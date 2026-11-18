@@ -426,6 +426,33 @@ button.hive-chip:hover { color: var(--hv-text-1); box-shadow: inset 0 0 0 1px va
   mask-image: linear-gradient(to bottom, transparent 0, #000 36px);
 }
 
+/* The answer still streaming: the pen rests at the end of the text as a
+   clay full stop (the same stop as the marks) and breathes until it lifts. */
+.hive-root .ai-md[data-streaming] > :last-child::after {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 4px;
+  border-radius: 999px;
+  vertical-align: baseline;
+  background: var(--hv-accent);
+  animation: hive-blink 1.2s ease-in-out infinite;
+}
+.hive-root .ai-md[data-streaming] > pre:last-child::after,
+.hive-root .ai-md[data-streaming] > :is(ul, ol, table, div):last-child::after { display: none; }
+.hive-root .ai-md[data-streaming] > :is(ul, ol):last-child > li:last-child::after {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 4px;
+  border-radius: 999px;
+  background: var(--hv-accent);
+  animation: hive-blink 1.2s ease-in-out infinite;
+}
+.hv-pen { flex-shrink: 0; }
+
 /* "Thinking" in chat and sessions: a word that changes and three dots. */
 .hive-word-swap { display: inline-block; animation: hive-word-in 320ms var(--hive-ease) both; }
 @keyframes hive-word-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }

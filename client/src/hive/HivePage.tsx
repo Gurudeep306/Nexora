@@ -560,8 +560,7 @@ function Sidebar({ resizable }: { resizable?: { width: number; onWidth: (w: numb
         </label>
       </div>
       <nav className="hive-scroll min-h-0 flex-1 overflow-y-auto px-2 pb-4">
-        <NavSections filter={s} />
-        <div className="mx-3 my-3 h-px bg-[var(--hive-line)]" />
+        {s ? <NavSections filter={s} /> : <PrimaryNav />}
         <SideHeading action={<SideAdd to="/hive/p/new" label="New project" />}>Projects</SideHeading>
         {projects
           .filter((p) => !s || p.name.toLowerCase().includes(s) || (tasksBy.get(p.id) ?? []).some((t) => t.title.toLowerCase().includes(s)))
@@ -622,6 +621,7 @@ function Sidebar({ resizable }: { resizable?: { width: number; onWidth: (w: numb
           </Link>
         )}
 
+        {!s && <ToolGrid />}
         <SideHeading action={<SideAdd to="/hive/chat" label="New chat" />}>Recent chats</SideHeading>
         {convos
           .filter((c) => !s || c.title.toLowerCase().includes(s))
@@ -703,6 +703,81 @@ function NavSections({ filter = '' }: { filter?: string }) {
   )
 }
 
+/** The four places people go most, as larger rows. */
+function PrimaryNav() {
+  const navFade = useNavFade()
+  const { sections } = useNav()
+  const { pathname } = useLocation()
+  const all = sections.flatMap((g) => g.items)
+  const pick = ['Home', 'Inbox', 'Copilot', 'Chat'].map((l) => all.find((it) => it.label === l)).filter((x): x is NavItem => !!x)
+  return (
+    <div className="space-y-0.5 pt-1" role="list" aria-label="Main">
+      {pick.map((it) => {
+        const forced = it.match ? it.match.test(pathname) : undefined
+        return (
+          <div role="listitem" key={it.label}>
+            <NavLink to={it.to} end={it.end} title={it.hint} onClick={(e) => navFade(e, it.to)} className="block">
+              {({ isActive }) => (
+                <span className="hv-nav min-h-[34px] text-[14px]" data-on={forced ?? isActive}>
+                  <it.icon className="size-[17px] shrink-0" strokeWidth={(forced ?? isActive) ? 1.9 : 1.7} />
+                  <span className="min-w-0 flex-1 truncate">{it.label}</span>
+                  {it.badge ? (
+                    <span className="hv-num grid min-w-4 place-items-center rounded-full px-1 text-[10px] font-bold text-[var(--hv-bg-app)]" style={{ background: it.tone }}>
+                      {it.badge}
+                    </span>
+                  ) : null}
+                </span>
+              )}
+            </NavLink>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
+/** Everything else in Hive, as a compact grid of labelled tiles. */
+function ToolGrid() {
+  const navFade = useNavFade()
+  const { sections } = useNav()
+  const { pathname } = useLocation()
+  const all = sections.flatMap((g) => g.items)
+  const tiles = ['Projects', 'Pipelines', 'Machines', 'Drive', 'Models', 'Keys & limits', 'Extensions', 'Spend'].map((l) => all.find((it) => it.label === l)).filter((x): x is NavItem => !!x)
+  return (
+    <>
+      <SideHeading>Workspace</SideHeading>
+      <ul className="m-0 grid list-none grid-cols-2 gap-1 p-0 px-1" aria-label="Workspace">
+        {tiles.map((it) => {
+          const forced = it.match ? it.match.test(pathname) : undefined
+          return (
+            <li key={it.label}>
+              <NavLink to={it.to} end={it.end} title={it.hint} onClick={(e) => navFade(e, it.to)} className="block">
+                {({ isActive }) => {
+                  const on = forced ?? isActive
+                  return (
+                    <span className={cn('relative flex h-[50px] flex-col justify-between overflow-hidden rounded-[var(--hv-r-btn)] border px-2.5 py-1.5 transition-colors', on ? 'border-[var(--hv-border-strong)] bg-[var(--hv-surface-1)]' : 'border-[var(--hv-border-subtle)] hover:border-[var(--hv-border)] hover:bg-[var(--hv-surface-1)]')}>
+                      {on && <span className="absolute inset-x-0 top-0 h-[2px] bg-[var(--hv-accent)]" aria-hidden />}
+                      <span className="flex items-center justify-between">
+                        <it.icon className={cn('size-4', on ? 'text-[var(--hv-text-1)]' : 'text-[var(--hv-text-3)]')} strokeWidth={1.7} />
+                        {it.badge ? (
+                          <span className="hv-num grid min-w-4 place-items-center rounded-full px-1 text-[9.5px] font-bold text-[var(--hv-bg-app)]" style={{ background: it.tone }}>
+                            {it.badge}
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className={cn('truncate text-[12px]', on ? 'font-semibold text-[var(--hv-text-1)]' : 'text-[var(--hv-text-2)]')}>{it.label}</span>
+                    </span>
+                  )
+                }}
+              </NavLink>
+            </li>
+          )
+        })}
+      </ul>
+    </>
+  )
+}
+
 /** The one strong button in the sidebar: everything you can start. */
 function NewMenu() {
   const navigate = useNavigate()
@@ -759,16 +834,35 @@ function MobileTabs() {
 }
 
 function SideFooter() {
-  const { boot, connected, online } = useHive()
+  const { boot, connected, online, live, machines } = useHive()
   const now = Date.now()
   const limited = (boot?.keys ?? []).filter((k) => !k.disabled && ((k.limitUntil ?? 0) > now || k.status === 'invalid')).length
   const ok = connected && !limited
   const text = !connected ? 'Reconnecting…' : limited ? `${limited} connection${limited === 1 ? '' : 's'} limited` : 'All systems ok'
   return (
     <div className="border-t hive-line px-2 py-2">
-      <Link to="/hive/models/health" className="flex items-center gap-2 rounded-[var(--hv-r-btn)] px-3 py-1.5 text-[12px] text-[var(--hv-text-2)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" title="Open model health">
-        <span className={cn('size-1.5 shrink-0 rounded-full', !connected && 'hv-live')} style={{ background: ok ? 'var(--hv-success)' : 'var(--hv-warning)' }} aria-hidden />
-        <span className="flex-1 truncate">{text}</span>
+      <Link to="/hive/models/health" className="block rounded-[var(--hv-r-btn)] px-3 py-2 hover:bg-[var(--hv-surface-2)]" title="Open model health">
+        <span className="flex items-center gap-2 text-[12px] text-[var(--hv-text-2)]">
+          <span className={cn('size-1.5 shrink-0 rounded-full', !connected && 'hv-live')} style={{ background: ok ? 'var(--hv-success)' : 'var(--hv-warning)' }} aria-hidden />
+          <span className="flex-1 truncate">{text}</span>
+        </span>
+        <span className="hv-num mt-1.5 grid grid-cols-3 gap-1 text-[11px] text-[var(--hv-text-3)]">
+          <span>
+            <b className="block text-[13px] font-semibold text-[var(--hv-text-1)]">{live.length}</b> working
+          </span>
+          <span>
+            <b className="block text-[13px] font-semibold text-[var(--hv-text-1)]">
+              {machines.filter((m) => m.online).length}/{machines.length}
+            </b>{' '}
+            machines
+          </span>
+          <span>
+            <b className="block text-[13px] font-semibold text-[var(--hv-text-1)]">
+              {(boot?.keys ?? []).filter((k) => k.status === 'ok' && !k.disabled).length}/{(boot?.keys ?? []).length}
+            </b>{' '}
+            keys ok
+          </span>
+        </span>
       </Link>
       <div className="flex items-center gap-1 px-1 pt-1">
         <Link to="/hub" className="flex min-w-0 flex-1 items-center gap-2 rounded-[var(--hv-r-btn)] px-2 py-1 text-[12px] text-[var(--hv-text-2)] hover:text-[var(--hv-text-1)]">

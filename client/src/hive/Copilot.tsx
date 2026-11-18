@@ -28,7 +28,10 @@ import {
   Globe,
   HeartPulse,
   Loader2,
+  AppWindow,
+  GripVertical,
   Maximize2,
+  PanelRight,
   MessageSquarePlus,
   Network,
   Play,
@@ -804,23 +807,156 @@ export function CopilotDock() {
     if (pathname.startsWith('/hive/copilot')) setOpen(false)
   }, [pathname])
   if (!open || pathname.startsWith('/hive/copilot')) return null
+  return <CopilotPanel onClose={() => setOpen(false)} />
+}
+
+/* ── The Copilot panel: docked on the right (drag its edge to resize) or a
+   floating window (drag its title bar anywhere, resize from the corner).
+   Dragging the docked panel's title bar lifts it into a window; "Dock"
+   puts it back. Size, place and mode are remembered in this browser. ── */
+type PanelGeo = { mode: 'dock' | 'float'; dockW: number; x: number; y: number; w: number; h: number }
+const GEO_KEY = 'hive:copilotPanel'
+const TOP = 52
+function readGeo(): PanelGeo {
+  const d: PanelGeo = { mode: 'dock', dockW: 440, x: Math.max(16, window.innerWidth - 480), y: 80, w: 440, h: Math.min(640, window.innerHeight - 120) }
+  try {
+    return { ...d, ...JSON.parse(localStorage.getItem(GEO_KEY) ?? '{}') }
+  } catch {
+    return d
+  }
+}
+function clampGeo(g: PanelGeo): PanelGeo {
+  const W = window.innerWidth
+  const H = window.innerHeight
+  const w = Math.min(Math.max(g.w, 320), W - 16)
+  const h = Math.min(Math.max(g.h, 280), H - TOP - 8)
+  return { ...g, dockW: Math.min(Math.max(g.dockW, 340), Math.max(340, W - 360)), w, h, x: Math.min(Math.max(8, g.x), W - w - 8), y: Math.min(Math.max(TOP, g.y), H - h - 8) }
+}
+
+function CopilotPanel({ onClose }: { onClose: () => void }) {
+  const [geo, setGeoState] = useState<PanelGeo>(() => clampGeo(readGeo()))
+  const phone = typeof window !== 'undefined' && window.matchMedia?.('(max-width: 640px)').matches
+  const setGeo = (f: (g: PanelGeo) => PanelGeo) =>
+    setGeoState((g) => {
+      const n = clampGeo(f(g))
+      try {
+        localStorage.setItem(GEO_KEY, JSON.stringify(n))
+      } catch {
+        /* private mode */
+      }
+      return n
+    })
+  useEffect(() => {
+    const r = () => setGeo((g) => g)
+    window.addEventListener('resize', r)
+    return () => window.removeEventListener('resize', r)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  const drag = useRef<{ kind: 'move' | 'size' | 'edge'; x: number; y: number; g: PanelGeo } | null>(null)
+  const down = (kind: 'move' | 'size' | 'edge') => (e: React.PointerEvent) => {
+    if (phone || e.button !== 0) return
+    if ((e.target as HTMLElement).closest('button, a') && kind === 'move') return
+    drag.current = { kind, x: e.clientX, y: e.clientY, g: geo }
+    ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+  }
+  const move = (e: React.PointerEvent) => {
+    const d = drag.current
+    if (!d) return
+    const dx = e.clientX - d.x
+    const dy = e.clientY - d.y
+    if (d.kind === 'edge') return setGeo((g) => ({ ...g, dockW: d.g.dockW - dx }))
+    if (d.kind === 'size') return setGeo((g) => ({ ...g, w: d.g.w + dx, h: d.g.h + dy }))
+    if (d.g.mode === 'dock') {
+      // Lift the docked panel into a window once it has moved a little.
+      if (Math.abs(dx) + Math.abs(dy) < 8) return
+      const w = Math.min(d.g.dockW, 480)
+      drag.current = { kind: 'move', x: e.clientX, y: e.clientY, g: { ...d.g, mode: 'float', w, x: e.clientX - w / 2, y: e.clientY - 18 } }
+      return setGeo((g) => ({ ...g, mode: 'float', w, x: e.clientX - w / 2, y: e.clientY - 18 }))
+    }
+    setGeo((g) => ({ ...g, x: d.g.x + dx, y: d.g.y + dy }))
+  }
+  const up = () => (drag.current = null)
+  const floating = !phone && geo.mode === 'float'
+  const style: React.CSSProperties = phone ? { top: TOP, right: 0, bottom: 0, width: '100vw' } : floating ? { left: geo.x, top: geo.y, width: geo.w, height: geo.h } : { top: TOP, right: 0, bottom: 0, width: geo.dockW }
+  const nudge = (e: React.KeyboardEvent) => {
+    if (!floating) return
+    const step = e.shiftKey ? 40 : 12
+    const k = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key]
+    if (!k) return
+    e.preventDefault()
+    setGeo((g) => ({ ...g, x: g.x + k[0], y: g.y + k[1] }))
+  }
   return (
-    <aside className="hv-panel fixed bottom-0 right-0 top-12 z-[800] flex w-[min(440px,100vw)] flex-col border-l border-[var(--hv-border)] bg-[var(--hv-surface-1)] shadow-[-12px_0_32px_-16px_oklch(0_0_0/0.45)]" role="complementary" aria-label="Copilot">
-      <div className="flex items-center gap-2 border-b border-[var(--hv-border)] px-3 py-2">
-        <Bot className="size-4 text-[var(--hv-accent)]" aria-hidden />
-        <span className="text-[13.5px] font-semibold">Copilot</span>
+    <aside
+      className={cn('hv-panel fixed z-[800] flex flex-col bg-[var(--hv-bg-app)]', floating ? 'rounded-[var(--hv-r-dialog)] border border-[var(--hv-border-strong)]' : 'border-l border-[var(--hv-border-strong)]')}
+      style={style}
+      role="complementary"
+      aria-label="Copilot"
+      onPointerMove={move}
+      onPointerUp={up}
+      onPointerCancel={up}
+    >
+      {!floating && !phone && (
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Resize the Copilot panel"
+          aria-valuemin={340}
+          aria-valuemax={1200}
+          aria-valuenow={geo.dockW}
+          tabIndex={0}
+          onPointerDown={down('edge')}
+          onKeyDown={(e) => {
+            if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+            e.preventDefault()
+            setGeo((g) => ({ ...g, dockW: g.dockW + (e.key === 'ArrowLeft' ? 24 : -24) }))
+          }}
+          className="group absolute inset-y-0 -left-[5px] z-10 w-[9px] cursor-col-resize touch-none outline-none"
+        >
+          <span className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 transition-colors group-hover:bg-[var(--hv-text-3)] group-focus-visible:bg-[var(--hv-focus-ring)]" />
+        </div>
+      )}
+      <div
+        onPointerDown={down('move')}
+        onKeyDown={nudge}
+        tabIndex={floating ? 0 : -1}
+        aria-label={floating ? 'Copilot window: drag to move, or use the arrow keys' : undefined}
+        className={cn('flex select-none items-center gap-2 border-b border-[var(--hv-border)] px-3 py-2 outline-none', !phone && (floating ? 'cursor-move' : 'cursor-grab'))}
+        title={phone ? undefined : floating ? 'Drag to move' : 'Drag to lift into a window'}
+      >
+        <GripVertical className="size-3.5 text-[var(--hv-text-3)] max-sm:hidden" aria-hidden />
+        <Bot className="size-4 text-[var(--hv-text-1)]" aria-hidden />
+        <span className="hv-serif text-[16px]">Copilot</span>
         <span className="hive-kbd ml-1">⌘I</span>
         <span className="ml-auto" />
-        <Link to="/hive/copilot" className="grid size-8 place-items-center rounded-[var(--hv-r-btn)] text-[var(--hv-text-3)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" aria-label="Open the full Copilot page" title="Open the full page">
+        {!phone && (
+          <button
+            type="button"
+            onClick={() => setGeo((g) => (g.mode === 'dock' ? { ...g, mode: 'float', x: window.innerWidth - g.w - 24, y: 80 } : { ...g, mode: 'dock' }))}
+            className="hv-icon-btn"
+            aria-label={floating ? 'Dock to the right' : 'Float as a window'}
+            title={floating ? 'Dock to the right' : 'Float as a window'}
+          >
+            {floating ? <PanelRight className="size-4" /> : <AppWindow className="size-4" />}
+          </button>
+        )}
+        <Link to="/hive/copilot" className="hv-icon-btn" aria-label="Open the full Copilot page" title="Open the full page">
           <Maximize2 className="size-4" />
         </Link>
-        <button type="button" onClick={() => setOpen(false)} className="grid size-8 place-items-center rounded-[var(--hv-r-btn)] text-[var(--hv-text-3)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]" aria-label="Close the Copilot panel (Esc)">
+        <button type="button" onClick={onClose} className="hv-icon-btn" aria-label="Close the Copilot panel (Esc)">
           <X className="size-4" />
         </button>
       </div>
       <div className="min-h-0 flex-1">
         <CopilotThread compact />
       </div>
+      {floating && (
+        <div onPointerDown={down('size')} className="absolute bottom-0 right-0 size-4 cursor-nwse-resize touch-none" aria-hidden>
+          <svg viewBox="0 0 16 16" className="size-4 text-[var(--hv-text-3)]">
+            <path d="M14 6L6 14M14 10L10 14" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+          </svg>
+        </div>
+      )}
     </aside>
   )
 }

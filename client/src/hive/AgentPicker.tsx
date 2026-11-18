@@ -45,9 +45,10 @@ export function speedOf(boot: Bootstrap, provider: string, model: string): numbe
 
 export function SpeedBadge({ ms }: { ms: number | null }) {
   if (ms == null) return null
-  const tone = ms < 1500 ? 'text-state-success bg-state-success/12' : ms < 5000 ? 'text-state-warning bg-state-warning/12' : 'text-state-error bg-state-error/12'
+  const tone = ms < 1500 ? 'bg-state-success' : ms < 5000 ? 'bg-state-warning' : 'bg-state-error'
   return (
-    <span className={cn('shrink-0 rounded-full px-1.5 py-px text-[10.5px] font-medium tabular-nums', tone)} title="Measured reply time">
+    <span className="inline-flex shrink-0 items-center gap-1 rounded-[var(--hv-r-chip,3px)] px-1.5 py-px text-[10.5px] font-medium tabular-nums text-text-secondary ring-1 ring-inset ring-[var(--hv-border,var(--color-border))]" title="Measured reply time">
+      <span className={cn('size-1.5 rounded-full', tone)} aria-hidden="true" />
       {ms < 1000 ? `${Math.round(ms / 100) / 10}s` : `${(ms / 1000).toFixed(ms < 10_000 ? 1 : 0)}s`}
     </span>
   )
@@ -127,13 +128,13 @@ export function AgentChip({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <span className="group inline-flex items-center rounded-full bg-text-primary/[0.06] transition-colors hover:bg-text-primary/[0.1]">
+      <span className="group inline-flex items-center rounded-[var(--hv-r-btn)] ring-1 ring-inset ring-[var(--hv-border)] transition-colors hover:ring-[var(--hv-border-strong)] data-[state=open]:ring-[var(--hv-text-2)]">
         <PopoverTrigger asChild>
           <button type="button" className={cn('flex min-w-0 items-center gap-1.5 py-1 pl-1 text-[12.5px] outline-none', onRemove ? 'pr-1' : 'pr-2.5')}>
             <AgentMark provider={spec.provider} model={spec.model} size={20} />
             {label && <span className="text-text-muted">{label}</span>}
-            <span className={cn('truncate font-medium text-text-primary', compact ? 'max-w-28' : 'max-w-48')}>{spec.provider === 'auto' ? (spec.freeOnly ? 'Auto · free' : 'Auto') : spec.name || shortModel(spec.model) || 'Choose model'}</span>
-            {spec.name && !compact && <span className="max-w-28 truncate text-text-muted">{shortModel(spec.model)}</span>}
+            <span className={cn('truncate font-semibold text-text-primary', compact ? 'max-w-28' : 'max-w-48')}>{spec.provider === 'auto' ? (spec.freeOnly ? 'Auto · free' : 'Auto') : spec.name || shortModel(spec.model) || 'Choose model'}</span>
+            {spec.name && !compact && <span className="hv-mono max-w-28 truncate text-[11px] text-text-muted">{shortModel(spec.model)}</span>}
             {spec.effort && spec.provider === 'anthropic' && !compact && <span className="text-[11px] text-text-muted">· {spec.effort}</span>}
             {spec.provider !== 'auto' && <span className="size-1.5 shrink-0 rounded-full" style={{ background: shareTone(share) }} title={key ? `${key.label}: ${key.tokenLimit == null ? 'no limit' : `${fmtTokens(key.remaining)} left`}` : ''} />}
             <ChevronDown className="size-3 text-text-muted transition-transform group-data-[state=open]:rotate-180" />
@@ -145,7 +146,7 @@ export function AgentChip({
           </button>
         )}
       </span>
-      <PopoverContent align={align} side={side} className="w-[min(560px,calc(100vw-24px))] overflow-hidden p-0">
+      <PopoverContent align={align} side={side} className="hive-root w-[min(600px,calc(100vw-24px))] overflow-hidden p-0" aria-label="Choose a model">
         {open && (
           <ModelPanel
             boot={boot}
@@ -239,8 +240,12 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
   let i = -1
 
   return (
-    <div className="flex max-h-[min(560px,70vh)] flex-col">
-      <label className="flex items-center gap-2 border-b hive-line px-3.5">
+    <div className="flex max-h-[min(600px,72vh)] flex-col">
+      <div className="flex items-baseline justify-between gap-3 px-4 pt-3.5">
+        <span className="font-[family-name:var(--font-display)] text-[18px] leading-tight text-text-primary">Choose a model</span>
+        <span className="text-[11.5px] text-text-muted">↑ ↓ to move · ↵ to pick</span>
+      </div>
+      <label className="mx-4 mt-2 flex items-center gap-2 border-b hive-line transition-colors focus-within:border-text-primary">
         <Search className="size-4 text-text-muted" />
         <input
           autoFocus
@@ -255,44 +260,47 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
               else if (q.trim()) onChange({ ...spec, model: q.trim() }, true)
             }
           }}
-          placeholder="Search models — or type any model id and press Enter"
-          className="h-11 flex-1 bg-transparent text-[13.5px] outline-none placeholder:text-text-muted"
+          placeholder="Search models, or type any model id"
+          className="h-10 flex-1 bg-transparent font-[family-name:var(--font-display)] text-[15px] italic outline-none placeholder:text-text-muted"
         />
         <span className="hive-kbd">↵</span>
       </label>
       <div className="flex min-h-0 flex-1">
-        <nav className="hive-scroll hidden w-40 shrink-0 overflow-y-auto border-r hive-line p-1.5 sm:block">
-          <VendorTab active={vendor === 'all'} onClick={() => setVendor('all')} icon={<Sparkles className="size-3.5 text-accent-brand" />} label="All models" />
+        <nav className="hive-scroll mt-2 hidden w-44 shrink-0 overflow-y-auto border-r hive-line p-1.5 sm:block" aria-label="Providers">
+          <VendorTab active={vendor === 'all'} onClick={() => setVendor('all')} icon={<Sparkles className="size-3.5 text-text-muted" />} label="All models" />
           {providers.map((p) => (
             <VendorTab key={p} active={vendor === p} onClick={() => setVendor(p)} icon={<ProviderGlyph provider={p} size="xs" />} label={vendorName(p)} count={modelsFor(boot, p, 'auto').length} />
           ))}
           {!providers.length && <p className="p-2 text-[11.5px] text-text-muted">Add a key in Keys first.</p>}
         </nav>
-        <div ref={listRef} className="hive-scroll min-h-0 flex-1 overflow-y-auto p-1.5">
+        <div ref={listRef} className="hive-scroll mt-2 min-h-0 flex-1 overflow-y-auto p-1.5">
           {need !== 'images' && vendor === 'all' && !q.trim() && (
             <div className="mb-1.5">
-              <div className="px-2 pb-1 pt-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-text-muted">Let Hive choose</div>
+              <div className="px-2 pb-1.5 pt-1.5 text-[10.5px] font-semibold uppercase tracking-[0.09em] text-text-muted">Let Hive choose</div>
+              <div className="grid gap-1.5 px-1 sm:grid-cols-2">
               {[
                 { free: false, title: 'Auto', sub: 'The best model for this kind of job — free and plan models first' },
                 { free: true, title: 'Auto · free only', sub: 'Only free models (free tiers and :free models)' },
               ].map((o) => {
                 const active = spec.provider === 'auto' && !!spec.freeOnly === o.free
                 return (
-                  <button key={o.title} type="button" onClick={() => onChange({ provider: 'auto', keyId: 'auto', model: '', freeOnly: o.free || undefined, name: spec.name }, true)} className={cn('flex w-full items-center gap-2.5 rounded-lg px-2 py-1.5 text-left', active ? 'bg-accent-brand/10' : 'hover:bg-text-primary/[0.04]')}>
+                  <button key={o.title} type="button" onClick={() => onChange({ provider: 'auto', keyId: 'auto', model: '', freeOnly: o.free || undefined, name: spec.name }, true)} className={cn('relative flex w-full items-start gap-2.5 overflow-hidden rounded-[var(--hv-r-card)] border px-2.5 py-2 text-left transition-colors', active ? 'border-text-primary' : 'hive-line hover:border-[var(--hv-border-strong)]')}>
+                    {active && <span className="absolute inset-x-0 top-0 h-[2px] bg-[var(--hv-accent)]" aria-hidden />}
                     <AgentMark provider="auto" size={22} />
                     <span className="min-w-0 flex-1">
-                      <span className="block text-[13px] font-medium text-text-primary">{o.title}</span>
-                      <span className="block truncate text-[11px] text-text-muted">{o.sub}</span>
+                      <span className="block text-[13px] font-semibold text-text-primary">{o.title}</span>
+                      <span className="block text-[11px] leading-snug text-text-muted">{o.sub}</span>
                     </span>
-                    {active && <Check className="size-3.5 shrink-0 text-accent-brand" />}
+                    {active && <Check className="size-3.5 shrink-0 text-text-primary" aria-label="Chosen" />}
                   </button>
                 )
               })}
+              </div>
             </div>
           )}
           {groups.map((g) => (
             <div key={g.title} className="mb-1.5">
-              <div className="px-2 pb-1 pt-1.5 text-[10.5px] font-semibold uppercase tracking-wider text-text-muted">{g.title}</div>
+              <div className="px-2 pb-1 pt-2.5 text-[10.5px] font-semibold uppercase tracking-[0.09em] text-text-muted">{g.title}</div>
               {g.items.map((r) => {
                 i++
                 const idx = i
@@ -303,12 +311,13 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
                     key={`${g.title}:${r.provider}:${r.model}`}
                     data-i={idx}
                     onMouseEnter={() => setCursor(idx)}
-                    className={cn('group/row flex items-center gap-2.5 rounded-lg px-2 py-1.5', idx === cursor ? 'bg-accent-brand/10' : '')}
+                    className={cn('group/row relative flex items-center gap-2.5 rounded-[var(--hv-r-btn)] px-2 py-1.5', idx === cursor && 'bg-[var(--hv-surface-2)]')}
                   >
+                    {idx === cursor && <span className="absolute bottom-1.5 left-0 top-1.5 w-[2px] rounded bg-[var(--hv-accent)]" aria-hidden />}
                     <button type="button" onClick={() => pick(r)} className="flex min-w-0 flex-1 items-center gap-2.5 text-left">
                       <AgentMark provider={r.provider} model={r.model} size={22} />
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[13px] text-text-primary">{shortModel(r.model)}</span>
+                        <span className={cn('block truncate text-[13px] text-text-primary', active && 'font-semibold')}>{shortModel(r.model)}</span>
                         <span className="block truncate text-[10.5px] text-text-muted">
                           {FAMILY[familyOf(r.provider, r.model)].name} · {vendorName(r.provider)} · <span className="font-mono">{r.model}</span>
                         </span>
@@ -320,7 +329,7 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
                         {caps?.images && <ImageIcon className="size-3" aria-label="Makes images" />}
                       </span>
                       <SpeedBadge ms={speedOf(boot, r.provider, r.model)} />
-                      {active && <Check className="size-3.5 shrink-0 text-accent-brand" />}
+                      {active && <Check className="size-3.5 shrink-0 text-text-primary" aria-label="Chosen" />}
                     </button>
                     <button type="button" onClick={() => toggleFav(r.provider, r.model)} className={cn('grid size-6 shrink-0 place-items-center rounded-md', isFav(r.provider, r.model) ? 'text-state-warning' : 'text-text-muted opacity-0 group-hover/row:opacity-100 hover:text-text-primary')} aria-label="Favourite">
                       <Star className={cn('size-3.5', isFav(r.provider, r.model) && 'fill-current')} />
@@ -340,7 +349,22 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
           )}
         </div>
       </div>
-      <div className="space-y-2.5 border-t hive-line bg-text-primary/[0.02] p-3">
+      {flat[cursor] && (() => {
+        const r = flat[cursor]
+        const caps = vendorInfo(boot, r.provider)?.caps
+        const ms = speedOf(boot, r.provider, r.model)
+        const plan = boot.keys.some((k) => k.provider === r.provider && k.subscription && !k.disabled)
+        const can = [caps?.tools && 'uses tools', caps?.vision && 'sees images', caps?.pdf && 'reads PDFs', caps?.images && 'makes images'].filter(Boolean).join(', ')
+        return (
+          <div className="border-t hive-line px-4 py-2 text-[11.5px] text-text-muted" aria-live="polite">
+            <span className="hv-mono text-text-secondary">{r.model}</span> · {vendorName(r.provider)}
+            {can && ` · ${can}`}
+            {ms != null && ` · first reply in about ${(ms / 1000).toFixed(1)}s here`}
+            {plan && ' · runs on your plan'}
+          </div>
+        )
+      })()}
+      <div className="space-y-2.5 border-t hive-line p-3 px-4">
         {spec.provider !== 'auto' && (
         <div className="flex items-center gap-2">
           <span className="w-16 shrink-0 text-[11px] font-medium text-text-muted">Account</span>
@@ -360,9 +384,9 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
         {supportsEffort && need !== 'images' && (
           <div className="flex items-center gap-2">
             <span className="w-16 shrink-0 text-[11px] font-medium text-text-muted">Effort</span>
-            <div className="grid flex-1 grid-cols-5 gap-0.5 rounded-lg bg-text-primary/[0.06] p-0.5">
+            <div className="flex flex-1 gap-1" role="radiogroup" aria-label="Effort">
               {EFFORTS.map((e) => (
-                <button key={e} type="button" onClick={() => onChange({ ...spec, effort: e })} className={cn('h-6 rounded-md text-[11px] capitalize transition-colors', (spec.effort ?? 'high') === e ? 'bg-bg-surface text-text-primary shadow-sm' : 'text-text-muted hover:text-text-secondary')}>
+                <button key={e} type="button" role="radio" aria-checked={(spec.effort ?? 'high') === e} onClick={() => onChange({ ...spec, effort: e })} className={cn("relative h-7 flex-1 rounded-[var(--hv-r-chip)] text-[12px] capitalize transition-colors after:absolute after:inset-x-2 after:bottom-0 after:h-[2px] after:rounded-full after:content-['']", (spec.effort ?? 'high') === e ? 'font-semibold text-text-primary after:bg-[var(--hv-accent)]' : 'text-text-muted after:bg-transparent hover:text-text-secondary')}>
                   {e}
                 </button>
               ))}
@@ -372,7 +396,7 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
         {need === 'tools' && (
           <div className="flex items-center gap-2">
             <span className="w-16 shrink-0 text-[11px] font-medium text-text-muted">Name</span>
-            <input value={spec.name ?? ''} onChange={(e) => onChange({ ...spec, name: e.target.value.slice(0, 40) || undefined })} placeholder="optional — e.g. frontend (the lead assigns work by name)" className="h-7 flex-1 rounded-md bg-text-primary/[0.05] px-2 text-[12px] outline-none placeholder:text-text-muted focus:bg-text-primary/[0.08]" />
+            <input value={spec.name ?? ''} onChange={(e) => onChange({ ...spec, name: e.target.value.slice(0, 40) || undefined })} placeholder="optional — e.g. frontend (the lead assigns work by name)" className="h-7 flex-1 border-b hive-line bg-transparent px-0.5 text-[12.5px] outline-none transition-colors placeholder:text-text-muted focus:border-text-primary" />
           </div>
         )}
       </div>
@@ -382,7 +406,8 @@ function ModelPanel({ boot, spec, need, onChange }: { boot: Bootstrap; spec: Age
 
 function VendorTab({ active, onClick, icon, label, count }: { active: boolean; onClick: () => void; icon: React.ReactNode; label: string; count?: number }) {
   return (
-    <button type="button" onClick={onClick} className={cn('flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[12.5px] transition-colors', active ? 'bg-text-primary/[0.08] text-text-primary' : 'text-text-secondary hover:bg-text-primary/[0.04]')}>
+    <button type="button" onClick={onClick} className={cn('relative flex w-full items-center gap-2 rounded-[var(--hv-r-btn)] px-2.5 py-1.5 text-left text-[12.5px] transition-colors', active ? 'bg-[var(--hv-surface-2)] font-semibold text-text-primary' : 'text-text-secondary hover:bg-[var(--hv-surface-2)]')}>
+      {active && <span className="absolute bottom-1.5 left-0 top-1.5 w-[2px] rounded bg-[var(--hv-accent)]" aria-hidden />}
       <span className="grid size-4 place-items-center">{icon}</span>
       <span className="min-w-0 flex-1 truncate">{label}</span>
       {count != null && <span className="text-[10.5px] tabular-nums text-text-muted">{count}</span>}
@@ -392,7 +417,7 @@ function VendorTab({ active, onClick, icon, label, count }: { active: boolean; o
 
 function Seg({ active, onClick, children, title }: { active: boolean; onClick: () => void; children: React.ReactNode; title?: string }) {
   return (
-    <button type="button" title={title} onClick={onClick} className={cn('inline-flex h-7 shrink-0 items-center gap-1.5 rounded-md px-2.5 text-[12px] transition-colors', active ? 'bg-accent-brand/12 text-text-primary ring-1 ring-accent-brand/30' : 'bg-text-primary/[0.05] text-text-secondary hover:bg-text-primary/[0.08]')}>
+    <button type="button" title={title} onClick={onClick} className={cn('inline-flex h-7 shrink-0 items-center gap-1.5 rounded-[var(--hv-r-btn)] px-2.5 text-[12px] ring-1 ring-inset transition-colors', active ? 'font-semibold text-text-primary ring-text-primary' : 'text-text-secondary ring-[var(--hv-border)] hover:ring-[var(--hv-border-strong)]')}>
       {children}
     </button>
   )
