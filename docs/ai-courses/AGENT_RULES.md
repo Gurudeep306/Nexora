@@ -68,9 +68,11 @@ an AI topic. These rules are not optional.
 14. **Cite only what is in `docs/ai-courses/sources/`** and passes
     `verify-sources.mjs`. To cite something new, add it to the right JSON file
     and run the check first. Never write a citation from memory.
-15. **Read the paper before you write about it.** Open copies: use
-    `scripts/ai-courses/fetch-open.mjs`. Paywalled ones: ask the owner (they
-    are listed in `sources/CHECK.md`); never use a pirated copy.
+15. **Read the paper before you write about it.** The library is
+    `docs/ai-courses/private/library/<NN>-<course>/<paper-id>.pdf`. If it is
+    empty (a new session): run `fetch-open.mjs` for the free papers, and ask
+    the owner for `Nexora-AI-papers-owner.zip` (then `library.mjs import`) for
+    the paywalled ones. Never use a pirated copy.
 16. **Point to the exact place**: section, equation or table number of the paper.
 17. **Write our own words and draw our own figures.** No copied paragraphs,
     figures or tables from papers or books. A quote is at most one sentence, in
