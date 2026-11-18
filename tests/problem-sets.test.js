@@ -177,7 +177,7 @@ test('the built-in library: famous series and one set per company, named just th
   assert.ok(blind && blind.builtIn && blind.count === lib.series.find((x) => x.id === 'blind-75').sections.flatMap((x) => x.items).length);
   const b = (await call('GET', '/api/problem-sets/blind-75', c[CAT])).body;
   assert.equal(b.items[0].problem.id, pid.lc, 'matched to our catalog');
-  assert.ok(b.items[1].link && /^https:\/\/leetcode\.com\//.test(b.items[1].link.url), 'a problem we lack is a link to the original');
+  assert.ok(b.items[1].link && b.items[1].link.url.startsWith('https://leetcode.com/'), 'a problem we lack is a link to the original');
   assert.equal(b.canEdit, false);
   const cos = (await call('GET', '/api/problem-sets?tab=company', c[CAT])).body.sets;
   const key = cos.find((x) => x.id === 'company:KEYENCE');
@@ -257,7 +257,7 @@ test('built-in famous series ship with the app: listed, resolved live, links for
   const twoSum = s.items.find((i) => i.problem?.title === 'Two Sum');
   assert.ok(twoSum && twoSum.problem.platform === 'leetcode' && twoSum.problem.id === pid.l, 'LC1 matched to our catalog row');
   const linked = s.items.find((i) => i.link);
-  assert.ok(linked && /^https:\/\/leetcode\.com\/problems\//.test(linked.link.url), 'entries we do not have stay as links to the original');
+  assert.ok(linked && linked.link.url.startsWith('https://leetcode.com/problems/'), 'entries we do not have stay as links to the original');
   assert.equal((await call('GET', '/api/problem-sets/nope-404', c[CAT])).status, 404);
 });
 
