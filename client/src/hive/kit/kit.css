@@ -8,56 +8,72 @@
    these point at.
    ──────────────────────────────────────────────────────────────────────── */
 .hive-root {
-  /* Surfaces: the sidebar sits one step dimmer than the page; cards, hover
-     and menus one step brighter each. Elevation = lighter surface + hairline. */
-  --hv-bg-app: var(--color-bg-app);
+  /* The desk: Hive sits on the site's own paper (the Field Journal tokens,
+     --ed-*, which follow whichever theme and mode the person chose). The
+     sidebar and the page share the canvas; cards are the theme's card
+     surface; edges are hairlines, never shadows. */
+  --hv-bg-app: var(--ed-canvas, var(--color-bg-app));
   --hv-bg-sidebar: var(--hv-bg-app);
-  --hv-surface-1: color-mix(in oklab, var(--color-bg-surface) 70%, var(--color-bg-app));
-  --hv-surface-2: color-mix(in oklab, var(--color-bg-surface-2) 85%, var(--color-bg-app));
-  --hv-surface-3: var(--color-bg-surface-3);
+  --hv-surface-1: var(--ed-card, var(--color-bg-surface));
+  --hv-surface-2: color-mix(in oklab, var(--ed-ink, var(--color-text-primary)) 4%, var(--hv-surface-1));
+  --hv-surface-3: color-mix(in oklab, var(--ed-ink, var(--color-text-primary)) 8%, var(--hv-surface-1));
 
-  --hv-border-subtle: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
-  --hv-border: color-mix(in oklab, var(--color-text-primary) 10%, transparent);
-  --hv-border-strong: color-mix(in oklab, var(--color-text-primary) 16%, transparent);
+  --hv-border-subtle: color-mix(in oklab, var(--ed-line, var(--color-border)) 55%, transparent);
+  --hv-border: var(--ed-line, var(--color-border));
+  --hv-border-strong: var(--ed-line-strong, var(--color-border-strong));
 
-  --hv-text-1: var(--color-text-primary);
-  --hv-text-2: var(--color-text-secondary);
+  --hv-text-1: var(--ed-ink, var(--color-text-primary));
+  --hv-text-2: var(--ed-ink-2, var(--color-text-secondary));
   /* Hints: the site's muted text nudged a quarter of the way toward the main
-     text, so small hints stay at 4.5:1 on Hive's tinted surfaces and inputs
-     in both themes (axe, WCAG 1.4.3). Older Hive classes (text-text-muted)
-     pick this up too. */
+     text, so small hints stay at 4.5:1 on Hive's cards and inputs in both
+     modes (axe, WCAG 1.4.3). Older Hive classes (text-text-muted) pick this
+     up too. */
   --color-text-muted: color-mix(in oklab, var(--oklch-fg-2) 75%, var(--color-text-primary));
   --hv-text-3: var(--color-text-muted);
 
-  --hv-accent: var(--color-accent-brand);
-  --hv-accent-hover: var(--color-accent-brand-hover);
-  --hv-accent-fg: var(--color-on-accent-brand);
-  --hv-accent-soft: color-mix(in oklab, var(--color-accent-brand) 14%, transparent);
+  /* The one action colour (clay in the house style). Never used for text. */
+  --hv-accent: var(--ed-clay, var(--color-accent-brand));
+  --hv-accent-hover: var(--ed-clay-deep, var(--color-accent-brand-hover));
+  --hv-accent-fg: var(--ed-on-clay, var(--color-on-accent-brand));
+  --hv-accent-soft: color-mix(in oklab, var(--hv-accent) 12%, transparent);
 
   --hv-success: var(--color-state-success);
   --hv-warning: var(--color-state-warning);
   --hv-danger: var(--color-state-error);
   --hv-info: var(--color-state-info);
-  --hv-focus-ring: var(--color-focus, var(--color-accent-brand));
+  --hv-focus-ring: var(--ed-focus, var(--color-focus, var(--color-accent-brand)));
+
+  /* Faces: headings and big figures in the theme's display face, controls
+     in its interface face, data in its code face. */
+  --hv-serif: var(--ed-serif, var(--font-display));
+  --hv-prose: var(--ed-prose, var(--hv-serif));
+  --hv-sans: var(--ed-sans, var(--font-body));
+  --hv-mono: var(--ed-mono, var(--font-mono));
 
   /* Shape and rhythm. Corners follow the site's own radius vars
-     ([data-radius] / [data-corners] rescale --radius-*), so Hive matches
-     whatever corner choice the rest of NexoraGuru is using. */
-  --hv-r-chip: var(--radius-xs, 2px);
-  --hv-r-btn: var(--radius-control);
-  --hv-r-card: var(--radius-card);
-  --hv-r-dialog: var(--radius-sheet);
+     ([data-radius] / [data-corners] rescale --radius-*). */
+  /* Corners follow the theme but are capped for a dense work tool: sharp
+     themes stay sharp, round themes get a calm 10px card. */
+  --hv-r-chip: min(var(--radius-xs, 2px), 4px);
+  --hv-r-btn: min(var(--radius-control), 8px);
+  --hv-r-card: min(var(--radius-card), 10px);
+  --hv-r-dialog: min(var(--radius-sheet), 14px);
   --hv-row-h: 40px;
 
-  /* Type scale (px): meta 12 · body-sm 12.5 · body 13.5 · emphasis 14 · section 17 · page 26. */
+  /* Type scale (px): meta 12 · body-sm 12.5 · body 13.5 · emphasis 14 · section 18 · page 32. */
   --hv-fs-meta: 12px;
   --hv-fs-sm: 12.5px;
   --hv-fs-body: 13.5px;
   --hv-fs-md: 14px;
-  --hv-fs-lg: 17px;
-  --hv-fs-page: 26px;
+  --hv-fs-lg: 18px;
+  --hv-fs-page: 32px;
 
-  /* Motion: only transform and opacity; 120 hover, 180 menus, 240 panels. */
+  /* No elevation anywhere inside Hive: hairlines separate things. */
+  --elev-1: none;
+  --elev-2: none;
+  --elev-3: none;
+
+/* Motion: only transform and opacity; 120 hover, 180 menus, 240 panels. */
   --hv-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --hv-d-fast: 120ms;
   --hv-d-menu: 180ms;
@@ -71,12 +87,10 @@
 /* ── Utilities ─────────────────────────────────────────────────────────── */
 .hv-num { font-variant-numeric: tabular-nums; }
 
-/* A crisp top highlight: a glassy edge without any blur. */
 .hv-card {
   background: var(--hv-surface-1);
   border: 1px solid var(--hv-border);
   border-radius: var(--hv-r-card);
-  box-shadow: inset 0 1px 0 color-mix(in oklab, white 4%, transparent);
 }
 
 /* Visible focus everywhere (2px ring, 2px offset); never hidden under sticky bars. */
@@ -156,10 +170,10 @@
 @keyframes hv-peek-in { from { transform: translateX(-8px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .hv-peek { animation: none; } }
 
-/* Composer: a crisp 1px accent ring when focused — no glow. */
+/* Composer: on focus its edge turns to ink (like the site's search line). */
 .hv-composer:focus-within {
-  border-color: var(--hv-accent);
-  box-shadow: 0 0 0 1px var(--hv-accent);
+  border-color: var(--hv-text-2);
+  box-shadow: none;
 }
 
 /* Loaders: an arc spinner for contained waits, a breathing skeleton block.
@@ -305,7 +319,6 @@
   color: var(--hv-text-2);
   font-size: 12px;
   font-weight: 500;
-  box-shadow: 0 4px 16px -6px rgb(0 0 0 / 0.35);
   transition: color var(--hv-d-fast) var(--hv-ease), border-color var(--hv-d-fast) var(--hv-ease);
 }
 .hv-jump:hover { color: var(--hv-text-1); border-color: var(--hv-border-strong); }

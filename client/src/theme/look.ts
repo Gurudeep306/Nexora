@@ -102,13 +102,16 @@ export const DEFAULT_LOOK: Look = {
   textSize: DEFAULT_TEXT_SIZE,
 }
 
-/** Hive keeps its own look (Studio on Midnight) whatever theme is on. */
+/**
+ * Hive wears the person's own look, like every other page (owner's choice,
+ * 2026-11: Hive matches the site). Kept as a function so the theme provider
+ * has one place to change if Hive ever needs its own again.
+ */
 export function hiveLook(look: Look): Look {
-  if (!LOOK_TABLES.kits[look.style]) return look
-  return { ...look, ...LOOK_TABLES.hive }
+  return look
 }
 
-/** Paths that keep their pre-journal look (see hiveLook). */
+/** Hive's pages (see hiveLook). */
 export function isHivePath(pathname: string): boolean {
   return pathname === '/hive' || pathname.startsWith('/hive/')
 }
