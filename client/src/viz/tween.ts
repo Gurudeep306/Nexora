@@ -16,7 +16,7 @@ import type { VizFrame } from './frames.ts'
 export const TWEEN_MS = 450
 
 /** Numeric geometry properties that tween between frames. */
-export const TWEEN_KEYS = ['x', 'y', 'w', 'h', 'cx', 'cy', 'r', 'r0', 'start', 'end', 'cell', 'cellW', 'cellH', 'size', 'curve'] as const
+export const TWEEN_KEYS = ['x', 'y', 'w', 'h', 'cx', 'cy', 'r', 'r0', 'start', 'end', 'cell', 'cellW', 'cellH', 'size', 'curve', 'angle'] as const
 
 export const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
