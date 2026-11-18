@@ -242,7 +242,7 @@ export default function NexoraGuide() {
                       <p>Pick a first job — or open the project and describe your own. Add more agents any time; each one’s result becomes a checkpoint you can return to.</p>
                       <div className="grid gap-2 md:grid-cols-3">
                         {FIRST_TASKS.map((t) => (
-                          <button key={t.title} type="button" disabled={!project || !!starting} onClick={() => start(t)} className="hive-card hive-card-hover hive-lift flex flex-col gap-1.5 p-4 text-left disabled:opacity-50">
+                          <button key={t.title} type="button" disabled={!project || !!starting} onClick={() => start(t)} className="hive-card hive-card-hover flex flex-col gap-1.5 p-4 text-left disabled:opacity-50">
                             <span className="flex items-center gap-2 text-[13.5px] font-medium text-text-primary">
                               {starting === t.title ? <Loader2 className="size-4 animate-spin" /> : <Play className="size-4 text-accent-brand" />} {t.title}
                             </span>

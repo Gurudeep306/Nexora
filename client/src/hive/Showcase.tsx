@@ -64,15 +64,15 @@ export function ProjectAvatar({ project, size = 28, live = 0 }: { project: Pick<
   return (
     <span className="relative inline-grid shrink-0 place-items-center" style={{ width: size, height: size }}>
       <span
-        className="grid size-full place-items-center rounded-lg font-semibold text-white"
-        style={{ background: `color-mix(in oklab, ${c} 62%, black)`, fontSize: Math.round(size * 0.38), letterSpacing: '-0.02em' }}
+        className="hv-serif grid size-full place-items-center rounded-[var(--hv-r-card)] text-[var(--hv-text-1)] ring-1 ring-inset ring-[color-mix(in_oklab,var(--hv-text-1)_14%,transparent)]"
+        style={{ background: `color-mix(in oklab, ${c} 22%, var(--hv-surface-1))`, fontSize: Math.round(size * 0.42), letterSpacing: '-0.02em' }}
       >
         {initials(project.name)}
       </span>
       {project.repo_owner && img && size >= 22 && (
         <img src={`https://github.com/${encodeURIComponent(project.repo_owner)}.png?size=40`} alt="" onError={() => setImg(false)} className="absolute -bottom-1 -right-1 rounded-full ring-2 ring-[var(--color-bg-app)]" style={{ width: Math.round(size * 0.48), height: Math.round(size * 0.48) }} />
       )}
-      {live > 0 && <span className="hive-dot-run absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-accent-brand ring-2 ring-[var(--color-bg-app)]" />}
+      {live > 0 && <span className="hive-dot-run absolute -right-0.5 -top-0.5 size-2.5 rounded-full bg-[var(--hv-accent)] ring-2 ring-[var(--hv-bg-app)]" aria-hidden="true" />}
     </span>
   )
 }

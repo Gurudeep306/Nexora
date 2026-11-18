@@ -237,7 +237,7 @@ function EmptyVault({ onAdd, providers }: { onAdd: (p: string) => void; provider
       <p className="mx-auto mt-1 max-w-md text-[13px] text-text-muted">Pick a provider. Free tiers work great to start — Gemini, Groq and OpenRouter all have them.</p>
       <div className="mx-auto mt-6 grid max-w-3xl grid-cols-2 gap-2 sm:grid-cols-4">
         {providers.map((p) => (
-          <button key={p.id} type="button" onClick={() => onAdd(p.id)} className="hive-card hive-card-hover hive-lift flex items-center gap-2.5 p-3 text-left">
+          <button key={p.id} type="button" onClick={() => onAdd(p.id)} className="hive-card hive-card-hover flex items-center gap-2.5 p-3 text-left">
             <ProviderGlyph provider={p.id} size="md" />
             <span className="min-w-0">
               <span className="block truncate text-[13px] font-medium">{p.label}</span>
@@ -579,7 +579,7 @@ export function AddKeysDialog({ provider, onClose }: { provider: string | null; 
               .map((v) => {
                 const n = boot?.keys.filter((k) => k.provider === v.id).length ?? 0
                 return (
-                  <button key={v.id} type="button" onClick={() => setVendor(v.id)} className="hive-card hive-card-hover hive-lift flex items-start gap-3 p-3.5 text-left">
+                  <button key={v.id} type="button" onClick={() => setVendor(v.id)} className="hive-card hive-card-hover flex items-start gap-3 p-3.5 text-left">
                     <ProviderGlyph provider={v.id} size="md" />
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-1.5 text-[13.5px] font-medium">

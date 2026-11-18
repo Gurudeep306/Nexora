@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowUp,
   BookText,
-  Brain,
   Check,
   ChevronDown,
   Columns3,
@@ -40,7 +39,7 @@ import { FileChips, useUploads } from '../uploads'
 import { AgentAvatar, AgentMark, describeTool } from '../agents'
 import { HiveLogo } from '../HiveLogo'
 import { ImproveButton } from '../Improve'
-import { ThinkingIndicator } from '../kit'
+import { Thought, Waiting } from '../kit'
 import { projectColor } from '../projectColor'
 import { setFocusProject } from '../Showcase'
 import { useHive } from '../store'
@@ -50,7 +49,7 @@ import { fmtTokens, timeAgo, vendorName } from '../ui'
 const fileUrl = (id: string) => apiUrl(`/api/hive/files/${id}`)
 const errMsg = (e: unknown) => (e instanceof Error ? e.message : 'Something went wrong')
 
-type Pending = { id: string; provider?: string; model?: string | null; group?: string | null; text: string; think: string; note?: string; started: number; mine?: boolean; tools?: ChatToolStep[]; files?: HiveFile[] }
+type Pending = { id: string; provider?: string; model?: string | null; group?: string | null; text: string; think: string; thinkAt?: number; note?: string; started: number; mine?: boolean; tools?: ChatToolStep[]; files?: HiveFile[] }
 
 export default function ChatPage() {
   const { convoId } = useParams()
@@ -119,7 +118,7 @@ export default function ChatPage() {
       on('convo:meta', (m: Partial<Convo> & { id: string }) => setConvo((c) => (c && c.id === m.id ? { ...c, ...m } : c))),
       on('convo:thinking', ({ id, text }: { id: string; text: string }) => {
         if (localStream.current) return
-        setPending((p) => (p[id] ? { ...p, [id]: { ...p[id], think: (p[id].think + text).slice(-4000) } } : p))
+        setPending((p) => (p[id] ? { ...p, [id]: { ...p[id], think: (p[id].think + text).slice(-12000), thinkAt: p[id].thinkAt ?? Date.now() } } : p))
       }),
       on('convo:note', ({ id, text }: { id: string; text: string }) => {
         if (localStream.current) return
@@ -165,7 +164,7 @@ export default function ChatPage() {
             if (type === 'msg') setMessages((l) => (l.some((x) => x.id === (d as unknown as ConvoMsg).id) ? l : [...l, d as unknown as ConvoMsg]))
             else if (type === 'start') setPending((p) => ({ ...p, [d.id as string]: { id: d.id as string, provider: d.provider as string, model: d.model as string, group: d.group as string, text: '', think: '', started: Date.now(), mine: true } as Pending }))
             else if (type === 'delta') setPending((p) => (p[d.id as string] ? { ...p, [d.id as string]: { ...p[d.id as string], text: p[d.id as string].text + (d.text as string) } } : p))
-            else if (type === 'thinking') setPending((p) => (p[d.id as string] ? { ...p, [d.id as string]: { ...p[d.id as string], think: (p[d.id as string].think + (d.text as string)).slice(-4000) } } : p))
+            else if (type === 'thinking') setPending((p) => (p[d.id as string] ? { ...p, [d.id as string]: { ...p[d.id as string], think: (p[d.id as string].think + (d.text as string)).slice(-12000), thinkAt: p[d.id as string].thinkAt ?? Date.now() } } : p))
             else if (type === 'note') setPending((p) => (p[d.id as string] ? { ...p, [d.id as string]: { ...p[d.id as string], note: d.text as string } } : p))
             else if (type === 'tool' || type === 'tool_done') setPending((p) => withTool(p, d.id as string, d.tool as ChatToolStep))
             else if (type === 'attachment') setPending((p) => (p[d.id as string] ? { ...p, [d.id as string]: { ...p[d.id as string], files: [...(p[d.id as string].files ?? []), d.file as HiveFile] } } : p))
@@ -393,7 +392,7 @@ function EmptyChat({ boot, project, onPick }: { boot: Bootstrap; project?: Proje
         <p className="mt-3 max-w-lg text-[14px] text-text-secondary">Ask anything about this project. The chat reads its code and the brief Hive wrote, so answers are about this repo — not in general.</p>
         <div className="mt-7 grid w-full gap-2.5 sm:grid-cols-2">
           {PROJECT_STARTERS.map((s) => (
-            <button key={s.title} type="button" onClick={() => onPick(s.text)} className="hive-card hive-card-hover hive-lift flex items-start gap-3 p-4 text-left">
+            <button key={s.title} type="button" onClick={() => onPick(s.text)} className="hive-card hive-card-hover flex items-start gap-3 p-4 text-left">
               <span className="hive-tile size-9 shrink-0" style={{ ['--tile' as string]: s.tone }}>
                 <s.icon className="size-4" />
               </span>
@@ -411,14 +410,15 @@ function EmptyChat({ boot, project, onPick }: { boot: Bootstrap; project?: Proje
   const hello = hour < 5 ? 'Up late' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
   return (
     <div className="relative mx-auto flex h-full max-w-[860px] flex-col items-center justify-center px-6 pb-8 text-center">
-      <HiveLogo size={44} />
-      <h1 className="mt-4 text-[24px] font-semibold tracking-[-0.02em] text-[var(--hv-text-1)]">
+      <HiveLogo size={40} />
+      <div className="hv-eyebrow mt-6">Chat</div>
+      <h1 className="hv-title mt-2 mb-0">
         {hello}, {boot.me.username}
       </h1>
-      <p className="mt-2 max-w-lg text-[13.5px] text-[var(--hv-text-3)]">Chat with any model you’ve connected. Drop in PDFs, images or code, pull files from a repo, make images — or ask several models at once and compare.</p>
+      <p className="hv-lead mt-2 mb-0 max-w-lg">Chat with any model you’ve connected. Drop in PDFs, images or code, pull files from a repo, make images — or ask several models at once and compare.</p>
       <div className="mt-8 grid w-full gap-2 text-left sm:grid-cols-2">
         {STARTERS.map((s) => (
-          <button key={s.title} type="button" onClick={() => onPick(s.text)} className="flex items-start gap-3 rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-3.5 text-left transition-colors duration-[var(--hv-d-fast)] hover:border-[var(--hv-border-strong)] hover:bg-[var(--hv-surface-2)]">
+          <button key={s.title} type="button" onClick={() => onPick(s.text)} className="flex items-start gap-3 rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-4 text-left transition-colors duration-[var(--hv-d-fast)] hover:border-[var(--hv-border-strong)]">
             <s.icon className="mt-0.5 size-4 shrink-0 text-[var(--hv-text-2)]" />
             <span className="min-w-0">
               <span className="block text-[13.5px] font-medium text-[var(--hv-text-1)]">{s.title}</span>
@@ -452,7 +452,7 @@ function Attachments({ files, align = 'start' }: { files: ConvoMsg['attachments'
     <div className={cn('mb-2 flex flex-wrap gap-2', align === 'end' && 'justify-end')}>
       {files.map((f) =>
         f.mime.startsWith('image/') ? (
-          <a key={f.id} href={fileUrl(f.id)} target="_blank" rel="noreferrer" className="block overflow-hidden rounded-xl ring-1 ring-[var(--hive-line)] transition-transform hover:scale-[1.01]">
+          <a key={f.id} href={fileUrl(f.id)} target="_blank" rel="noreferrer" className="block overflow-hidden rounded-xl ring-1 ring-[var(--hive-line)] transition-transform">
             <img src={fileUrl(f.id)} alt={f.name} className="max-h-72 max-w-full object-contain" />
           </a>
         ) : (
@@ -492,14 +492,14 @@ function AnswerGroup({ msgs, convoId, onRetry }: { msgs: ConvoMsg[]; convoId: st
       <div className="mb-2 flex flex-wrap items-center gap-2 text-[11.5px] font-medium text-text-muted">
         <Columns3 className="size-3.5" /> {msgs.length} models answered · pick the one the chat continues from
         {groupId && (
-          <button type="button" onClick={judgeNow} disabled={judging} className="ml-auto inline-flex h-7 items-center gap-1.5 rounded-full bg-accent-brand/10 px-3 text-[12px] font-medium text-text-primary transition-opacity hover:bg-accent-brand/15 disabled:opacity-60">
+          <button type="button" onClick={judgeNow} disabled={judging} className="ml-auto inline-flex h-7 items-center gap-1.5 rounded-[var(--hv-r-btn)] px-3 text-[12px] font-medium text-text-primary ring-1 ring-inset ring-[var(--hv-border-strong)] transition-colors hover:bg-[var(--hv-surface-2)] disabled:opacity-60">
             {judging ? <Loader2 className="size-3.5 animate-spin" /> : <Gavel className="size-3.5" />} {judging ? 'The Judge is reading…' : 'Let the Judge pick'}
           </button>
         )}
       </div>
       <AnimatePresence>
         {verdict && (
-          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="mb-3 flex items-start gap-2.5 rounded-2xl bg-state-success/[0.07] px-3.5 py-2.5 text-[12.5px]">
+          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} className="mb-3 flex items-start gap-2.5 border-l-2 border-state-success py-1 pl-3.5 text-[12.5px]">
             <Gavel className="mt-0.5 size-4 shrink-0 text-state-success" />
             <span className="text-text-secondary">
               <b className="text-text-primary">Winner: {(() => { const w = msgs.find((m) => m.id === verdict.winner); return w ? `${vendorName(w.provider ?? '')} · ${shortModel(w.model ?? '')}` : 'picked' })()}</b>
@@ -511,7 +511,7 @@ function AnswerGroup({ msgs, convoId, onRetry }: { msgs: ConvoMsg[]; convoId: st
       </AnimatePresence>
       <div className={cn('grid gap-3', msgs.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-2 xl:grid-cols-3')}>
         {msgs.map((m) => (
-          <div key={m.id} className={cn('hive-card flex min-w-0 flex-col p-4 transition-shadow', preferred === m.id && 'ring-2 ring-accent-brand/50')}>
+          <div key={m.id} className={cn('hive-card flex min-w-0 flex-col p-4 transition-colors', preferred === m.id && 'border-[var(--hv-text-2)]')}>
             <Answer m={m} compact convoId={convoId} onRetry={onRetry} />
             <button
               type="button"
@@ -519,7 +519,7 @@ function AnswerGroup({ msgs, convoId, onRetry }: { msgs: ConvoMsg[]; convoId: st
                 setPreferred(m.id)
                 hiveApi.prefer(convoId, m.id).catch(() => {})
               }}
-              className={cn('mt-auto inline-flex h-8 items-center justify-center gap-1.5 rounded-lg text-[12px] font-medium', preferred === m.id ? 'bg-accent-brand/15 text-accent-brand' : 'bg-text-primary/[0.05] text-text-secondary hover:bg-text-primary/[0.08]')}
+              className={cn('mt-auto inline-flex h-8 items-center justify-center gap-1.5 rounded-[var(--hv-r-btn)] text-[12px] font-medium', preferred === m.id ? 'bg-[var(--hv-text-1)] text-[var(--hv-bg-app)]' : 'text-text-secondary ring-1 ring-inset ring-[var(--hv-border)] hover:bg-[var(--hv-surface-2)]')}
             >
               {preferred === m.id ? <Check className="size-3.5" /> : null} {preferred === m.id ? 'Continuing from this' : 'Continue from this'}
             </button>
@@ -546,17 +546,22 @@ function Answer({ m, compact, convoId, onRetry }: { m: ConvoMsg; compact?: boole
     <div className={cn('hive-in group', !compact && 'mb-8')}>
       <div className="mb-2 flex items-center gap-2">
         <AgentMark provider={provider} model={m.model} size={22} />
-        <span className="text-[13px] font-medium">{vendorName(provider)}</span>
-        {m.model && <span className="truncate font-mono text-[11px] text-text-muted">{shortModel(m.model)}</span>}
-        <span className="ml-auto shrink-0 text-[11px] tabular-nums text-text-muted">{m.output_tokens ? `${fmtTokens(m.output_tokens)} out · ` : ''}{timeAgo(m.created_at)}</span>
+        <span className="text-[13px] font-semibold">{vendorName(provider)}</span>
+        {m.model && <span className="hv-mono truncate text-[11px] text-text-muted">{shortModel(m.model)}</span>}
+        <span className="hv-num ml-auto shrink-0 text-[11px] text-text-muted">
+          {m.took_ms ? `answered in ${Math.max(1, Math.round(m.took_ms / 1000))}s · ` : ''}
+          {m.output_tokens ? `${fmtTokens(m.output_tokens)} out · ` : ''}
+          {timeAgo(m.created_at)}
+        </span>
       </div>
+      {m.thinking && <Thought text={m.thinking} ms={m.think_ms} />}
       {m.tools && m.tools.length > 0 && <ToolSteps tools={m.tools} />}
       {m.content && <AiMarkdown text={m.content} />}
       {m.attachments.length > 0 && <Attachments files={m.attachments} />}
       {m.error && (
-        <div className="mt-2 rounded-xl border border-state-error/30 bg-state-error/[0.07] px-3.5 py-2.5 text-[13px]">
+        <div className="mt-2 border-l-2 border-state-error py-1 pl-3.5 text-[13px]">
           {m.error.split('\n').map((l, i) => (
-            <p key={i} className={i ? 'mt-1 text-text-secondary' : 'font-medium text-state-error'}>
+            <p key={i} className={i ? 'mt-1 text-text-secondary' : 'font-medium text-text-primary'}>
               {l}
             </p>
           ))}
@@ -638,7 +643,6 @@ function PendingGroup({ items }: { items: Pending[] }) {
 }
 
 function PendingAnswer({ p, boxed }: { p: Pending; boxed: boolean }) {
-  const [showThink, setShowThink] = useState(false)
   const [, tick] = useState(0)
   useEffect(() => {
     const t = setInterval(() => tick((x) => x + 1), 1000)
@@ -646,22 +650,17 @@ function PendingAnswer({ p, boxed }: { p: Pending; boxed: boolean }) {
   }, [])
   const secs = Math.round((Date.now() - p.started) / 1000)
   return (
-    <div className={cn('min-w-0', boxed && 'hive-card hive-working p-4')}>
-      <div className="mb-2 flex items-center gap-2">
+    <div className={cn('min-w-0', boxed && 'hive-card hive-working p-4')} aria-busy="true">
+      <div className="mb-2.5 flex items-center gap-2">
         <AgentAvatar provider={p.provider ?? 'custom'} model={p.model} state={p.tools?.some((t) => t.status === 'running') ? (p.tools.at(-1)?.name.includes('search') || p.tools.at(-1)?.name.includes('read') ? 'reading' : 'running') : p.text ? 'writing' : 'thinking'} size={26} />
-        <span className="text-[13px] font-medium">{vendorName(p.provider ?? 'custom')}</span>
-        {p.model && <span className="truncate font-mono text-[11px] text-text-muted">{shortModel(p.model)}</span>}
-        <span className="ml-auto text-[11px] tabular-nums text-text-muted">{secs}s</span>
+        <span className="text-[13px] font-semibold">{vendorName(p.provider ?? 'custom')}</span>
+        {p.model && <span className="hv-mono truncate text-[11px] text-text-muted">{shortModel(p.model)}</span>}
+        <span className="hv-num ml-auto text-[11px] text-text-muted" title="Seconds since you asked">{secs}s</span>
       </div>
       {p.note && <div className="mb-2 border-l-2 border-[var(--hv-warning)] pl-2.5 text-[12px] text-[var(--hv-text-2)]">{p.note}</div>}
-      {p.think && (
-        <button type="button" onClick={() => setShowThink((s) => !s)} aria-expanded={showThink} className="mb-2 flex w-full items-start gap-2 border-l border-[var(--hv-border-strong)] py-0.5 pl-3 text-left">
-          <Brain className="mt-0.5 size-3.5 shrink-0 text-[var(--hv-text-3)]" />
-          <span className={cn('min-w-0 flex-1 text-[12.5px] italic text-text-muted', !showThink && 'line-clamp-2')}>{p.think}</span>
-        </button>
-      )}
+      {p.think && <Thought text={p.think} live answering={!!p.text} startedAt={p.thinkAt ?? p.started} />}
       {p.tools && p.tools.length > 0 && <ToolSteps tools={p.tools} live />}
-      {p.text ? <AiMarkdown text={p.text} streaming /> : !p.think && !p.tools?.length && <ThinkingIndicator />}
+      {p.text ? <AiMarkdown text={p.text} streaming /> : !p.think && !p.tools?.length && <Waiting who={p.model ? shortModel(p.model) : vendorName(p.provider ?? 'custom')} since={p.started} />}
       {p.files && p.files.length > 0 && <Attachments files={p.files} />}
     </div>
   )
@@ -673,26 +672,26 @@ function ToolSteps({ tools, live }: { tools: ChatToolStep[]; live?: boolean }) {
   const running = tools.filter((t) => t.status === 'running').length
   const shown = open ? tools : tools.slice(-1)
   return (
-    <div className="mb-2.5 rounded-2xl bg-text-primary/[0.035] px-3 py-2">
-      <button type="button" onClick={() => setOpen((o) => !o)} className="flex w-full items-center gap-2 text-left text-[12px] text-text-muted">
-        <Wrench className="size-3.5" />
-        <span className="font-medium text-text-secondary">{running ? `Working · ${tools.length} step${tools.length === 1 ? '' : 's'}` : `Used ${tools.length} tool${tools.length === 1 ? '' : 's'}`}</span>
-        <ChevronDown className={cn('ml-auto size-3.5 transition-transform', open && 'rotate-180')} />
+    <div className="mb-3">
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="inline-flex min-h-7 items-center gap-2 text-left text-[13px]">
+        <Wrench className="size-3.5 text-[var(--hv-text-3)]" />
+        <span className={cn('font-medium', running ? 'text-[var(--hv-text-1)]' : 'text-[var(--hv-text-2)]')}>{running ? `Working · step ${tools.length}` : `Used ${tools.length} tool${tools.length === 1 ? '' : 's'}`}</span>
+        <ChevronDown className={cn('size-3.5 text-[var(--hv-text-3)] transition-transform', open && 'rotate-180')} />
       </button>
-      <ul className="mt-1.5 space-y-1">
+      <ul className="m-0 mt-1 ml-[6px] list-none space-y-1.5 border-l border-[var(--hv-border-strong)] py-1 pl-4">
         <AnimatePresence initial={false}>
           {shown.map((t) => {
             const results = (t.meta?.results as { title: string; url: string }[] | undefined) ?? []
             return (
               <motion.li key={t.id} initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }} className="text-[12.5px]">
                 <div className="flex items-center gap-2">
-                  {t.status === 'running' ? <Loader2 className="size-3.5 shrink-0 animate-spin text-accent-brand" /> : t.status === 'error' ? <XCircle className="size-3.5 shrink-0 text-state-error" /> : <Check className="size-3.5 shrink-0 text-state-success" />}
-                  <span className={cn('min-w-0 truncate', t.status === 'running' ? 'hive-thinking-text text-text-primary' : 'text-text-secondary')}>{describeTool(t.name, t.input)}</span>
+                  {t.status === 'running' ? <Loader2 className="size-3.5 shrink-0 animate-spin text-[var(--hv-text-2)]" aria-label="Running" /> : t.status === 'error' ? <XCircle className="size-3.5 shrink-0 text-state-error" aria-label="Failed" /> : <Check className="size-3.5 shrink-0 text-state-success" aria-label="Done" />}
+                  <span className={cn('min-w-0 truncate', t.status === 'running' ? 'text-[var(--hv-text-1)]' : 'text-[var(--hv-text-2)]')}>{describeTool(t.name, t.input)}</span>
                 </div>
                 {open && results.length > 0 && (
                   <div className="ml-5.5 mt-1 flex flex-wrap gap-1">
                     {results.slice(0, 5).map((r) => (
-                      <a key={r.url} href={r.url} target="_blank" rel="noreferrer" className="inline-flex max-w-[220px] items-center gap-1 rounded-md bg-bg-surface px-1.5 py-0.5 text-[11px] text-text-muted ring-1 ring-[var(--hive-line)] hover:text-text-primary">
+                      <a key={r.url} href={r.url} target="_blank" rel="noreferrer" className="inline-flex max-w-[220px] items-center gap-1 rounded-[var(--hv-r-chip)] bg-[var(--hv-surface-1)] px-1.5 py-0.5 text-[11px] text-text-muted ring-1 ring-[var(--hive-line)] hover:text-text-primary">
                         <img src={`https://www.google.com/s2/favicons?domain=${(() => { try { return new URL(r.url).hostname } catch { return '' } })()}&sz=32`} alt="" className="size-3 rounded-sm" />
                         <span className="truncate">{r.title}</span>
                       </a>
@@ -908,11 +907,11 @@ function ChatComposer({
           <span className="ml-auto" />
           {!busy && <ImproveButton value={text} onApply={(t) => setText(t)} mode="chat" projectId={convo?.project_id ?? null} />}
           {busy ? (
-            <button type="button" onClick={onStop} className="grid size-9 place-items-center rounded-full bg-text-primary text-bg-app transition-transform hover:scale-105" aria-label="Stop">
+            <button type="button" onClick={onStop} className="grid size-9 place-items-center rounded-[var(--hv-r-btn)] bg-text-primary text-bg-app transition-transform" aria-label="Stop">
               <Square className="size-3.5 fill-current" />
             </button>
           ) : (
-            <button type="button" onClick={submit} disabled={(!text.trim() && !up.files.length && !repoRefs.length) || up.busy} className="grid size-9 place-items-center rounded-full bg-accent-brand text-on-accent-brand shadow-sm transition-all enabled:hover:scale-105 disabled:opacity-35" aria-label="Send">
+            <button type="button" onClick={submit} disabled={(!text.trim() && !up.files.length && !repoRefs.length) || up.busy} className="grid size-9 place-items-center rounded-[var(--hv-r-btn)] bg-accent-brand text-on-accent-brand shadow-sm transition-all disabled:opacity-35" aria-label="Send">
               <ArrowUp className="size-4" strokeWidth={2.4} />
             </button>
           )}

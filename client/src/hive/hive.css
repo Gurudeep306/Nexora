@@ -432,6 +432,56 @@ button.hive-chip:hover { color: var(--hv-text-1); box-shadow: inset 0 0 0 1px va
 /* A floating layer (the sidebar peeking over the rail): a hairline, no shadow. */
 .hv-float { background: var(--hv-bg-app); border-right: 1px solid var(--hv-border-strong); }
 
+/* ── A model at work (kit/Thinking.tsx) ─────────────────────────────────── */
+/* Waiting for the first word: a short ink rule that draws and fades on a
+   loop beside an honest line (who was asked, seconds so far). */
+.hv-wait { display: flex; align-items: center; gap: 12px; min-height: 28px; font-size: 13px; }
+.hv-wait-rule { position: relative; width: 28px; height: 1.5px; flex-shrink: 0; overflow: hidden; background: var(--hv-border); border-radius: 2px; }
+.hv-wait-rule::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--hv-text-1);
+  transform-origin: left center;
+  animation: hv-wait-draw 1.4s var(--hive-ease) infinite;
+}
+@keyframes hv-wait-draw { 0% { transform: scaleX(0); opacity: 1; } 65% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: 0; } }
+/* The shared reasoning: a quiet header, then the text in the reading face
+   behind a hairline. Live, it is a short window that follows the newest
+   line, with the older lines fading out at the top. */
+.hv-thought { margin: 2px 0 12px; }
+.hv-thought-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  padding: 0 6px 0 0;
+  border-radius: var(--hv-r-btn);
+  font-size: 13px;
+  cursor: pointer;
+}
+.hv-thought-head:hover span { color: var(--hv-text-1); }
+.hv-thought-mark { width: 7px; height: 7px; border-radius: 999px; background: var(--hv-text-3); flex-shrink: 0; }
+.hv-thought[data-live] .hv-thought-mark { background: var(--hv-accent); animation: hive-blink 1.4s ease-in-out infinite; }
+.hv-thought-body {
+  margin: 4px 0 0 3px;
+  padding: 2px 0 2px 16px;
+  border-left: 1px solid var(--hv-border-strong);
+  max-height: 320px;
+  overflow-y: auto;
+  font-family: var(--hv-prose);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--hv-text-2);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.hv-thought-body.is-live {
+  max-height: 128px;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 36px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 36px);
+}
+
 /* "Thinking" in chat and sessions: a word that changes and three dots. */
 .hive-word-swap { display: inline-block; animation: hive-word-in 320ms var(--hive-ease) both; }
 @keyframes hive-word-in { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
@@ -449,6 +499,35 @@ button.hive-chip:hover { color: var(--hv-text-1); box-shadow: inset 0 0 0 1px va
 }
 
 /* These must beat utilities (and the kit's focus ring), so they stay outside the layer. */
+/* Older screens tint small tags and selected rows with the accent. Inside
+   Hive those read as hairline labels: the accent stays for fills that mean
+   "the action" and for the current place. */
+.hive-root :is([class~="bg-accent-brand/10"], [class~="bg-accent-brand/12"], [class~="bg-accent-brand/15"], [class~="bg-accent-brand/[0.08]"], [class~="bg-accent-brand/[0.06]"]) {
+  background-color: transparent;
+  box-shadow: inset 0 0 0 1px var(--hv-border-strong);
+}
+/* Arbitrary shadows (glows, drop shadows) never show inside Hive. */
+.hive-root [class*="shadow-["] { box-shadow: none; }
+/* The site's shared Button, dressed for the desk: the primary and the brand
+   button are a flat accent fill; secondary and subtle are a hairline on the
+   page (no raised surface, no gradient). The rest of the site is untouched. */
+.hive-root :is([data-variant="primary"], [data-variant="accent"]) { background-image: none; box-shadow: none; }
+.hive-root [data-variant="accent"] { background-color: var(--hv-accent); }
+.hive-root [data-variant="accent"]:hover { filter: none; background-color: var(--hv-accent-hover); }
+.hive-root :is([data-variant="secondary"], [data-variant="subtle"]) {
+  background: transparent;
+  border-color: var(--hv-border-strong);
+  box-shadow: none;
+}
+.hive-root :is([data-variant="secondary"], [data-variant="subtle"]):hover { background: var(--hv-surface-2); border-color: var(--hv-text-3); }
+.hive-root :is([data-variant="destructive"], [data-variant="danger"], [data-variant="success"]) { box-shadow: none; }
+/* A main action that can't run yet is an outline, not a faded fill. */
+.hive-root :is(button, a):is(:disabled, [aria-disabled="true"]):is([class~="bg-accent-brand"], [class~="bg-[var(--hv-accent)]"], [data-variant="primary"], [data-variant="accent"]) {
+  background: transparent;
+  color: var(--hv-text-3);
+  box-shadow: inset 0 0 0 1px var(--hv-border-strong);
+  opacity: 1;
+}
 /* Text fields show focus through their own edge, not a ring. */
 .hive-root :is(input, textarea):focus-visible { outline: none; }
 /* Inside Hive nothing floats on a shadow: hairlines do the separating.
