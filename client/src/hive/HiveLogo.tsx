@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils'
 import './boot.css'
+import { HIVE_STOP, HIVE_STROKES, hiveWeight } from '@/components/brand/hiveGeometry'
 
 /**
  * The Hive mark: an H written in three strokes of the same ink as the
@@ -15,11 +16,8 @@ import './boot.css'
  * All motion is CSS and stops under prefers-reduced-motion (the finished
  * mark shows).
  */
-const HIVE_STROKES = ['M6.4 6.9V25.4', 'M16.8 6.9V25.4', 'M6.4 16.15H21.6'] as const
-const HIVE_STOP = [25.6, 16.15] as const
 const CLAY = 'var(--ed-clay, #D97757)'
-
-const weight = (px: number) => (px <= 20 ? 3.8 : px <= 24 ? 3.5 : 3.2)
+const weight = hiveWeight
 
 export function HiveLogo({
   size = 28,
