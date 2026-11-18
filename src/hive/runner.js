@@ -20,6 +20,7 @@ const router = require("./router");
 const perf = require("./perf");
 const cliMod = require("./providers/cli");
 const { cardFor, quality: qualityFor } = require("./catalog");
+const { safeCommand } = require("./commandPolicy");
 const caps = require("./caps");
 const defaultModelOf = (key, vendor) => key.default_model || pickDefault(json(key.models_json, []), vendor.suggested);
 
@@ -403,6 +404,12 @@ async function runAgentInner(agentId, { team = [], delegateFn = null, readOnly =
     const m = await get("SELECT policy, name FROM hive_machines WHERE id=?", [ctx.machine.id]);
     if (!m || m.policy === "read") return { approved: false, reason: "This machine is read-only" };
     if (m.policy === "auto") return { approved: true };
+    // "Run safe commands": plain tests, builds and read-only commands go ahead;
+    // everything else waits for a person, as under "ask".
+    if (m.policy === "safe" && kind !== "server" && safeCommand(command)) {
+      await event(task.id, agentId, "system", { message: `Ran without asking (a safe command on ${m.name}): ${String(command).slice(0, 160)}` });
+      return { approved: true, by: "safe-policy" };
+    }
     await event(task.id, agentId, "approval", { command, kind, machine: m.name });
     const r = await machines.requestApproval({ taskId: task.id, agentId, agent: agent.name, projectId: project.id, command, kind, machine: m.name, folder: ws.folder || ctx.machine.folder });
     await event(task.id, agentId, "approval_result", { command, approved: r.approved, by: r.by || null, reason: r.reason || null });
@@ -493,7 +500,8 @@ async function runAgentInner(agentId, { team = [], delegateFn = null, readOnly =
     if (!ctx.machine) throw new Error(`${v.label} works in a folder on a connected machine — start this session on a machine`);
     if (keyRow.machine_id && keyRow.machine_id !== ctx.machine.id) throw new Error(`${v.label} is connected on another machine — start the session there`);
     const mrow = await get("SELECT policy FROM hive_machines WHERE id=?", [ctx.machine.id]);
-    const policy = readOnly ? "read" : mrow?.policy || "ask";
+    // CLI agents keep their own approval prompts under "safe" (it acts as "ask").
+    const policy = readOnly ? "read" : mrow?.policy === "safe" ? "ask" : mrow?.policy || "ask";
     let session = agent.cli_session || null;
     let prompt = agent.instructions;
     let steps = 0;
