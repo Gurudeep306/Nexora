@@ -65,7 +65,8 @@
    "courses": [
     "math-for-ai"
    ],
-   "of": "kochenderfer-opt"
+   "of": "kochenderfer-opt",
+   "note": "Library copy is the 2nd edition."
   },
   {
    "id": "mackay-itila",
@@ -339,7 +340,8 @@
    "courses": [
     "reinforcement-learning"
    ],
-   "of": "sutton-barto"
+   "of": "sutton-barto",
+   "note": "Library copy (from the owner) is the 2014–15 draft of the 2nd edition; the final 2018 edition is free at incompleteideas.net/book/RLbook2020.pdf (unreachable from the cloud machine)."
   },
   {
    "id": "szeliski",

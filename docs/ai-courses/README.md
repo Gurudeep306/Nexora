@@ -81,14 +81,16 @@ that is in these files and passes the check.
   guides, 22 models; the web of 10 courses and 225 topics in strict teaching
   order with 400 links (144 between courses), every paper used; the story
   style; the update process; the checkers and the open-paper downloader.
-- **Library (2026-11-18):** 231 of 248 papers (all 30 of the owner's), 61 of 68
-  books, courses, sites and repos (about 7.5 GB), 6,271 files indexed into
-  46,256 searchable passages (scans read by OCR); the topic map for all 225
-  topics is in `sources/TOPIC-MAP.md`.
-- **Waiting on the owner:** the 18 papers listed under "Still needed" in
-  `sources/LIBRARY.md`; and earlier: the 30 paywalled papers (links in
-  `sources/DOWNLOAD.md`) into `docs/ai-courses/private/papers/<id>.pdf` or the
-  Drive folder; open the 11 "check by hand" links once in a browser.
+- **Library (complete, 2026-11-18):** all 248 papers (47 from the owner, the
+  rest free copies), all 68 books, courses, sites and code repos, about 7.7 GB;
+  6,295 files indexed into 51,152 searchable passages (scans read by OCR); the
+  topic map for all 225 topics is in `sources/TOPIC-MAP.md`.
+  - The owner's papers are kept as `Nexora-AI-papers-owner.zip`, and seven
+    books are in the owner's Drive folder "Books" (Boyd; Elements of
+    Statistical Learning; Kochenderfer, 2nd ed.; Nielsen; Jurafsky & Martin;
+    Sutton & Barto, a 2014–15 draft of the 2nd edition; Szeliski, 2nd ed.). A
+    new session downloads that folder by its share link, then runs
+    `library.mjs import` on the zip.
 - **Next (P1):** build the AI Lab engine (PIPELINE.md section 4.1, 4.2, 4.4 and
   the golden tests), then the pilot (P2): Foundations and Deep Learning
   chapter 1, for the owner to approve before anything else is written.
