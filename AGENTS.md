@@ -217,6 +217,11 @@ changed.
   problem has solutions in all five languages. See `client/src/learn/AUTHORING.md`.
 - **GATE**: see `docs/gate/AUTHORING_QUICK.md` and `docs/gate/SOLUTION_AUTHORING.md`.
   Check every solution against the official paper.
+- **GATE notes subjects** (lessons, animations, Live Labs, PYQ mapping, Nexus
+  links) are built with the binding pipeline in `docs/gate/notes-pipeline/`
+  (`README.md`, `animations.md`, one file per subject). Digital Logic is the
+  bar. The reference notes PDFs are third-party: they live in a private repo,
+  never in this one.
 - In TypeScript template strings, escape math backslashes (`\\infty`).
 
 ## Hive

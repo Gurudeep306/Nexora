@@ -134,3 +134,69 @@ export function gateShape(kind: GateKind, x: number, y: number, w: number, h: nu
     out: [round(x + w), round(mid)],
   }
 }
+
+/* ── Self-loops (the `loop` element, dm.md job E2) ───────────────────────── */
+
+/**
+ * Open arc path (stroke only, no fill) on a circle of radius r, from `start`
+ * to `end` degrees clockwise from 12 o'clock. A full turn is drawn as two
+ * half-arcs, because one SVG arc cannot start and end at the same point.
+ */
+export function arcStroke(cx: number, cy: number, r: number, start: number, end: number): string {
+  const sweep = end - start
+  if (sweep >= 360) {
+    const mid = start + 180
+    const [x1, y1] = polar(cx, cy, r, start)
+    const [x2, y2] = polar(cx, cy, r, mid)
+    const [x3, y3] = polar(cx, cy, r, end)
+    return `M${x1} ${y1} A${r} ${r} 0 1 1 ${x2} ${y2} A${r} ${r} 0 1 1 ${x3} ${y3}`
+  }
+  const large = sweep > 180 ? 1 : 0
+  const [x1, y1] = polar(cx, cy, r, start)
+  const [x2, y2] = polar(cx, cy, r, end)
+  return `M${x1} ${y1} A${r} ${r} 0 ${large} 1 ${x2} ${y2}`
+}
+
+export interface LoopGeom {
+  /** Arc path data of the loop (stroke). */
+  d: string
+  /** Attach point on the node's outline. */
+  attach: Pt
+  /** Far point of the loop (label anchor, and where arrows snap to). */
+  anchor: Pt
+  /** Arrowhead polygon at the arc end when head = "end" (digraphs). */
+  head?: Pt[]
+}
+
+/**
+ * A self-loop on the outline of a node (cx, cy, r) at `angle` degrees
+ * (clockwise from 12 o'clock). The loop is a circle of radius `size` tangent
+ * to the node at that point, drawn as a 280° arc with a 80° gap at the node.
+ */
+export function loopGeom(cx: number, cy: number, r: number, angle: number, size: number, head: 'end' | 'none' = 'none'): LoopGeom {
+  const a = (angle * Math.PI) / 180
+  const dir: Pt = [Math.sin(a), -Math.cos(a)]
+  const attach: Pt = [round(cx + r * dir[0]), round(cy + r * dir[1])]
+  const c: Pt = [round(attach[0] + size * dir[0]), round(attach[1] + size * dir[1])]
+  const gap = 40 // half the opening at the node, in degrees
+  const start = angle + 180 + gap
+  const end = angle + 180 + 360 - gap
+  const d = arcStroke(c[0], c[1], size, start, end)
+  const anchor = polar(c[0], c[1], size, angle)
+  let headPts: Pt[] | undefined
+  if (head === 'end') {
+    // Arrowhead at the arc's end: tip on the arc, base straddling the tangent
+    // (clockwise travel at `end` runs in direction end + 90).
+    const tip = polar(c[0], c[1], size, end)
+    const bx = c[0] + (size - 9) * Math.sin(((end + 90) * Math.PI) / 180)
+    const by = c[1] - (size - 9) * Math.cos(((end + 90) * Math.PI) / 180)
+    const px = Math.cos(((end + 90) * Math.PI) / 180)
+    const py = Math.sin(((end + 90) * Math.PI) / 180)
+    headPts = [
+      [round(bx - 4.5 * py), round(by + 4.5 * px)],
+      [round(tip[0]), round(tip[1])],
+      [round(bx + 4.5 * py), round(by - 4.5 * px)],
+    ]
+  }
+  return { d, attach, anchor, head: headPts }
+}
