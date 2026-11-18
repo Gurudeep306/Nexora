@@ -1,0 +1,102 @@
+{
+ "version": 1,
+ "title": "Loop and multigraph fixture",
+ "width": 640,
+ "height": 300,
+ "intro": "Two nodes with parallel weighted edges and self-loops.",
+ "narrow": {
+  "width": 340,
+  "height": 300,
+  "below": 560
+ },
+ "elements": [
+  {
+   "id": "a",
+   "type": "node",
+   "cx": 140,
+   "cy": 150,
+   "r": 26,
+   "label": "a",
+   "narrow": {
+    "cx": 90,
+    "cy": 150
+   }
+  },
+  {
+   "id": "b",
+   "type": "node",
+   "cx": 480,
+   "cy": 150,
+   "r": 26,
+   "label": "b",
+   "narrow": {
+    "cx": 250,
+    "cy": 150
+   }
+  },
+  {
+   "id": "e1",
+   "type": "arrow",
+   "from": "a",
+   "to": "b",
+   "curve": 0.18,
+   "head": "none",
+   "label": "3"
+  },
+  {
+   "id": "e2",
+   "type": "arrow",
+   "from": "a",
+   "to": "b",
+   "curve": -0.36,
+   "head": "none",
+   "label": "5"
+  },
+  {
+   "id": "e3",
+   "type": "arrow",
+   "from": "b",
+   "to": "a",
+   "head": "end",
+   "label": "1"
+  },
+  {
+   "id": "l1",
+   "type": "loop",
+   "on": "a",
+   "angle": 0,
+   "label": "self",
+   "narrow": {
+    "angle": -45
+   }
+  },
+  {
+   "id": "l2",
+   "type": "loop",
+   "on": "b",
+   "angle": 90,
+   "size": 20,
+   "head": "end",
+   "label": "2"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The loops swing to the side; a glides right.",
+   "patches": [
+    {
+     "id": "l1",
+     "set": {
+      "angle": 135
+     }
+    },
+    {
+     "id": "a",
+     "set": {
+      "cx": 200
+     }
+    }
+   ]
+  }
+ ]
+}

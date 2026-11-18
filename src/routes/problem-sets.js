@@ -7,15 +7,22 @@
 //            Staff add others (e.g. a well-known sheet) as a link to the
 //            original plus the matching problems we have; we never copy a
 //            paid or private list.
-//   company  "asked at <company>": staff sets that cite a public source
+//            The built-in library (src/problem-set-library.js) adds many more:
+//            NeetCode, LeetCode's free study plans, AtCoder's sets, Euler.
+//   company  one set per company, titled with just its name. Built in: the
+//            problems from contests the company ran or sponsored (library).
+//            Also staff sets that cite a public source
 //            (a link is required), and community reports on a problem
 //            ("I was asked this at X"), shown with how many people said so.
 //            Nothing is invented and no premium/leaked data is used.
 //
 // Tables: problem_sets, problem_set_items, problem_set_likes, problem_asked.
 const express = require("express");
+const fs = require("fs");
+const path = require("path");
 const { all, get, run } = require("../db");
 const { getOpenCatalog, byId } = require("../problem-catalog");
+const library = require("../problem-set-library");
 
 const KINDS = ["mine", "series", "company"];
 const MAX_ITEMS = 300;
@@ -100,6 +107,28 @@ const httpUrl = (v) => {
   }
 };
 
+/* ── Built-in company sources (content/problem-sets/companies.json) ──
+   A public page about each company's interviews, cited on its set. A company
+   gets a card once it has problems (contest set or 2+ reports); never empty. */
+const CONTENT_DIR = path.join(__dirname, "..", "..", "content", "problem-sets");
+function loadContent(file) {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(CONTENT_DIR, file), "utf8"));
+  } catch {
+    return null;
+  }
+}
+let builtinCompaniesCache = null;
+function builtinCompanies() {
+  if (builtinCompaniesCache === null) {
+    const d = loadContent("companies.json");
+    builtinCompaniesCache = Array.isArray(d?.companies)
+      ? d.companies.filter((c) => c && companyName(c.company) && httpUrl(c.sourceUrl)).map((c) => ({ company: companyName(c.company), sourceUrl: httpUrl(c.sourceUrl) }))
+      : [];
+  }
+  return builtinCompaniesCache;
+}
+
 function createProblemSetsRouter({ me, can }) {
   const router = express.Router();
   const h = (fn) => async (req, res) => {
@@ -180,6 +209,40 @@ function createProblemSetsRouter({ me, can }) {
     };
   }
 
+  /** Problems you solved (ids), for counting progress on the built-in library. */
+  async function solvedSet() {
+    const u = me();
+    if (!u) return new Set();
+    return new Set((await all("SELECT problem_rowid FROM progress WHERE username=? AND status='solved'", [u])).map((r) => r.problem_rowid));
+  }
+  /** A library set as a card. Company sets open at company:<name>. */
+  function libCard(set, kind, catalog, solved) {
+    const items = library.resolve(set, catalog);
+    return {
+      id: kind === "company" ? `company:${set.company}` : set.id,
+      title: set.title,
+      description: set.description || "",
+      kind,
+      visibility: "public",
+      owner: null,
+      company: set.company || null,
+      sourceUrl: set.sourceUrl || null,
+      likes: null,
+      liked: false,
+      count: items.length,
+      solved: items.filter((i) => i.row && solved.has(i.row.id)).length,
+      builtIn: true,
+    };
+  }
+  /** Library items in the shape the set page reads. */
+  function libItems(set, catalog, st, from = 0) {
+    return library.resolve(set, catalog).map((i, k) =>
+      i.row
+        ? { position: from + k, section: i.section, note: "", problem: { id: i.row.id, title: i.row.title, platform: i.row.platform, rating: i.row.rating, topics: safeList(i.row.topics) }, status: st.get(i.row.id) || "unsolved" }
+        : { position: from + k, section: i.section, note: "", link: i.link },
+    );
+  }
+
   /** Companies from community reports: those with problems at least MIN_REPORTS people named. */
   async function companies() {
     const rows = await all(
@@ -212,12 +275,31 @@ function createProblemSetsRouter({ me, can }) {
     }
     if (q) rows = rows.filter((r) => `${r.title} ${r.description} ${r.company || ""}`.toLowerCase().includes(q));
     let sets = await cards(rows);
-    if (tab === "series") {
-      const c = await csesCard();
-      if (c && (!q || c.title.toLowerCase().includes(q))) sets = [c, ...sets];
+    const matches = (s) => !q || `${s.title} ${s.description} ${s.company || ""}`.toLowerCase().includes(q);
+    if (tab === "series" || tab === "company") {
+      const catalog = await getOpenCatalog();
+      const solved = await solvedSet();
+      const lib = tab === "series" ? library.library().series : library.library().companies;
+      const built = lib.filter(matches).map((s) => libCard(s, tab, catalog, solved)).filter((c) => c.count > 0);
+      // A stored set with a built-in set's title (e.g. an older seed of "Blind 75") would show twice.
+      const titles = new Set(lib.map((s) => s.title.toLowerCase()));
+      sets = sets.filter((s) => !titles.has(s.title.toLowerCase()));
+      const cses = tab === "series" ? await csesCard() : null;
+      sets = [...(cses && matches(cses) ? [cses] : []), ...built, ...sets];
     }
     const out = { ok: true, tab, sets };
-    if (tab === "company") out.reported = (await companies()).filter((c) => !q || c.company.toLowerCase().includes(q));
+    if (tab === "company") {
+      // Companies people reported that have no built-in set yet (those with one show the reports on it).
+      // Companies with reports but no contest set: a card when there's a public source to cite, else a chip.
+      const stats = await companyReportStats();
+      for (const c of builtinCompanies()) {
+        const st = stats.get(c.company);
+        if (!st || library.findCompany(c.company) || (q && !c.company.toLowerCase().includes(q))) continue;
+        sets.push({ id: `company:${c.company}`, title: c.company, description: `Problems people here reported being asked at ${c.company} (each by at least ${MIN_REPORTS} people).`, kind: "company", visibility: "public", owner: null, company: c.company, sourceUrl: c.sourceUrl, likes: null, liked: false, count: st.count, solved: st.solved, builtIn: true });
+      }
+      const carded = new Set(sets.map((x) => x.company).filter(Boolean));
+      out.reported = (await companies()).filter((c) => !carded.has(c.company) && !library.findCompany(c.company) && (!q || c.company.toLowerCase().includes(q)));
+    }
     res.json(out);
   }));
 
@@ -258,25 +340,63 @@ function createProblemSetsRouter({ me, can }) {
     }
   };
 
+  /** Reported-problem counts per company (2+ reports), with how many you solved. */
+  async function companyReportStats() {
+    const rows = await all(`SELECT company, problem_rowid, COUNT(*) AS n FROM problem_asked GROUP BY company, problem_rowid HAVING COUNT(*) >= ?`, [MIN_REPORTS]);
+    const catalog = await getOpenCatalog();
+    const st = await statuses(rows.map((r) => r.problem_rowid));
+    const by = new Map();
+    for (const r of rows) {
+      if (!byId(catalog, r.problem_rowid)) continue;
+      const c = by.get(r.company) || { count: 0, solved: 0 };
+      c.count++;
+      if (st.get(r.problem_rowid) === "solved") c.solved++;
+      by.set(r.company, c);
+    }
+    return by;
+  }
+
   router.get("/api/problem-sets/company/:name", h(async (req, res) => {
-    const company = companyName(decodeURIComponent(req.params.name));
+    const raw = decodeURIComponent(req.params.name);
+    const built = library.findCompany(raw);
+    const company = built ? built.company : companyName(raw);
     if (!company) fail(404, "Unknown company");
+    const sourced = builtinCompanies().find((c) => c.company === company)?.sourceUrl || null;
     const rows = await all(
       `SELECT problem_rowid, COUNT(*) AS n, MAX(year) AS year FROM problem_asked WHERE company=? GROUP BY problem_rowid HAVING COUNT(*) >= ? ORDER BY n DESC`,
       [company, MIN_REPORTS],
     );
     const catalog = await getOpenCatalog();
-    const st = await statuses(rows.map((r) => r.problem_rowid));
+    const libRows = built ? library.resolve(built, catalog).filter((i) => i.row).map((i) => i.row.id) : [];
+    const st = await statuses([...new Set([...rows.map((r) => r.problem_rowid), ...libRows])]);
+    const fromLib = built ? libItems(built, catalog, st) : [];
+    const reportedSection = built ? "Reported by people here" : "";
     const items = rows
       .map((r, i) => {
         const p = byId(catalog, r.problem_rowid);
-        return p && { position: i, section: "", note: `Reported by ${r.n} people${r.year ? ` · latest ${r.year}` : ""}`, reports: r.n, problem: { id: p.id, title: p.title, platform: p.platform, rating: p.rating, topics: safeList(p.topics) }, status: st.get(p.id) || "unsolved" };
+        return p && { position: fromLib.length + i, section: reportedSection, note: `Reported by ${r.n} people${r.year ? ` · latest ${r.year}` : ""}`, reports: r.n, problem: { id: p.id, title: p.title, platform: p.platform, rating: p.rating, topics: safeList(p.topics) }, status: st.get(p.id) || "unsolved" };
       })
       .filter(Boolean);
+    const all_ = [...fromLib, ...items];
+    const reportsNote = `Problems people here reported being asked at ${company} (each by at least ${MIN_REPORTS} people). Reports are from our users, not from ${company}.`;
     res.json({
       ok: true,
-      set: { id: `company:${company}`, title: `Asked at ${company}`, description: `Problems people reported being asked at ${company} (each by at least ${MIN_REPORTS} people). Reports are from our users, not from ${company}.`, kind: "company", visibility: "public", company, builtIn: true, count: items.length, solved: items.filter((i) => i.status === "solved").length },
-      items,
+      set: {
+        id: `company:${company}`,
+        title: company,
+        description: built ? `${built.description}${items.length ? ` ${reportsNote}` : ""}` : reportsNote,
+        kind: "company",
+        visibility: "public",
+        owner: null,
+        company,
+        sourceUrl: built?.sourceUrl || sourced,
+        likes: null,
+        liked: false,
+        builtIn: true,
+        count: all_.length,
+        solved: all_.filter((i) => i.status === "solved").length,
+      },
+      items: all_,
       canEdit: false,
     });
   }));
@@ -288,6 +408,14 @@ function createProblemSetsRouter({ me, can }) {
       const st = await statuses(s.rows.map((r) => r.id));
       const items = s.rows.map((p, i) => ({ position: i, section: p.category || "", note: "", problem: { id: p.id, title: p.title, platform: p.platform, rating: p.rating, topics: safeList(p.topics) }, status: st.get(p.id) || "unsolved" }));
       return res.json({ ok: true, set: await csesCard(), items, canEdit: false });
+    }
+    const series = library.findSeries(req.params.id);
+    if (series) {
+      const catalog = await getOpenCatalog();
+      const ids = library.resolve(series, catalog).filter((i) => i.row).map((i) => i.row.id);
+      const st = await statuses(ids);
+      const solved = new Set(ids.filter((id) => st.get(id) === "solved"));
+      return res.json({ ok: true, set: libCard(series, "series", catalog, solved), items: libItems(series, catalog, st), canEdit: false });
     }
     const { row, owner } = await loadSet(req.params.id);
     const [card] = await cards([row]);

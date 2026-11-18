@@ -3,6 +3,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { ArrowDown, ArrowUp, Check, CircleDot, ExternalLink, Heart, Lock, Pencil, Plus, Trash2, Trophy, X } from 'lucide-react'
 import { BackButton, Button, ConfirmDialog, EmptyState, ErrorState, Input, LoadingBlock, Modal, PageHeader, Progress, SearchInput, Textarea, useToast } from '@/components/ui'
 import { ToggleRow } from '@/components/account/SettingsPrimitives'
+import { AddLinkForm } from '@/components/problems/sets/SetDialogs'
+import { useSite } from '@/context/SiteContext'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { TopicChips } from '@/components/topics/TopicChips'
 import { useAuth } from '@/context/AuthContext'
@@ -101,7 +103,7 @@ export default function ProblemSetPage() {
       <BackButton />
       <PageHeader
         icon="problems"
-        eyebrow={set.kind === 'series' ? 'Famous series' : set.kind === 'company' ? `Company · ${set.company}` : set.visibility === 'private' ? 'Your private set' : set.owner ? `A set by @${set.owner}` : 'Problem set'}
+        eyebrow={set.kind === 'series' ? 'Famous series' : set.kind === 'company' ? 'Company' : set.visibility === 'private' ? 'Your private set' : set.owner ? `A set by @${set.owner}` : 'Problem set'}
         title={set.title}
         subtitle={set.description || undefined}
         actions={
@@ -127,7 +129,7 @@ export default function ProblemSetPage() {
         </div>
         {set.sourceUrl && (
           <a href={set.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-text-primary underline underline-offset-[3px]">
-            The original <ExternalLink className="size-3.5" aria-hidden="true" />
+            {set.kind === 'company' ? 'The public source' : 'The original'} <ExternalLink className="size-3.5" aria-hidden="true" />
             <span className="sr-only">(opens in a new tab)</span>
           </a>
         )}
@@ -225,7 +227,7 @@ export default function ProblemSetPage() {
           }}
         />
       )}
-      {adding && <AddProblemsDialog setId={set.id} have={new Set(items.map((i) => i.problem?.id).filter(Boolean) as number[])} onClose={() => setAdding(false)} onAdded={() => d.refetch()} />}
+      {adding && <AddProblemsDialog setId={set.id} series={set.kind === 'series'} have={new Set(items.map((i) => i.problem?.id).filter(Boolean) as number[])} onClose={() => setAdding(false)} onAdded={() => d.refetch()} />}
       <ConfirmDialog
         open={deleting}
         onClose={() => setDeleting(false)}
@@ -333,8 +335,11 @@ interface Found {
 }
 
 /** Find problems by name or topic (the same search as Problems) and add them. */
-function AddProblemsDialog({ setId, have, onClose, onAdded }: { setId: string; have: Set<number>; onClose: () => void; onAdded: () => void }) {
+function AddProblemsDialog({ setId, series, have, onClose, onAdded }: { setId: string; series: boolean; have: Set<number>; onClose: () => void; onAdded: () => void }) {
   const toast = useToast()
+  const { user } = useAuth()
+  const { can } = useSite()
+  const staff = !!user && can('problems.manage')
   const [q, setQ] = useState('')
   const [added, setAdded] = useState<Set<number>>(new Set())
   const query = q.trim()
@@ -352,6 +357,7 @@ function AddProblemsDialog({ setId, have, onClose, onAdded }: { setId: string; h
     <Modal open onClose={onClose} title="Add problems" description="Search by name, or by topic: “graphs”, “topic:dp”." size="md">
       <div className="space-y-3">
         <SearchInput value={q} onChange={(e) => setQ(e.target.value)} placeholder="Two pointers, Dijkstra, topic:dp…" aria-label="Find problems" autoFocus />
+        {series && staff && <AddLinkForm setId={setId} onAdded={onAdded} />}
         {query.length < 2 ? (
           <p className="py-4 text-center text-sm text-text-secondary">Type at least two letters.</p>
         ) : !found.data ? (
@@ -371,7 +377,7 @@ function AddProblemsDialog({ setId, have, onClose, onAdded }: { setId: string; h
                       {p.rating ? ` · ${p.rating}` : ''}
                     </span>
                   </span>
-                  <Button variant="ghost" size="sm" disabled={inSet} onClick={() => void add(p)} aria-label={inSet ? `${p.title} is in the set` : `Add ${p.title}`}>
+                  <Button variant="ghost" size="sm" disabled={inSet} onClick={() => void add(p)} aria-label={inSet ? `Added: ${p.title}` : `Add ${p.title}`}>
                     {inSet ? <Check aria-hidden="true" /> : <Plus aria-hidden="true" />} {inSet ? 'Added' : 'Add'}
                   </Button>
                 </li>

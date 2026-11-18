@@ -14,6 +14,8 @@ import { setPath, type AskedReport, type SetForProblem } from '@/lib/problemSets
 
 const errText = (e: unknown) => (e instanceof ApiError ? e.message : undefined)
 
+const THIS_YEAR = new Date().getFullYear()
+
 function SignInNote({ what }: { what: string }) {
   return (
     <p className="m-0 py-3 text-sm text-text-secondary">
@@ -117,7 +119,7 @@ export function AddToSetDialog({ problemId, title, onClose }: { problemId: numbe
                     </Link>
                     <span className="block text-xs text-text-muted">{s.visibility === 'public' ? 'Shared' : 'Private'}</span>
                   </span>
-                  <Button variant="ghost" size="sm" disabled={s.has || busy !== null} loading={busy === s.id} onClick={() => void add(s)} aria-label={s.has ? `It is in ${s.title}` : `Add to ${s.title}`}>
+                  <Button variant="ghost" size="sm" disabled={s.has || busy !== null} loading={busy === s.id} onClick={() => void add(s)} aria-label={s.has ? `In it: ${s.title}` : `Add to ${s.title}`}>
                     {s.has ? <Check aria-hidden="true" /> : <Plus aria-hidden="true" />} {s.has ? 'In it' : 'Add'}
                   </Button>
                 </li>
@@ -148,7 +150,7 @@ export function AskedAtDialog({ problemId, title, onClose }: { problemId: number
   const [year, setYear] = useState('')
   const [busy, setBusy] = useState(false)
   const asked = useApi(() => api.get<AskedReport>(`/api/problems/${problemId}/asked`), [problemId])
-  const thisYear = new Date().getFullYear()
+  const thisYear = THIS_YEAR
   const report = async () => {
     setBusy(true)
     try {
@@ -311,7 +313,7 @@ export function StaffSetDialog({ onClose, kind: initial = 'series' }: { onClose:
           </Select>
         </Field>
         <Field label="Name">
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={100} placeholder={kind === 'series' ? 'A well-known sheet' : 'Asked at the company'} required />
+          <Input value={title} onChange={(e) => setTitle(e.target.value)} maxLength={100} placeholder={kind === 'series' ? 'A well-known sheet' : 'The company, e.g. Google'} required />
         </Field>
         {kind === 'company' && (
           <Field label="Company">

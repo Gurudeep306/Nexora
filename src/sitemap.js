@@ -41,7 +41,7 @@ const PARTS = [
 
   { id: "practice", label: "Problems", pages: "^/(problems(/|$)|solve/(?!learn/))", api: "^/api/(problems|problem-statement)(/|$)", flag: "practice", files: ["client/src/pages/ProblemsPage.tsx", "client/src/pages/SolvePage.tsx", "client/src/components/problems/", "client/src/components/solve/", "src/sources/"] },
   { id: "practice.workshop", parent: "practice", label: "Workshop", pages: "^/workshop(/|$)", api: "^/api/forge(/|$)", flag: "workshop", files: ["client/src/pages/WorkshopPage.tsx", "client/src/components/workshop/", "src/routes/forge.js"] },
-  { id: "practice.sets", parent: "practice", label: "Problem sets", pages: "^/problems/sets(/|$)", api: "^/api/problem-sets(-for)?(/|$)", files: ["client/src/pages/ProblemSetsPage.tsx", "client/src/pages/ProblemSetPage.tsx", "src/routes/problem-sets.js"] },
+  { id: "practice.sets", parent: "practice", label: "Problem sets", pages: "^/problems/sets(/|$)", api: "^/api/problem-sets(-for)?(/|$)", files: ["client/src/pages/ProblemSetsPage.tsx", "client/src/pages/ProblemSetPage.tsx", "src/routes/problem-sets.js", "content/problem-sets/"] },
   { id: "practice.submissions", parent: "practice", label: "Submissions", pages: "^/submissions(/|$)", files: ["client/src/pages/SubmissionsPage.tsx", "client/src/components/submissions/"] },
 
   { id: "contests", label: "Contests", pages: "^/contests(/|$)", api: "^/api/(contests|live|hosted)(/|$)", flag: "contests", files: ["client/src/pages/ContestsPage.tsx", "client/src/pages/contests/", "client/src/components/contests/", "src/routes/hosted-contests.js", "src/routes/live.js", "src/contests.js"] },

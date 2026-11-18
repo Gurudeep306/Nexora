@@ -12,8 +12,8 @@ import { cn } from '@/lib/utils'
 
 const TABS: { id: SetTab; label: string; hint: string }[] = [
   { id: 'public', label: 'Shared', hint: 'Sets people made public, most liked first.' },
-  { id: 'series', label: 'Famous series', hint: 'Well-known series, with the problems we have.' },
-  { id: 'company', label: 'Companies', hint: 'From public lists (with their source) and what people report being asked.' },
+  { id: 'series', label: 'Famous series', hint: 'Well-known lists. Problems we have open here; the rest link to the original.' },
+  { id: 'company', label: 'Companies', hint: 'Problems from contests each company ran, plus what people here report being asked.' },
   { id: 'mine', label: 'Yours', hint: 'Your own sets. Private until you share them.' },
 ]
 
@@ -25,7 +25,8 @@ const TABS: { id: SetTab; label: string; hint: string }[] = [
 export default function ProblemSetsPage() {
   const [params, setParams] = useSearchParams()
   const { user } = useAuth()
-  const tab = (TABS.find((t) => t.id === params.get('tab'))?.id ?? 'public') as SetTab
+  const DEFAULT_TAB: SetTab = 'series'
+  const tab = (TABS.find((t) => t.id === params.get('tab'))?.id ?? DEFAULT_TAB) as SetTab
   const [q, setQ] = useState('')
   const [creating, setCreating] = useState(false)
   const [staffAdding, setStaffAdding] = useState(false)
@@ -42,7 +43,7 @@ export default function ProblemSetsPage() {
     setParams(
       (prev) => {
         const n = new URLSearchParams(prev)
-        if (id === 'public') n.delete('tab')
+        if (id === DEFAULT_TAB) n.delete('tab')
         else n.set('tab', id)
         return n
       },
@@ -108,10 +109,19 @@ export default function ProblemSetsPage() {
               />
             )
           )}
+          {tab === 'public' && !query && list.data.sets.length === 0 && (
+            <p className="m-0 text-center text-[13px] text-text-secondary">
+              Nothing shared yet —{' '}
+              <Link to="/problems/sets?tab=series" className="font-medium text-text-primary underline underline-offset-[3px]">
+                browse the famous series
+              </Link>{' '}
+              or make your own set.
+            </p>
+          )}
           {tab === 'company' && (list.data.reported?.length ?? 0) > 0 && (
             <section aria-labelledby="reported-h" className="space-y-2 pt-2">
               <h2 id="reported-h" className="m-0 text-[15px] font-semibold text-text-primary">
-                Reported by people here
+                {list.data.sets.length ? 'More companies people reported' : 'Reported by people here'}
               </h2>
               <p className="m-0 text-[13px] text-text-secondary">A problem shows once at least two people say they were asked it. These are their reports, not the companies’ own lists.</p>
               <ul className="flex flex-wrap gap-2">
@@ -143,7 +153,7 @@ function SetCardView({ s }: { s: SetCard }) {
       <Card className="h-full transition-colors hover:border-border-strong">
         <CardContent className="flex h-full flex-col gap-2 py-4">
           <p className="m-0 flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-text-muted uppercase">
-            {s.kind === 'series' ? 'Series' : s.kind === 'company' ? `Company · ${s.company}` : s.visibility === 'private' ? 'Private' : `By @${s.owner}`}
+            {s.kind === 'series' ? 'Series' : s.kind === 'company' ? 'Company' : s.visibility === 'private' ? 'Private' : `By @${s.owner}`}
             {s.visibility === 'private' && <Lock className="size-3" aria-hidden="true" />}
           </p>
           <p className="m-0 text-[15px] leading-snug font-semibold text-text-primary">{s.title}</p>
