@@ -81,7 +81,12 @@ that is in these files and passes the check.
   guides, 22 models; the web of 10 courses and 225 topics in strict teaching
   order with 400 links (144 between courses), every paper used; the story
   style; the update process; the checkers and the open-paper downloader.
-- **Waiting on the owner:** download the 30 paywalled papers (links in
+- **Library (2026-11-18):** 231 of 248 papers (all 30 of the owner's), 61 of 68
+  books, courses, sites and repos (about 7.5 GB), 6,271 files indexed into
+  46,256 searchable passages (scans read by OCR); the topic map for all 225
+  topics is in `sources/TOPIC-MAP.md`.
+- **Waiting on the owner:** the 18 papers listed under "Still needed" in
+  `sources/LIBRARY.md`; and earlier: the 30 paywalled papers (links in
   `sources/DOWNLOAD.md`) into `docs/ai-courses/private/papers/<id>.pdf` or the
   Drive folder; open the 11 "check by hand" links once in a browser.
 - **Next (P1):** build the AI Lab engine (PIPELINE.md section 4.1, 4.2, 4.4 and
