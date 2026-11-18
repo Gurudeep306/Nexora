@@ -103,11 +103,10 @@
   border-radius: var(--hv-r-chip);
   font-size: 12px;
   color: var(--hv-text-2);
-  background: transparent;
-  box-shadow: inset 0 0 0 1px var(--hv-border);
-  transition: color 120ms, box-shadow 120ms;
+  background: var(--hv-fill);
+  transition: color 120ms, background-color 120ms;
 }
-button.hive-chip:hover { color: var(--hv-text-1); box-shadow: inset 0 0 0 1px var(--hv-border-strong); }
+button.hive-chip:hover, a.hive-chip:hover { color: var(--hv-text-1); background: var(--hv-fill-hover); }
 
 .hive-kbd {
   display: inline-grid;
@@ -307,12 +306,12 @@ button.hive-chip:hover { color: var(--hv-text-1); box-shadow: inset 0 0 0 1px va
   color: var(--hv-text-2);
   transition: color 120ms var(--hive-ease), background-color 120ms var(--hive-ease);
 }
-.hv-nav:hover { color: var(--hv-text-1); background: var(--hv-surface-2); }
+.hv-nav:hover { color: var(--hv-text-1); background: var(--hv-fill); }
 .hv-nav svg { color: var(--hv-text-3); transition: color 120ms var(--hive-ease); }
 .hv-nav:hover svg { color: var(--hv-text-2); }
-.hv-nav[data-on="true"] { color: var(--hv-text-1); font-weight: 600; background: var(--hv-surface-2); }
+.hv-nav[data-on="true"] { color: var(--hv-text-1); font-weight: 500; background: var(--hv-fill-hover); }
 .hv-nav[data-on="true"] svg { color: var(--hv-text-1); }
-.hv-nav[data-on="true"]::before {
+.hv-nav[data-on="true"]::before { display: none;
   content: "";
   position: absolute;
   left: 0;
@@ -479,43 +478,40 @@ button.hive-chip:hover { color: var(--hv-text-1); box-shadow: inset 0 0 0 1px va
    site's generic heading rules (they sit outside the layer). */
 /* ── Type ───────────────────────────────────────────────────────────────── */
 /* The display face, for page titles, section titles and big figures. */
+/* Type follows the person's theme exactly like the site's own pages: the
+   display face for titles and figures (the ed-display scale), the reading
+   face for leads, small spaced capitals for labels (ed-label). */
 .hive-root .hv-serif, .hv-serif { font-family: var(--hv-serif); font-weight: var(--kit-heading-weight, 400); letter-spacing: -0.01em; }
-/* Small spaced capitals: section labels, column heads, eyebrows. */
 .hv-eyebrow {
   font-family: var(--hv-sans);
   font-size: 11px;
   line-height: 1.2;
   font-weight: 600;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--hv-text-3);
 }
-/* A page title: the display face, large and calm. */
 .hive-root .hv-title, .hv-title {
   font-family: var(--hv-serif);
   font-weight: var(--kit-heading-weight, 400);
-  font-size: clamp(26px, 3.2vw, var(--hv-fs-page));
+  font-size: clamp(26px, 3vw, 34px);
   line-height: 1.12;
   letter-spacing: -0.015em;
   color: var(--hv-text-1);
   text-wrap: balance;
 }
-/* A section title inside a page. */
 .hive-root .hv-h2, .hv-h2 {
   font-family: var(--hv-serif);
   font-weight: var(--kit-heading-weight, 400);
-  font-size: var(--hv-fs-lg);
+  font-size: 19px;
   line-height: 1.25;
-  letter-spacing: -0.005em;
   color: var(--hv-text-1);
 }
-/* The one line under a title, in the reading face. */
 .hive-root .hv-lead, .hv-lead { font-family: var(--hv-prose); font-size: 15px; line-height: 1.55; color: var(--hv-text-2); text-wrap: pretty; }
-/* Big figures (stats): display face, lining tabular numbers. */
 .hive-root .hv-figure, .hv-figure {
   font-family: var(--hv-serif);
   font-weight: var(--kit-heading-weight, 400);
-  font-size: 30px;
+  font-size: 28px;
   line-height: 1;
   letter-spacing: -0.02em;
   font-variant-numeric: lining-nums tabular-nums;
@@ -533,13 +529,44 @@ button.hive-chip:hover { color: var(--hv-text-1); box-shadow: inset 0 0 0 1px va
 }
 .hv-link:hover { text-decoration-color: currentColor; }
 
+/* Hive is its own full-window page (owner's choice): the Hive bar on top,
+   the page below it. */
+.hive-frame { height: 100dvh; }
+/* Hive's section tabs: the site's tab style (an accent rule under the
+   current one). */
+.hive-tab {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 7px;
+  height: 40px;
+  padding: 0 10px;
+  font-size: 13.5px;
+  color: var(--hv-text-2);
+  white-space: nowrap;
+  transition: color 120ms var(--hive-ease);
+}
+.hive-tab svg { color: var(--hv-text-3); }
+.hive-tab:hover { color: var(--hv-text-1); }
+.hive-tab[data-on="true"] { color: var(--hv-text-1); font-weight: 600; }
+.hive-tab[data-on="true"] svg { color: var(--hv-text-1); }
+.hive-tab[data-on="true"]::after { content: ""; position: absolute; left: 8px; right: 8px; bottom: -1px; height: 2px; border-radius: 2px; background: var(--hv-accent); }
+
+/* Quiet studio: hairline rings on small labels and chips become soft fills. */
+.hive-root :is(span, a, button):is([class~="ring-1"][class~="ring-inset"]):not(:focus-visible):not([data-variant]) {
+  --tw-ring-color: transparent !important;
+  background-color: var(--hv-fill);
+}
+.hive-root :is(a, button):is([class~="ring-1"][class~="ring-inset"]):not([data-variant]):hover { background-color: var(--hv-fill-hover); }
+
 /* These must beat utilities (and the kit's focus ring), so they stay outside the layer. */
 /* Older screens tint small tags and selected rows with the accent. Inside
    Hive those read as hairline labels: the accent stays for fills that mean
    "the action" and for the current place. */
 .hive-root :is([class~="bg-accent-brand/10"], [class~="bg-accent-brand/12"], [class~="bg-accent-brand/15"], [class~="bg-accent-brand/[0.08]"], [class~="bg-accent-brand/[0.06]"]) {
-  background-color: transparent;
-  box-shadow: inset 0 0 0 1px var(--hv-border-strong);
+  background-color: var(--hv-fill);
+  box-shadow: none;
 }
 /* Arbitrary shadows (glows, drop shadows) never show inside Hive. */
 .hive-root [class*="shadow-["] { box-shadow: none; }
@@ -550,11 +577,11 @@ button.hive-chip:hover { color: var(--hv-text-1); box-shadow: inset 0 0 0 1px va
 .hive-root [data-variant="accent"] { background-color: var(--hv-accent); }
 .hive-root [data-variant="accent"]:hover { filter: none; background-color: var(--hv-accent-hover); }
 .hive-root :is([data-variant="secondary"], [data-variant="subtle"]) {
-  background: transparent;
-  border-color: var(--hv-border-strong);
+  background: var(--hv-fill);
+  border-color: transparent;
   box-shadow: none;
 }
-.hive-root :is([data-variant="secondary"], [data-variant="subtle"]):hover { background: var(--hv-surface-2); border-color: var(--hv-text-3); }
+.hive-root :is([data-variant="secondary"], [data-variant="subtle"]):hover { background: var(--hv-fill-hover); border-color: transparent; }
 .hive-root :is([data-variant="destructive"], [data-variant="danger"], [data-variant="success"]) { box-shadow: none; }
 /* A main action that can't run yet is an outline, not a faded fill. */
 .hive-root :is(button, a):is(:disabled, [aria-disabled="true"]):is([class~="bg-accent-brand"], [class~="bg-[var(--hv-accent)]"], [data-variant="primary"], [data-variant="accent"]) {
