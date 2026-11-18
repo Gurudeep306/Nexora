@@ -88,7 +88,8 @@
    "topics": [
     "adagrad"
    ],
-   "url": "https://jmlr.org/papers/v12/duchi11a.html"
+   "url": "https://jmlr.org/papers/v12/duchi11a.html",
+   "pdf": "https://jmlr.org/papers/volume12/duchi11a/duchi11a.pdf"
   },
   {
    "id": "kingma-2014",
@@ -365,7 +366,8 @@
    "topics": [
     "t-sne"
    ],
-   "url": "https://jmlr.org/papers/v9/vandermaaten08a.html"
+   "url": "https://jmlr.org/papers/v9/vandermaaten08a.html",
+   "pdf": "https://jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf"
   },
   {
    "id": "mcinnes-2018",
@@ -409,7 +411,8 @@
    "topics": [
     "lda-topics"
    ],
-   "url": "https://jmlr.org/papers/v3/blei03a.html"
+   "url": "https://jmlr.org/papers/v3/blei03a.html",
+   "pdf": "https://jmlr.org/papers/volume3/blei03a/blei03a.pdf"
   },
   {
    "id": "rabiner-1989",
@@ -652,7 +655,8 @@
    "topics": [
     "init"
    ],
-   "url": "https://proceedings.mlr.press/v9/glorot10a.html"
+   "url": "https://proceedings.mlr.press/v9/glorot10a.html",
+   "pdf": "https://proceedings.mlr.press/v9/glorot10a/glorot10a.pdf"
   },
   {
    "id": "he-2015",
@@ -686,7 +690,8 @@
    "topics": [
     "dropout"
    ],
-   "url": "https://jmlr.org/papers/v15/srivastava14a.html"
+   "url": "https://jmlr.org/papers/v15/srivastava14a.html",
+   "pdf": "https://jmlr.org/papers/volume15/srivastava14a/srivastava14a.pdf"
   },
   {
    "id": "ioffe-2015",
@@ -765,7 +770,9 @@
    "topics": [
     "alexnet"
    ],
-   "doi": "10.1145/3065386"
+   "doi": "10.1145/3065386",
+   "pdf": "https://papers.nips.cc/paper_files/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf",
+   "note": "The DOI is the 2017 CACM reprint; the PDF is the original NeurIPS 2012 paper."
   },
   {
    "id": "deng-2009",
@@ -2145,7 +2152,8 @@
    "topics": [
     "policy-gradient"
    ],
-   "url": "https://papers.nips.cc/paper_files/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html"
+   "url": "https://papers.nips.cc/paper_files/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html",
+   "pdf": "https://papers.nips.cc/paper_files/paper/1999/file/464d828b85b0bed98e80ade0a5c43b0f-Paper.pdf"
   },
   {
    "id": "mnih-2013",

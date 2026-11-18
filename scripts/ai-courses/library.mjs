@@ -103,7 +103,7 @@ function index() {
   mkdirSync(LIB, { recursive: true })
   const pages = (f) => {
     try {
-      return Number(execFileSync('pdfinfo', [f], { encoding: 'utf8' }).match(/Pages:\s+(\d+)/)[1])
+      return f.endsWith('.pdf') ? Number(execFileSync('pdfinfo', [f], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).match(/Pages:\s+(\d+)/)[1]) : null
     } catch {
       return null
     }
@@ -111,12 +111,13 @@ function index() {
   let have = 0
   const rows = []
   for (const p of papers) {
-    const f = pathOf(p)
+    const pdf = pathOf(p)
+    const f = existsSync(pdf) ? pdf : pdf.replace(/\.pdf$/, '.html')
     const e = man.papers[p.id] || {}
     if (existsSync(f)) {
       have++
       const buf = readFileSync(f)
-      Object.assign(e, { file: `${folderOf(p.course)}/${p.id}.pdf`, bytes: buf.length, pages: pages(f), sha256: createHash('sha256').update(buf).digest('hex'), source: e.source || 'free copy (fetch-open.mjs)' })
+      Object.assign(e, { file: `${folderOf(p.course)}/${basename(f)}`, bytes: buf.length, pages: pages(f), sha256: createHash('sha256').update(buf).digest('hex'), source: e.source || 'free copy (fetch-open.mjs)' })
       man.papers[p.id] = e
     } else delete man.papers[p.id]
     rows.push({ p, e: existsSync(f) ? e : null })
@@ -130,6 +131,13 @@ function index() {
     `**${have} of ${papers.length} papers in the library.** Free copies come from \`fetch-open.mjs\`; the paywalled ones from the owner's institutional access (\`library.mjs import\`).`,
     '',
   ]
+  const missing = rows.filter((r) => !r.e)
+  const partial = rows.filter((r) => r.e?.note)
+  if (missing.length || partial.length) {
+    L.push(`## Still needed (${missing.length + partial.length}): please download`, '', 'These sites block automated downloads. Open each link in a browser (signed in to your institution if asked), save the PDF as the name shown, zip them, and give the zip to a session (`library.mjs import <folder>` files them).', '', '| Save as | Paper | Link |', '|---|---|---|')
+    for (const { p, e } of [...missing, ...partial]) L.push(`| ${p.id}.pdf | ${p.authors} (${p.year}). ${p.title}${e?.note ? ` — ${e.note}` : ''} | ${p.doi ? `https://doi.org/${p.doi}` : p.url || `https://arxiv.org/abs/${p.arxiv}`} |`)
+    L.push('')
+  }
   for (const c of courses) {
     const list = rows.filter((r) => r.p.course === c)
     if (!list.length) continue
