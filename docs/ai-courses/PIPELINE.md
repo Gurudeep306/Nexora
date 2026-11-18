@@ -24,6 +24,18 @@ The best AI course anywhere, for Indian students, free:
    A guided "paper walk" makes the original readable.
 5. **You build it yourself.** Each method is coded from scratch in NumPy in the
    browser, then trained live, then checked by tests.
+6. **One web, not separate courses.** Every topic links to what it builds on,
+   what uses it in any course, related ideas elsewhere, and the real models
+   that use it (`web.json`). A student with a doubt is one click from where
+   that idea is taught. New models and papers join the web as they appear
+   ([UPDATING.md](UPDATING.md)).
+7. **Told as a story.** Each course is a story and each topic a chapter: the
+   problem, the attempt that failed, the idea, the math, what it unlocked.
+   Code is built up version by version, never dumped ([STYLE.md](STYLE.md)).
+8. **Inside the machine.** A whole course shows how big models are really
+   built: GPUs, memory, training across thousands of GPUs, data,
+   post-training, serving, and what researchers can see inside a trained
+   model.
 
 ## 2. The learner's path through one topic
 
@@ -71,6 +83,8 @@ This is the rule the owner cares about most.
   4. Then, in any order once Deep Learning is done: Computer Vision, NLP,
      Generative Models, Reinforcement Learning
   5. Large Language Models (needs NLP and Deep Learning; RLHF needs RL)
+  6. How Big Models Are Built (GPUs, memory, parallel training, data,
+     post-training, serving, interpretability; ends with building your own GPT)
 
 ## 4. New technology to build first (the "AI Lab" engine)
 
@@ -173,6 +187,41 @@ Each says what it is, what it was trained on, and its size. No pretend demos.
   with edges for "builds on" (from OpenAlex citation data). Click a paper →
   its walk, the topics that use it, the open copy.
 
+### 4.8 The course web on the site
+
+- `web.json` (generated) drives a **course web map**, like the Nexus maps: every
+  topic is a node, coloured by course; "needs" and "related" are edges. Click a
+  topic to open it; your progress shows on the map.
+- On every lesson: "What you need" (prerequisites with a warm-up), "Stuck?"
+  (the whole prerequisite chain, nearest first), "Where this goes next" (used
+  by, related, models). All from `web.json`, never typed by hand.
+- **Look it up from anywhere:** every defined term is in the site search
+  (`lib/lessonSearch.ts`), so typing "softmax" or "KV cache" opens the lesson
+  that teaches it.
+- The **models timeline** (`sources/models.json`): each model links to the
+  lessons that explain its parts, and says honestly how much its makers
+  published.
+
+### 4.9 "Inside the machine" scenes (for How Big Models Are Built)
+
+- **A GPU in 3D**: streaming multiprocessors, warps executing in lock-step,
+  tensor cores; a tiled matrix multiply running block by block, with memory
+  traffic counted against the roofline.
+- **The memory bar**: a model's memory (weights, gradients, optimiser state,
+  activations) counted byte by byte for real model sizes, then split across
+  GPUs by ZeRO/FSDP, tensor and pipeline parallelism.
+- **A cluster in 3D**: GPUs in nodes and racks; an all-reduce moving around the
+  ring; a pipeline schedule with its bubble.
+- **A training run**: compute ≈ 6 × parameters × tokens, derived; loss curves
+  and numbers taken only from published reports (with the table or figure
+  number).
+- **Inside a real model**: a walk through every layer of a real small open
+  model (for example GPT-2 small, whose weights are openly released) on a
+  fixed prompt, with activations computed offline by us and shipped as data;
+  attention heads, induction heads and features shown on it.
+- Honesty rule: for closed models (GPT-4, Claude, Gemini) we show only what
+  their makers published, and say so on the page.
+
 ## 5. The pipeline for one topic (stages and gates)
 
 Each stage has an owner (role) and a gate. A topic is one PR.
@@ -181,6 +230,7 @@ Each stage has an owner (role) and a gate. A topic is one PR.
 |---|---|---|---|
 | S0 Scope | Planner | Topic entry in `curriculum.json`: id, prerequisites, the one main idea, pages, papers, signature visual | `check-curriculum.mjs` passes; owner/lead approves the scope |
 | S1 Sources | Librarian | Each paper and book section the topic uses is in `sources/*.json`; paywalled ones requested from the owner | `verify-sources.mjs` passes; open copies read |
+| S1b Story and reading | Writer | The topic's story beat (problem → failed attempt → idea → what it unlocked) per [STYLE.md](STYLE.md); the matching chapters of the course's `reading` books read | Reviewer confirms the story and the "Read more" chapters |
 | S2 Math | Math writer | Every definition and derivation, step by step, in our notation | Every derived result checked numerically (`golden/` test); a second reviewer redoes each step |
 | S3 Worked numbers | Math writer | The tiny example, every number | Numbers produced by the tensor engine and matched by NumPy |
 | S4 Scenes | Visual engineer | 2D/3D scenes on the tiny and the real example | Teaches one idea per scene; step mode; reduced motion; axe 0; phone width |
@@ -208,7 +258,7 @@ Each stage has an owner (role) and a gate. A topic is one PR.
 
 | Phase | What | Done when |
 |---|---|---|
-| P0 Sources and plan | This folder: verified papers, books, courses; rules; curriculum | Done (this PR) except the 6 hand checks and the owner's 29 downloads |
+| P0 Sources and plan | This folder: verified papers, books, courses; rules; curriculum | Done, except the 11 hand checks and the owner's 30 downloads (sources/DOWNLOAD.md) |
 | P1 Engine | 4.1 tensor engine + tape, 4.2 views, 4.4 derivation stepper, golden tests | A demo page runs a 2-layer net forward and backward with every number, checked against NumPy |
 | P2 Pilot | Foundations ch. 0 and Deep Learning ch. 1 ("one neuron" to "backprop"), end to end, with 4.3 (3D loss surface) and 4.5 (Pyodide lab) | The owner approves the pilot's look, depth and pace. This sets the voice for everything else. |
 | P3 Build out | Courses in ladder order; several agents in parallel on topics whose prerequisites are done | Each topic passes S0–S9 |

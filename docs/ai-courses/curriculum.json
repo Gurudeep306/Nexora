@@ -1,11 +1,16 @@
 {
- "about": "The AI courses in teaching order. Each topic may only need topics listed before it. Checked by node scripts/ai-courses/check-curriculum.mjs.",
+ "about": "The web of AI courses. Courses are in teaching order; a topic may only need topics listed before it. The web (needs, used by, related) is built from this file by node scripts/ai-courses/check-curriculum.mjs. Add related: [ids] on a topic for cross-links that are not prerequisites.",
  "courses": [
   {
    "id": "foundations",
    "title": "Foundations",
    "nexus": "calc",
    "blurb": "School maths and Python, up to exactly what the rest needs. Nobody is assumed to know anything.",
+   "story": "You want a computer to tell a cat from a dog. Before it can, we need a language for numbers, change and data. This course builds that language one word at a time.",
+   "runningExample": "A small table of real exam scores we plot, fit and question all through the course.",
+   "reading": [
+    "mml"
+   ],
    "chapters": [
     {
      "title": "Numbers and functions",
@@ -99,6 +104,16 @@
    "title": "Math for AI",
    "nexus": "prob",
    "blurb": "Linear algebra, calculus, probability, statistics, information theory and optimisation, each built from the one before.",
+   "story": "Every tool here is introduced the day a model needs it: vectors to hold data, derivatives to improve a guess, probability to say how sure we are, optimisation to get better step by step.",
+   "runningExample": "One 2-parameter model whose loss surface we explore with every new tool.",
+   "reading": [
+    "mml",
+    "axler-ladr",
+    "boyd-cvx",
+    "kochenderfer-opt",
+    "mackay-itila",
+    "dlbook"
+   ],
    "chapters": [
     {
      "title": "Vectors and matrices",
@@ -201,7 +216,11 @@
        ],
        "papers": [],
        "visual": "Vectors that stay on their line while the grid bends",
-       "gateDA": true
+       "gateDA": true,
+       "related": [
+        "dl-gnn",
+        "ml-density-spectral"
+       ]
       },
       {
        "id": "m-symmetric",
@@ -222,7 +241,11 @@
        ],
        "papers": [],
        "visual": "Rotate, stretch, rotate: a circle becomes an ellipse; image compression by rank",
-       "gateDA": true
+       "gateDA": true,
+       "related": [
+        "llm-lora",
+        "ml-pca"
+       ]
       }
      ]
     },
@@ -310,7 +333,10 @@
         "m-matmul"
        ],
        "papers": [],
-       "visual": "A small square mapped to a parallelogram; the Jacobian is that map"
+       "visual": "A small square mapped to a parallelogram; the Jacobian is that map",
+       "related": [
+        "gen-flows"
+       ]
       },
       {
        "id": "m-hessian",
@@ -477,7 +503,10 @@
         "metropolis-1953",
         "hastings-1970"
        ],
-       "visual": "A Metropolis walker exploring a 2D density"
+       "visual": "A Metropolis walker exploring a 2D density",
+       "related": [
+        "gen-score"
+       ]
       }
      ]
     },
@@ -494,7 +523,11 @@
        "papers": [
         "shannon-1948"
        ],
-       "visual": "Coding a message: surprise in bits per symbol"
+       "visual": "Coding a message: surprise in bits per symbol",
+       "related": [
+        "ml-decision-trees",
+        "nlp-ngram"
+       ]
       },
       {
        "id": "m-cross-entropy-kl",
@@ -505,7 +538,11 @@
        "papers": [
         "kullback-1951"
        ],
-       "visual": "Two distributions and the area of their mismatch"
+       "visual": "Two distributions and the area of their mismatch",
+       "related": [
+        "dl-losses",
+        "gen-vae"
+       ]
       },
       {
        "id": "m-mutual-information",
@@ -594,7 +631,10 @@
        "papers": [
         "robbins-1951"
        ],
-       "visual": "Noisy steps from mini-batches vs full-batch steps"
+       "visual": "Noisy steps from mini-batches vs full-batch steps",
+       "related": [
+        "sys-data-parallel"
+       ]
       },
       {
        "id": "m-momentum",
@@ -618,7 +658,10 @@
         "kingma-2014",
         "loshchilov-2017"
        ],
-       "visual": "Four optimisers racing on the same 3D surface"
+       "visual": "Four optimisers racing on the same 3D surface",
+       "related": [
+        "sys-memory-budget"
+       ]
       },
       {
        "id": "m-lr-schedules",
@@ -641,7 +684,11 @@
        "papers": [
         "blei-2016"
        ],
-       "visual": "A simple distribution stretching to fit a complex one"
+       "visual": "A simple distribution stretching to fit a complex one",
+       "related": [
+        "gen-vae",
+        "ml-topic-models"
+       ]
       }
      ]
     }
@@ -652,6 +699,18 @@
    "title": "Machine Learning",
    "nexus": "ml",
    "blurb": "From fitting a line to ensembles, kernels, unsupervised learning and learning theory.",
+   "story": "1950s to 2000s: how people taught computers from examples. Lines, then curves, then trees, margins and clusters, each invented because the last one failed somewhere.",
+   "runningExample": "One real dataset (Indian house prices, then exam results) carried from linear regression to boosting.",
+   "reading": [
+    "isl",
+    "esl",
+    "prml",
+    "pml1",
+    "uml",
+    "fml",
+    "gpml",
+    "barber-brml"
+   ],
    "chapters": [
     {
      "title": "Learning from data",
@@ -765,7 +824,10 @@
         "belkin-2019"
        ],
        "visual": "Many fits from many samples: spread vs offset",
-       "gateDA": true
+       "gateDA": true,
+       "related": [
+        "dl-modern-generalization"
+       ]
       },
       {
        "id": "ml-regularization",
@@ -781,7 +843,10 @@
         "zou-2005"
        ],
        "visual": "Loss contours meeting the L2 circle vs the L1 diamond",
-       "gateDA": true
+       "gateDA": true,
+       "related": [
+        "dl-regularization"
+       ]
       }
      ]
     },
@@ -810,7 +875,10 @@
         "cox-1958"
        ],
        "visual": "The sigmoid surface over the plane (3D); the boundary at 0.5",
-       "gateDA": true
+       "gateDA": true,
+       "related": [
+        "dl-losses"
+       ]
       },
       {
        "id": "ml-softmax-regression",
@@ -820,7 +888,11 @@
         "m-jacobian"
        ],
        "papers": [],
-       "visual": "Scores to probabilities, row by row"
+       "visual": "Scores to probabilities, row by row",
+       "related": [
+        "dl-self-attention",
+        "nlp-decoding"
+       ]
       },
       {
        "id": "ml-metrics",
@@ -973,7 +1045,10 @@
         "m-symmetric"
        ],
        "papers": [],
-       "visual": "Points lifted into 3D where a plane separates them"
+       "visual": "Points lifted into 3D where a plane separates them",
+       "related": [
+        "dl-self-attention"
+       ]
       },
       {
        "id": "ml-gaussian-processes",
@@ -1028,7 +1103,11 @@
         "hotelling-1933"
        ],
        "visual": "A 3D cloud and the plane that keeps the most variance",
-       "gateDA": true
+       "gateDA": true,
+       "related": [
+        "dl-autoencoders",
+        "nlp-word2vec"
+       ]
       },
       {
        "id": "ml-ica",
@@ -1156,6 +1235,15 @@
    "title": "Deep Learning",
    "nexus": "deep",
    "blurb": "From one neuron to the transformer, with every gradient derived.",
+   "story": "From the 1943 artificial neuron to the 2017 transformer: how machines learned to find their own features, and the problems (XOR, vanishing gradients, long memory) that forced each idea.",
+   "runningExample": "A digit recogniser that grows from one neuron to a ResNet, then a tiny transformer.",
+   "reading": [
+    "dlbook",
+    "bishop-dl",
+    "udl",
+    "d2l",
+    "nielsen"
+   ],
    "chapters": [
     {
      "title": "One neuron",
@@ -1439,7 +1527,11 @@
         "he-2016b",
         "huang-2017"
        ],
-       "visual": "Gradient paths with and without the skip connection"
+       "visual": "Gradient paths with and without the skip connection",
+       "related": [
+        "dl-neural-ode",
+        "dl-transformer-block"
+       ]
       },
       {
        "id": "dl-efficient-cnns",
@@ -1502,7 +1594,10 @@
         "bahdanau-2014",
         "luong-2015"
        ],
-       "visual": "The alignment matrix filling as each word is translated"
+       "visual": "The alignment matrix filling as each word is translated",
+       "related": [
+        "cv-detr"
+       ]
       }
      ]
     },
@@ -1560,7 +1655,12 @@
        "papers": [
         "vaswani-2017"
        ],
-       "visual": "Masked attention, then the decoder generating word by word"
+       "visual": "Masked attention, then the decoder generating word by word",
+       "related": [
+        "cv-vit",
+        "nlp-bert",
+        "nlp-gpt"
+       ]
       }
      ]
     },
@@ -1578,7 +1678,11 @@
         "hinton-2006b",
         "vincent-2008"
        ],
-       "visual": "A 3D bottleneck space of digits"
+       "visual": "A 3D bottleneck space of digits",
+       "related": [
+        "gen-vae",
+        "sys-features"
+       ]
       },
       {
        "id": "dl-gnn",
@@ -1623,7 +1727,10 @@
         "goodfellow-2014b",
         "madry-2017"
        ],
-       "visual": "A tiny pixel change flipping the prediction, the gradient that made it"
+       "visual": "A tiny pixel change flipping the prediction, the gradient that made it",
+       "related": [
+        "gen-gan"
+       ]
       },
       {
        "id": "dl-interpretability",
@@ -1635,7 +1742,11 @@
         "selvaraju-2016",
         "sundararajan-2017"
        ],
-       "visual": "Heat maps of what the network looked at"
+       "visual": "Heat maps of what the network looked at",
+       "related": [
+        "sys-circuits",
+        "ml-interpretability"
+       ]
       },
       {
        "id": "dl-compression",
@@ -1647,7 +1758,10 @@
         "hinton-2015",
         "frankle-2018"
        ],
-       "visual": "Soft targets vs hard labels; weights removed and accuracy kept"
+       "visual": "Soft targets vs hard labels; weights removed and accuracy kept",
+       "related": [
+        "llm-quantization"
+       ]
       }
      ]
     },
@@ -1677,6 +1791,14 @@
    "title": "Computer Vision",
    "nexus": "computer-vision",
    "blurb": "Images, detection, segmentation, vision transformers, self-supervised learning, 3D scenes.",
+   "story": "How machines learned to see: from filters to boxes to masks to models that understand images and text together.",
+   "runningExample": "One photo of a street analysed with every new method.",
+   "reading": [
+    "szeliski",
+    "d2l",
+    "bishop-dl",
+    "hartley-zisserman"
+   ],
    "chapters": [
     {
      "title": "Images",
@@ -1798,7 +1920,10 @@
         "caron-2021",
         "he-2021"
        ],
-       "visual": "Two views of one image pulled together in embedding space (3D)"
+       "visual": "Two views of one image pulled together in embedding space (3D)",
+       "related": [
+        "nlp-bert"
+       ]
       },
       {
        "id": "cv-clip",
@@ -1809,7 +1934,11 @@
        "papers": [
         "radford-2021"
        ],
-       "visual": "The image–text similarity matrix and its diagonal"
+       "visual": "The image–text similarity matrix and its diagonal",
+       "related": [
+        "llm-rag",
+        "gen-latent-diffusion"
+       ]
       }
      ]
     },
@@ -1843,7 +1972,10 @@
        "papers": [
         "mildenhall-2020"
        ],
-       "visual": "Rays through a 3D scene, colour integrated along each"
+       "visual": "Rays through a 3D scene, colour integrated along each",
+       "related": [
+        "gen-intro"
+       ]
       },
       {
        "id": "cv-gaussian-splatting",
@@ -1865,6 +1997,12 @@
    "title": "Natural Language Processing",
    "nexus": "nlp",
    "blurb": "Text to tokens to word vectors to BERT and GPT.",
+   "story": "How machines learned language: counting words, then vectors for meaning, then models that read the whole sentence at once.",
+   "runningExample": "One paragraph of text tokenised, embedded and predicted by each model.",
+   "reading": [
+    "slp3",
+    "d2l"
+   ],
    "chapters": [
     {
      "title": "Text",
@@ -1917,7 +2055,10 @@
         "mikolov-2013",
         "mikolov-2013b"
        ],
-       "visual": "Words moving in 3D as training pulls neighbours together"
+       "visual": "Words moving in 3D as training pulls neighbours together",
+       "related": [
+        "llm-rag"
+       ]
       },
       {
        "id": "nlp-glove",
@@ -2010,7 +2151,10 @@
        "papers": [
         "holtzman-2019"
        ],
-       "visual": "The same distribution cut and reshaped by each method"
+       "visual": "The same distribution cut and reshaped by each method",
+       "related": [
+        "sys-inference-serving"
+       ]
       }
      ]
     }
@@ -2021,6 +2165,13 @@
    "title": "Generative Models",
    "nexus": "genai-llms",
    "blurb": "Autoregressive models, VAEs, GANs, flows and diffusion, each likelihood derived.",
+   "story": "How machines learned to create: from predicting the next pixel to turning noise into pictures.",
+   "runningExample": "One 2D toy dataset (and then digits) generated by every family of models.",
+   "reading": [
+    "pml2",
+    "udl",
+    "bishop-dl"
+   ],
    "chapters": [
     {
      "title": "Basics",
@@ -2168,7 +2319,10 @@
         "ho-2020",
         "nichol-2021"
        ],
-       "visual": "2D points noised to a Gaussian and denoised back, every step"
+       "visual": "2D points noised to a Gaussian and denoised back, every step",
+       "related": [
+        "gen-vae"
+       ]
       },
       {
        "id": "gen-ddim",
@@ -2243,6 +2397,13 @@
    "title": "Reinforcement Learning",
    "nexus": "reinforcement-learning",
    "blurb": "Bandits and MDPs to DQN, PPO and AlphaZero.",
+   "story": "How machines learn by trying: from a robot in a grid to AlphaZero.",
+   "runningExample": "One grid world that grows into a game.",
+   "reading": [
+    "sutton-barto",
+    "pml2",
+    "udl"
+   ],
    "chapters": [
     {
      "title": "The problem",
@@ -2381,7 +2542,10 @@
         "williams-1992",
         "sutton-1999"
        ],
-       "visual": "Action probabilities nudged by returns"
+       "visual": "Action probabilities nudged by returns",
+       "related": [
+        "sys-reasoning-rl"
+       ]
       },
       {
        "id": "rl-actor-critic",
@@ -2407,7 +2571,10 @@
         "schulman-2015",
         "schulman-2017"
        ],
-       "visual": "The clipped objective as a plot; updates kept inside the region"
+       "visual": "The clipped objective as a plot; updates kept inside the region",
+       "related": [
+        "llm-rlhf"
+       ]
       },
       {
        "id": "rl-continuous",
@@ -2441,7 +2608,10 @@
         "silver-2017b",
         "schrittwieser-2019"
        ],
-       "visual": "MCTS growing its tree, visit counts as size"
+       "visual": "MCTS growing its tree, visit counts as size",
+       "related": [
+        "sys-reasoning-rl"
+       ]
       }
      ]
     }
@@ -2452,6 +2622,13 @@
    "title": "Large Language Models",
    "nexus": "genai-llms",
    "blurb": "Scaling, modern architectures, efficient inference, fine-tuning, RLHF and DPO, reasoning and RAG.",
+   "story": "From GPT-3 to today's assistants: what changed when models got big, and how they are made helpful.",
+   "runningExample": "One prompt followed from pre-training to the aligned answer.",
+   "reading": [
+    "slp3",
+    "udl",
+    "bishop-dl"
+   ],
    "chapters": [
     {
      "title": "Scale",
@@ -2478,7 +2655,10 @@
         "kaplan-2020",
         "hoffmann-2022"
        ],
-       "visual": "Loss vs compute on log axes; the Chinchilla line"
+       "visual": "Loss vs compute on log axes; the Chinchilla line",
+       "related": [
+        "sys-pretraining-run"
+       ]
       }
      ]
     },
@@ -2495,6 +2675,7 @@
        "papers": [
         "su-2021",
         "shazeer-2020",
+        "zhang-2019",
         "shazeer-2019",
         "ainslie-2023",
         "touvron-2023",
@@ -2543,7 +2724,10 @@
         "dao-2022",
         "kwon-2023"
        ],
-       "visual": "Tiles moving between slow and fast memory; the cache growing per token"
+       "visual": "Tiles moving between slow and fast memory; the cache growing per token",
+       "related": [
+        "sys-memory-hierarchy"
+       ]
       },
       {
        "id": "llm-quantization",
@@ -2640,6 +2824,354 @@
         "schick-2023"
        ],
        "visual": "Thought → action → observation, loop by loop"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "ai-systems",
+   "title": "How Big Models Are Built",
+   "nexus": "mlops",
+   "blurb": "GPUs, memory, training across thousands of GPUs, data, post-training, serving, and looking inside a trained model. Built from what labs have published; where a lab has not published something (for example how a specific closed model was trained), the lesson says so.",
+   "story": "What really happens inside the data centre: how a frontier model is trained across thousands of GPUs, and what we can see inside it afterwards.",
+   "runningExample": "One model's memory and compute budget, counted from a single GPU to a full cluster; ends with building your own GPT.",
+   "reading": [
+    "pmpp"
+   ],
+   "chapters": [
+    {
+     "title": "The machine",
+     "topics": [
+      {
+       "id": "sys-computer-basics",
+       "title": "How a computer computes: bits, memory and instructions",
+       "needs": [
+        "f-numbers",
+        "f-numpy"
+       ],
+       "papers": [],
+       "visual": "A number travelling from memory to the processor and back"
+      },
+      {
+       "id": "sys-floats",
+       "title": "Floating-point numbers: fp32, fp16, bf16, fp8",
+       "needs": [
+        "sys-computer-basics",
+        "f-exp-log"
+       ],
+       "papers": [],
+       "visual": "The bits of a float lit up; what rounding does to a sum",
+       "related": [
+        "llm-quantization"
+       ]
+      },
+      {
+       "id": "sys-gpu",
+       "title": "How a GPU works: thousands of threads, warps and tensor cores",
+       "needs": [
+        "sys-computer-basics",
+        "m-matmul"
+       ],
+       "papers": [
+        "nickolls-2008",
+        "jouppi-2017"
+       ],
+       "visual": "A 3D GPU: streaming multiprocessors, warps running in lock-step"
+      },
+      {
+       "id": "sys-memory-hierarchy",
+       "title": "Memory is the bottleneck: HBM, caches, shared memory and the roofline",
+       "needs": [
+        "sys-gpu"
+       ],
+       "papers": [
+        "williams-2009"
+       ],
+       "visual": "Data moving between memory levels with real bandwidths; the roofline plot"
+      },
+      {
+       "id": "sys-matmul-kernel",
+       "title": "A matrix multiply on a GPU, tile by tile",
+       "needs": [
+        "sys-memory-hierarchy"
+       ],
+       "papers": [],
+       "visual": "Tiles loaded into shared memory and multiplied by thread blocks (3D)"
+      },
+      {
+       "id": "sys-attention-kernel",
+       "title": "FlashAttention as a GPU kernel",
+       "needs": [
+        "sys-matmul-kernel",
+        "llm-efficient-attention"
+       ],
+       "papers": [
+        "dao-2023"
+       ],
+       "visual": "Attention computed tile by tile without the full matrix in memory"
+      }
+     ]
+    },
+    {
+     "title": "One big model",
+     "topics": [
+      {
+       "id": "sys-memory-budget",
+       "title": "Where the memory goes: weights, gradients, optimiser state, activations",
+       "needs": [
+        "sys-floats",
+        "dl-optimizers",
+        "dl-transformer"
+       ],
+       "papers": [],
+       "visual": "A memory bar for a 7B model filling up, every byte counted"
+      },
+      {
+       "id": "sys-mixed-precision",
+       "title": "Mixed-precision training and loss scaling",
+       "needs": [
+        "sys-memory-budget"
+       ],
+       "papers": [
+        "micikevicius-2017"
+       ],
+       "visual": "Gradients underflowing in fp16, rescued by scaling"
+      },
+      {
+       "id": "sys-checkpointing",
+       "title": "Activation checkpointing: trading compute for memory",
+       "needs": [
+        "sys-memory-budget"
+       ],
+       "papers": [
+        "chen-2016b",
+        "korthikanti-2022"
+       ],
+       "visual": "Activations dropped and recomputed in the backward pass"
+      }
+     ]
+    },
+    {
+     "title": "Many GPUs",
+     "topics": [
+      {
+       "id": "sys-collectives",
+       "title": "GPUs talking: all-reduce and the ring algorithm",
+       "needs": [
+        "sys-gpu"
+       ],
+       "papers": [
+        "patarasuk-2009"
+       ],
+       "visual": "Eight GPUs in a ring passing chunks until all hold the sum"
+      },
+      {
+       "id": "sys-data-parallel",
+       "title": "Data parallelism",
+       "needs": [
+        "sys-collectives",
+        "dl-training-loop"
+       ],
+       "papers": [],
+       "visual": "Each GPU on its own batch, gradients averaged"
+      },
+      {
+       "id": "sys-zero-fsdp",
+       "title": "Sharding the optimiser, gradients and weights: ZeRO and FSDP",
+       "needs": [
+        "sys-data-parallel",
+        "sys-memory-budget"
+       ],
+       "papers": [
+        "rajbhandari-2019",
+        "zhao-2023"
+       ],
+       "visual": "The memory bar split across GPUs, stage by stage"
+      },
+      {
+       "id": "sys-tensor-parallel",
+       "title": "Tensor parallelism: splitting one layer",
+       "needs": [
+        "sys-zero-fsdp",
+        "dl-transformer-block"
+       ],
+       "papers": [
+        "shoeybi-2019"
+       ],
+       "visual": "One matrix multiply split by columns and rows across GPUs"
+      },
+      {
+       "id": "sys-pipeline-parallel",
+       "title": "Pipeline parallelism and the bubble",
+       "needs": [
+        "sys-tensor-parallel"
+       ],
+       "papers": [
+        "huang-2018",
+        "narayanan-2021"
+       ],
+       "visual": "Micro-batches flowing through layer groups; the idle bubble shrinking"
+      },
+      {
+       "id": "sys-expert-sequence-parallel",
+       "title": "Expert and sequence parallelism",
+       "needs": [
+        "sys-pipeline-parallel",
+        "llm-moe"
+       ],
+       "papers": [
+        "lepikhin-2020",
+        "liu-2023"
+       ],
+       "visual": "Tokens routed to experts on other GPUs; a long sequence passed round a ring"
+      }
+     ]
+    },
+    {
+     "title": "Data",
+     "topics": [
+      {
+       "id": "sys-pretraining-data",
+       "title": "Pre-training data: crawl, filter, deduplicate, mix",
+       "needs": [
+        "llm-scaling"
+       ],
+       "papers": [
+        "gao-2020",
+        "penedo-2023",
+        "penedo-2024"
+       ],
+       "visual": "A web page passing (or failing) each filter"
+      }
+     ]
+    },
+    {
+     "title": "The life of a frontier model",
+     "topics": [
+      {
+       "id": "sys-pretraining-run",
+       "title": "A pre-training run, end to end: the plan, the compute, the loss curve",
+       "needs": [
+        "sys-pipeline-parallel",
+        "sys-pretraining-data",
+        "sys-mixed-precision"
+       ],
+       "papers": [
+        "openai-2023",
+        "grattafiori-2024",
+        "deepseek-2024"
+       ],
+       "visual": "Compute = 6 × parameters × tokens, derived; a real loss curve from a published report"
+      },
+      {
+       "id": "sys-post-training",
+       "title": "Post-training: instruction tuning, RLHF and constitutional methods",
+       "needs": [
+        "sys-pretraining-run",
+        "llm-dpo"
+       ],
+       "papers": [
+        "wei-2021",
+        "chung-2022",
+        "bai-2022a"
+       ],
+       "visual": "The same prompt answered by the base, the tuned and the aligned model"
+      },
+      {
+       "id": "sys-reasoning-rl",
+       "title": "Reasoning models: RL on verifiable answers, process rewards, thinking longer",
+       "needs": [
+        "sys-post-training"
+       ],
+       "papers": [
+        "shao-2024",
+        "lightman-2023",
+        "deepseek-2025",
+        "snell-2024"
+       ],
+       "visual": "Group-relative advantages computed for a batch of answers"
+      },
+      {
+       "id": "sys-evaluation",
+       "title": "Measuring a model: benchmarks and their limits",
+       "needs": [
+        "sys-post-training"
+       ],
+       "papers": [
+        "hendrycks-2020",
+        "liang-2022"
+       ],
+       "visual": "One question scored many ways; contamination shown"
+      },
+      {
+       "id": "sys-inference-serving",
+       "title": "Serving at scale: batching, KV-cache memory, speculative decoding",
+       "needs": [
+        "sys-evaluation",
+        "llm-quantization"
+       ],
+       "papers": [
+        "pope-2022",
+        "leviathan-2022"
+       ],
+       "visual": "A draft model guessing tokens and the big model checking them"
+      }
+     ]
+    },
+    {
+     "title": "Inside a trained model",
+     "topics": [
+      {
+       "id": "sys-circuits",
+       "title": "The residual stream, attention heads as circuits, induction heads",
+       "needs": [
+        "dl-transformer",
+        "llm-icl"
+       ],
+       "papers": [
+        "elhage-2021",
+        "olsson-2022"
+       ],
+       "visual": "An induction head copying a pattern, its attention traced"
+      },
+      {
+       "id": "sys-features",
+       "title": "Superposition and features: sparse autoencoders",
+       "needs": [
+        "sys-circuits"
+       ],
+       "papers": [
+        "elhage-2022",
+        "bricken-2023",
+        "templeton-2024"
+       ],
+       "visual": "More features than neurons, packed as directions (3D)"
+      }
+     ]
+    },
+    {
+     "title": "Capstone",
+     "topics": [
+      {
+       "id": "sys-build-gpt",
+       "title": "Build and train a small GPT from scratch",
+       "needs": [
+        "sys-pretraining-run",
+        "nlp-subwords"
+       ],
+       "papers": [],
+       "visual": "Your GPT's loss falling and its samples improving, live"
+      },
+      {
+       "id": "sys-inside-gpt",
+       "title": "Walk through a real model's forward pass",
+       "needs": [
+        "sys-build-gpt",
+        "sys-circuits"
+       ],
+       "papers": [],
+       "visual": "A 3D walk through every layer of a real small model with its real activations"
       }
      ]
     }

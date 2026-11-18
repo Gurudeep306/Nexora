@@ -1,0 +1,326 @@
+{
+ "about": "Models timeline: each notable model linked to the papers that describe it and the topics that explain its parts. Add new models here as they come out (see ../UPDATING.md). Checked by check-curriculum.mjs.",
+ "models": [
+  {
+   "id": "lenet-5",
+   "name": "LeNet-5",
+   "org": "AT&T Bell Labs",
+   "year": 1998,
+   "published": "paper",
+   "papers": [
+    "lecun-1998"
+   ],
+   "topics": [
+    "dl-cnn"
+   ],
+   "whatsNew": "Convolutions and pooling trained end to end by backprop; read cheques."
+  },
+  {
+   "id": "alexnet",
+   "name": "AlexNet",
+   "org": "University of Toronto",
+   "year": 2012,
+   "published": "paper",
+   "papers": [
+    "krizhevsky-2012",
+    "deng-2009"
+   ],
+   "topics": [
+    "dl-cnn-architectures"
+   ],
+   "whatsNew": "A deep CNN on GPUs with ReLU and dropout won ImageNet by a wide margin."
+  },
+  {
+   "id": "word2vec",
+   "name": "word2vec",
+   "org": "Google",
+   "year": 2013,
+   "published": "paper",
+   "papers": [
+    "mikolov-2013",
+    "mikolov-2013b"
+   ],
+   "topics": [
+    "nlp-word2vec"
+   ],
+   "whatsNew": "Word meanings as vectors learned from context."
+  },
+  {
+   "id": "gan",
+   "name": "GAN",
+   "org": "Université de Montréal",
+   "year": 2014,
+   "published": "paper",
+   "papers": [
+    "goodfellow-2014"
+   ],
+   "topics": [
+    "gen-gan"
+   ],
+   "whatsNew": "A generator and a discriminator trained against each other."
+  },
+  {
+   "id": "resnet",
+   "name": "ResNet",
+   "org": "Microsoft Research",
+   "year": 2015,
+   "published": "paper",
+   "papers": [
+    "he-2016"
+   ],
+   "topics": [
+    "dl-resnet"
+   ],
+   "whatsNew": "Skip connections let networks go 100+ layers deep."
+  },
+  {
+   "id": "alphago",
+   "name": "AlphaGo",
+   "org": "DeepMind",
+   "year": 2016,
+   "published": "paper",
+   "papers": [
+    "silver-2016"
+   ],
+   "topics": [
+    "rl-planning"
+   ],
+   "whatsNew": "Tree search guided by policy and value networks beat a Go champion."
+  },
+  {
+   "id": "transformer",
+   "name": "Transformer",
+   "org": "Google",
+   "year": 2017,
+   "published": "paper",
+   "papers": [
+    "vaswani-2017"
+   ],
+   "topics": [
+    "dl-transformer"
+   ],
+   "whatsNew": "Attention only, no recurrence: the base of every modern LLM."
+  },
+  {
+   "id": "bert",
+   "name": "BERT",
+   "org": "Google",
+   "year": 2018,
+   "published": "paper",
+   "papers": [
+    "devlin-2018"
+   ],
+   "topics": [
+    "nlp-bert"
+   ],
+   "whatsNew": "Pre-train by filling in masked words, then fine-tune for any task."
+  },
+  {
+   "id": "gpt-2",
+   "name": "GPT-2",
+   "org": "OpenAI",
+   "year": 2019,
+   "published": "paper",
+   "papers": [
+    "radford-2019"
+   ],
+   "topics": [
+    "nlp-gpt"
+   ],
+   "whatsNew": "A bigger decoder-only model doing tasks it was never trained for."
+  },
+  {
+   "id": "gpt-3",
+   "name": "GPT-3",
+   "org": "OpenAI",
+   "year": 2020,
+   "published": "paper",
+   "papers": [
+    "brown-2020"
+   ],
+   "topics": [
+    "llm-icl",
+    "llm-scaling"
+   ],
+   "whatsNew": "175B parameters; learns new tasks from examples in the prompt."
+  },
+  {
+   "id": "clip",
+   "name": "CLIP",
+   "org": "OpenAI",
+   "year": 2021,
+   "published": "paper",
+   "papers": [
+    "radford-2021"
+   ],
+   "topics": [
+    "cv-clip"
+   ],
+   "whatsNew": "Images and text in one embedding space, from 400M image–text pairs."
+  },
+  {
+   "id": "instructgpt",
+   "name": "InstructGPT",
+   "org": "OpenAI",
+   "year": 2022,
+   "published": "paper",
+   "papers": [
+    "ouyang-2022"
+   ],
+   "topics": [
+    "llm-rlhf"
+   ],
+   "whatsNew": "RLHF makes a model follow instructions; the method behind ChatGPT."
+  },
+  {
+   "id": "stable-diffusion",
+   "name": "Latent diffusion (Stable Diffusion)",
+   "org": "LMU Munich / Runway / Stability AI",
+   "year": 2022,
+   "published": "paper",
+   "papers": [
+    "rombach-2021"
+   ],
+   "topics": [
+    "gen-latent-diffusion"
+   ],
+   "whatsNew": "Diffusion in a compressed latent space, conditioned on text."
+  },
+  {
+   "id": "chinchilla",
+   "name": "Chinchilla",
+   "org": "DeepMind",
+   "year": 2022,
+   "published": "paper",
+   "papers": [
+    "hoffmann-2022"
+   ],
+   "topics": [
+    "llm-scaling"
+   ],
+   "whatsNew": "Train on many more tokens for the same compute."
+  },
+  {
+   "id": "llama",
+   "name": "LLaMA and Llama 2",
+   "org": "Meta",
+   "year": 2023,
+   "published": "paper",
+   "papers": [
+    "touvron-2023",
+    "touvron-2023b"
+   ],
+   "topics": [
+    "llm-architecture"
+   ],
+   "whatsNew": "Open weights with RoPE, SwiGLU and RMSNorm; Llama 2 adds chat tuning."
+  },
+  {
+   "id": "gpt-4",
+   "name": "GPT-4",
+   "org": "OpenAI",
+   "year": 2023,
+   "published": "technical report (architecture and training not disclosed)",
+   "papers": [
+    "openai-2023"
+   ],
+   "topics": [
+    "sys-pretraining-run",
+    "sys-evaluation"
+   ],
+   "whatsNew": "Multimodal; the report gives results and predictable scaling, not the architecture."
+  },
+  {
+   "id": "mistral-7b",
+   "name": "Mistral 7B",
+   "org": "Mistral AI",
+   "year": 2023,
+   "published": "paper",
+   "papers": [
+    "jiang-2023"
+   ],
+   "topics": [
+    "llm-architecture"
+   ],
+   "whatsNew": "Grouped-query and sliding-window attention in a small strong model."
+  },
+  {
+   "id": "mamba",
+   "name": "Mamba",
+   "org": "CMU / Princeton",
+   "year": 2023,
+   "published": "paper",
+   "papers": [
+    "gu-2023"
+   ],
+   "topics": [
+    "llm-ssm"
+   ],
+   "whatsNew": "Selective state spaces: linear-time sequence modelling."
+  },
+  {
+   "id": "llama-3",
+   "name": "Llama 3",
+   "org": "Meta",
+   "year": 2024,
+   "published": "paper",
+   "papers": [
+    "grattafiori-2024"
+   ],
+   "topics": [
+    "sys-pretraining-run",
+    "sys-pretraining-data",
+    "sys-post-training"
+   ],
+   "whatsNew": "A detailed public account of training a frontier-scale model: data, 4D parallelism, post-training."
+  },
+  {
+   "id": "deepseek-v3",
+   "name": "DeepSeek-V3",
+   "org": "DeepSeek",
+   "year": 2024,
+   "published": "technical report",
+   "papers": [
+    "deepseek-2024"
+   ],
+   "topics": [
+    "llm-moe",
+    "sys-pretraining-run",
+    "sys-mixed-precision"
+   ],
+   "whatsNew": "A large mixture-of-experts model trained with FP8 and multi-token prediction."
+  },
+  {
+   "id": "deepseek-r1",
+   "name": "DeepSeek-R1",
+   "org": "DeepSeek",
+   "year": 2025,
+   "published": "technical report",
+   "papers": [
+    "deepseek-2025",
+    "shao-2024"
+   ],
+   "topics": [
+    "sys-reasoning-rl"
+   ],
+   "whatsNew": "Reasoning learned with reinforcement learning on checkable answers (GRPO)."
+  },
+  {
+   "id": "claude",
+   "name": "Claude models",
+   "org": "Anthropic",
+   "year": 2022,
+   "published": "not published (architecture, data and training recipe); research on methods is published",
+   "papers": [
+    "bai-2022",
+    "bai-2022a",
+    "templeton-2024"
+   ],
+   "topics": [
+    "sys-post-training",
+    "sys-features"
+   ],
+   "whatsNew": "Anthropic has published its alignment methods (constitutional AI, RLHF) and interpretability work on Claude 3 Sonnet, not how its models are built. Lessons say exactly this."
+  }
+ ]
+}

@@ -113,6 +113,8 @@ async function checkUrl(id, url) {
   if (!(r.status >= 200 && r.status < 400)) r = await fetchText(url, { tries: 2 })
   const ok = r.status >= 200 && r.status < 400
   if (!r.status) return { id, ok: true, unreachable: true, why: `could not reach from here (${r.error})`, access: 'open', read: url, manual: true }
+  // Some sites (GitHub, publishers) refuse automated checks; that is not a broken link.
+  if (r.status === 401 || r.status === 403 || r.status === 429) return { id, ok: true, unreachable: true, why: `refused an automated check (${r.status})`, access: 'open', read: url, manual: true }
   return { id, ok, why: ok ? '' : `link answered ${r.status}`, access: 'open', read: url, manual: true }
 }
 
@@ -165,7 +167,7 @@ const lines = [
   '',
 ]
 if (unreachable.length) {
-  lines.push('## Unreachable from the checking machine', '', 'Not errors: the network where the check ran could not reach these hosts. Open each in a browser once.', '')
+  lines.push('## Unreachable from the checking machine', '', 'Not errors: these hosts could not be reached from the checking machine, or refuse automated checks. Open each in a browser once.', '')
   for (const u of unreachable) lines.push(`- ${u.id}: ${u.check.read}`)
   lines.push('')
 }
@@ -183,6 +185,32 @@ for (const c of report.courses) lines.push(`| ${c.id} | ${c.title} | [link](${c.
 lines.push('', '## All papers', '', '| Course | Id | Paper | Read | Status |', '|---|---|---|---|---|')
 for (const p of report.papers) lines.push(`| ${p.course} | ${p.id} | ${p.authors} (${p.year}). ${p.title} | ${p.check?.read ? `[link](${p.check.read})` : ''} | ${p.check?.ok ? (p.check.manual ? 'link ok, title by hand' : 'verified') : 'PROBLEM'}${p.check?.access === 'paywalled' ? ' · paywalled' : ''} |`)
 writeFileSync(join(ROOT, 'CHECK.md'), lines.join('\n') + '\n')
+
+// DOWNLOAD.md: every paper with a link, the ones that need the owner's access first.
+const D = [
+  '# Papers: download links',
+  '',
+  `Generated ${report.checkedAt.slice(0, 10)} by \`verify-sources.mjs\`. Save each PDF as \`<id>.pdf\` (the first column) in \`docs/ai-courses/private/papers/\` on your computer or in the "Nexora AI papers" Drive folder. Never commit them.`,
+  '',
+  `## 1. Needs your institutional access (${paywalled.length})`,
+  '',
+  'Open the link while signed in to IEEE Xplore / ScienceDirect / SpringerLink / Wiley / Nature through your institution, then download the PDF.',
+  '',
+  '| Save as | Paper | Link |',
+  '|---|---|---|',
+  ...paywalled.map((p) => `| ${p.id}.pdf | ${p.authors} (${p.year}). ${p.title} | https://doi.org/${p.doi} |`),
+  '',
+  `## 2. Free to download (${report.papers.length - paywalled.length})`,
+  '',
+  'These are free and legal (arXiv, the journal or the authors). `NODE_USE_ENV_PROXY=1 node scripts/ai-courses/fetch-open.mjs` downloads them all at once; the links are here too.',
+  '',
+  '| Save as | Paper | Read | PDF |',
+  '|---|---|---|---|',
+  ...report.papers
+    .filter((p) => !paywalled.includes(p))
+    .map((p) => `| ${p.id}.pdf | ${p.authors} (${p.year}). ${p.title} | ${p.check?.read || p.url || ''} | ${p.arxiv ? `https://arxiv.org/pdf/${p.arxiv}` : p.check?.read || p.url || ''} |`),
+]
+if (report.papers.length) writeFileSync(join(ROOT, 'DOWNLOAD.md'), D.join('\n') + '\n')
 writeFileSync(join(ROOT, 'check.json'), JSON.stringify(report, null, 1) + '\n')
 console.log(lines.slice(4, 9).join('\n'))
 process.exit(bad.length ? 1 : 0)
