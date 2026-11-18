@@ -1,0 +1,251 @@
+{
+ "version": 1,
+ "title": "Bound and free variables under a scope bracket",
+ "width": 640,
+ "height": 280,
+ "narrow": {
+  "width": 360,
+  "height": 270
+ },
+ "intro": "The scope of a quantifier is the part of the formula it applies to. Variables inside are bound; the rest are free.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Scope of ∀x in  ∀x (P(x) ∧ Q(x,y)) ∨ R(y)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Scope of ∀x",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "t0",
+   "type": "box",
+   "x": 40,
+   "y": 100,
+   "w": 80,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 12,
+    "y": 96,
+    "w": 58,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∀x"
+  },
+  {
+   "id": "t1",
+   "type": "box",
+   "x": 130,
+   "y": 100,
+   "w": 80,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 80,
+    "y": 96,
+    "w": 58,
+    "h": 40,
+    "size": 13
+   },
+   "label": "P(x)"
+  },
+  {
+   "id": "t2",
+   "type": "box",
+   "x": 220,
+   "y": 100,
+   "w": 80,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 140,
+    "y": 96,
+    "w": 58,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∧"
+  },
+  {
+   "id": "t3",
+   "type": "box",
+   "x": 290,
+   "y": 100,
+   "w": 80,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 195,
+    "y": 96,
+    "w": 58,
+    "h": 40,
+    "size": 13
+   },
+   "label": "Q(x,y)"
+  },
+  {
+   "id": "t4",
+   "type": "box",
+   "x": 400,
+   "y": 100,
+   "w": 150,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 260,
+    "y": 96,
+    "w": 88,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∨ R(y)"
+  },
+  {
+   "id": "br",
+   "type": "box",
+   "x": 122,
+   "y": 92,
+   "w": 256,
+   "h": 60,
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "x": 74,
+    "y": 88,
+    "w": 185,
+    "h": 56
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 320,
+   "y": 210,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 200,
+    "size": 13
+   }
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 250,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "accent",
+   "narrow": {
+    "x": 180,
+    "y": 240,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The quantifier ∀x stands in front of a bracketed formula. Its scope is everything inside those brackets.",
+   "patches": [
+    {
+     "id": "t0",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The bracket covers P(x) ∧ Q(x,y): every x inside it is bound by ∀x.",
+   "patches": [
+    {
+     "id": "br",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "x occurs only inside the scope → bound",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Outside the brackets we have ∨ R(y). The y in Q(x,y) and in R(y) is not in any quantifier's scope: it is free.",
+   "patches": [
+    {
+     "id": "t4",
+     "set": {
+      "tone": "warning",
+      "fill": "warning"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "y occurs outside every scope → free",
+      "tone": "warning"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So this formula has one bound variable (x) and one free variable (y); it is not yet a sentence. Quantify the y (or fix it) and it becomes a proposition.",
+   "patches": [
+    {
+     "id": "verdict",
+     "set": {
+      "text": "free variables: {y} — not a sentence yet"
+     }
+    }
+   ]
+  }
+ ]
+}

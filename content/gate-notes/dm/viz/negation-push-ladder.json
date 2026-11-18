@@ -1,0 +1,206 @@
+{
+ "version": 1,
+ "title": "De Morgan for quantifiers, pushed inward",
+ "width": 640,
+ "height": 350,
+ "narrow": {
+  "width": 360,
+  "height": 344
+ },
+ "intro": "¬∀xφ ≡ ∃x¬φ and ¬∃xφ ≡ ∀x¬φ. Push ¬ through a chain of quantifiers one at a time, flipping each; then use ¬(P→Q) ≡ P∧¬Q.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Pushing ¬ inward: one quantifier per step",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Negation push-through",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "l0",
+   "type": "box",
+   "x": 60,
+   "y": 90,
+   "w": 520,
+   "h": 42,
+   "size": 16,
+   "mono": true,
+   "hidden": false,
+   "narrow": {
+    "x": 16,
+    "y": 88,
+    "w": 328,
+    "h": 40,
+    "size": 13
+   },
+   "label": "¬∀x ∃y (P(x) → Q(y))"
+  },
+  {
+   "id": "l1",
+   "type": "box",
+   "x": 60,
+   "y": 146,
+   "w": 520,
+   "h": 42,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 16,
+    "y": 144,
+    "w": 328,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∃x ¬∃y (P(x) → Q(y))"
+  },
+  {
+   "id": "l2",
+   "type": "box",
+   "x": 60,
+   "y": 202,
+   "w": 520,
+   "h": 42,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 16,
+    "y": 200,
+    "w": 328,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∃x ∀y ¬(P(x) → Q(y))"
+  },
+  {
+   "id": "l3",
+   "type": "box",
+   "x": 60,
+   "y": 258,
+   "w": 520,
+   "h": 42,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 16,
+    "y": 256,
+    "w": 328,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∃x ∀y (P(x) ∧ ¬Q(y))"
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 330,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 322,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start: ¬∀x ∃y (P(x) → Q(y)).",
+   "patches": [
+    {
+     "id": "l0",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "¬∀ becomes ∃¬:  ¬∀x φ ≡ ∃x ¬φ.  Line: ∃x ¬∃y (P(x) → Q(y)).",
+   "patches": [
+    {
+     "id": "l1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "l0",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Again: ¬∃y becomes ∀y¬:  ∃x ∀y ¬(P(x) → Q(y)).",
+   "patches": [
+    {
+     "id": "l2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "l1",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Inside: ¬(P → Q) ≡ P ∧ ¬Q (an implication is broken exactly when its hypothesis holds and conclusion fails).",
+   "patches": [
+    {
+     "id": "l3",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "l2",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Final: ∃x ∀y (P(x) ∧ ¬Q(y)) — negation only on the atoms. Verified equivalent to the original on all interpretations up to size 3.",
+   "patches": [
+    {
+     "id": "verdict",
+     "set": {
+      "text": "¬∀x∃y(P→Q) ≡ ∃x∀y(P∧¬Q)",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,748 @@
+{
+ "version": 1,
+ "title": "“All A are B” — implication, not conjunction",
+ "width": 640,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 330
+ },
+ "intro": "“All A are B” is ∀x(A(x) → B(x)): non-A elements satisfy it vacuously. The ∧ version wrongly demands that everything be A and B.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "“All A are B”:  ∀x (A(x) → B(x))   vs the wrong  ∀x (A(x) ∧ B(x))",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "All A are B — correct vs wrong",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 60,
+   "y": 100,
+   "cellW": 92,
+   "cellH": 34,
+   "rows": [
+    [
+     "x",
+     "A(x)",
+     "B(x)",
+     "A→B",
+     "A∧B"
+    ],
+    [
+     "a",
+     "T",
+     "T",
+     "",
+     ""
+    ],
+    [
+     "b",
+     "T",
+     "T",
+     "",
+     ""
+    ],
+    [
+     "c",
+     "F",
+     "T",
+     "",
+     ""
+    ],
+    [
+     "d",
+     "F",
+     "F",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 14,
+    "y": 96,
+    "cellW": 66,
+    "cellH": 32
+   }
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 300,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 300,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "World: D = {a,b,c,d}, A = {a,b}, B = {a,b,c}. First fill the A and B columns.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "A(x)",
+        "B(x)",
+        "A→B",
+        "A∧B"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "d",
+        "F",
+        "F",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Element a: A(a) = T, B(a) = T, so A→B = T",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "A(x)",
+        "B(x)",
+        "A→B",
+        "A∧B"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "d",
+        "F",
+        "F",
+        "T",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Element b: A(b) = T, B(b) = T, so A→B = T",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "A(x)",
+        "B(x)",
+        "A→B",
+        "A∧B"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "d",
+        "F",
+        "F",
+        "T",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Element c: A(c) = F, B(c) = T, so A→B = T (vacuously true: not A).",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "A(x)",
+        "B(x)",
+        "A→B",
+        "A∧B"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "d",
+        "F",
+        "F",
+        "T",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Element d: A(d) = F, B(d) = F, so A→B = T (vacuously true: not A).",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "A(x)",
+        "B(x)",
+        "A→B",
+        "A∧B"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "d",
+        "F",
+        "F",
+        "T",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∀x(A→B): every element gives T (a and b because they are in B; c and d vacuously because they are not A). The statement is TRUE.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        3
+       ],
+       [
+        4,
+        3
+       ]
+      ],
+      "rows": [
+       [
+        "x",
+        "A(x)",
+        "B(x)",
+        "A→B",
+        "A∧B"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "d",
+        "F",
+        "F",
+        "T",
+        ""
+       ]
+      ]
+     }
+    },
+    {
+     "id": "verdict",
+     "set": {
+      "text": "∀x(A→B) = T",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now the wrong pairing ∀x(A∧B): at a, A∧B = T.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "A(x)",
+        "B(x)",
+        "A→B",
+        "A∧B"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        "T",
+        "F"
+       ],
+       [
+        "d",
+        "F",
+        "F",
+        "T",
+        "F"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now the wrong pairing ∀x(A∧B): at b, A∧B = T.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "A(x)",
+        "B(x)",
+        "A→B",
+        "A∧B"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        "T",
+        "F"
+       ],
+       [
+        "d",
+        "F",
+        "F",
+        "T",
+        "F"
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        2,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now the wrong pairing ∀x(A∧B): at c, A∧B = F — FALSE at an element that is not even A!",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "A(x)",
+        "B(x)",
+        "A→B",
+        "A∧B"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        "T",
+        "F"
+       ],
+       [
+        "d",
+        "F",
+        "F",
+        "T",
+        "F"
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "verdict",
+     "set": {
+      "text": "∀x(A∧B) fails at c and d",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now the wrong pairing ∀x(A∧B): at d, A∧B = F — FALSE at an element that is not even A!",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "A(x)",
+        "B(x)",
+        "A→B",
+        "A∧B"
+       ],
+       [
+        "a",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "b",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "c",
+        "F",
+        "T",
+        "T",
+        "F"
+       ],
+       [
+        "d",
+        "F",
+        "F",
+        "T",
+        "F"
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        4,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The wrong formula ∀x(A∧B) claims every object is both A and B — it fails at c and d. “All A are B” only restricts the A's, so the correct form is ∀x(A(x) → B(x)).",
+   "patches": [
+    {
+     "id": "verdict",
+     "set": {
+      "text": "correct: ∀x(A→B) = T;  wrong: ∀x(A∧B) = F",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        3,
+        4
+       ],
+       [
+        4,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

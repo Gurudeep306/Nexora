@@ -1219,23 +1219,24 @@
       "verification": "Every group of order $p^2$ is Abelian, and there are exactly two of order 4."
     },
     "cse-2007-cs-22": {
-      "approach": "Rewrite 'not every graph is connected' as $\\neg\\forall x(G(x)\\Rightarrow C(x))\\equiv\\exists x(G(x)\\wedge\\neg C(x))$ and test each option for equivalence.",
+      "approach": "Concept tested: **“Not every graph is connected”** = ¬∀x(Graph(x) → Connected(x)) ≡ ∃x(Graph(x) ∧ ¬Connected(x)). Find the option that does NOT say this.",
       "concepts": [
-        "First-order logic",
-        "Quantifier negation"
+        "Negation of a universal",
+        "Implication form"
       ],
+      "given": "“Not every graph is connected.”",
       "steps": [
         {
-          "title": "Target",
-          "body": "$\\neg\\forall x\\,(G\\Rightarrow C)\\equiv\\exists x\\,\\neg(\\neg G\\vee C)\\equiv\\exists x\\,(G\\wedge\\neg C)$."
+          "title": "Correct forms",
+          "body": "A: ¬∀x(Graph → Connected) — exactly the sentence. B: ∃x(Graph ∧ ¬Connected) — equivalent by De Morgan for quantifiers. C: ¬∀x(¬Graph ∨ Connected) — ¬Graph ∨ Connected is Graph → Connected, so C is the same as A."
         },
         {
-          "title": "Check options",
-          "body": "(A) is the target verbatim. (B) is its equivalent form. (C) uses $G\\Rightarrow C\\equiv\\neg G\\vee C$, so equals (A).\n\n(D) $\\forall x\\,(G\\Rightarrow\\neg C)$ says **no** graph is connected — stronger and different."
+          "title": "The odd one out",
+          "body": "D: ∀x(Graph → ¬Connected) says “no graph is connected” — a different, much stronger claim. It is the one that does NOT represent the statement."
         }
       ],
       "answer": {
-        "value": "$\\forall x\\,(Graph(x)\\Rightarrow\\neg Connected(x))$",
+        "value": "$\\forall x\\,(Graph(x) \\Rightarrow \\neg Connected(x))$ does NOT represent the statement",
         "choice": [
           "D"
         ],
@@ -1245,25 +1246,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Exactly 'not every graph is connected'."
+          "reason": "¬∀x(Graph → Connected) is exactly “not every graph is connected”."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "'Some graph is not connected' — equivalent."
+          "reason": "∃x(Graph ∧ ¬Connected): some graph is not connected — equivalent to A."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\neg G\\vee C$ is $G\\Rightarrow C$, so this equals (A)."
+          "reason": "¬∀x(¬Graph ∨ Connected): the inner is Graph → Connected, so C ≡ A."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Means 'no graph is connected' — not the given statement."
+          "reason": "∀x(Graph → ¬Connected) says every graph is disconnected — this is the one that does NOT represent the statement."
         }
       ],
-      "verification": "Model check: a world with one connected and one disconnected graph makes A, B, C true but D false."
+      "shortcut": "¬∀(A→B) ≡ ∃(A∧¬B); anything equivalent to those two represents the sentence; ∀(A→¬B) is the opposite extreme.",
+      "pitfalls": [
+        "Thinking D is the negation — it is the universal negative, not the negated universal."
+      ],
+      "verification": "A, B, C are mutually equivalent on all interpretations ≤ 3; D is not equivalent to them."
     },
     "cse-2007-cs-23": {
       "approach": "A connected graph has an Eulerian circuit iff every vertex has even degree. Check degree parity and connectivity for each option.",

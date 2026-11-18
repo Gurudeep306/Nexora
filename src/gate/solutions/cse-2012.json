@@ -1426,23 +1426,24 @@
       "verification": "Equivalent DFA: $\\{q_0\\} \\xrightarrow{a} \\{q_0,q_1,q_2\\}$ (accepting) with an $a$ self-loop — exactly $a^+$."
     },
     "cse-2012-cs-13": {
-      "approach": "\"Some A are B\" is existential with a conjunction: there is an $x$ that is both real and rational.",
+      "approach": "Concept tested: **“Some real numbers are rational”** = ∃x(real(x) ∧ rational(x)) — the witness must be both.",
       "concepts": [
-        "Predicate logic",
-        "Existential quantifier"
+        "Translation",
+        "∃ takes ∧"
       ],
+      "given": "“Some real numbers are rational.”",
       "steps": [
         {
-          "title": "Pattern",
-          "body": "\"All A are B\" $\\equiv \\forall x\\,(A(x) \\rightarrow B(x))$; \"Some A are B\" $\\equiv \\exists x\\,(A(x) \\wedge B(x))$."
+          "title": "Formalise",
+          "body": "“Some real numbers are rational” needs a witness that is both: ∃x (real(x) ∧ rational(x)) — true, e.g. x = 1/2."
         },
         {
-          "title": "Apply",
-          "body": "$\\exists x\\,(\\mathrm{real}(x) \\wedge \\mathrm{rational}(x))$."
+          "title": "Why the others fail",
+          "body": "∃x(real ∨ rational) is true of any object that is either; ∃x(real → rational) is vacuously true at any non-real; ∀x(real → rational) claims all reals are rational."
         }
       ],
       "answer": {
-        "value": "∃x (real(x) ∧ rational(x))",
+        "value": "$\\exists x\\,(\\mathrm{real}(x) \\wedge \\mathrm{rational}(x))$",
         "choice": [
           "C"
         ],
@@ -1452,28 +1453,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "True as soon as anything is real *or* rational — it does not require a real rational number."
+          "reason": "real ∨ rational: true for any object that is either — not “some real is rational”."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Says *all* reals are rational."
+          "reason": "∀x(real → rational): claims ALL reals are rational."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "There exists something that is both real and rational."
+          "reason": "∃x(real ∧ rational): a witness that is both real and rational."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Vacuously true for any non-rational $x$ (false antecedent), so it asserts nothing about real rationals."
+          "reason": "∃x(rational → real): vacuous at any non-rational object."
         }
       ],
+      "shortcut": "Some A are B ⇔ ∃x(A ∧ B).",
       "pitfalls": [
-        "Using $\\rightarrow$ inside $\\exists$ — it makes the statement almost always true."
+        "Using → with ∃ (vacuously true at non-A)."
       ],
-      "verification": "In a domain with no rational numbers, A and D could still be true while the English sentence is false; only C tracks it exactly."
+      "verification": "Equivalence search up to size 3: only C matches."
     },
     "cse-2012-cs-14": {
       "approach": "ER allows multivalued and composite attributes; the relational model requires atomic values (1NF), so a cell holds exactly one value or NULL.",

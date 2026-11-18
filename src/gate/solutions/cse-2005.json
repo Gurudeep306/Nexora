@@ -2410,24 +2410,24 @@
       "verification": "Truth tables over $P, Q, R$: $X \\to Y$ is T on all 8 rows; each other option has a false row."
     },
     "cse-2005-cs-41": {
-      "approach": "For each teacher x there must exist (possibly a different) y who is a student and likes x. \"Some … is …\" uses ∃ with ∧, \"every … is …\" uses ∀ with →.",
+      "approach": "Concept tested: **“every A is B-ed by some C”** — ∀x(A(x) → ∃y(C(y) ∧ relation(y, x))). Note the argument order of likes: the student likes the teacher, so likes(y, x).",
       "concepts": [
-        "First-order logic",
-        "Quantifier scope",
-        "Translating English"
+        "Translation",
+        "Argument order of a binary predicate"
       ],
+      "given": "“Every teacher is liked by some student.”",
       "steps": [
         {
-          "title": "Structure",
-          "body": "\"Every teacher …\": $\\forall x\\,[\\text{teacher}(x) \\to \\dots]$. \"… is liked by some student\": $\\exists y\\,[\\text{student}(y) \\wedge \\text{likes}(y,x)]$."
+          "title": "Formalise",
+          "body": "∀x (teacher(x) → ∃y (student(y) ∧ likes(y, x))). The ∃y is inside the ∀x scope: each teacher may have a different liker."
         },
         {
-          "title": "Combine",
-          "body": "$\\forall x\\,[\\text{teacher}(x) \\to \\exists y\\,[\\text{student}(y) \\wedge \\text{likes}(y,x)]]$ — option (B)."
+          "title": "Kill the wrong options",
+          "body": "A uses student(y) → likes (vacuous at non-students); C puts ∃y outside ∀x (one student likes all teachers); D uses teacher(x) ∧ … (claims everything is a teacher)."
         }
       ],
       "answer": {
-        "value": "$\\forall(x)[\\text{teacher}(x) \\rightarrow \\exists(y)[\\text{student}(y) \\wedge \\text{likes}(y,x)]]$",
+        "value": "$\\forall x\\,[teacher(x) \\rightarrow \\exists y\\,[student(y) \\wedge likes(y, x)]]$",
         "choice": [
           "B"
         ],
@@ -2437,29 +2437,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$\\exists y[\\text{student}(y)\\to\\dots]$ is satisfied by any non-student $y$, so it does not require a liking student."
+          "reason": "student(y) → likes(y,x) is true whenever y is not a student — vacuous, wrong."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct."
+          "reason": "∀x(teacher → ∃y(student ∧ likes(y,x))): every teacher has a student who likes them."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\exists y\\forall x$ demands one single student who likes every teacher — stronger than the sentence."
+          "reason": "∃y∀x(teacher(x) → student(y) ∧ likes(y,x)): one fixed student, and it also claims teacher(x) → (student(y) ∧ …) with ∧ under → — wrong on two counts."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\forall x[\\text{teacher}(x)\\wedge\\dots]$ asserts that everything is a teacher; also uses $\\to$ under $\\exists$."
+          "reason": "teacher(x) ∧ ∃y(…): the outer ∧ claims every object is a teacher."
         }
       ],
+      "shortcut": "∀ over a restricted subject → implication; ∃ over a restricted object → conjunction; mind which argument of likes is the student.",
       "pitfalls": [
-        "∃ pairs with ∧, ∀ pairs with →.",
-        "Quantifier order: ∀x∃y ≠ ∃y∀x."
+        "Swapping likes' arguments (likes(x, y) would mean the teacher likes the student)."
       ],
-      "verification": "A world with no student liking a teacher makes (A) true via a non-student y but (B) false — so only (B) captures the sentence."
+      "verification": "Equivalence search up to domain size 3: only B matches the intended formula."
     },
     "cse-2005-cs-42": {
       "approach": "Reflexivity, symmetry and transitivity are each preserved by intersection. Union preserves reflexivity and symmetry but can break transitivity.",

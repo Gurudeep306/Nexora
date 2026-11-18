@@ -5460,71 +5460,24 @@
       "verification": "Chase/tableau: rows for $t_1$ $(n, c, b_1)$ and $t_2$ $(n, b_2, o)$; applying $\\mathit{name} \\to \\mathit{owner}$ to the first row makes it $(n, c, o)$, an all-distinguished row ⇒ lossless ✓."
     },
     "cse-2025-1-cs-38": {
-      "approach": "Translate \"exactly one\" as **existence + uniqueness**: some $y$ is the mother of $x$, and no $z$ different from $y$ is. Then test each formula on three situations for a person $x$: no mother, exactly one, two mothers — a correct formula must give F, T, F.",
+      "approach": "Concept tested: **“Everyone has exactly one mother”** = ∀x∃y(mother(y,x) ∧ ∀z(mother(z,x) → z = y)) — existence plus uniqueness. B and D are the two equivalent uniqueness forms.",
       "concepts": [
-        "First-order logic translation",
-        "Uniqueness quantification",
-        "Quantifier negation"
+        "∃! uniqueness",
+        "Equivalent forms"
       ],
+      "given": "mother(y, x): y is the mother of x; noteq(x, y): x ≠ y. Which formulae say “everyone has exactly one mother”?",
       "steps": [
         {
-          "title": "The target formula",
-          "body": "\"$x$ has exactly one mother\" = \"$x$ has a mother $y$, and anyone $z \\ne y$ is not $x$'s mother\":\n$$\\forall x\\, \\exists y\\, [\\mathit{mother}(y,x) \\wedge \\forall z\\,(\\mathit{noteq}(z,y) \\to \\neg\\mathit{mother}(z,x))]$$\nThat is option (B) verbatim.",
-          "scene": {
-            "reveal": 12,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Build it",
+          "body": "∀x∃y [mother(y,x) ∧ ∀z(noteq(z,y) → ¬mother(z,x))]: for each x there is a mother y and no OTHER z is a mother — B. D says the same with ¬∃z(noteq(z,y) ∧ mother(z,x)) — equivalent."
         },
         {
-          "title": "D is the same formula",
-          "body": "Push the negation in D's inner part:\n$$\\neg\\exists z\\,(\\mathit{noteq}(z,y) \\wedge \\mathit{mother}(z,x)) \\equiv \\forall z\\,\\neg(\\mathit{noteq}(z,y) \\wedge \\mathit{mother}(z,x)) \\equiv \\forall z\\,(\\mathit{noteq}(z,y) \\to \\neg\\mathit{mother}(z,x))$$\nusing $\\neg(p \\wedge q) \\equiv p \\to \\neg q$. So D $\\equiv$ B — **correct**.",
-          "scene": {
-            "reveal": 12,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "success"
-              },
-              {
-                "r": 3,
-                "tone": "success"
-              }
-            ]
-          }
-        },
-        {
-          "title": "A and C fail",
-          "body": "- **A**: $\\exists y\\exists z\\,(\\mathit{mother}(y,x) \\wedge \\neg\\mathit{mother}(z,x))$ only says \"$x$ has a mother, and somebody is not his mother\". With two mothers it is still true (take $z$ = any non-mother, e.g. $x$ himself) — uniqueness is not expressed.\n- **C**: $\\forall y[\\mathit{mother}(y,x) \\to \\exists z(\\mathit{mother}(z,x) \\wedge z = y)]$ — choose $z = y$ and the consequent is the antecedent, so C is **always true** (a tautology). It asserts neither existence nor uniqueness.\n\nCorrect: **(B) and (D)**.",
-          "scene": {
-            "reveal": 12,
-            "hl": [
-              {
-                "r": 0,
-                "tone": "error"
-              },
-              {
-                "r": 2,
-                "tone": "error"
-              },
-              {
-                "r": 1,
-                "tone": "success"
-              },
-              {
-                "r": 3,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Kill A and C",
+          "body": "A: ∀x∃y∃z(mother(y,x) ∧ ¬mother(z,x)) — demands a NON-mother too, and z could equal y... it doesn't enforce uniqueness. C is ∀x∀y(mother(y,x) → ∃z(mother(z,x) ∧ ¬noteq(z,y))) — garbled, not uniqueness."
         }
       ],
       "answer": {
-        "value": "Options **(B)** and **(D)**",
+        "value": "B and D",
         "choice": [
           "B",
           "D"
@@ -5535,105 +5488,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "True even when someone has two mothers; \"someone is not the mother\" does not mean \"no one else is the mother\"."
+          "reason": "∃y∃z(mother(y,x) ∧ ¬mother(z,x)): the second conjunct only needs SOME non-mother z (anyone else), and y is not pinned as unique."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Existence ($\\mathit{mother}(y,x)$) plus uniqueness (every $z \\ne y$ is not a mother) — the standard \"exactly one\" pattern."
+          "reason": "∀x∃y[mother(y,x) ∧ ∀z(noteq(z,y) → ¬mother(z,x))]: x has a mother y, and any z ≠ y is not a mother — exactly one."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Valid formula (take $z = y$): true in every world, including people with no mother or two mothers."
+          "reason": "∀x∀y(mother(y,x) → ∃z(mother(z,x) ∧ ¬noteq(z,y))): says every mother y has a DIFFERENT mother z — wrong."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$\\neg\\exists z(p \\wedge q) \\equiv \\forall z(p \\to \\neg q)$, so D is logically equivalent to B."
+          "reason": "∀x∃y[mother(y,x) ∧ ¬∃z(noteq(z,y) ∧ mother(z,x))]: no z ≠ y is a mother — equivalent to B."
         }
       ],
-      "shortcut": "Look for \"∃y [mother(y,x) ∧ no other z is a mother]\". B states it with ∀…→¬, D with ¬∃…∧ — the two standard equivalent forms.",
+      "shortcut": "exactly one = ∃y(P(y) ∧ ∀z(z≠y → ¬P(z))) = ∃y(P(y) ∧ ¬∃z(z≠y ∧ P(z))).",
       "pitfalls": [
-        "Reading A's $\\neg\\mathit{mother}(z,x)$ as \"nobody else is a mother\": $z$ is existentially quantified, so it says only that one non-mother exists.",
-        "Thinking C expresses uniqueness because of $\\neg\\mathit{noteq}(z,y)$ (i.e. $z = y$); it is trivially satisfied."
+        "Reading ¬mother(z,x) in A as enforcing uniqueness — z ranges over everything, so it just needs one non-mother."
       ],
-      "verification": "Truth table over the three situations (table): B and D give F, T, F exactly like \"exactly one mother\"; A gives F, T, T and C gives T, T, T.",
-      "animation": {
-        "kind": "table",
-        "title": "Truth value for one person x",
-        "corner": "formula",
-        "cols": [
-          "no mother",
-          "exactly one",
-          "two mothers"
-        ],
-        "rowLabels": [
-          "A",
-          "B",
-          "C",
-          "D"
-        ],
-        "rows": [
-          [
-            {
-              "v": "F",
-              "tone": "error"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            }
-          ],
-          [
-            {
-              "v": "F",
-              "tone": "error"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "F",
-              "tone": "error"
-            }
-          ],
-          [
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            }
-          ],
-          [
-            {
-              "v": "F",
-              "tone": "error"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "F",
-              "tone": "error"
-            }
-          ]
-        ],
-        "reveal": 0
-      }
+      "verification": "equiv(B, D, intended) on all domains ≤ 3; A and C not equivalent."
     },
     "cse-2025-1-cs-39": {
       "approach": "Check the axioms one by one for pointwise addition of functions $A \\to A$: closure, associativity and commutativity are inherited from $+$ on non-negative integers, the zero function is the identity, but inverses would need negative values — so it is a commutative (Abelian) monoid, not a group.",

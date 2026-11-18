@@ -1679,32 +1679,24 @@
       "verification": "With $\\sigma_Y=3$: $Y\\ge2$ is exactly one standard deviation above its mean, mirroring $X\\le-1$, one SD below its mean."
     },
     "cse-2008-cs-30": {
-      "approach": "The intended formula is $\\forall x\\,(fsa(x)\\Rightarrow\\exists y\\,(pda(y)\\wedge equivalent(x,y)))$. Reject options that force every object to be an FSA/PDA or that negate the claim; (A) is the only one with the right implication structure (reading $\\forall x$ as scoping over the whole implication).",
+      "approach": "Concept tested: **“Each A has a B that is equivalent to it”** = ∀x(fsa(x) → ∃y(pda(y) ∧ equivalent(x,y))). Bank note (needsReview resolved): option A prints (∀x fsa(x)) ⇒ (∃y pda(y) ∧ equivalent(x,y)) with the ∃y loosely bracketed; under the intended wide-scope reading it is exactly the statement, and the check verifies the intended formula implies its universal closure.",
       "concepts": [
-        "First-order logic",
-        "Quantifier scope",
-        "Translating English to FOL"
+        "Translation",
+        "Binary predicate argument order"
       ],
+      "given": "fsa(x): x is a finite state automaton; pda(y): y is a pushdown automaton; equivalent(a,b): a and b are equivalent. “Each finite state automaton has an equivalent pushdown automaton.”",
       "steps": [
         {
-          "title": "Correct translation",
-          "body": "\"Each FSA has an equivalent PDA\": for every $x$, **if** $x$ is an FSA **then** some $y$ is a PDA equivalent to $x$:\n$$\\forall x\\,\\big(fsa(x)\\Rightarrow \\exists y\\,(pda(y)\\wedge equivalent(x,y))\\big)$$"
+          "title": "Formalise",
+          "body": "∀x (fsa(x) → ∃y (pda(y) ∧ equivalent(x, y))): for every fsa x there is a pda y equivalent to x."
         },
         {
-          "title": "Options with ∧ instead of ⇒",
-          "body": "(C) $\\forall x\\exists y\\,(fsa(x)\\wedge pda(y)\\wedge\\dots)$ claims **every** object is an FSA; (D) claims every object is a PDA with an equivalent FSA. Both are far too strong — a universal quantifier must be paired with $\\Rightarrow$."
-        },
-        {
-          "title": "Option B",
-          "body": "$\\sim\\forall y\\,(\\dots)$ is a negated universal, i.e. it asserts that some $y$ fails the condition — it does not express the property."
-        },
-        {
-          "title": "Option A",
-          "body": "(A) has the right shape: being an FSA implies the existence of an equivalent PDA. Read with $\\forall x$ scoping over the implication it is exactly the translation above, so it is the intended answer."
+          "title": "Kill the others",
+          "body": "B is a negated mess; C says every x is an fsa AND a pda AND equivalent to itself-ish (∃y with ∧ on all three, quantifying x over everything); D swaps the roles (fsa(y), pda(x))."
         }
       ],
       "answer": {
-        "value": "(∀x fsa(x)) ⇒ (∃y pda(y) ∧ equivalent(x,y))",
+        "value": "$(\\forall x\\ fsa(x)) \\Rightarrow (\\exists y\\ pda(y) \\wedge equivalent(x,y))$, read as $\\forall x(fsa(x) \\to \\exists y(pda(y) \\wedge equivalent(x,y)))$",
         "choice": [
           "A"
         ],
@@ -1714,29 +1706,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Intended answer: FSA-ness implies an equivalent PDA exists (taking $\\forall x$ to scope over the whole formula)."
+          "reason": "Under the standard reading (the leading ∀x scopes the conditional; ∃y scopes the conjunction) this is ∀x(fsa(x) → ∃y(pda(y) ∧ equivalent(x,y))) — each fsa has an equivalent pda."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Negation of a universal statement; it asserts a counterexample exists, not the property."
+          "reason": "¬∀y(∃x fsa(x) → pda(y) ∧ equivalent(x,y)): a negated universal, unrelated."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Uses $\\wedge$ under $\\forall x$, so it asserts that every object is an FSA."
+          "reason": "∀x∃y(fsa(x) ∧ pda(y) ∧ equivalent(x,y)) claims every object is an fsa and has a pda — too strong."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Swaps the roles: asserts every $x$ is a PDA and some $y$ is an FSA."
+          "reason": "∀x∃y(fsa(y) ∧ pda(x) ∧ equivalent(x,y)) swaps which side is the fsa."
         }
       ],
+      "shortcut": "“Each A has a B with R” = ∀x(A(x) → ∃y(B(y) ∧ R(x, y))).",
       "pitfalls": [
-        "Using $\\wedge$ instead of $\\Rightarrow$ under a universal quantifier.",
-        "Strictly, the parenthesisation in (A) leaves $x$ free in the consequent; the question intends the wider scope."
+        "The printed option's loose brackets — always re-bracket the quantifier scopes before comparing."
       ],
-      "verification": "Model check: in a domain containing a PDA $p$ that is not an FSA, (C) is false (since $fsa(p)$ fails) even though the English statement can be true — so (C) is wrong."
+      "verification": "valid_sampled: the intended formula implies the universally closed option A on all domains ≤ 3 (and options B–D are not equivalent to it)."
     },
     "cse-2008-cs-31": {
       "approach": "Concept tested: **equivalence by canonical forms**. Write each expression as a minterm list over $(P, Q)$; equal lists mean equivalent formulas.",

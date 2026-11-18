@@ -1300,27 +1300,29 @@
       "verification": "800 × 12 = 9600 bits/s."
     },
     "cse-2004-cs-23": {
-      "approach": "Pattern: \"some A are B\" → ∃x (A(x) ∧ B(x)); \"taller than all girls\" → ∀y (girl(y) → taller(x, y)). Combine them.",
+      "approach": "Concept tested: **nested restricted quantifiers and the ∀/∃ connective pairing**. “Some boys … taller than all the girls” is ∃x(boy(x) ∧ ∀y(girl(y) → taller(x,y))): the ∃ takes ∧, the inner ∀ takes →.",
       "concepts": [
-        "First-order logic",
-        "Quantifier translation"
+        "Translation",
+        "Nested quantifiers",
+        "∀/∃ pairing"
       ],
+      "given": "“Some boys in the class are taller than all the girls”; taller(x, y): x is taller than y.",
       "steps": [
         {
-          "title": "Inner part",
-          "body": "\"$x$ is taller than all the girls\": for every $y$, **if** $y$ is a girl then taller$(x,y)$: $(\\forall y)(\\text{girl}(y)\\rightarrow\\text{taller}(x,y))$. Using $\\wedge$ here would claim every object is a girl."
+          "title": "Outer quantifier",
+          "body": "“Some boys” → ∃x boy(x) ∧ … (existential takes ∧)."
         },
         {
-          "title": "Outer part",
-          "body": "\"Some boy has that property\": $(\\exists x)(\\text{boy}(x)\\wedge\\dots)$. Using $\\rightarrow$ under $\\exists$ is trivially satisfied by any non-boy $x$."
+          "title": "Inner quantifier",
+          "body": "“… taller than all the girls” → ∀y (girl(y) → taller(x, y)) (universal over girls takes →). Full: ∃x (boy(x) ∧ ∀y (girl(y) → taller(x, y)))."
         },
         {
-          "title": "Combine",
-          "body": "$(\\exists x)(\\text{boy}(x)\\wedge(\\forall y)(\\text{girl}(y)\\rightarrow\\text{taller}(x,y)))$ — option D."
+          "title": "Kill the wrong pairings",
+          "body": "A and C use boy(x) → …, which is vacuously true at any non-boy; B uses girl(y) ∧ taller(x,y), demanding every object be a girl. Checked on all interpretations up to size 3: only D equals the intended formula."
         }
       ],
       "answer": {
-        "value": "(∃x)(boy(x) ∧ (∀y)(girl(y) → taller(x, y)))",
+        "value": "$(\\exists x)(\\text{boy}(x) \\wedge (\\forall y)(\\text{girl}(y) \\rightarrow \\text{taller}(x, y)))$",
         "choice": [
           "D"
         ],
@@ -1330,28 +1332,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "∃x(boy(x) → …) is true as soon as any x is not a boy; and ∀y(girl(y) ∧ …) says everyone is a girl."
+          "reason": "∃x(boy(x) → …) is true at any non-boy: vacuous, not the sentence."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "∀y(girl(y) ∧ taller(x, y)) asserts every object is a girl that x is taller than."
+          "reason": "∀y(girl(y) ∧ taller(x,y)) claims every object is a taller girl."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "∃x(boy(x) → …) is vacuously true for any non-boy x, so it does not say that a boy exists."
+          "reason": "boy(x) → … is vacuous at non-boys; the ∧ is required for the existential."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: ∃ pairs with ∧, ∀ pairs with →."
+          "reason": "∃x(boy(x) ∧ ∀y(girl(y) → taller(x,y))): a boy witness, and every girl is shorter than him."
         }
       ],
+      "shortcut": "∃ takes ∧, ∀ takes →, and the inner quantifier sits inside the outer one's scope.",
       "pitfalls": [
-        "Swapping the connectives: ∃ goes with ∧, ∀ goes with →."
+        "Reading the inner ∀y as ranging over everything (it is restricted to girls, hence →).",
+        "Swapping taller's arguments: taller(x, y) has the taller one first."
       ],
-      "verification": "In a world with no boys, D is false (as the sentence should be), while A and C become true."
+      "verification": "On a world {boy b, girl g} with taller(b,g): D is true; A is also true there but differs on a world with a non-boy — the full search up to size 3 separates them."
     },
     "cse-2004-cs-24": {
       "approach": "$S$ links each number to its successor. Transitive closure chains successors to give all pairs with $y > x$; the reflexive part adds $y = x$.",
