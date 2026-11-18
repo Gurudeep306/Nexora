@@ -72,10 +72,9 @@
    "kind": "book",
    "title": "Information Theory, Inference, and Learning Algorithms",
    "fetch": {
-    "discover": {
-     "page": "https://www.inference.org.uk/itila/book.html",
-     "match": "book\\.pdf"
-    }
+    "pdf": [
+     "https://www.inference.org.uk/itprnn/book.pdf"
+    ]
    },
    "licence": "Free to read on screen",
    "use": "Information theory",
@@ -176,10 +175,9 @@
    "kind": "book",
    "title": "Understanding Machine Learning",
    "fetch": {
-    "discover": {
-     "page": "https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/",
-     "match": "\\.pdf"
-    }
+    "pdf": [
+     "https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/understanding-machine-learning-theory-algorithms.pdf"
+    ]
    },
    "licence": "Free PDF for personal use",
    "use": "Learning theory",
@@ -261,10 +259,9 @@
    "kind": "book",
    "title": "Understanding Deep Learning",
    "fetch": {
-    "discover": {
-     "page": "https://udlbook.github.io/udlbook/",
-     "match": "UDL.*\\.pdf"
-    }
+    "pdf": [
+     "https://github.com/udlbook/udlbook/releases/download/v5.0.2/UnderstandingDeepLearning_05_29_25_C.pdf"
+    ]
    },
    "licence": "CC BY-NC-ND",
    "use": "Figures and notebooks",
