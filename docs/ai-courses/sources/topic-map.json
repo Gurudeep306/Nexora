@@ -4,6 +4,11 @@
   "f-numbers": {
    "paper": [
     {
+     "source": "cortes-1995",
+     "file": "cortes-1995.pdf",
+     "loc": "p. 13"
+    },
+    {
      "source": "olsson-2022",
      "file": "olsson-2022.pdf",
      "loc": "p. 39"
@@ -12,11 +17,6 @@
      "source": "lloyd-1982",
      "file": "lloyd-1982.pdf",
      "loc": "p. 4"
-    },
-    {
-     "source": "hochreiter-1997",
-     "file": "hochreiter-1997.pdf",
-     "loc": "p. 32"
     }
    ],
    "book": [
@@ -31,9 +31,9 @@
      "loc": "p. 476"
     },
     {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 128"
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 148"
     }
    ],
    "course": [
@@ -169,6 +169,11 @@
      "loc": "p. 1045"
     },
     {
+     "source": "boyd-cvx",
+     "file": "boyd-cvx.pdf",
+     "loc": "p. 176"
+    },
+    {
      "source": "mackay-itila",
      "file": "itprnn_book.pdf",
      "loc": "p. 329"
@@ -192,31 +197,31 @@
      "loc": "p. 2"
     },
     {
+     "source": "williams-1992",
+     "file": "williams-1992.pdf",
+     "loc": "p. 9"
+    },
+    {
      "source": "hyvarinen-2000",
      "file": "hyvarinen-2000.pdf",
      "loc": "p. 4"
-    },
-    {
-     "source": "boser-1992",
-     "file": "boser-1992.pdf",
-     "loc": "p. 2"
     }
    ],
    "book": [
     {
+     "source": "boyd-cvx",
+     "file": "boyd-cvx.pdf",
+     "loc": "p. 647"
+    },
+    {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 103"
+    },
+    {
      "source": "prml",
      "file": "prml.pdf",
      "loc": "p. 34"
-    },
-    {
-     "source": "mml",
-     "file": "book_mml-book.pdf",
-     "loc": "p. 189"
-    },
-    {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 348"
     }
    ],
    "course": [
@@ -275,9 +280,14 @@
      "loc": "p. 1130"
     },
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 832"
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 211"
+    },
+    {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 30"
     }
    ],
    "course": [
@@ -370,14 +380,14 @@
      "loc": "p. 8"
     },
     {
-     "source": "radford-2015",
-     "file": "radford-2015.pdf",
-     "loc": "p. 6"
-    },
-    {
      "source": "bai-2022a",
      "file": "bai-2022a.pdf",
      "loc": "p. 64"
+    },
+    {
+     "source": "radford-2015",
+     "file": "radford-2015.pdf",
+     "loc": "p. 6"
     }
    ],
    "book": [
@@ -416,14 +426,14 @@
    ],
    "site": [
     {
-     "source": "distill",
-     "file": "2019_advex-bugs-discussion_response-3_.html",
-     "loc": "part 1"
-    },
-    {
      "source": "lilian-weng",
      "file": "posts_2018-11-30-meta-learning_.html",
      "loc": "part 3"
+    },
+    {
+     "source": "distill",
+     "file": "2019_advex-bugs-discussion_response-3_.html",
+     "loc": "part 1"
     },
     {
      "source": "alammar",
@@ -433,14 +443,14 @@
    ],
    "repo": [
     {
-     "source": "d2l-en",
-     "file": "chapter_recurrent-neural-networks/sequence.md",
-     "loc": "line 421"
-    },
-    {
      "source": "pyprobml",
      "file": "notebooks/misc/clip_imagenette_make_dataset_pytorch.ipynb",
      "loc": "line 121"
+    },
+    {
+     "source": "d2l-en",
+     "file": "chapter_recurrent-neural-networks/sequence.md",
+     "loc": "line 421"
     },
     {
      "source": "ml-book-rasbt",
@@ -479,9 +489,9 @@
      "loc": "p. 261"
     },
     {
-     "source": "isl",
-     "file": "isl.pdf",
-     "loc": "p. 405"
+     "source": "nielsen",
+     "file": "nielsen.pdf",
+     "loc": "p. 54"
     }
    ],
    "course": [
@@ -624,14 +634,14 @@
      "loc": "p. 174"
     },
     {
+     "source": "boyd-cvx",
+     "file": "boyd-cvx.pdf",
+     "loc": "p. 648"
+    },
+    {
      "source": "mml",
      "file": "book_mml-book.pdf",
      "loc": "p. 81"
-    },
-    {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 476"
     }
    ],
    "course": [
@@ -696,6 +706,11 @@
    ],
    "book": [
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 195"
+    },
+    {
      "source": "mml",
      "file": "book_mml-book.pdf",
      "loc": "p. 12"
@@ -704,11 +719,6 @@
      "source": "axler-ladr",
      "file": "LADR4e.pdf",
      "loc": "p. 288"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 33"
     }
    ],
    "course": [
@@ -870,7 +880,7 @@
     {
      "source": "hotelling-1933",
      "file": "hotelling-1933.pdf",
-     "loc": "p. 1"
+     "loc": "p. 26"
     },
     {
      "source": "vonluxburg-2007",
@@ -985,6 +995,11 @@
   "m-eigen": {
    "paper": [
     {
+     "source": "sutton-1988",
+     "file": "sutton-1988.pdf",
+     "loc": "p. 20"
+    },
+    {
      "source": "vonluxburg-2007",
      "file": "vonluxburg-2007.pdf",
      "loc": "p. 8"
@@ -1063,9 +1078,14 @@
      "loc": "p. 270"
     },
     {
-     "source": "gpml",
-     "file": "gpml_chapters_RW.pdf",
-     "loc": "p. 98"
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 294"
+    },
+    {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 173"
     }
    ],
    "course": [],
@@ -1097,14 +1117,14 @@
      "loc": "p. 290"
     },
     {
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 605"
+    },
+    {
      "source": "mml",
      "file": "book_mml-book.pdf",
      "loc": "p. 125"
-    },
-    {
-     "source": "prml",
-     "file": "prml.pdf",
-     "loc": "p. 757"
     }
    ],
    "course": [
@@ -1220,14 +1240,14 @@
      "loc": "line 601"
     },
     {
-     "source": "pyprobml",
-     "file": "notebooks/book2/23/two_moons_cnf_normalizing_flow.ipynb",
-     "loc": "line 1"
-    },
-    {
      "source": "handson-ml3",
      "file": "math_differential_calculus.ipynb",
      "loc": "line 721"
+    },
+    {
+     "source": "pyprobml",
+     "file": "notebooks/book2/23/two_moons_cnf_normalizing_flow.ipynb",
+     "loc": "line 1"
     }
    ]
   },
@@ -1256,14 +1276,14 @@
      "loc": "p. 971"
     },
     {
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 423"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 300"
-    },
-    {
-     "source": "mml",
-     "file": "book_mml-book.pdf",
-     "loc": "p. 152"
     }
    ],
    "course": [
@@ -1358,23 +1378,28 @@
      "source": "lloyd-1982",
      "file": "lloyd-1982.pdf",
      "loc": "p. 7"
+    },
+    {
+     "source": "dempster-1977",
+     "file": "dempster-1977.pdf",
+     "loc": "p. 15"
     }
    ],
    "book": [
+    {
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 464"
+    },
     {
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 974"
     },
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 319"
-    },
-    {
-     "source": "mml",
-     "file": "book_mml-book.pdf",
-     "loc": "p. 150"
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 592"
     }
    ],
    "course": [
@@ -1422,6 +1447,11 @@
     }
    ],
    "book": [
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 112"
+    },
     {
      "source": "d2l",
      "file": "d2l-en.pdf",
@@ -1488,14 +1518,14 @@
      "loc": "p. 6"
     },
     {
+     "source": "williams-1992",
+     "file": "williams-1992.pdf",
+     "loc": "p. 13"
+    },
+    {
      "source": "chen-2018",
      "file": "chen-2018.pdf",
      "loc": "p. 3"
-    },
-    {
-     "source": "baydin-2015",
-     "file": "baydin-2015.pdf",
-     "loc": "p. 17"
     }
    ],
    "book": [
@@ -1551,14 +1581,14 @@
    ],
    "repo": [
     {
-     "source": "udlbook-nb",
-     "file": "Notebooks/Chap09/9_1_L2_Regularization.ipynb",
-     "loc": "line 241"
-    },
-    {
      "source": "pyprobml",
      "file": "notebooks/book1/11/LinearRegressionProbML.ipynb",
      "loc": "line 841"
+    },
+    {
+     "source": "udlbook-nb",
+     "file": "Notebooks/Chap09/9_1_L2_Regularization.ipynb",
+     "loc": "line 241"
     },
     {
      "source": "d2l-en",
@@ -1571,14 +1601,19 @@
    "paper": [],
    "book": [
     {
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 45"
+    },
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 482"
+    },
+    {
      "source": "mml",
      "file": "book_mml-book.pdf",
      "loc": "p. 146"
-    },
-    {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 451"
     }
    ],
    "course": [
@@ -1693,14 +1728,14 @@
      "loc": "p. 171"
     },
     {
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 130"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 185"
-    },
-    {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 424"
     }
    ],
    "course": [
@@ -1795,6 +1830,11 @@
    ],
    "book": [
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 179"
+    },
+    {
      "source": "mml",
      "file": "book_mml-book.pdf",
      "loc": "p. 167"
@@ -1803,11 +1843,6 @@
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 222"
-    },
-    {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 131"
     }
    ],
    "course": [
@@ -2041,7 +2076,7 @@
     {
      "source": "hotelling-1933",
      "file": "hotelling-1933.pdf",
-     "loc": "p. 9"
+     "loc": "p. 24"
     },
     {
      "source": "geman-1992",
@@ -2061,14 +2096,14 @@
      "loc": "p. 206"
     },
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 595"
+    },
+    {
      "source": "isl",
      "file": "isl.pdf",
      "loc": "p. 49"
-    },
-    {
-     "source": "prml",
-     "file": "prml.pdf",
-     "loc": "p. 169"
     }
    ],
    "course": [
@@ -2148,14 +2183,14 @@
      "loc": "p. 1004"
     },
     {
+     "source": "boyd-cvx",
+     "file": "boyd-cvx.pdf",
+     "loc": "p. 442"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 471"
-    },
-    {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 324"
     }
    ],
    "course": [
@@ -2275,6 +2310,11 @@
    ],
    "book": [
     {
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 410"
+    },
+    {
      "source": "isl",
      "file": "isl.pdf",
      "loc": "p. 157"
@@ -2283,11 +2323,6 @@
      "source": "mml",
      "file": "book_mml-book.pdf",
      "loc": "p. 210"
-    },
-    {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 188"
     }
    ],
    "course": [
@@ -2370,6 +2405,11 @@
   "m-estimation": {
    "paper": [
     {
+     "source": "dempster-1977",
+     "file": "dempster-1977.pdf",
+     "loc": "p. 21"
+    },
+    {
      "source": "hyvarinen-2000",
      "file": "hyvarinen-2000.pdf",
      "loc": "p. 10"
@@ -2378,11 +2418,6 @@
      "source": "geman-1992",
      "file": "geman-1992.pdf",
      "loc": "p. 5"
-    },
-    {
-     "source": "cox-1958",
-     "file": "cox-1958.pdf",
-     "loc": "p. 17"
     }
    ],
    "book": [
@@ -2397,9 +2432,9 @@
      "loc": "p. 343"
     },
     {
-     "source": "prml",
-     "file": "prml.pdf",
-     "loc": "p. 114"
+     "source": "boyd-cvx",
+     "file": "boyd-cvx.pdf",
+     "loc": "p. 365"
     }
    ],
    "course": [
@@ -2474,9 +2509,9 @@
      "loc": "p. 306"
     },
     {
-     "source": "gpml",
-     "file": "gpml_chapters_RW.pdf",
-     "loc": "p. 27"
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 289"
     }
    ],
    "course": [
@@ -2526,9 +2561,9 @@
      "loc": "p. 4"
     },
     {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 478"
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 66"
     }
    ],
    "course": [],
@@ -2566,19 +2601,19 @@
    ],
    "book": [
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 1219"
+    },
+    {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 761"
+    },
+    {
      "source": "prml",
      "file": "prml.pdf",
      "loc": "p. 557"
-    },
-    {
-     "source": "mml",
-     "file": "book_mml-book.pdf",
-     "loc": "p. 281"
-    },
-    {
-     "source": "gpml",
-     "file": "gpml_chapters_RW.pdf",
-     "loc": "p. 59"
     }
    ],
    "course": [],
@@ -2699,7 +2734,7 @@
     {
      "source": "kullback-1951",
      "file": "kullback-1951.pdf",
-     "loc": "whole paper"
+     "loc": "p. 1"
     },
     {
      "source": "mcinnes-2018",
@@ -2867,26 +2902,26 @@
      "loc": "p. 21"
     },
     {
-     "source": "goodfellow-2014",
-     "file": "goodfellow-2014.pdf",
-     "loc": "p. 5"
+     "source": "cortes-1995",
+     "file": "cortes-1995.pdf",
+     "loc": "p. 9"
     }
    ],
    "book": [
+    {
+     "source": "boyd-cvx",
+     "file": "boyd-cvx.pdf",
+     "loc": "p. 30"
+    },
     {
      "source": "mml",
      "file": "book_mml-book.pdf",
      "loc": "p. 242"
     },
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 308"
-    },
-    {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 515"
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 595"
     }
    ],
    "course": [
@@ -3026,14 +3061,14 @@
      "loc": "p. 43"
     },
     {
+     "source": "sutton-1988",
+     "file": "sutton-1988.pdf",
+     "loc": "p. 24"
+    },
+    {
      "source": "duchi-2011",
      "file": "duchi-2011.pdf",
      "loc": "p. 7"
-    },
-    {
-     "source": "baydin-2015",
-     "file": "baydin-2015.pdf",
-     "loc": "p. 15"
     }
    ],
    "book": [
@@ -3048,9 +3083,9 @@
      "loc": "p. 156"
     },
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 314"
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 156"
     }
    ],
    "course": [
@@ -3115,19 +3150,14 @@
    ],
    "book": [
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 320"
+     "source": "boyd-cvx",
+     "file": "boyd-cvx.pdf",
+     "loc": "p. 549"
     },
     {
-     "source": "mml",
-     "file": "book_mml-book.pdf",
-     "loc": "p. 252"
-    },
-    {
-     "source": "fml",
-     "file": "fml.pdf",
-     "loc": "p. 308"
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 123"
     }
    ],
    "course": [
@@ -3174,7 +3204,13 @@
   },
   "m-constrained": {
    "paper": [],
-   "book": [],
+   "book": [
+    {
+     "source": "boyd-cvx",
+     "file": "boyd-cvx.pdf",
+     "loc": "p. 296"
+    }
+   ],
    "course": [],
    "site": [],
    "repo": []
@@ -3184,7 +3220,7 @@
     {
      "source": "robbins-1951",
      "file": "robbins-1951.pdf",
-     "loc": "whole paper"
+     "loc": "p. 2"
     },
     {
      "source": "mcinnes-2018",
@@ -3286,14 +3322,14 @@
      "loc": "p. 555"
     },
     {
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 102"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 101"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 318"
     }
    ],
    "course": [
@@ -3363,19 +3399,19 @@
    ],
    "book": [
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 316"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 536"
     },
     {
-     "source": "dlbook",
-     "file": "contents_optimization.html",
-     "loc": "part 59"
-    },
-    {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 565"
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 104"
     }
    ],
    "course": [
@@ -3438,9 +3474,9 @@
      "loc": "p. 13"
     },
     {
-     "source": "xiong-2020",
-     "file": "xiong-2020.pdf",
-     "loc": "p. 2"
+     "source": "lipman-2022",
+     "file": "lipman-2022.pdf",
+     "loc": "p. 20"
     }
    ],
    "book": [
@@ -3453,6 +3489,11 @@
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 326"
+    },
+    {
+     "source": "nielsen",
+     "file": "nielsen.pdf",
+     "loc": "p. 158"
     }
    ],
    "course": [
@@ -3530,8 +3571,8 @@
    "course": [
     {
      "source": "cs236",
-     "file": "docs/vae/index.html",
-     "loc": "part 3"
+     "file": "vae/index.md",
+     "loc": "line 121"
     },
     {
      "source": "cs229",
@@ -3695,7 +3736,13 @@
   },
   "ml-linreg-normal": {
    "paper": [],
-   "book": [],
+   "book": [
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 1222"
+    }
+   ],
    "course": [],
    "site": [],
    "repo": []
@@ -3794,14 +3841,14 @@
      "loc": "p. 159"
     },
     {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 191"
+    },
+    {
      "source": "uml",
      "file": "uml.pdf",
      "loc": "p. 368"
-    },
-    {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 276"
     }
    ],
    "course": [],
@@ -3887,9 +3934,9 @@
      "loc": "p. 1"
     },
     {
-     "source": "kaplan-2020",
-     "file": "kaplan-2020.pdf",
-     "loc": "p. 28"
+     "source": "zou-2005",
+     "file": "zou-2005.pdf",
+     "loc": "p. 1"
     }
    ],
    "book": [
@@ -3971,10 +4018,15 @@
     {
      "source": "zou-2005",
      "file": "zou-2005.pdf",
-     "loc": "whole paper"
+     "loc": "p. 7"
     }
    ],
    "book": [
+    {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 92"
+    },
     {
      "source": "pml1",
      "file": "pml1.pdf",
@@ -3984,11 +4036,6 @@
      "source": "isl",
      "file": "isl.pdf",
      "loc": "p. 238"
-    },
-    {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 170"
     }
    ],
    "course": [
@@ -4037,6 +4084,11 @@
    ],
    "book": [
     {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 120"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 398"
@@ -4045,11 +4097,6 @@
      "source": "gpml",
      "file": "gpml_chapters_RW.pdf",
      "loc": "p. 94"
-    },
-    {
-     "source": "prml",
-     "file": "prml.pdf",
-     "loc": "p. 224"
     }
    ],
    "course": [
@@ -4114,6 +4161,11 @@
    ],
    "book": [
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 119"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 369"
@@ -4122,11 +4174,6 @@
      "source": "isl",
      "file": "isl.pdf",
      "loc": "p. 166"
-    },
-    {
-     "source": "uml",
-     "file": "uml.pdf",
-     "loc": "p. 126"
     }
    ],
    "course": [
@@ -4201,14 +4248,14 @@
      "loc": "p. 181"
     },
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 117"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 85"
-    },
-    {
-     "source": "prml",
-     "file": "prml.pdf",
-     "loc": "p. 230"
     }
    ],
    "course": [
@@ -4350,6 +4397,11 @@
   "ml-naive-bayes": {
    "paper": [
     {
+     "source": "breiman-2001",
+     "file": "breiman-2001.pdf",
+     "loc": "p. 19"
+    },
+    {
      "source": "blei-2003",
      "file": "blei-2003.pdf",
      "loc": "p. 25"
@@ -4358,11 +4410,6 @@
      "source": "friedman-2001",
      "file": "friedman-2001.pdf",
      "loc": "p. 27"
-    },
-    {
-     "source": "hinton-2012",
-     "file": "hinton-2012.pdf",
-     "loc": "p. 6"
     }
    ],
    "book": [
@@ -4377,9 +4424,9 @@
      "loc": "p. 363"
     },
     {
-     "source": "prml",
-     "file": "prml.pdf",
-     "loc": "p. 400"
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 230"
     }
    ],
    "course": [
@@ -4439,14 +4486,14 @@
      "loc": "p. 353"
     },
     {
-     "source": "isl",
-     "file": "isl.pdf",
-     "loc": "p. 164"
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 273"
     },
     {
-     "source": "mml",
-     "file": "book_mml-book.pdf",
-     "loc": "p. 414"
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 759"
     }
    ],
    "course": [
@@ -4483,9 +4530,9 @@
      "loc": "p. 6"
     },
     {
-     "source": "ba-2016",
-     "file": "ba-2016.pdf",
-     "loc": "p. 5"
+     "source": "dempster-1977",
+     "file": "dempster-1977.pdf",
+     "loc": "p. 16"
     }
    ],
    "book": [
@@ -4531,7 +4578,7 @@
     {
      "source": "quinlan-1986",
      "file": "quinlan-1986.pdf",
-     "loc": "whole paper"
+     "loc": "p. 20"
     },
     {
      "source": "chen-2016",
@@ -4598,17 +4645,12 @@
     {
      "source": "breiman-1996",
      "file": "breiman-1996.pdf",
-     "loc": "whole paper"
+     "loc": "p. 4"
     },
     {
      "source": "breiman-2001",
      "file": "breiman-2001.pdf",
-     "loc": "whole paper"
-    },
-    {
-     "source": "ribeiro-2016",
-     "file": "ribeiro-2016.pdf",
-     "loc": "p. 6"
+     "loc": "p. 25"
     }
    ],
    "book": [
@@ -4616,6 +4658,11 @@
      "source": "isl",
      "file": "isl.pdf",
      "loc": "p. 331"
+    },
+    {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 608"
     },
     {
      "source": "pml1",
@@ -4675,17 +4722,17 @@
     {
      "source": "freund-1997",
      "file": "freund-1997.pdf",
-     "loc": "whole paper"
+     "loc": "p. 13"
+    },
+    {
+     "source": "breiman-2001",
+     "file": "breiman-2001.pdf",
+     "loc": "p. 6"
     },
     {
      "source": "friedman-2001",
      "file": "friedman-2001.pdf",
      "loc": "p. 6"
-    },
-    {
-     "source": "ke-2017",
-     "file": "ke-2017.pdf",
-     "loc": "p. 9"
     }
    ],
    "book": [
@@ -4698,6 +4745,11 @@
      "source": "uml",
      "file": "uml.pdf",
      "loc": "p. 130"
+    },
+    {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 403"
     }
    ],
    "course": [],
@@ -4786,19 +4838,19 @@
    ],
    "book": [
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 277"
+    },
+    {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 740"
+    },
+    {
      "source": "fml",
      "file": "fml.pdf",
      "loc": "p. 97"
-    },
-    {
-     "source": "gpml",
-     "file": "gpml_chapters_RW.pdf",
-     "loc": "p. 160"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 820"
     }
    ],
    "course": [
@@ -4853,7 +4905,7 @@
     {
      "source": "cortes-1995",
      "file": "cortes-1995.pdf",
-     "loc": "whole paper"
+     "loc": "p. 10"
     },
     {
      "source": "zeiler-2014",
@@ -5027,9 +5079,9 @@
      "loc": "p. 560"
     },
     {
-     "source": "gpml",
-     "file": "gpml_chapters_RW.pdf",
-     "loc": "p. 264"
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 422"
     }
    ],
    "course": [
@@ -5109,9 +5161,9 @@
      "loc": "p. 753"
     },
     {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 444"
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 479"
     }
    ],
    "course": [
@@ -5171,7 +5223,7 @@
     {
      "source": "dempster-1977",
      "file": "dempster-1977.pdf",
-     "loc": "whole paper"
+     "loc": "p. 16"
     },
     {
      "source": "blei-2016",
@@ -5191,14 +5243,14 @@
      "loc": "p. 17"
     },
     {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 294"
+    },
+    {
      "source": "mml",
      "file": "book_mml-book.pdf",
      "loc": "p. 368"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 127"
     }
    ],
    "course": [
@@ -5253,7 +5305,7 @@
     {
      "source": "hotelling-1933",
      "file": "hotelling-1933.pdf",
-     "loc": "p. 1"
+     "loc": "p. 6"
     },
     {
      "source": "olsson-2022",
@@ -5263,6 +5315,11 @@
    ],
    "book": [
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 288"
+    },
+    {
      "source": "mml",
      "file": "book_mml-book.pdf",
      "loc": "p. 323"
@@ -5271,11 +5328,6 @@
      "source": "fml",
      "file": "fml.pdf",
      "loc": "p. 10"
-    },
-    {
-     "source": "isl",
-     "file": "isl.pdf",
-     "loc": "p. 14"
     }
    ],
    "course": [
@@ -5355,14 +5407,14 @@
      "loc": "p. 449"
     },
     {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 759"
+    },
+    {
      "source": "prml",
      "file": "prml.pdf",
      "loc": "p. 753"
-    },
-    {
-     "source": "mml",
-     "file": "book_mml-book.pdf",
-     "loc": "p. 352"
     }
    ],
    "course": [
@@ -5412,6 +5464,11 @@
    ],
    "book": [
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 293"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 735"
@@ -5453,19 +5510,19 @@
    ],
    "book": [
     {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 598"
+    },
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 520"
+    },
+    {
      "source": "uml",
      "file": "uml.pdf",
      "loc": "p. 15"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 764"
-    },
-    {
-     "source": "mml",
-     "file": "book_mml-book.pdf",
-     "loc": "p. 416"
     }
    ],
    "course": [],
@@ -5519,9 +5576,9 @@
      "loc": "p. 668"
     },
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 809"
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 416"
     }
    ],
    "course": [
@@ -5596,6 +5653,11 @@
    ],
    "book": [
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 138"
+    },
+    {
      "source": "mml",
      "file": "book_mml-book.pdf",
      "loc": "p. 239"
@@ -5604,11 +5666,6 @@
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 1146"
-    },
-    {
-     "source": "fml",
-     "file": "fml.pdf",
-     "loc": "p. 14"
     }
    ],
    "course": [
@@ -5668,17 +5725,17 @@
     {
      "source": "valiant-1984",
      "file": "valiant-1984.pdf",
-     "loc": "whole paper"
+     "loc": "p. 1"
+    },
+    {
+     "source": "freund-1997",
+     "file": "freund-1997.pdf",
+     "loc": "p. 7"
     },
     {
      "source": "baydin-2015",
      "file": "baydin-2015.pdf",
      "loc": "p. 38"
-    },
-    {
-     "source": "geman-1992",
-     "file": "geman-1992.pdf",
-     "loc": "p. 55"
     }
    ],
    "book": [
@@ -5892,14 +5949,14 @@
      "loc": "p. 438"
     },
     {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 1001"
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 535"
     },
     {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 45"
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 370"
     }
    ],
    "course": [
@@ -5949,7 +6006,7 @@
     {
      "source": "mcculloch-1943",
      "file": "mcculloch-1943.pdf",
-     "loc": "whole paper"
+     "loc": "p. 2"
     },
     {
      "source": "jouppi-2017",
@@ -5964,6 +6021,11 @@
    ],
    "book": [
     {
+     "source": "nielsen",
+     "file": "nielsen.pdf",
+     "loc": "p. 11"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 51"
@@ -5972,11 +6034,6 @@
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 212"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 467"
     }
    ],
    "course": [
@@ -6034,17 +6091,22 @@
      "loc": "p. 5"
     },
     {
-     "source": "goodfellow-2014",
-     "file": "goodfellow-2014.pdf",
+     "source": "cortes-1995",
+     "file": "cortes-1995.pdf",
      "loc": "p. 2"
     },
     {
-     "source": "rumelhart-1986",
-     "file": "rumelhart-1986.pdf",
-     "loc": "p. 1"
+     "source": "goodfellow-2014",
+     "file": "goodfellow-2014.pdf",
+     "loc": "p. 2"
     }
    ],
    "book": [
+    {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 475"
+    },
     {
      "source": "prml",
      "file": "prml.pdf",
@@ -6054,11 +6116,6 @@
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 376"
-    },
-    {
-     "source": "uml",
-     "file": "uml.pdf",
-     "loc": "p. 214"
     }
    ],
    "course": [
@@ -6310,14 +6367,14 @@
      "loc": "p. 43"
     },
     {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 764"
+    },
+    {
      "source": "dlbook",
      "file": "contents_bib.html",
      "loc": "part 40"
-    },
-    {
-     "source": "prml",
-     "file": "prml.pdf",
-     "loc": "p. 250"
     }
    ],
    "course": [
@@ -6380,14 +6437,14 @@
      "loc": "p. 5"
     },
     {
-     "source": "friedman-2001",
-     "file": "friedman-2001.pdf",
-     "loc": "p. 6"
-    },
-    {
      "source": "nichol-2021",
      "file": "nichol-2021.pdf",
      "loc": "p. 8"
+    },
+    {
+     "source": "loshchilov-2017",
+     "file": "loshchilov-2017.pdf",
+     "loc": "p. 4"
     }
    ],
    "book": [
@@ -6397,14 +6454,14 @@
      "loc": "p. 265"
     },
     {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 445"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 74"
-    },
-    {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 1073"
     }
    ],
    "course": [
@@ -6474,6 +6531,11 @@
    ],
    "book": [
     {
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 51"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 476"
@@ -6482,11 +6544,6 @@
      "source": "dlbook",
      "file": "contents_optimization.html",
      "loc": "part 27"
-    },
-    {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 103"
     }
    ],
    "course": [
@@ -6549,17 +6606,22 @@
      "loc": "whole paper"
     },
     {
+     "source": "williams-1992",
+     "file": "williams-1992.pdf",
+     "loc": "p. 13"
+    },
+    {
      "source": "rezende-2014",
      "file": "rezende-2014.pdf",
      "loc": "p. 3"
-    },
-    {
-     "source": "hochreiter-1997",
-     "file": "hochreiter-1997.pdf",
-     "loc": "p. 41"
     }
    ],
    "book": [
+    {
+     "source": "nielsen",
+     "file": "nielsen.pdf",
+     "loc": "p. 78"
+    },
     {
      "source": "d2l",
      "file": "d2l-en.pdf",
@@ -6569,11 +6631,6 @@
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 117"
-    },
-    {
-     "source": "prml",
-     "file": "prml.pdf",
-     "loc": "p. 267"
     }
    ],
    "course": [
@@ -6731,7 +6788,13 @@
   },
   "dl-training-loop": {
    "paper": [],
-   "book": [],
+   "book": [
+    {
+     "source": "nielsen",
+     "file": "nielsen.pdf",
+     "loc": "p. 74"
+    }
+   ],
    "course": [
     {
      "source": "fastai",
@@ -6778,9 +6841,9 @@
      "loc": "p. 740"
     },
     {
-     "source": "dlbook",
-     "file": "contents_optimization.html",
-     "loc": "part 1"
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 1152"
     }
    ],
    "course": [
@@ -6863,6 +6926,11 @@
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 541"
+    },
+    {
+     "source": "pml1",
+     "file": "pml1.pdf",
+     "loc": "p. 827"
     }
    ],
    "course": [
@@ -7178,9 +7246,9 @@
      "loc": "p. 449"
     },
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 823"
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 764"
     }
    ],
    "course": [
@@ -7250,14 +7318,14 @@
      "loc": "p. 699"
     },
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 366"
+    },
+    {
      "source": "bishop-dl",
      "file": "Concepts_in_Deep_Learning_Solutions_v1.0.pdf",
      "loc": "p. 106"
-    },
-    {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 177"
     }
    ],
    "course": [
@@ -7337,14 +7405,14 @@
      "loc": "p. 500"
     },
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 313"
+    },
+    {
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 302"
-    },
-    {
-     "source": "pml1",
-     "file": "pml-book_toc1.pdf",
-     "loc": "p. 11"
     }
    ],
    "course": [
@@ -7429,14 +7497,14 @@
      "loc": "p. 332"
     },
     {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 209"
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 326"
     },
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 526"
+     "source": "udl",
+     "file": "udl.pdf",
+     "loc": "p. 190"
     }
    ],
    "course": [
@@ -7506,14 +7574,14 @@
      "loc": "p. 216"
     },
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 328"
+    },
+    {
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 351"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 514"
     }
    ],
    "course": [
@@ -7587,6 +7655,11 @@
     }
    ],
    "book": [
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 329"
+    },
     {
      "source": "pml1",
      "file": "pml1.pdf",
@@ -7678,14 +7751,14 @@
      "loc": "p. 421"
     },
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 325"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 544"
-    },
-    {
-     "source": "dlbook",
-     "file": "contents_guidelines.html",
-     "loc": "part 8"
     }
    ],
    "course": [
@@ -7765,9 +7838,9 @@
      "loc": "p. 533"
     },
     {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 216"
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 415"
     }
    ],
    "course": [
@@ -7847,14 +7920,14 @@
      "loc": "p. 489"
     },
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 237"
+    },
+    {
      "source": "pml1",
      "file": "pml-book_toc1.pdf",
      "loc": "p. 12"
-    },
-    {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 229"
     }
    ],
    "course": [
@@ -7937,6 +8010,11 @@
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 477"
+    },
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 351"
     }
    ],
    "course": [
@@ -8011,14 +8089,14 @@
      "loc": "p. 473"
     },
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 560"
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 375"
     },
     {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 230"
+     "source": "pml1",
+     "file": "pml1.pdf",
+     "loc": "p. 557"
     }
    ],
    "course": [
@@ -8103,9 +8181,9 @@
      "loc": "p. 477"
     },
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 559"
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 351"
     }
    ],
    "course": [
@@ -8175,14 +8253,14 @@
      "loc": "p. 484"
     },
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 196"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 535"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 661"
     }
    ],
    "course": [
@@ -8209,14 +8287,14 @@
      "loc": "part 37"
     },
     {
-     "source": "transformer-circuits",
-     "file": "2026_workspace_index.html",
-     "loc": "part 70"
-    },
-    {
      "source": "alammar",
      "file": "explaining-transformers_.html",
      "loc": "part 7"
+    },
+    {
+     "source": "transformer-circuits",
+     "file": "2026_workspace_index.html",
+     "loc": "part 70"
     }
    ],
    "repo": [
@@ -8257,14 +8335,19 @@
    ],
    "book": [
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 377"
+    },
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 352"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 240"
-    },
-    {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 497"
     }
    ],
    "course": [
@@ -8491,6 +8574,11 @@
      "source": "bishop-dl",
      "file": "Concepts_in_Deep_Learning_errata_July_2025.pdf",
      "loc": "p. 6"
+    },
+    {
+     "source": "nielsen",
+     "file": "nielsen.pdf",
+     "loc": "p. 137"
     }
    ],
    "course": [],
@@ -8534,6 +8622,11 @@
    ],
    "book": [
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 338"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 429"
@@ -8542,11 +8635,6 @@
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 667"
-    },
-    {
-     "source": "dlbook",
-     "file": "contents_representation.html",
-     "loc": "part 35"
     }
    ],
    "course": [
@@ -8616,9 +8704,9 @@
      "loc": "p. 541"
     },
     {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 404"
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 371"
     }
    ],
    "course": [
@@ -8703,7 +8791,7 @@
     {
      "source": "lilian-weng",
      "file": "posts_2023-01-10-inference-optimization_.html",
-     "loc": "part 11"
+     "loc": "part 1"
     },
     {
      "source": "transformer-circuits",
@@ -8728,7 +8816,7 @@
     {
      "source": "hopfield-1982",
      "file": "hopfield-1982.pdf",
-     "loc": "whole paper"
+     "loc": "p. 3"
     },
     {
      "source": "hinton-2006",
@@ -8743,14 +8831,14 @@
      "loc": "p. 148"
     },
     {
+     "source": "nielsen",
+     "file": "nielsen.pdf",
+     "loc": "p. 220"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 66"
-    },
-    {
-     "source": "dlbook",
-     "file": "contents_partition.html",
-     "loc": "part 13"
     }
    ],
    "course": [
@@ -8807,7 +8895,13 @@
   },
   "cv-images": {
    "paper": [],
-   "book": [],
+   "book": [
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 450"
+    }
+   ],
    "course": [],
    "site": [],
    "repo": []
@@ -8842,9 +8936,9 @@
      "loc": "p. 659"
     },
     {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 167"
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 235"
     }
    ],
    "course": [
@@ -8919,14 +9013,14 @@
      "loc": "p. 687"
     },
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 408"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 509"
-    },
-    {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 510"
     }
    ],
    "course": [
@@ -8991,6 +9085,11 @@
    ],
    "book": [
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 410"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 520"
@@ -8999,11 +9098,6 @@
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 191"
-    },
-    {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 687"
     }
    ],
    "course": [
@@ -9063,14 +9157,14 @@
      "loc": "p. 521"
     },
     {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 780"
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 418"
     },
     {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 490"
+     "source": "d2l",
+     "file": "d2l-en.pdf",
+     "loc": "p. 18"
     }
    ],
    "course": [
@@ -9150,9 +9244,9 @@
      "loc": "p. 496"
     },
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 563"
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 1102"
     }
    ],
    "course": [
@@ -9192,6 +9286,11 @@
    ],
    "book": [
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 409"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 526"
@@ -9230,6 +9329,11 @@
     }
    ],
    "book": [
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 341"
+    },
     {
      "source": "pml1",
      "file": "pml1.pdf",
@@ -9308,9 +9412,9 @@
      "loc": "p. 1143"
     },
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 666"
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 429"
     }
    ],
    "course": [
@@ -9368,6 +9472,16 @@
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 192"
+    },
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 626"
+    },
+    {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 66"
     }
    ],
    "course": [
@@ -9420,7 +9534,13 @@
      "loc": "p. 12"
     }
    ],
-   "book": [],
+   "book": [
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 933"
+    }
+   ],
    "course": [
     {
      "source": "cs231n",
@@ -9445,7 +9565,13 @@
      "loc": "p. 6"
     }
    ],
-   "book": [],
+   "book": [
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 237"
+    }
+   ],
    "course": [],
    "site": [],
    "repo": []
@@ -9460,14 +9586,14 @@
   "nlp-ngram": {
    "paper": [
     {
-     "source": "cho-2014",
-     "file": "cho-2014.pdf",
-     "loc": "p. 6"
-    },
-    {
      "source": "shoeybi-2019",
      "file": "shoeybi-2019.pdf",
      "loc": "p. 7"
+    },
+    {
+     "source": "cho-2014",
+     "file": "cho-2014.pdf",
+     "loc": "p. 6"
     },
     {
      "source": "gao-2020",
@@ -9477,9 +9603,9 @@
    ],
    "book": [
     {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 387"
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 96"
     }
    ],
    "course": [],
@@ -9512,6 +9638,11 @@
    ],
    "book": [
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 290"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 248"
@@ -9520,11 +9651,6 @@
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 758"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 826"
     }
    ],
    "course": [
@@ -9599,6 +9725,11 @@
    ],
    "book": [
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 145"
+    },
+    {
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 731"
@@ -9658,6 +9789,11 @@
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 740"
+    },
+    {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 152"
     }
    ],
    "course": [
@@ -9721,6 +9857,11 @@
     }
    ],
    "book": [
+    {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 314"
+    },
     {
      "source": "d2l",
      "file": "d2l-en.pdf",
@@ -9799,6 +9940,11 @@
      "loc": "p. 1140"
     },
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 573"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 56"
@@ -9871,6 +10017,11 @@
      "loc": "p. 769"
     },
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 235"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 569"
@@ -9907,14 +10058,14 @@
    ],
    "repo": [
     {
-     "source": "d2l-en",
-     "file": "chapter_attention-mechanisms-and-transformers/large-pretraining-transformers.md",
-     "loc": "line 61"
-    },
-    {
      "source": "labml-annotated",
      "file": "docs/transformers/mlm/index.html",
      "loc": "part 1"
+    },
+    {
+     "source": "d2l-en",
+     "file": "chapter_attention-mechanisms-and-transformers/large-pretraining-transformers.md",
+     "loc": "line 61"
     },
     {
      "source": "llms-from-scratch",
@@ -9948,14 +10099,14 @@
      "loc": "p. 501"
     },
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 235"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 572"
-    },
-    {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 244"
     }
    ],
    "course": [
@@ -10028,6 +10179,16 @@
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 783"
+    },
+    {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 319"
+    },
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 432"
     }
    ],
    "course": [
@@ -10092,6 +10253,11 @@
    ],
    "book": [
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 208"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 545"
@@ -10100,11 +10266,6 @@
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 249"
-    },
-    {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 442"
     }
    ],
    "course": [
@@ -10174,14 +10335,14 @@
      "loc": "p. 335"
     },
     {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 249"
+    },
+    {
      "source": "mml",
      "file": "book_mml-book.pdf",
      "loc": "p. 374"
-    },
-    {
-     "source": "fml",
-     "file": "fml.pdf",
-     "loc": "p. 312"
     }
    ],
    "course": [
@@ -10410,6 +10571,11 @@
    ],
    "book": [
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 356"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 360"
@@ -10472,6 +10638,11 @@
    ],
    "book": [
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 358"
+    },
+    {
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 922"
@@ -10480,11 +10651,6 @@
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 292"
-    },
-    {
-     "source": "dlbook",
-     "file": "contents_index-.html",
-     "loc": "part 3"
     }
    ],
    "course": [
@@ -10557,6 +10723,11 @@
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 300"
+    },
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 361"
     }
    ],
    "course": [
@@ -10609,6 +10780,11 @@
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 316"
+    },
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 360"
     }
    ],
    "course": [
@@ -10719,8 +10895,8 @@
      "loc": "line 421"
     },
     {
-     "source": "d2l-en",
-     "file": "chapter_computational-performance/hybridize.md",
+     "source": "labml-annotated",
+     "file": "labml_nn/normalization/batch_norm/__init__.py",
      "loc": "line 1"
     }
    ]
@@ -10810,6 +10986,11 @@
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 382"
+    },
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 670"
     },
     {
      "source": "d2l",
@@ -11073,6 +11254,11 @@
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 64"
+    },
+    {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 71"
     }
    ],
    "course": [
@@ -11132,19 +11318,14 @@
    ],
    "book": [
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 827"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 501"
-    },
-    {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 592"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 514"
     }
    ],
    "course": [
@@ -11193,9 +11374,9 @@
      "loc": "line 1"
     },
     {
-     "source": "manim",
-     "file": "manim/animation/transform.py",
-     "loc": "line 841"
+     "source": "labml-annotated",
+     "file": "papers/1706.03762.pdf",
+     "loc": "p. 5"
     }
    ]
   },
@@ -11222,6 +11403,11 @@
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 388"
+    },
+    {
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 95"
     },
     {
      "source": "fml",
@@ -11268,7 +11454,13 @@
   },
   "rl-bandits": {
    "paper": [],
-   "book": [],
+   "book": [
+    {
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 46"
+    }
+   ],
    "course": [
     {
      "source": "silver-rl",
@@ -11316,14 +11508,14 @@
      "loc": "p. 392"
     },
     {
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 102"
+    },
+    {
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 822"
-    },
-    {
-     "source": "fml",
-     "file": "fml.pdf",
-     "loc": "p. 397"
     }
    ],
    "course": [
@@ -11383,14 +11575,14 @@
    ],
    "book": [
     {
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 90"
+    },
+    {
      "source": "fml",
      "file": "fml.pdf",
      "loc": "p. 402"
-    },
-    {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 394"
     }
    ],
    "course": [
@@ -11445,6 +11637,11 @@
    ],
    "book": [
     {
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 111"
+    },
+    {
      "source": "fml",
      "file": "fml.pdf",
      "loc": "p. 407"
@@ -11453,11 +11650,6 @@
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 398"
-    },
-    {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 828"
     }
    ],
    "course": [
@@ -11522,19 +11714,14 @@
    ],
    "book": [
     {
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 157"
+    },
+    {
      "source": "mackay-itila",
      "file": "itprnn_book.pdf",
      "loc": "p. 399"
-    },
-    {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 398"
-    },
-    {
-     "source": "dlbook",
-     "file": "contents_monte_carlo.html",
-     "loc": "part 1"
     }
    ],
    "course": [
@@ -11584,7 +11771,7 @@
     {
      "source": "sutton-1988",
      "file": "sutton-1988.pdf",
-     "loc": "whole paper"
+     "loc": "p. 1"
     },
     {
      "source": "silver-2017b",
@@ -11599,19 +11786,14 @@
    ],
    "book": [
     {
-     "source": "fml",
-     "file": "fml.pdf",
-     "loc": "p. 490"
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 38"
     },
     {
      "source": "udl",
      "file": "udl.pdf",
-     "loc": "p. 411"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 497"
+     "loc": "p. 399"
     }
    ],
    "course": [
@@ -11656,7 +11838,7 @@
     {
      "source": "watkins-1992",
      "file": "watkins-1992.pdf",
-     "loc": "whole paper"
+     "loc": "p. 14"
     },
     {
      "source": "mnih-2016",
@@ -11674,6 +11856,11 @@
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 411"
+    },
+    {
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 172"
     },
     {
      "source": "fml",
@@ -11731,26 +11918,26 @@
      "loc": "p. 3"
     },
     {
-     "source": "mnih-2015",
-     "file": "mnih-2015.pdf",
-     "loc": "p. 13"
+     "source": "mnih-2013",
+     "file": "mnih-2013.pdf",
+     "loc": "p. 3"
     }
    ],
    "book": [
     {
-     "source": "dlbook",
-     "file": "contents_bib.html",
-     "loc": "part 85"
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 266"
     },
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 641"
+     "source": "boyd-cvx",
+     "file": "boyd-cvx.pdf",
+     "loc": "p. 308"
     },
     {
-     "source": "prml",
-     "file": "prml.pdf",
-     "loc": "p. 748"
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 10"
     }
    ],
    "course": [
@@ -11815,7 +12002,7 @@
     {
      "source": "schaul-2015",
      "file": "schaul-2015.pdf",
-     "loc": "p. 11"
+     "loc": "p. 2"
     }
    ],
    "book": [
@@ -11892,7 +12079,7 @@
     {
      "source": "williams-1992",
      "file": "williams-1992.pdf",
-     "loc": "whole paper"
+     "loc": "p. 19"
     },
     {
      "source": "sutton-1999",
@@ -11907,6 +12094,11 @@
    ],
    "book": [
     {
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 9"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 412"
@@ -11915,11 +12107,6 @@
      "source": "fml",
      "file": "fml.pdf",
      "loc": "p. 407"
-    },
-    {
-     "source": "dlbook",
-     "file": "contents_bib.html",
-     "loc": "part 85"
     }
    ],
    "course": [
@@ -11983,6 +12170,11 @@
     }
    ],
    "book": [
+    {
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 273"
+    },
     {
      "source": "udl",
      "file": "udl.pdf",
@@ -12156,6 +12348,11 @@
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 413"
+    },
+    {
+     "source": "kochenderfer-opt",
+     "file": "kochenderfer-opt.pdf",
+     "loc": "p. 24"
     }
    ],
    "course": [
@@ -12215,14 +12412,14 @@
      "loc": "p. 765"
     },
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 572"
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 210"
     },
     {
-     "source": "udl",
-     "file": "udl.pdf",
-     "loc": "p. 511"
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 342"
     }
    ],
    "course": [
@@ -12307,9 +12504,9 @@
      "loc": "p. 833"
     },
     {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 412"
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 15"
     }
    ],
    "course": [
@@ -12329,6 +12526,11 @@
      "source": "distill",
      "file": "2019_gan-open-problems_.html",
      "loc": "part 24"
+    },
+    {
+     "source": "transformer-circuits",
+     "file": "2025_january-update_index.html",
+     "loc": "part 3"
     }
    ],
    "repo": [
@@ -12393,6 +12595,16 @@
     }
    ],
    "book": [
+    {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 212"
+    },
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 1070"
+    },
     {
      "source": "d2l",
      "file": "d2l-en.pdf",
@@ -12471,9 +12683,9 @@
      "loc": "p. 693"
     },
     {
-     "source": "gpml",
-     "file": "gpml_chapters_RW.pdf",
-     "loc": "p. 210"
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 348"
     }
    ],
    "course": [
@@ -12638,14 +12850,14 @@
      "loc": "p. 341"
     },
     {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 297"
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 395"
     },
     {
-     "source": "prml",
-     "file": "prml.pdf",
-     "loc": "p. 449"
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 379"
     }
    ],
    "course": [
@@ -12693,7 +12905,13 @@
      "loc": "p. 6"
     }
    ],
-   "book": [],
+   "book": [
+    {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 222"
+    }
+   ],
    "course": [
     {
      "source": "mit-6s191",
@@ -12745,6 +12963,11 @@
    ],
    "book": [
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 27"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 413"
@@ -12753,11 +12976,6 @@
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 824"
-    },
-    {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 506"
     }
    ],
    "course": [
@@ -12817,19 +13035,19 @@
    ],
    "book": [
     {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 233"
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 230"
     },
     {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 606"
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 961"
     },
     {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 364"
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 120"
     }
    ],
    "course": [
@@ -12902,6 +13120,11 @@
      "source": "gpml",
      "file": "gpml_chapters_RW.pdf",
      "loc": "p. 143"
+    },
+    {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 699"
     }
    ],
    "course": [
@@ -12961,14 +13184,19 @@
    ],
    "book": [
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 275"
+    },
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 476"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 485"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 851"
     }
    ],
    "course": [
@@ -13037,6 +13265,11 @@
     }
    ],
    "book": [
+    {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 233"
+    },
     {
      "source": "d2l",
      "file": "d2l-en.pdf",
@@ -13147,7 +13380,7 @@
     {
      "source": "nickolls-2008",
      "file": "nickolls-2008.pdf",
-     "loc": "whole paper"
+     "loc": "p. 4"
     },
     {
      "source": "jouppi-2017",
@@ -13167,14 +13400,14 @@
      "loc": "p. 313"
     },
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 200"
+    },
+    {
      "source": "dlbook",
      "file": "contents_applications.html",
      "loc": "part 6"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 484"
     }
    ],
    "course": [
@@ -13189,9 +13422,9 @@
      "loc": "line 61"
     },
     {
-     "source": "ultrascale",
-     "file": "ultra_blog.md",
-     "loc": "line 2341"
+     "source": "cuda-guide",
+     "file": "cuda_cuda-programming-guide_04-special-topics_async-copies.html",
+     "loc": "part 44"
     }
    ],
    "site": [
@@ -13213,14 +13446,14 @@
    ],
    "repo": [
     {
-     "source": "llm-c",
-     "file": "dev/cuda/matmul_backward_bias.cu",
-     "loc": "line 61"
-    },
-    {
      "source": "d2l-en",
      "file": "chapter_computational-performance/async-computation.md",
      "loc": "line 1"
+    },
+    {
+     "source": "llm-c",
+     "file": "dev/cuda/matmul_backward_bias.cu",
+     "loc": "line 61"
     },
     {
      "source": "gpu-puzzles",
@@ -13234,7 +13467,7 @@
     {
      "source": "williams-2009",
      "file": "williams-2009.pdf",
-     "loc": "whole paper"
+     "loc": "p. 2"
     },
     {
      "source": "jouppi-2017",
@@ -13459,14 +13692,14 @@
      "loc": "p. 128"
     },
     {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 313"
+    },
+    {
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 600"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 326"
     }
    ],
    "course": [
@@ -13524,9 +13757,9 @@
      "loc": "p. 6"
     },
     {
-     "source": "dao-2023",
-     "file": "dao-2023.pdf",
-     "loc": "p. 5"
+     "source": "grattafiori-2024",
+     "file": "grattafiori-2024.pdf",
+     "loc": "p. 11"
     }
    ],
    "book": [
@@ -13541,9 +13774,9 @@
      "loc": "p. 128"
     },
     {
-     "source": "mml",
-     "file": "book_mml-book.pdf",
-     "loc": "p. 18"
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 284"
     }
    ],
    "course": [
@@ -13966,19 +14199,19 @@
    ],
    "book": [
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 25"
+    },
+    {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 589"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 173"
-    },
-    {
-     "source": "prml",
-     "file": "prml.pdf",
-     "loc": "p. 296"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 662"
     }
    ],
    "course": [
@@ -14066,9 +14299,9 @@
    ],
    "book": [
     {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 506"
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 218"
     },
     {
      "source": "udl",
@@ -14102,7 +14335,7 @@
     {
      "source": "transformer-circuits",
      "file": "2026_workspace_index.html",
-     "loc": "part 83"
+     "loc": "part 116"
     }
    ],
    "repo": [
@@ -14148,19 +14381,19 @@
    ],
    "book": [
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 51"
+    },
+    {
+     "source": "sutton-barto",
+     "file": "sutton-barto.pdf",
+     "loc": "p. 166"
+    },
+    {
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 506"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 48"
-    },
-    {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 82"
     }
    ],
    "course": [
@@ -14225,6 +14458,11 @@
    ],
    "book": [
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 36"
+    },
+    {
      "source": "udl",
      "file": "udl.pdf",
      "loc": "p. 248"
@@ -14233,11 +14471,6 @@
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 591"
-    },
-    {
-     "source": "pml1",
-     "file": "pml1.pdf",
-     "loc": "p. 745"
     }
    ],
    "course": [
@@ -14317,9 +14550,9 @@
      "loc": "p. 540"
     },
     {
-     "source": "d2l",
-     "file": "d2l-en.pdf",
-     "loc": "p. 606"
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 212"
     }
    ],
    "course": [
@@ -14374,6 +14607,11 @@
    ],
    "book": [
     {
+     "source": "slp3",
+     "file": "slp3.pdf",
+     "loc": "p. 259"
+    },
+    {
      "source": "pml1",
      "file": "pml1.pdf",
      "loc": "p. 840"
@@ -14382,11 +14620,6 @@
      "source": "d2l",
      "file": "d2l-en.pdf",
      "loc": "p. 607"
-    },
-    {
-     "source": "mackay-itila",
-     "file": "itprnn_book.pdf",
-     "loc": "p. 15"
     }
    ],
    "course": [
@@ -14449,7 +14682,18 @@
      "loc": "whole paper"
     }
    ],
-   "book": [],
+   "book": [
+    {
+     "source": "szeliski",
+     "file": "szeliski.pdf",
+     "loc": "p. 148"
+    },
+    {
+     "source": "esl",
+     "file": "esl.pdf",
+     "loc": "p. 719"
+    }
+   ],
    "course": [],
    "site": [
     {

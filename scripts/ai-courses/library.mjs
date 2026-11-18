@@ -55,15 +55,48 @@ const MATCH = {
   'silver-2016': /mastering the game of go with deep neural networks and tree search/i,
   'silver-2017': /mastering the game of go without human knowledge/i,
   'patarasuk-2009': /bandwidth optimal all-reduce/i,
+  'zou-2005': /zou and trevor hastie|variable selection via the elastic net/i,
+  'hopfield-1982': /emergent collective computational abilities/i,
+  'watkins-1992': /technical note q-learning/i,
+  'cortes-1995': /support-vector networks/i,
+  'mcculloch-1943': /logical calculus of the ideas immanent|immanent in nervous activity/i,
+  'dempster-1977': /incomplete data via the em algorithm/i,
+  'breiman-2001': /random forests\s+leo breiman/i,
+  'nickolls-2008': /scalable parallel programming/i,
+  'quinlan-1986': /induction of decision trees/i,
+  'breiman-1996': /bagging predictors/i,
+  'williams-1992': /simple statistical gradient-following/i,
+  'freund-1997': /decision-theoretic generalization of on-line/i,
+  'sutton-1988': /learning to predict by the methods of temporal differences/i,
+  'williams-2009': /roofline model/i,
+  'valiant-1984': /theory of the learnable/i,
+  'kullback-1951': /kullback and r\. ?a\. leibler|information and sufficiency/i,
+  'robbins-1951': /stochastic approximation/i,
 }
 /** Scanned PDFs with no text layer: identified by eye, matched by file name. */
 const SCANNED = { 'backprop_old.pdf': 'rumelhart-1986', 'bias-variance.pdf': 'geman-1992' }
 /** Known partial copies. */
-const NOTES = { 'hotelling-1933': 'Part 2 only (the continuation, from the next issue). Part 1 is still needed.' }
+const NOTES = {
+  'mcculloch-1943': 'The 1990 reprint (Bulletin of Mathematical Biology 52, 99–115); same text as the 1943 original.',
+}
 
 const text = (f) => {
   try {
     return execFileSync('pdftotext', ['-l', '3', f, '-'], { encoding: 'utf8', maxBuffer: 1 << 26 })
+  } catch {
+    return ''
+  }
+}
+/** Text of the first pages by OCR, for scans with no text layer (JSTOR, old journals). */
+const ocrText = (f) => {
+  try {
+    const tmp = join(LIB, '..', 'ocr-import')
+    execFileSync('rm', ['-rf', tmp])
+    mkdirSync(tmp, { recursive: true })
+    execFileSync('pdftoppm', ['-r', '150', '-gray', '-png', '-f', '1', '-l', '3', f, join(tmp, 'p')], { stdio: 'ignore' })
+    const t = readdirSync(tmp).sort().map((x) => execFileSync('tesseract', [join(tmp, x), '-'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })).join(' ')
+    execFileSync('rm', ['-rf', tmp])
+    return t
   } catch {
     return ''
   }
@@ -82,8 +115,12 @@ function importFolder(dir) {
       out.push(`skip ${basename(f)}: not a PDF`)
       continue
     }
-    const t = text(f).replace(/\s+/g, ' ')
-    const id = SCANNED[basename(f)] || Object.keys(MATCH).find((k) => MATCH[k].test(t))
+    let t = text(f).replace(/\s+/g, ' ')
+    let id = SCANNED[basename(f)] || Object.keys(MATCH).find((k) => MATCH[k].test(t))
+    if (!id) {
+      t = ocrText(f).replace(/\s+/g, ' ')
+      id = Object.keys(MATCH).find((k) => MATCH[k].test(t))
+    }
     if (!id) {
       out.push(`?? ${basename(f)}: not recognised (add a MATCH phrase)`)
       continue
@@ -132,7 +169,7 @@ function index() {
     '',
   ]
   const missing = rows.filter((r) => !r.e)
-  const partial = rows.filter((r) => r.e?.note)
+  const partial = rows.filter((r) => /still needed/i.test(r.e?.note || ''))
   if (missing.length || partial.length) {
     L.push(`## Still needed (${missing.length + partial.length}): please download`, '', 'These sites block automated downloads. Open each link in a browser (signed in to your institution if asked), save the PDF as the name shown, zip them, and give the zip to a session (`library.mjs import <folder>` files them).', '', '| Save as | Paper | Link |', '|---|---|---|')
     for (const { p, e } of [...missing, ...partial]) L.push(`| ${p.id}.pdf | ${p.authors} (${p.year}). ${p.title}${e?.note ? ` — ${e.note}` : ''} | ${p.doi ? `https://doi.org/${p.doi}` : p.url || `https://arxiv.org/abs/${p.arxiv}`} |`)
