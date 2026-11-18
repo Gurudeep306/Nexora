@@ -1,13 +1,15 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { HiveLogo } from '../HiveLogo'
 
 /**
  * How a model's work is shown while it answers, in the manner of the best
  * chat apps, but only with what really happened:
  *
- *   Waiting   nothing has arrived yet: who we asked and the seconds so far
- *             (never invented phases like "Planning…").
+ *   Waiting   nothing has arrived yet: the Hive mark writing itself (the
+ *             pen at work), who we asked and the seconds so far (never
+ *             invented phases like "Planning…").
  *   Thought   the reasoning the model chose to share, streaming live in a
  *             short window that follows the newest line; it folds away when
  *             the answer starts, and a finished answer keeps it behind
@@ -39,7 +41,7 @@ export function Waiting({ who, since, className }: { who?: string | null; since:
   const line = secs < 2 ? `Asking ${who || 'the model'}` : secs < 15 ? `Waiting for ${who || 'the model'} to start` : `Still waiting for ${who || 'the model'} — some models think for a while before they write`
   return (
     <div role="status" aria-live="polite" className={cn('hv-wait', className)}>
-      <span className="hv-wait-rule" aria-hidden="true" />
+      <HiveLogo size={20} loop className="hv-pen" />
       <span className="min-w-0">
         <span className="text-[var(--hv-text-2)]">{line}</span>
         {secs >= 2 && <span className="hv-num ml-2 text-[var(--hv-text-3)]">{secs}s</span>}
@@ -68,7 +70,7 @@ export function Thought({ text, live = false, answering = false, startedAt, ms, 
   return (
     <div className={cn('hv-thought', className)} data-live={thinking || undefined}>
       <button type="button" onClick={() => setUserOpen(!open)} aria-expanded={open} className="hv-thought-head">
-        <span className="hv-thought-mark" aria-hidden="true" />
+        {thinking ? <HiveLogo size={15} loop className="hv-pen" /> : <span className="hv-thought-mark" aria-hidden="true" />}
         <span className={cn('font-medium', thinking ? 'text-[var(--hv-text-1)]' : 'text-[var(--hv-text-2)]')}>{label}</span>
         {thinking && (
           <span className="hv-num text-[var(--hv-text-3)]" aria-hidden="true">

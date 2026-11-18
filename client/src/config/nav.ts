@@ -1,11 +1,11 @@
-import type { IconName } from '@/components/icon/names'
+import type { IconOrBrand } from '@/components/icon/names'
 import { apiUrl } from '@/lib/api'
 
 export interface NavItem {
   to: string
   label: string
   /** Semantic icon — render with <Icon name={item.icon} />. */
-  icon: IconName
+  icon: IconOrBrand
   end?: boolean
   /** Served by Express as a separate page (not a client route) — full page load */
   external?: boolean
@@ -63,7 +63,7 @@ export const CREATE_SECTION: NavSection = {
 export const ADMIN_ITEM: NavItem = { to: '/admin', label: 'Admin', icon: 'shield' }
 
 /** Staff-only multi-agent workspace. */
-export const HIVE_ITEM: NavItem = { to: '/hive', label: 'Hive · AI workspace', icon: 'bot' }
+export const HIVE_ITEM: NavItem = { to: '/hive', label: 'Hive · AI workspace', icon: 'hive' }
 
 export const ACCOUNT_ITEMS: NavItem[] = [
   { to: '/profile', label: 'Profile', icon: 'profile' },
