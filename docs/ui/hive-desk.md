@@ -41,7 +41,10 @@ keep every feature.
 | Page masthead (area label, title, one line, actions) | `kit/PageHeader.tsx` (`hiveArea()` picks the label) |
 | Tabs-style choices | `kit/SegmentedControl.tsx` |
 | Status labels (hairline, icon in the state colour) | `kit/StatusPill.tsx` |
-| Waiting / Thought (live reasoning, "Thought for 12s") | `kit/Thinking.tsx` |
+| Waiting / Thought (the mark writing itself, live reasoning, "Thought for 12s") | `kit/Thinking.tsx`; a streaming answer ends in a clay full stop (`hive.css`) |
+| Sidebar: primary rows, workspace tiles, live footer | `HivePage.tsx` (`PrimaryNav`, `ToolGrid`, `SideFooter`) |
+| Copilot panel: docked or floating, draggable | `Copilot.tsx` (`CopilotPanel`) |
+| Model picker | `AgentPicker.tsx` |
 
 The mark uses the NG mark's grid, stroke weights and clay
 (`components/brand/traversal.ts`), so the two read as one family.
