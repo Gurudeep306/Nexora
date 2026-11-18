@@ -42,7 +42,8 @@ keep every feature.
 | Tabs-style choices | `kit/SegmentedControl.tsx` |
 | Status labels (hairline, icon in the state colour) | `kit/StatusPill.tsx` |
 | Waiting / Thought (the mark writing itself, live reasoning, "Thought for 12s") | `kit/Thinking.tsx`; a streaming answer ends in a clay full stop (`hive.css`) |
-| Sidebar: primary rows, workspace tiles, live footer | `HivePage.tsx` (`PrimaryNav`, `ToolGrid`, `SideFooter`) |
+| The Hive bar (replaces the sidebar, 2026-11-18): back to NexoraGuru, the Hive name, system status, New, project in focus, inbox, team, Copilot panel, settings, search; then every section as a tab | `HivePage.tsx` (`HiveBar`, `SystemStatus`, `.hive-tab`) |
+| Chat history (each chat, newest first, search) | `pages/ChatPage.tsx` (`ChatHistory`) |
 | Copilot panel: docked or floating, draggable | `Copilot.tsx` (`CopilotPanel`) |
 | Model picker | `AgentPicker.tsx` |
 
@@ -61,3 +62,11 @@ shows "Thought for 12s · answered in 14s" and opens to the real text.
 `client/scripts/check-page.cjs` on every Hive route: axe 0 in light, dark and
 phone, no sideways scroll. The demo's mock model streams reasoning, so the
 thinking view can be seen end to end.
+
+## The frame (owner's call, 2026-11-18)
+
+Hive is its **own full-window page**, not inside the site's top bar and Dock
+(tried and turned down). No sidebar: one Hive bar with tabs keeps it uncrowded.
+It wears the person's site theme — its colours and its own heading and
+reading faces — and edges are faint (`--hv-border*` are lighter, `--hv-fill`
+soft fills replace outlines on chips, labels and secondary buttons).

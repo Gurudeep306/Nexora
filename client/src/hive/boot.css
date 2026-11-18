@@ -71,7 +71,7 @@
   text-transform: uppercase;
   color: var(--hv-text-3);
 }
-.hive-boot-line { font-family: var(--hv-prose); font-style: italic; font-size: 14.5px; color: var(--hv-text-2); min-height: 1.4em; }
+.hive-boot-line { font-family: var(--hv-prose); font-size: 14px; color: var(--hv-text-2); min-height: 1.4em; }
 /* A hairline that fills while Hive opens: honest (it never claims a percent). */
 .hive-boot-rule { position: relative; width: 168px; height: 1px; overflow: hidden; background: var(--hv-border); }
 .hive-boot-rule::after {

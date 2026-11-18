@@ -52,6 +52,7 @@ import { CopilotMark as Bot } from './marks'
 import { AiMarkdown } from '@/components/ai/AiMarkdown'
 import { Popover, PopoverContent, PopoverTrigger, Tooltip, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { HiveLogo } from './HiveLogo'
 import { AgentChip } from './AgentPicker'
 import { AgentAvatar, AgentMark } from './agents'
 import { hiveApi } from './api'
@@ -625,7 +626,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className={cn('flex items-center gap-2 border-b hive-line', compact ? 'px-3 py-2' : 'px-4 py-2.5 sm:px-6')}>
+      <div className={cn('flex items-center gap-2', compact ? 'border-b hive-line px-3 py-2' : 'px-4 py-2.5 sm:px-6')}>
         <BrainPill brain={brain} settings={settings} onChange={changeBrain} compact={compact} admin={admin} />
         {settings && (
           <StatusPill status={settings.autonomy === 'assist' ? 'planning' : 'done'} label={settings.autonomy === 'assist' ? 'Assist' : 'Autopilot'} className="max-sm:hidden" />
@@ -664,14 +665,12 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
             </div>
           ) : !msgs.length && !pending ? (
             <div className={cn('text-center', compact ? 'py-4' : 'py-10')}>
-              <span className="mx-auto mb-3 grid size-10 place-items-center rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] text-[var(--hv-text-2)]">
-                <Bot className="size-5" />
-              </span>
-              <h2 className={cn('font-semibold tracking-tight text-[var(--hv-text-1)]', compact ? 'text-[16px]' : 'text-[20px]')}>Your Copilot runs the hive</h2>
+              <HiveLogo size={compact ? 28 : 36} className="mx-auto mb-4" />
+              <h2 className={cn('hv-title m-0', compact && 'text-[20px]')}>Your Copilot runs the hive</h2>
               <p className="mx-auto mt-1 max-w-md text-[13px] text-[var(--hv-text-3)]">Say what you want built or checked. It plans the work, writes the prompts, puts the right agents on it, reviews what they did and tells you when it's ready.</p>
               <div className={cn('mx-auto mt-5 grid gap-2 text-left', compact ? '' : 'max-w-2xl sm:grid-cols-2')}>
                 {SUGGESTIONS.slice(0, compact ? 4 : 6).map((s) => (
-                  <button key={s.text} type="button" onClick={() => send(s.text)} className="flex items-start gap-2.5 rounded-[var(--hv-r-card)] border border-[var(--hv-border)] bg-[var(--hv-surface-1)] p-3 text-left text-[12.5px] text-[var(--hv-text-2)] transition-colors duration-[var(--hv-d-fast)] hover:border-[var(--hv-border-strong)] hover:bg-[var(--hv-surface-2)] hover:text-[var(--hv-text-1)]">
+                  <button key={s.text} type="button" onClick={() => send(s.text)} className="flex items-start gap-2.5 rounded-[var(--hv-r-card)] bg-[var(--hv-fill)] p-3 text-left text-[13px] text-[var(--hv-text-2)] transition-colors duration-[var(--hv-d-fast)] hover:bg-[var(--hv-fill-hover)] hover:text-[var(--hv-text-1)]">
                     <s.icon className="mt-0.5 size-4 shrink-0 text-[var(--hv-text-3)]" />
                     {s.text}
                   </button>
@@ -745,7 +744,7 @@ export function CopilotThread({ compact = false }: { compact?: boolean }) {
         {!!msgs?.length && !pending && (
           <div className={cn('hive-scroll mx-auto mb-2 flex gap-1.5 overflow-x-auto', !compact && 'max-w-[820px]')}>
             {QUICK.map((q) => (
-              <button key={q.label} type="button" onClick={() => (q.send ? send(q.send) : setText(q.fill ?? ''))} className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-[var(--hv-r-btn)] border border-[var(--hv-border)] px-2.5 text-[12px] text-[var(--hv-text-2)] transition-colors duration-[var(--hv-d-fast)] hover:border-[var(--hv-border-strong)] hover:bg-[var(--hv-surface-1)] hover:text-[var(--hv-text-1)]">
+              <button key={q.label} type="button" onClick={() => (q.send ? send(q.send) : setText(q.fill ?? ''))} className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full bg-[var(--hv-fill)] px-3 text-[12px] text-[var(--hv-text-2)] transition-colors duration-[var(--hv-d-fast)] hover:bg-[var(--hv-fill-hover)] hover:text-[var(--hv-text-1)]">
                 <q.icon className="size-3.5 text-[var(--hv-text-3)]" /> {q.label}
               </button>
             ))}
@@ -816,7 +815,8 @@ export function CopilotDock() {
    puts it back. Size, place and mode are remembered in this browser. ── */
 type PanelGeo = { mode: 'dock' | 'float'; dockW: number; x: number; y: number; w: number; h: number }
 const GEO_KEY = 'hive:copilotPanel'
-const TOP = 52
+// Below the Hive bar (its top row and the tabs).
+const TOP = 96
 function readGeo(): PanelGeo {
   const d: PanelGeo = { mode: 'dock', dockW: 440, x: Math.max(16, window.innerWidth - 480), y: 80, w: 440, h: Math.min(640, window.innerHeight - 120) }
   try {
