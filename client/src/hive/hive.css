@@ -59,7 +59,7 @@
 .hive-tile {
   display: inline-grid;
   place-items: center;
-  border-radius: 12px;
+  border-radius: var(--radius-control);
   color: var(--hv-text-2, var(--color-text-secondary));
   background: var(--hv-surface-2, var(--color-bg-surface));
   box-shadow: inset 0 0 0 1px var(--hv-border, rgba(127, 127, 127, 0.2));
@@ -104,17 +104,16 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
   tab-size: 2;
 }
 
-/* Terminal output. */
+/* Terminal output: the site's own code surface, in both modes. */
 .hive-term {
   font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
   font-size: 12px;
   line-height: 1.55;
-  background: color-mix(in oklab, var(--color-bg-app) 55%, black);
-  color: color-mix(in oklab, var(--color-text-primary) 88%, transparent);
+  background: var(--color-code-bg);
+  color: var(--color-text-primary);
   white-space: pre-wrap;
   word-break: break-word;
 }
-:root[data-mode="light"] .hive-term { background: oklch(0.2 0.01 260); color: oklch(0.92 0 0); }
 
 /* Inline diff lines. */
 .hive-diff { font-family: var(--font-mono, ui-monospace, monospace); font-size: 12px; line-height: 1.55; }
@@ -258,53 +257,28 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
 .hive-root :is(a, button, [role="button"], [role="tab"], [role="switch"]):focus-visible { outline: 2px solid color-mix(in oklab, var(--color-accent-brand) 70%, transparent); outline-offset: 2px; }
 .hive-root :is(input, textarea):focus-visible { outline: none; }
 
-/* ═══ Premium pass: sharp edges + calm flat canvas, scoped to Hive only ═══
-   Radius and background are re-declared on .hive-root, so every Tailwind
-   rounded-* / bg-* utility and every --hv-* alias inside Hive resolves to
-   these values while the rest of NexoraGuru keeps its own theme. */
+/* ═══ Hive runs on the site's own look ═══
+   The site already gives /hive its own theme ("Studio on Midnight", see
+   theme/look.ts hiveLook): palette, light/dark mode, ink and accent all
+   arrive through the site's tokens ([data-palette][data-mode] → --color-*),
+   so no colours are re-declared here. Only the Tailwind rounded-* scale is
+   mapped onto the site's semantic radii, so every rounded-* utility inside
+   Hive follows the same corner choice ([data-radius] / [data-corners]) as
+   the rest of NexoraGuru. */
 .hive-root {
-  /* Sharp corners: the site's radius vars plus the Tailwind radius scale
-     that rounded-xs…4xl utilities read. */
-  --radius-control: 0.125rem;
-  --radius-card: 0.25rem;
-  --radius-sheet: 0.375rem;
-  --radius-xs: 0.125rem;
-  --radius-sm: 0.125rem;
-  --radius-md: 0.1875rem;
-  --radius-lg: 0.25rem;
-  --radius-xl: 0.25rem;
-  --radius-2xl: 0.375rem;
-  --radius-3xl: 0.5rem;
-  --radius-4xl: 0.625rem;
-
-  /* Calm warm-charcoal canvas (dark is the default mode). */
-  --color-bg-app: oklch(0.15 0.004 95);
-  --color-bg-surface: oklch(0.195 0.004 95);
-  --color-bg-surface-2: oklch(0.235 0.005 95);
-  --color-bg-surface-3: oklch(0.275 0.005 95);
-  --color-bg-surface-4: oklch(0.315 0.005 95);
-  --color-bg-field: oklch(0.125 0.004 95);
-  --color-code-bg: oklch(0.235 0.005 95);
-  --color-bg-glass: color-mix(in oklab, oklch(0.235 0.005 95) 88%, transparent);
-  --color-bg-glass-hover: color-mix(in oklab, oklch(0.275 0.005 95) 80%, transparent);
-}
-:root[data-mode="light"] .hive-root,
-.light .hive-root {
-  /* Calm warm-paper canvas. */
-  --color-bg-app: oklch(0.978 0.0035 100);
-  --color-bg-surface: oklch(0.998 0.002 100);
-  --color-bg-surface-2: oklch(0.958 0.004 100);
-  --color-bg-surface-3: oklch(0.935 0.005 100);
-  --color-bg-surface-4: oklch(0.91 0.005 100);
-  --color-bg-field: oklch(0.948 0.004 100);
-  --color-code-bg: oklch(0.958 0.004 100);
-  --color-bg-glass: color-mix(in oklab, oklch(0.958 0.004 100) 88%, transparent);
-  --color-bg-glass-hover: color-mix(in oklab, oklch(0.935 0.005 100) 80%, transparent);
+  --radius-xs: var(--radius-control);
+  --radius-sm: var(--radius-control);
+  --radius-md: var(--radius-control);
+  --radius-lg: var(--radius-card);
+  --radius-xl: var(--radius-card);
+  --radius-2xl: var(--radius-sheet);
+  --radius-3xl: var(--radius-sheet);
+  --radius-4xl: var(--radius-sheet);
 }
 
 .hive-tile { border-radius: var(--radius-control); }
 .hive-chip { border-radius: var(--hv-r-chip); }
-.hive-kbd { border-radius: 3px; }
+.hive-kbd { border-radius: var(--radius-xs); }
 .hive-station { border-radius: var(--radius-card); }
 
 /* Working state: a static 1px accent hairline instead of a travelling glow. */
@@ -367,7 +341,7 @@ button.hive-chip:hover { background: color-mix(in oklab, var(--color-text-primar
 
 /* Chat markdown inside Hive (the shared AiMarkdown): sharp hairline code
    blocks with a language header + copy, scrollable tables, quiet rules. */
-.hive-root .ai-md :not(pre) > code { border-radius: 3px; }
+.hive-root .ai-md :not(pre) > code { border-radius: var(--radius-xs); }
 .hive-root .ai-code {
   border: 1px solid var(--hv-border);
   border-radius: var(--hv-r-card);
