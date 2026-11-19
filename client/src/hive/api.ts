@@ -66,8 +66,8 @@ export const hiveApi = {
   assign: (taskId: string, body: { title?: string; instructions: string; agents: AgentSpec[]; together: boolean }) => api.post<Ok<{ agents: AgentRow[] }>>(`/api/hive/tasks/${taskId}/assign`, body, { timeoutMs: 60000 }),
   handoff: (agentId: string, agent: AgentSpec) => api.post<Ok<{ agent: AgentRow }>>(`/api/hive/agents/${agentId}/handoff`, { agent }, { timeoutMs: 60000 }),
 
-  memory: (projectId: string) => api.get<Ok<{ memory: MemoryItem[] }>>(`/api/hive/projects/${projectId}/memory`),
-  addMemory: (projectId: string, body: { title: string; body: string; pinned?: boolean }) => api.post<Ok<{ id: string }>>(`/api/hive/projects/${projectId}/memory`, body),
+  memory: (projectId: string) => api.get<Ok<{ memory: MemoryItem[]; sharing?: { enabled: boolean; limit: number } }>>(`/api/hive/projects/${projectId}/memory`),
+  addMemory: (projectId: string, body: { title: string; body: string; pinned?: boolean }) => api.post<Ok<{ id: string; updated?: boolean }>>(`/api/hive/projects/${projectId}/memory`, body),
   updateMemory: (id: string, body: Record<string, unknown>) => api.patch<Ok<object>>(`/api/hive/memory/${id}`, body),
   deleteMemory: (id: string) => api.delete<Ok<object>>(`/api/hive/memory/${id}`),
 

@@ -215,8 +215,10 @@ async function execute(name, input, ctx) {
       }
       case "remember":
         if (!ctx.remember) return { content: "Shared memory is off for this project.", isError: true };
-        await ctx.remember(String(input.title).slice(0, 120), String(input.note).slice(0, 1500));
-        return { content: "Saved to project memory. Every agent on this project will see it." };
+      {
+        const r = await ctx.remember(String(input.title).slice(0, 120), String(input.note).slice(0, 1500));
+        return { content: r?.updated ? "Updated the project memory note with that title. Every agent on this project will see it." : "Saved to project memory. Every agent on this project will see it." };
+      }
       case "read_url": {
         const r = await readWebPage(input.url);
         return { content: clip(r.text, 60_000), meta: { url: input.url } };
