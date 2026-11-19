@@ -171,9 +171,9 @@ async function execute(name, input, ctx) {
         const fact = String(input.fact || "").trim().slice(0, 400);
         if (!fact) return { content: "Nothing to remember.", isError: true };
         const n = await get("SELECT COUNT(*) AS n FROM hive_user_memory WHERE username=?", [ctx.username]);
-        if (Number(n?.n) >= 200) return { content: "Memory is full (200 facts) — ask the person to tidy it in Settings.", isError: true };
-        await run("INSERT INTO hive_user_memory(id, username, fact, source, created_at) VALUES(?,?,?,?,?)", [newId("um"), ctx.username, fact, "chat", now()]);
-        return { content: "Saved to their memory." };
+        if (Number(n?.n) >= 200) return { content: "Memory is full (200 facts) — ask the person to tidy it in Hive → Memory → About you.", isError: true };
+        const r = await require("./memory").rememberPerson(ctx.username, fact, "chat");
+        return { content: r.updated ? "Already in their memory." : "Saved to their memory." };
       }
       default:
         return { content: `Unknown tool ${name}`, isError: true };
