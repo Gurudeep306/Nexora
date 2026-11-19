@@ -81,6 +81,29 @@ export function AgentPanel() {
   const [hidden, setHidden] = useState(sessionHidden)
   const [unread, setUnread] = useState(false)
   const [input, setInput] = useState('')
+  // Phones: the bubble steps aside while the reader scrolls down through
+  // content, and returns on the way back up or once scrolling stops.
+  const [tucked, setTucked] = useState(false)
+  useEffect(() => {
+    if (!sheet) {
+      setTucked(false)
+      return
+    }
+    let last = window.scrollY
+    let rest: number | undefined
+    const onScroll = () => {
+      const y = window.scrollY
+      if (Math.abs(y - last) > 6) setTucked(y > last && y > 80)
+      last = y
+      window.clearTimeout(rest)
+      rest = window.setTimeout(() => setTucked(false), 1200)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      window.clearTimeout(rest)
+    }
+  }, [sheet])
 
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -300,6 +323,7 @@ export function AgentPanel() {
           className="ai-fab"
           style={{ left: drag?.x ?? bubbleX, top: drag?.y ?? bubbleY, width: BUBBLE, height: BUBBLE }}
           data-dragging={drag ? '' : undefined}
+          data-tucked={tucked && !drag ? '' : undefined}
           onPointerDown={onBubbleDown}
           onPointerMove={onBubbleMove}
           onPointerUp={onBubbleUp}

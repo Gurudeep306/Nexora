@@ -445,6 +445,16 @@ function MiniRail({
           const done = ch.lessons.filter((l) => progressOf(progress, subject, l.id).completed).length
           const here = ch.lessons.some((l) => l.id === current)
           const frac = ch.lessons.length ? done / ch.lessons.length : 0
+          // A chapter still being written has no lesson to open.
+          if (!ch.lessons.length) {
+            return (
+              <li key={ch.id}>
+                <span className="nr-mini-ch is-soon" title={`Chapter ${ch.n}: ${ch.title} (being written)`} aria-label={`Chapter ${ch.n}: ${ch.title}, being written`}>
+                  <span>{ch.n}</span>
+                </span>
+              </li>
+            )
+          }
           return (
             <li key={ch.id}>
               <Link

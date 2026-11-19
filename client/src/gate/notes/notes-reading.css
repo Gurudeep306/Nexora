@@ -274,3 +274,37 @@
   color: var(--notes-paper);
 }
 
+/* Maths symbols in headings and box titles (⊕, ∀, ∃, ≡, ⊤, ⊥, ⊢, ⊨ …)
+   come from KaTeX's text face, the same one the formulas use: the heading
+   faces either lack them or draw them heavy and oversized in bold.
+   unicode-range limits this face to those symbols, so listing it first
+   changes nothing else in the heading. */
+@font-face {
+  font-family: 'NG Math Symbols';
+  src: url('../../../node_modules/katex/dist/fonts/KaTeX_Main-Regular.woff2') format('woff2');
+  unicode-range: U+2200-2203, U+2205, U+2208-2209, U+2261, U+2262, U+2295-2299, U+22A2, U+22A4-22A5, U+22A8;
+  font-weight: 100 900;
+  font-style: normal italic;
+  font-display: swap;
+}
+.notes-root :is(.notes-h, .nb-title) {
+  font-family: 'NG Math Symbols', var(--read-heading);
+}
+
+/* Section headings lead, sub-headings follow: the same reading face for
+   both, the sub-heading smaller (the site-wide rule made small headings the
+   bold sans, which out-shouted the section headings above them). */
+.notes-root .notes-prose h2.notes-h {
+  font-weight: 500;
+}
+.notes-root .notes-prose h3.notes-h {
+  font-family: var(--read-heading);
+  font-size: 1.16em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.notes-root .notes-prose h4.notes-h {
+  font-family: var(--read-heading);
+  font-size: 1.04em;
+  font-weight: 600;
+}

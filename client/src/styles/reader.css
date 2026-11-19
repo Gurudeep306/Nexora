@@ -1280,3 +1280,9 @@
   border-left-color: var(--color-accent-brand);
   background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
 }
+
+/* A chapter still being written: shown in the strip, but nothing to open. */
+.nr-mini-ch.is-soon {
+  opacity: 0.45;
+  cursor: default;
+}

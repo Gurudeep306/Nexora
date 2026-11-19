@@ -100,7 +100,7 @@ export default function GateLeaderboardPage() {
 function Row({ r, me }: { r: LeaderboardRow; me: boolean }) {
   return (
     <tr className={cn('transition-colors', me ? 'bg-bg-surface-3' : 'hover:bg-bg-surface-2')} aria-current={me ? 'true' : undefined}>
-      <td className="py-2.5 pl-4 font-mono font-semibold text-text-muted tabular-nums sm:pl-5">{r.rank}</td>
+      <td className={cn('py-2.5 pl-4 font-mono font-semibold tabular-nums sm:pl-5', me ? 'text-text-secondary' : 'text-text-muted')}>{r.rank}</td>
       <td className="py-2.5">
         <span className="flex min-w-0 items-center gap-2.5">
           <Avatar size="sm" seed={r.username} avatar={r.avatar} name={r.displayName ?? r.username} ring={false} />
@@ -109,13 +109,14 @@ function Row({ r, me }: { r: LeaderboardRow; me: boolean }) {
               {r.displayName ?? r.username}
               {me && <span className="ml-1.5 rounded px-1.5 py-px font-mono text-[10.5px] font-semibold text-text-primary shadow-[inset_0_0_0_1px_var(--color-text-primary)]">You</span>}
             </span>
-            {r.displayName && <span className="block truncate text-[11.5px] text-text-muted">@{r.username}</span>}
+            {r.displayName && <span className={cn('block truncate text-[11.5px]', me ? 'text-text-secondary' : 'text-text-muted')}>@{r.username}</span>}
           </span>
         </span>
       </td>
       <td className="py-2.5 text-right text-text-secondary tabular-nums">
         {r.correct}
-        <span className="text-text-muted">/{r.attempted}</span>
+        {/* The highlighted row is a shade darker: its quiet text steps up a tone to stay readable. */}
+        <span className={me ? 'text-text-secondary' : 'text-text-muted'}>/{r.attempted}</span>
       </td>
       <td className="py-2.5 text-right text-text-secondary tabular-nums">{pct(r.accuracy)}%</td>
       <td className="py-2.5 pr-4 text-right font-mono text-[14px] font-semibold text-text-primary tabular-nums sm:pr-5">{Math.round(r.score * 100) / 100}</td>
