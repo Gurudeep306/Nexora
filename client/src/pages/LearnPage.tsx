@@ -1,4 +1,4 @@
-import { Navigate, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useSearchParams } from 'react-router-dom'
 import { LessonFinder } from '@/components/learn/LessonFinder'
 import { BackButton } from '@/components/ui/BackButton'
 import { TutorialsPanel } from '@/components/learn/TutorialsPanel'
@@ -30,6 +30,9 @@ export default function LearnPage() {
           <h1 className="ed-title mt-3 mb-0">Learn</h1>
           <p className="ed-lead mt-3 mb-0 max-w-[60ch]">Pick up where you left off, or open a subject: its lessons, skill tree and practice sit together.</p>
           <LessonFinder className="mt-8 max-w-2xl" />
+          <p className="ed-muted mt-4 mb-0 text-[14.5px]">
+            <Link to="/learn/ai-courses" className="underline underline-offset-2">AI courses</Link>: ten courses, from school maths to how big models are built.
+          </p>
         </header>
         <LearnHome />
       </div>

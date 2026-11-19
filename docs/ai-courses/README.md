@@ -13,13 +13,14 @@ any agent can build a topic to the same standard.
 | [STYLE.md](STYLE.md) | How we explain: every lesson is a story, code is built up step by step, no student stays stuck. |
 | [UPDATING.md](UPDATING.md) | How new models and papers join the web as they come out. |
 | [MODELS.md](MODELS.md) | The models timeline (LeNet to today), each linked to the lessons that explain it. Generated. |
+| [PYTHON.md](PYTHON.md) | **Python in the courses**: the versions taught (Python 3.15, NumPy 2.5, pandas 3.1, Matplotlib 3.11, scikit-learn 1.9, PyTorch 2.15), the official sources, the runnable Python block (run, step through, edit) and how outputs are recorded from real runs. |
 | [STAGE.md](STAGE.md) | **Nexora Stage**, the animation library every course uses: one 2D/3D scene format, kits, the generator that builds scenes from a computation, and how to add a kit. |
 | [ANIMATION.md](ANIMATION.md) | How every idea is animated: the technology, which scene type fits which idea, how time and autoplay work, the rules. The engine and 7 example scenes are live at `/ai-lab`. |
 | [PIPELINE.md](PIPELINE.md) | How a topic goes from papers to a finished lesson, the new tools to build first (3D, live training in the browser, derivation stepper, paper walks, labs), and the phases. |
 | [AGENT_RULES.md](AGENT_RULES.md) | The rules every agent follows. Give this file to any agent. |
 | [TOPIC_TEMPLATE.md](TOPIC_TEMPLATE.md) | The exact shape of one topic: every section, block and check. |
 | [NOTATION.md](NOTATION.md) | One notation for every course (symbols, shapes, indices). |
-| [CURRICULUM.md](CURRICULUM.md) | The web of courses: 10 courses, 225 topics in teaching order, each with what it builds on, what uses it, related topics, papers, models and its signature visual. Generated from `curriculum.json` (with `web.json`, the data the site will draw). |
+| [CURRICULUM.md](CURRICULUM.md) | The web of courses: 10 courses, 244 topics in teaching order, each with what it builds on, what uses it, related topics, papers, models and its signature visual. Generated from `curriculum.json` (with `web.json`, the data the site will draw). |
 | [sources/](sources/) | `papers.json` (248 papers), `books.json` (24 books), `courses.json` (26 courses, guides and code references), `models.json` (22 models), **`DOWNLOAD.md` (a link for every paper)** and `CHECK.md` (the check report). |
 
 ## The sources are checked, not typed from memory

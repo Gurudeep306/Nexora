@@ -29,6 +29,7 @@ const AnalyticsPage = lazy(pageLoaders.AnalyticsPage)
 const AchievementsPage = lazy(pageLoaders.AchievementsPage)
 const LearnPage = lazy(pageLoaders.LearnPage)
 const LearnTopicPage = lazy(pageLoaders.LearnTopicPage)
+const AiCoursesPage = lazy(pageLoaders.AiCoursesPage)
 const LearnPracticePage = lazy(pageLoaders.LearnPracticePage)
 const GatePage = lazy(pageLoaders.GatePage)
 const GateCbtPage = lazy(pageLoaders.GateCbtPage)
@@ -134,6 +135,10 @@ export default function App() {
             <Route path="/learn/dsa/:topic/practice" element={<LearnPracticePage />} />
             <Route path="/learn/dsa/:topic/:page?" element={<LearnTopicPage />} />
             {/* Every Nexus subject's one page: its course tree; a node opens its lesson in place. */}
+            <Route path="/learn/ai-courses" element={<AiCoursesPage />} />
+            <Route path="/learn/ai-courses/:course" element={<AiCoursesPage />} />
+            <Route path="/learn/ai-courses/:course/:topic/practice" element={<LearnPracticePage />} />
+            <Route path="/learn/ai-courses/:course/:topic/:page?" element={<LearnTopicPage />} />
             <Route path="/learn/dsa" element={<SubjectPage />} />
             <Route path="/learn/dsa/skill/:node" element={<SubjectPage />} />
             <Route path="/learn/:subject" element={<SubjectPage />} />

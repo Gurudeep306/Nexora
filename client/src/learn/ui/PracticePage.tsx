@@ -8,6 +8,7 @@ import { codeKey, isDone, qKey, useProgress } from '../progress'
 import { KIND_LABEL, type Question, type QuestionKind } from '../questions/types'
 import { QuestionCard } from './QuestionCard'
 import { useTopic } from './useTopic'
+import { topicBase } from '../content/courses'
 
 type Status = 'all' | 'todo' | 'done'
 
@@ -61,7 +62,7 @@ export default function PracticePage() {
 
   return (
     <div className="mx-auto max-w-[900px]">
-      <Link to={`/learn/dsa/${topic.id}`} className="mb-3 inline-flex items-center gap-1.5 text-[12.5px] text-text-muted !no-underline hover:text-text-primary">
+      <Link to={topicBase(topic.id)} className="mb-3 inline-flex items-center gap-1.5 text-[12.5px] text-text-muted !no-underline hover:text-text-primary">
         <ArrowLeft className="size-3.5" /> {topic.title}
       </Link>
       <PageHeader title={`${topic.title} — question bank`} subtitle={`${total} questions: ${topic.questions.filter((q) => q.kind !== 'code').length} answered right here, ${topic.questions.filter((q) => q.kind === 'code').length} judged in the editor. ${done} done.`} />

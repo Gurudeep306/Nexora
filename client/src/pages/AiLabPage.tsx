@@ -146,7 +146,7 @@ export default function AiLabPage() {
           Every kit at work
         </h2>
         <p className="m-0 max-w-3xl text-[15px] leading-relaxed text-text-secondary">
-          Each scene computes its own numbers: the dice are simulated, the classifier is trained, the grid world is solved by value iteration, the memory is counted byte by byte. Every one of the 225 topics in the curriculum is drawn with these pieces.
+          Each scene computes its own numbers: the dice are simulated, the classifier is trained, the grid world is solved by value iteration, the memory is counted byte by byte. Every topic in the curriculum is drawn with these pieces.
         </p>
       </section>
       {KIT_DEMOS.map(({ kit, make }) => {

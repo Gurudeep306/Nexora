@@ -15,6 +15,19 @@ export type Block =
   | { t: 'steps'; title?: string; items: { title: string; md: string }[] }
   /** A Nexora Stage scene (2D and 3D, client/src/ai/stage/spec.ts); loaded only when a page shows one. */
   | { t: 'stage'; scene: StageSpec; caption?: string }
+  /** A derivation: one line per step, each with the reason it follows from the line before. */
+  | { t: 'derive'; title?: string; lines: { tex: string; why: string }[]; result?: string }
+  /**
+   * Python the reader can run, step through line by line, and edit. Its output
+   * is recorded from a real run (scripts/ai-courses/record-python.mjs).
+   * `browser: false` for code the in-browser Python cannot run (PyTorch, or a
+   * feature newer than the browser's Python): it shows the recorded output only.
+   * `error: true` marks an example that ends in an error on purpose (the tests
+   * fail if any other example errors).
+   */
+  | { t: 'python'; code: string; title?: string; note?: string; stdin?: string; browser?: boolean; step?: boolean; error?: boolean }
+  /** Books and chapters to read alongside (ids from docs/ai-courses/sources/books.json). */
+  | { t: 'readmore'; items: { book: string; where: string; why: string }[] }
 
 export interface Page {
   id: string

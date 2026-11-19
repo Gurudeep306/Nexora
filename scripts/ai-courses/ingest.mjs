@@ -101,6 +101,13 @@ async function ingest(it) {
   if (existsSync(dir) && readdirSync(dir).length && !refresh) return
   mkdirSync(dir, { recursive: true })
   if (f.pdf) for (const u of f.pdf) await savePdf(u, dir)
+  // An official archive (for example the Python docs as plain text): download, then unpack with unzip.
+  if (f.zip) {
+    const r = await get(f.zip, { binary: true })
+    const file = join(dir, 'archive.zip')
+    writeFileSync(file, r.body)
+    execFileSync('unzip', ['-q', '-o', file, '-d', dir], { stdio: 'pipe', timeout: 600000 })
+  }
   if (f.discover) {
     const page = await get(f.discover.page)
     const re = new RegExp(f.discover.match, 'i')

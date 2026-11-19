@@ -76,8 +76,22 @@ export function CurveEl({ el, c }: El<'curve'>) {
       dots.push(P(x2, f(x2)))
     }
   }
+  // A point riding on the curve, with dashed guides to both axes.
+  const rider = f && el.dot != null && Number.isFinite(f(el.dot)) ? ([el.dot, f(el.dot)] as [number, number]) : null
   return (
     <group>
+      {rider && el.guides && (
+        <>
+          <Line points={[P(rider[0], 0), P(rider[0], rider[1])]} color={toneColor(c.p, 'muted')} lineWidth={1.2} dashed dashSize={0.07} gapSize={0.05} transparent opacity={o} />
+          <Line points={[P(0, rider[1]), P(rider[0], rider[1])]} color={toneColor(c.p, 'muted')} lineWidth={1.2} dashed dashSize={0.07} gapSize={0.05} transparent opacity={o} />
+        </>
+      )}
+      {rider && (
+        <mesh position={P(rider[0], rider[1])} onPointerMove={(e) => c.tip(e, `x = ${fmt(rider[0])}, f(x) = ${fmt(rider[1])}`)} onPointerOut={() => c.tip(null)}>
+          <sphereGeometry args={[0.09, 20, 20]} />
+          <Mat color={toneColor(c.p, 'accent')} />
+        </mesh>
+      )}
       {fillQuads.length > 0 && <Quads quads={fillQuads} colors={[mix(c.p.surface, toneColor(c.p, el.tone, 'info'), 0.35)]} opacity={0.55 * o} />}
       {rects.length > 0 && <Quads quads={rects} colors={rects.map((_, i) => mix(c.p.surface, c.p.warning, i % 2 ? 0.45 : 0.6))} opacity={0.8 * o} onTip={(e, i) => c.tip(e, e && i >= 0 && el.fill && f ? `rectangle ${i + 1}: width ${fmt((el.fill[1] - el.fill[0]) / Math.round(el.riemann!))} × height ${fmt(f(el.fill[0] + ((i + 0.5) * (el.fill[1] - el.fill[0])) / Math.round(el.riemann!)))}` : undefined)} />}
       {shown.length > 1 && <Line points={shown.map(([x, y]) => P(x, y))} color={col} lineWidth={el.width ?? 2.4} dashed={el.dashed} dashSize={0.08} gapSize={0.06} transparent opacity={o} />}

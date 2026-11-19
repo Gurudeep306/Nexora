@@ -4,12 +4,16 @@ import { cachedStructure, fetchStructure, rememberStructure } from '@/components
 import { subjectHref } from '@/components/nexus/course'
 import type { NexusWebStructure } from '@/components/nexus/types'
 import { DSA_TOPICS } from '@/learn/content/dsa/syllabus'
+import { AI_COURSES, AI_TOPIC_INFO } from '@/learn/content/ai/web.gen'
+import { AI_SEARCH } from '@/learn/content/ai/search.gen'
+import { aiTopicHref, topicBase } from '@/learn/content/courses'
 import type { SearchResult } from '@/gate/notes/types'
 import type { IconName } from '@/components/icon/names'
 
 /*
  * One "find a lesson" index for the whole site: every written lesson (GATE
- * notes, searched on the server in full text, and DSA chapters), every
+ * notes, searched on the server in full text, DSA chapters, and AI course
+ * topics with their pages and sections), every
  * subject and every skill in the Nexus. The top bar, the command palette,
  * Learn and Nexus all search through it, so a lesson is found the same way
  * from anywhere.
@@ -98,6 +102,20 @@ export function useLessonSearch(query: string, { enabled = true, limit = 6 }: { 
       if (!t.load) continue
       const r = matchRank(t.title, q)
       if (r >= 0) lessons.push({ r, h: { id: `dsa:${t.id}`, kind: 'lesson', label: t.title, hint: 'DSA course', to: `/learn/dsa/${t.id}` } })
+    }
+    // AI courses: every topic by name (written or not), and every page and section of the written ones.
+    for (const [id, t] of Object.entries(AI_TOPIC_INFO)) {
+      const course = AI_COURSES.find((c) => c.id === t.course)?.title ?? 'AI'
+      const r = matchRank(t.title, q)
+      if (r >= 0) lessons.push({ r, h: { id: `ai:${id}`, kind: 'lesson', label: t.title, hint: `${course} · ${t.chapter}`, to: aiTopicHref(id) } })
+      for (const p of AI_SEARCH[id] ?? []) {
+        const pr = matchRank(p.title, q)
+        if (pr >= 0) lessons.push({ r: pr + 0.5, h: { id: `ai:${id}/${p.page}`, kind: 'lesson', label: p.title, hint: `${course} · ${t.title}`, to: `${topicBase(id)}/${p.page}` } })
+        for (const sec of p.sections) {
+          const sr = matchRank(sec, q)
+          if (sr >= 0) lessons.push({ r: sr + 1, h: { id: `ai:${id}/${p.page}#${sec}`, kind: 'lesson', label: sec, hint: `${t.title} · ${p.title}`, to: `${topicBase(id)}/${p.page}` } })
+        }
+      }
     }
     if (notes.q === q) {
       for (const n of notes.results) {

@@ -969,3 +969,314 @@
     --read-size: 1.25rem;
   }
 }
+
+/* A derivation: each line of maths with the reason it follows (AI courses). */
+.nr-derive ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+.nr-derive li {
+  display: grid;
+  grid-template-columns: 2.4rem minmax(0, 1fr) minmax(0, 15rem);
+  gap: 0.25rem 1rem;
+  align-items: center;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.nr-derive-n {
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+.nr-derive-tex {
+  min-width: 0;
+  overflow-x: auto;
+}
+.nr-derive-tex .katex-display {
+  margin: 0.2rem 0;
+  text-align: left;
+}
+.nr-derive-why {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.nr-derive-why p {
+  margin: 0;
+}
+.nr-derive-result {
+  margin-top: 0.75rem;
+  padding-left: 0.9rem;
+  border-left: 2px solid var(--color-accent-brand);
+}
+@media (max-width: 640px) {
+  .nr-derive li {
+    grid-template-columns: 2rem minmax(0, 1fr);
+  }
+  .nr-derive-why {
+    grid-column: 2;
+  }
+}
+/* "Read more": books and chapters, a quiet list. */
+.nr-readmore ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.6rem;
+}
+.nr-readmore li {
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 14.5px;
+}
+.nr-readmore li p {
+  display: inline;
+  margin: 0;
+}
+/* AI courses: the course web inside a lesson (what you need, where next, stuck?). */
+.nr-web {
+  padding: 0.9rem 0 1rem;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+.nr-web-h {
+  margin: 0 0 0.5rem !important;
+  font-size: 13px !important;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.nr-web-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.25rem;
+}
+.nr-web-item::before {
+  content: '→ ';
+  color: var(--color-text-muted);
+}
+.nr-stuck {
+  margin: 1.5rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+/* AI course pages: numbered topics with what each needs. */
+.ai-topics {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+.ai-topic {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--color-border);
+  scroll-margin-top: 6rem;
+}
+.ai-topic:target {
+  background: color-mix(in oklab, var(--color-text-primary) 5%, transparent);
+}
+.ai-topic-n {
+  padding-top: 0.15rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+/* A Python example: code, step-through, output (AI courses). */
+.py-block {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, 12px);
+  background: var(--color-bg-surface);
+  overflow: hidden;
+}
+.py-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.6rem 0.4rem 0.9rem;
+  border-bottom: 1px solid var(--color-border);
+}
+.py-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.py-tag {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+.py-code {
+  margin: 0;
+  padding: 0.6rem 0;
+  overflow-x: auto;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 13.5px;
+  line-height: 1.6;
+  background: var(--color-bg-surface);
+}
+.py-line {
+  display: flex;
+  padding: 0 1rem 0 0;
+  border-left: 3px solid transparent;
+  white-space: pre;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+.py-line.is-active {
+  border-left-color: var(--color-accent-brand);
+  background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+}
+.py-line.is-error {
+  border-left-color: var(--color-state-error);
+  background: color-mix(in oklab, var(--color-state-error) 10%, transparent);
+}
+.py-ln {
+  flex: none;
+  width: 2.6rem;
+  padding-right: 0.9rem;
+  text-align: right;
+  color: var(--color-text-muted);
+  user-select: none;
+}
+.py-editor {
+  border-bottom: 1px solid var(--color-border);
+}
+.py-step {
+  border-top: 1px solid var(--color-border);
+  padding: 0.5rem 0.75rem 0.75rem;
+}
+.py-step-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+.py-scrub {
+  width: clamp(80px, 30vw, 220px);
+  accent-color: var(--color-accent-brand);
+}
+.py-step-n {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.py-vars-wrap {
+  margin-top: 0.5rem;
+  overflow-x: auto;
+}
+.py-stack {
+  margin: 0 0 0.35rem;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.py-vars {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.py-vars th,
+.py-vars td {
+  padding: 0.25rem 0.6rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+  white-space: pre;
+}
+.py-vars th {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+.py-vars tr.is-changed td {
+  animation: py-flash 0.9s ease;
+}
+.py-vars tr.is-changed td:first-child {
+  font-weight: 700;
+}
+.py-vars tr.no-motion td {
+  animation: none;
+}
+@keyframes py-flash {
+  from {
+    background: color-mix(in oklab, var(--color-accent-brand) 18%, transparent);
+  }
+  to {
+    background: transparent;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .py-line {
+    transition: none;
+  }
+  .py-vars tr.is-changed td {
+    animation: none;
+  }
+}
+.py-out {
+  border-top: 1px solid var(--color-border);
+  padding: 0.5rem 0.9rem 0.75rem;
+  background: var(--color-bg-app);
+}
+.py-out-label {
+  margin: 0 0 0.25rem;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+.py-out-text {
+  margin: 0;
+  overflow-x: auto;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre;
+  color: var(--color-text-primary);
+}
+.py-out-text.is-error {
+  color: var(--color-state-error);
+}
+.py-fig {
+  display: block;
+  max-width: 100%;
+  margin-top: 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+.py-note {
+  margin: 0;
+  padding: 0.5rem 0.9rem;
+  border-top: 1px solid var(--color-border);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.py-line.is-done {
+  border-left-color: var(--color-border-strong);
+  background: color-mix(in oklab, var(--color-text-primary) 4%, transparent);
+}
+.py-legend {
+  margin: 0.5rem 0 0;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.py-key {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  margin: 0 0.25rem 0 0.5rem;
+  vertical-align: -0.1rem;
+  border-left: 3px solid var(--color-border-strong);
+  background: color-mix(in oklab, var(--color-text-primary) 4%, transparent);
+}
+.py-key:first-child {
+  margin-left: 0;
+}
+.py-key.is-active {
+  border-left-color: var(--color-accent-brand);
+  background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+}
