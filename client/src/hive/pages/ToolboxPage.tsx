@@ -6,7 +6,7 @@
    worker machine, or open the project. Connected tools are shared by the
    whole staff workspace and show up in chat and in every agent.
    ──────────────────────────────────────────────────────────────────────── */
-import { SecretInput } from '../kit'
+import { Empty, SecretInput, SegmentedControl } from '../kit'
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -25,7 +25,6 @@ import {
   Play,
   Plug,
   Plus,
-  PiggyBank,
   RefreshCw,
   Search,
   Server,
@@ -34,7 +33,7 @@ import {
   Wand2,
   Wrench,
 } from 'lucide-react'
-import { Button, Input, Modal, Tooltip, useToast } from '@/components/ui'
+import { Button, Input, Modal, SearchInput, Select, Tooltip, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
 import { errMsg } from '../Improve'
@@ -42,17 +41,15 @@ import { useHive } from '../store'
 import type { EcoTool, Integration, McpToolInfo, ToolHow, Toolbox } from '../types'
 import { PageTitle, Toggle, timeAgo } from '../ui'
 
-const EASE = [0.2, 0.8, 0.2, 1] as const
-
-const HOW: Record<ToolHow, { label: string; short: string; hue: number; icon: typeof Plug; hint: string }> = {
-  mcp: { label: 'Connect as MCP', short: 'MCP', hue: 285, icon: Plug, hint: 'Its tools appear in chat and for every agent' },
-  search: { label: 'Search engine', short: 'Search', hue: 200, icon: Globe, hint: 'Powers web search and page reading in chat and agents' },
-  provider: { label: 'Model endpoint', short: 'Models', hue: 160, icon: KeyRound, hint: 'OpenAI-compatible — add it in Keys and the router can use it' },
-  skill: { label: 'Import skill', short: 'Skill', hue: 330, icon: Wand2, hint: 'Imported as a Hive plugin: instructions every agent follows' },
-  subscription: { label: 'Subscription agent', short: 'Subscription', hue: 25, icon: Sparkles, hint: 'Runs on your plan through a worker machine' },
-  builtin: { label: 'Built into Hive', short: 'Built in', hue: 145, icon: CheckCircle2, hint: 'Hive already does this — nothing to install' },
-  machine: { label: 'Runs on a machine', short: 'Machine', hue: 55, icon: Server, hint: 'A CLI you run on a worker machine next to the bridge' },
-  reference: { label: 'Reference', short: 'Reference', hue: 250, icon: BookOpen, hint: 'Good to know — open the project to learn more' },
+const HOW: Record<ToolHow, { label: string; short: string; icon: typeof Plug; hint: string }> = {
+  mcp: { label: 'Connect as MCP', short: 'MCP', icon: Plug, hint: 'Its tools appear in chat and for every agent' },
+  search: { label: 'Search engine', short: 'Search', icon: Globe, hint: 'Powers web search and page reading in chat and agents' },
+  provider: { label: 'Model endpoint', short: 'Models', icon: KeyRound, hint: 'OpenAI-compatible — add it in Keys and the router can use it' },
+  skill: { label: 'Import skill', short: 'Skill', icon: Wand2, hint: 'Imported as a Hive plugin: instructions every agent follows' },
+  subscription: { label: 'Subscription agent', short: 'Subscription', icon: Sparkles, hint: 'Runs on your plan through a worker machine' },
+  builtin: { label: 'Built into Hive', short: 'Built in', icon: CheckCircle2, hint: 'Hive already does this — nothing to install' },
+  machine: { label: 'Runs on a machine', short: 'Machine', icon: Server, hint: 'A CLI you run on a worker machine next to the bridge' },
+  reference: { label: 'Reference', short: 'Reference', icon: BookOpen, hint: 'Good to know — open the project to learn more' },
 }
 const FILTERS: { id: string; label: string; hows: ToolHow[] | null }[] = [
   { id: 'all', label: 'Everything', hows: null },
@@ -61,8 +58,8 @@ const FILTERS: { id: string; label: string; hows: ToolHow[] | null }[] = [
   { id: 'machine', label: 'Runs on a machine', hows: ['machine'] },
   { id: 'reference', label: 'Learn about', hows: ['reference'] },
 ]
-const hue = (h: number, l = 62, c = 0.14) => `oklch(${l}% ${c} ${h})`
 const PAGE = 48
+const LINK = 'underline decoration-[var(--hv-border-strong,var(--hv-border))] underline-offset-[3px] hover:text-[var(--hv-text-1)] hover:decoration-current'
 
 export default function ToolboxPage() {
   const toast = useToast()
@@ -101,7 +98,13 @@ export default function ToolboxPage() {
       return words.every((w) => hay.includes(w))
     })
   }, [data, q, cat, filter])
-  useEffect(() => setShown(PAGE), [q, cat, filter])
+  // A new search or filter starts again at the first page.
+  const [lastQuery, setLastQuery] = useState('')
+  const queryKey = `${q}|${cat}|${filter}`
+  if (queryKey !== lastQuery) {
+    setLastQuery(queryKey)
+    setShown(PAGE)
+  }
 
   const counts = useMemo(() => {
     const c: Record<string, number> = {}
@@ -112,9 +115,13 @@ export default function ToolboxPage() {
   const builtin = data?.tools.filter((t) => t.use.how === 'builtin').length ?? 0
   const live = data?.integrations.filter((i) => i.enabled).length ?? 0
   const liveTools = data?.integrations.filter((i) => i.enabled).reduce((n, i) => n + i.tools.length, 0) ?? 0
+  const showFilter = (id: string) => {
+    setTab('discover')
+    setFilter(id)
+  }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-5xl px-4 pb-20 pt-10 sm:px-8">
       <PageTitle icon={<Boxes />} title="Toolbox" sub={`${data?.tools.length ?? '300+'} open-source AI tools — connect what Hive can use, discover the rest. Shared by the whole team.`}>
         <div className="flex flex-wrap gap-2">
           <Button variant="secondary" onClick={() => setConnect({ kind: 'skill' })}>
@@ -126,81 +133,79 @@ export default function ToolboxPage() {
         </div>
       </PageTitle>
 
-      {/* Overview */}
-      <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Stat icon={Plug} hue={285} value={live} label="Connected now" sub={liveTools ? `${liveTools} tools live in chat & agents` : 'Nothing connected yet'} onClick={() => setTab('connected')} />
-        <Stat icon={Sparkles} hue={200} value={ready} label="Ready to connect" sub="MCP, search, models, skills" onClick={() => (setTab('discover'), setFilter('connect'))} />
-        <Stat icon={CheckCircle2} hue={145} value={builtin} label="Already in Hive" sub="No install needed" onClick={() => (setTab('discover'), setFilter('builtin'))} />
-        <Link to="/hive/spend/savings" className="hive-card hive-card-hover group relative overflow-hidden p-4">
-          <PiggyBank className="size-5" style={{ color: hue(150) }} />
-          <div className="mt-2 text-[14px] font-semibold text-text-primary">Token Steward</div>
-          <div className="text-[12px] text-text-muted">Spend tokens wisely with these tools</div>
-          <ArrowUpRight className="absolute right-3 top-3 size-4 text-text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-        </Link>
-      </div>
-
-      {/* Tabs */}
-      <div className="mb-5 flex items-center gap-1 overflow-x-auto rounded-2xl bg-text-primary/[0.04] p-1 sm:w-fit">
-        {(
-          [
-            ['discover', 'Discover', Boxes],
-            ['connected', `Connected${live ? ` · ${live}` : ''}`, Plug],
-            ['directories', 'Directories', Library],
-          ] as const
-        ).map(([id, label, Icon]) => (
-          <button key={id} type="button" onClick={() => setTab(id)} className={cn('relative flex h-9 shrink-0 items-center gap-1.5 rounded-xl px-3.5 text-[13px] font-medium transition-colors', tab === id ? 'text-text-primary' : 'text-text-muted hover:text-text-primary')}>
-            {tab === id && <motion.span layoutId="toolbox-tab" className="absolute inset-0 rounded-xl bg-bg-surface shadow-sm ring-1 ring-[var(--hive-line)]" transition={{ type: 'spring', stiffness: 500, damping: 40 }} />}
-            <Icon className="relative size-4" />
-            <span className="relative">{label}</span>
+      {data && (
+        <p className="mb-6 text-[13.5px] leading-relaxed text-[var(--hv-text-2)]">
+          <button type="button" onClick={() => setTab('connected')} className={LINK}>
+            {live ? `${live} connected` : 'Nothing connected yet'}
           </button>
-        ))}
-      </div>
+          {liveTools > 0 && ` (${liveTools} tools live in chat and agents)`} ·{' '}
+          <button type="button" onClick={() => showFilter('connect')} className={LINK}>
+            {ready} ready to connect
+          </button>{' '}
+          ·{' '}
+          <button type="button" onClick={() => showFilter('builtin')} className={LINK}>
+            {builtin} already in Hive
+          </button>{' '}
+          ·{' '}
+          <Link to="/hive/spend/savings" className={LINK}>
+            what the tools cost in tokens
+          </Link>
+        </p>
+      )}
+
+      <SegmentedControl
+        label="Toolbox view"
+        value={tab}
+        onChange={setTab}
+        options={[
+          { value: 'discover', label: 'Discover' },
+          { value: 'connected', label: live ? `Connected · ${live}` : 'Connected' },
+          { value: 'directories', label: 'Directories' },
+        ]}
+        className="mb-6"
+      />
 
       {!data ? (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 9 }, (_, i) => (
-            <div key={i} className="hive-shimmer h-40 rounded-2xl" />
+        <div className="space-y-2">
+          {Array.from({ length: 6 }, (_, i) => (
+            <div key={i} className="hive-shimmer h-20 rounded-[var(--hv-r-card)]" />
           ))}
         </div>
       ) : tab === 'discover' ? (
         <>
-          <div className="mb-3 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="relative flex-1">
-              <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-muted" />
-              <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search tools — “pdf”, “browser”, “vector”, “voice”, “gateway”…" className="h-10 rounded-xl pl-9" aria-label="Search tools" />
-            </div>
-            <div className="flex gap-1 overflow-x-auto">
+          <SearchInput value={q} onChange={(e) => setQ(e.target.value)} onClear={() => setQ('')} placeholder="Search tools — “pdf”, “browser”, “vector”, “voice”, “gateway”…" aria-label="Search tools" containerClassName="mb-3" />
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <Select value={filter} onValueChange={setFilter} className="w-52" aria-label="Show">
               {FILTERS.map((f) => (
-                <button key={f.id} type="button" onClick={() => setFilter(f.id)} className={cn('h-9 shrink-0 rounded-full px-3 text-[12.5px] font-medium transition-colors', filter === f.id ? 'bg-accent-brand text-on-accent-brand' : 'bg-text-primary/[0.05] text-text-secondary hover:bg-text-primary/[0.08]')}>
+                <option key={f.id} value={f.id}>
                   {f.label}
-                </button>
+                </option>
               ))}
-            </div>
+            </Select>
+            <Select value={cat} onValueChange={setCat} className="w-64" aria-label="Category">
+              <option value="all">All categories ({data.tools.length})</option>
+              {Object.entries(data.categories).map(([id, c]) => (
+                <option key={id} value={id}>
+                  {c.label} ({counts[id] ?? 0})
+                </option>
+              ))}
+            </Select>
+            <span className="hv-num text-[12.5px] text-[var(--hv-text-3)]" aria-live="polite">
+              {tools.length} {tools.length === 1 ? 'tool' : 'tools'}
+            </span>
           </div>
-          <div className="hive-scroll -mx-1 mb-5 flex gap-1.5 overflow-x-auto px-1 pb-1">
-            <CatChip on={cat === 'all'} onClick={() => setCat('all')} label="All categories" n={data.tools.length} />
-            {Object.entries(data.categories).map(([id, c]) => (
-              <CatChip key={id} on={cat === id} onClick={() => setCat(id)} label={c.label} n={counts[id] ?? 0} hint={c.hint} />
-            ))}
-          </div>
+          {cat !== 'all' && data.categories[cat]?.hint && <p className="mb-2 text-[12.5px] text-[var(--hv-text-3)]">{data.categories[cat].hint}</p>}
           {!tools.length ? (
-            <div className="hive-card grid place-items-center gap-2 p-12 text-center">
-              <Search className="size-6 text-text-muted" />
-              <div className="text-[14px] font-medium">Nothing matches</div>
-              <p className="max-w-sm text-[13px] text-text-muted">Try a broader word, or look through the directories — they list thousands more MCP servers and skills.</p>
-              <Button variant="secondary" size="sm" onClick={() => setTab('directories')}>
-                Open directories
-              </Button>
-            </div>
+            <Empty level={2} icon={<Search />} title="Nothing matches" action={<Button variant="secondary" size="sm" onClick={() => setTab('directories')}>Open directories</Button>}>
+              Try a broader word, or look through the directories — they list thousands more MCP servers and skills.
+            </Empty>
           ) : (
             <>
-              <motion.div layout className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                <AnimatePresence initial={false}>
-                  {tools.slice(0, shown).map((t, i) => (
-                    <ToolCard key={t.id} t={t} i={i} catLabel={data.categories[t.cat]?.label ?? t.cat} onConnect={(kind) => setConnect({ kind, tool: t, engine: t.use.how === 'search' ? t.use.engine : undefined })} />
-                  ))}
-                </AnimatePresence>
-              </motion.div>
+              <ul className="mt-4 divide-y divide-[var(--hv-border)] border-y border-[var(--hv-border)]">
+                {tools.slice(0, shown).map((t) => (
+                  <ToolRow key={t.id} t={t} catLabel={data.categories[t.cat]?.label ?? t.cat} onConnect={(kind) => setConnect({ kind, tool: t, engine: t.use.how === 'search' ? t.use.engine : undefined })} />
+                ))}
+              </ul>
               {tools.length > shown && (
                 <div className="mt-5 flex justify-center">
                   <Button variant="secondary" onClick={() => setShown((n) => n + PAGE)}>
@@ -222,107 +227,75 @@ export default function ToolboxPage() {
   )
 }
 
-function Stat({ icon: Icon, hue: h, value, label, sub, onClick }: { icon: typeof Plug; hue: number; value: number; label: string; sub: string; onClick: () => void }) {
-  return (
-    <button type="button" onClick={onClick} className="hive-card hive-card-hover relative overflow-hidden p-4 text-left">
-      <div className="flex items-center justify-between">
-        <Icon className="size-5" style={{ color: hue(h) }} />
-        <span className="text-[24px] font-semibold tabular-nums tracking-tight text-text-primary">{value}</span>
-      </div>
-      <div className="mt-2 text-[14px] font-semibold text-text-primary">{label}</div>
-      <div className="truncate text-[12px] text-text-muted">{sub}</div>
-    </button>
-  )
-}
+const QUIET_ACTION = 'inline-flex h-8 items-center gap-1.5 rounded-[var(--hv-r-btn)] px-2.5 text-[12px] font-medium text-[var(--hv-text-1)] bg-[var(--hv-fill)] hover:bg-[var(--hv-fill-hover)]'
 
-function CatChip({ on, onClick, label, n, hint }: { on: boolean; onClick: () => void; label: string; n: number; hint?: string }) {
-  return (
-    <button type="button" title={hint} onClick={onClick} className={cn('flex h-8 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl border px-3 text-[12px] transition-colors', on ? 'border-accent-brand/40 bg-accent-brand/10 text-text-primary' : 'hive-line text-text-secondary hover:bg-text-primary/[0.04]')}>
-      {label}
-      <span className="tabular-nums text-text-muted">{n}</span>
-    </button>
-  )
-}
-
-function HowBadge({ how }: { how: ToolHow }) {
-  const h = HOW[how]
-  return (
-    <Tooltip label={h.hint}>
-      <span className="inline-flex h-6 items-center gap-1 rounded-full px-2 text-[11px] font-medium" style={{ color: `color-mix(in oklab, ${hue(h.hue)} 62%, var(--color-text-primary))`, background: `color-mix(in oklab, ${hue(h.hue)} 13%, transparent)` }}>
-        <h.icon className="size-3" /> {h.short}
-      </span>
-    </Tooltip>
-  )
-}
-
-function ToolCard({ t, i, catLabel, onConnect }: { t: EcoTool; i: number; catLabel: string; onConnect: (kind: 'mcp' | 'search' | 'skill') => void }) {
+function ToolRow({ t, catLabel, onConnect }: { t: EcoTool; catLabel: string; onConnect: (kind: 'mcp' | 'search' | 'skill') => void }) {
   const h = HOW[t.use.how]
   let action: ReactNode
   if (t.connected) {
     action = (
-      <span className="inline-flex h-8 items-center gap-1 rounded-lg bg-state-success/12 px-2.5 text-[12px] font-medium text-state-success">
+      <span className="inline-flex h-8 items-center gap-1 px-1 text-[12px] font-medium text-[var(--color-state-success)]">
         <Check className="size-3.5" /> Connected
       </span>
     )
   } else if (t.use.how === 'mcp' || t.use.how === 'search' || t.use.how === 'skill') {
     const kind = t.use.how
     action = (
-      <Button size="sm" variant="secondary" onClick={() => onConnect(kind)}>
+      <Button size="sm" variant="secondary" onClick={() => onConnect(kind)} aria-label={`${kind === 'skill' ? 'Import' : 'Connect'} ${t.name}`}>
         <h.icon /> {kind === 'skill' ? 'Import' : 'Connect'}
       </Button>
     )
   } else if (t.use.how === 'provider' || t.use.how === 'subscription') {
     action = (
-      <Link to={`/hive/keys?add=${encodeURIComponent(t.use.vendor)}`} className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-text-primary/[0.06] px-2.5 text-[12px] font-medium text-text-primary hover:bg-text-primary/[0.1]">
+      <Link to={`/hive/keys?add=${encodeURIComponent(t.use.vendor)}`} className={QUIET_ACTION} aria-label={`Add in Keys: ${t.name}`}>
         <KeyRound className="size-3.5" /> Add in Keys
       </Link>
     )
   } else if (t.use.how === 'builtin') {
     action = (
-      <Link to="/hive/extensions/plugins" className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12px] font-medium text-state-success hover:bg-state-success/10">
+      <Link to="/hive/extensions/plugins" className="inline-flex h-8 items-center gap-1.5 px-1 text-[12px] font-medium text-[var(--color-state-success)] hover:underline" aria-label={`In Hive: ${t.name} is built in, see Plugins`}>
         <CheckCircle2 className="size-3.5" /> In Hive
       </Link>
     )
   } else if (t.use.how === 'machine') {
     action = (
-      <Link to="/hive/machines" className="inline-flex h-8 items-center gap-1.5 rounded-lg bg-text-primary/[0.06] px-2.5 text-[12px] font-medium text-text-primary hover:bg-text-primary/[0.1]">
+      <Link to="/hive/machines" className={QUIET_ACTION} aria-label={`Machines: run ${t.name} on a machine`}>
         <Cpu className="size-3.5" /> Machines
       </Link>
     )
   }
+  const licence = t.license === 'oss' ? 'Open source' : t.license === 'hosted' ? 'Hosted' : 'Open core'
   return (
-    <motion.article
-      layout
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0, transition: { duration: 0.22, ease: EASE, delay: Math.min(i, 12) * 0.02 } }}
-      exit={{ opacity: 0, scale: 0.98, transition: { duration: 0.12 } }}
-      className="hive-card hive-card-hover group relative flex flex-col overflow-hidden p-4"
-    >
-      <span className="absolute inset-x-0 top-0 h-[2px] opacity-0 transition-opacity group-hover:opacity-100" style={{ background: hue(h.hue) }} />
-      <div className="mb-2 flex items-start gap-3">
-        <span className="grid size-10 shrink-0 place-items-center rounded-xl text-[15px] font-semibold" style={{ color: `color-mix(in oklab, ${hue(h.hue)} 62%, var(--color-text-primary))`, background: `color-mix(in oklab, ${hue(h.hue)} 14%, transparent)` }}>
+    <li className="flex flex-col gap-3 py-4 sm:flex-row sm:items-start">
+      <div className="flex min-w-0 flex-1 gap-3">
+        <span className="grid size-9 shrink-0 place-items-center rounded-[var(--hv-r-btn)] bg-[var(--hv-fill)] text-[13px] font-semibold text-[var(--hv-text-2)]" aria-hidden="true">
           {t.name.replace(/[^A-Za-z0-9]/g, '').slice(0, 2) || '·'}
         </span>
         <div className="min-w-0 flex-1">
-          <h2 className="truncate text-[14px] font-semibold text-text-primary">{t.name}</h2>
-          <div className="truncate text-[11.5px] text-text-muted">{catLabel}</div>
+          <div className="flex flex-wrap items-baseline gap-x-2">
+            <h2 className="m-0 font-[family-name:var(--hv-sans)] text-[14px] font-medium leading-snug text-[var(--hv-text-1)]">{t.name}</h2>
+            <Tooltip label={h.hint}>
+              <span className="inline-flex items-center gap-1 text-[11.5px] text-[var(--hv-text-2)]">
+                <h.icon className="size-3" aria-hidden="true" /> {h.short}
+              </span>
+            </Tooltip>
+          </div>
+          <p className="mb-0 mt-0.5 line-clamp-2 text-[13px] leading-relaxed text-[var(--hv-text-2)]">{t.what}</p>
+          <p className="mb-0 mt-1 text-[11.5px] text-[var(--hv-text-3)]">
+            {catLabel} · {t.iface} ·{' '}
+            <Tooltip label={t.status}>
+              <span>{licence}</span>
+            </Tooltip>
+          </p>
         </div>
-        <HowBadge how={t.use.how} />
       </div>
-      <p className="line-clamp-3 flex-1 text-[13px] leading-relaxed text-text-secondary">{t.what}</p>
-      <div className="mt-3 flex flex-wrap items-center gap-1.5 text-[11px] text-text-muted">
-        <span className="rounded-md bg-text-primary/[0.05] px-1.5 py-0.5">{t.iface}</span>
-        <Tooltip label={t.status}>
-          <span className={cn('rounded-md px-1.5 py-0.5', t.license === 'oss' ? 'bg-state-success/10 text-state-success' : t.license === 'hosted' ? 'bg-state-warning/10 text-state-warning' : 'bg-text-primary/[0.05]')}>{t.license === 'oss' ? 'Open source' : t.license === 'hosted' ? 'Hosted' : 'Open core'}</span>
-        </Tooltip>
-      </div>
-      <div className="mt-3 flex items-center justify-between gap-2 border-t hive-line pt-3">
-        <a href={t.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-[12px] text-text-muted hover:text-text-primary">
+      <div className="flex shrink-0 items-center gap-1 pl-12 sm:pl-0">
+        <a href={t.url} target="_blank" rel="noreferrer" className="inline-flex h-8 items-center gap-1 rounded-[var(--hv-r-btn)] px-2 text-[12px] text-[var(--hv-text-2)] hover:bg-[var(--hv-fill)] hover:text-[var(--hv-text-1)]" aria-label={`Project: ${t.name} (opens in a new tab)`}>
           <ExternalLink className="size-3.5" /> Project
         </a>
         {action}
       </div>
-    </motion.article>
+    </li>
   )
 }
 
@@ -332,15 +305,13 @@ function Connected({ data, reload, onAdd }: { data: Toolbox; reload: () => void;
   const search = data.integrations.filter((i) => i.kind === 'search')
   if (!data.integrations.length)
     return (
-      <div className="hive-card relative overflow-hidden p-8 sm:p-10">
-        <div className="relative max-w-xl">
-          <Plug className="size-7 text-accent-brand" />
-          <h2 className="mt-3 text-[20px] font-semibold tracking-tight">Give your agents real tools</h2>
-          <p className="mt-2 text-[14px] leading-relaxed text-text-secondary">
-            Connect an <b>MCP server</b> (GitHub, Sentry, Linear, Notion, Supabase, Context7, Exa…) and its tools appear in chat and for every agent. Add a <b>search engine</b> (Tavily, Exa, Brave, SearXNG, Jina, Firecrawl) for sharper web research. <b>Import a skill</b> (Superpowers, wshobson/agents…) and every agent follows it.
-          </p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            <Button onClick={() => onAdd('mcp')}>
+      <Empty
+        level={2}
+        icon={<Plug />}
+        title="Give your agents real tools"
+        action={
+          <div className="flex flex-wrap justify-center gap-2">
+            <Button variant="secondary" onClick={() => onAdd('mcp')}>
               <Plug /> Connect MCP server
             </Button>
             <Button variant="secondary" onClick={() => onAdd('search')}>
@@ -350,8 +321,10 @@ function Connected({ data, reload, onAdd }: { data: Toolbox; reload: () => void;
               <Wand2 /> Import a skill
             </Button>
           </div>
-        </div>
-      </div>
+        }
+      >
+        Connect an MCP server (GitHub, Sentry, Linear, Notion, Supabase, Context7, Exa…) and its tools appear in chat and for every agent. Add a search engine (Tavily, Exa, Brave, SearXNG, Jina, Firecrawl) for sharper web research. Import a skill and every agent follows it.
+      </Empty>
     )
   return (
     <div className="space-y-8">
@@ -362,12 +335,12 @@ function Connected({ data, reload, onAdd }: { data: Toolbox; reload: () => void;
             <Plus /> Add
           </Button>
         </div>
-        <div className="space-y-3">
+        <div className="divide-y divide-[var(--hv-border)] border-y border-[var(--hv-border)]">
           {mcp.map((i) => (
             <IntegrationCard key={i.id} i={i} reload={reload} />
           ))}
           {!mcp.length && (
-            <div className="flex flex-col items-center gap-1.5 rounded-xl border border-dashed hive-line px-6 py-8 text-center">
+            <div className="flex flex-col items-center gap-1.5 px-6 py-8 text-center">
               <Plug className="size-5 text-text-muted" />
               <div className="text-[13.5px] font-medium text-text-primary">No MCP servers yet</div>
               <div className="max-w-xs text-[12.5px] text-text-muted">Connect one to give agents outside tools — databases, browsers, ticket queues.</div>
@@ -385,11 +358,11 @@ function Connected({ data, reload, onAdd }: { data: Toolbox; reload: () => void;
             <Plus /> Add
           </Button>
         </div>
-        <div className="space-y-3">
+        <div className="divide-y divide-[var(--hv-border)] border-y border-[var(--hv-border)]">
           {search.map((i) => (
             <IntegrationCard key={i.id} i={i} reload={reload} />
           ))}
-          {!search.length && <p className="text-[13px] text-text-muted">Using the built-in free search (DuckDuckGo). Add an engine for better results.</p>}
+          {!search.length && <p className="py-4 text-[13px] text-text-muted">Using the built-in free search (DuckDuckGo). Add an engine for better results.</p>}
         </div>
       </section>
     </div>
@@ -400,6 +373,7 @@ function IntegrationCard({ i, reload }: { i: Integration; reload: () => void }) 
   const toast = useToast()
   const [open, setOpen] = useState(false)
   const [busy, setBusy] = useState<string | null>(null)
+  const [confirmRemove, setConfirmRemove] = useState(false)
   const act = async (what: string, fn: () => Promise<unknown>, ok?: string) => {
     setBusy(what)
     try {
@@ -414,14 +388,17 @@ function IntegrationCard({ i, reload }: { i: Integration; reload: () => void }) 
   }
   const tone = !i.enabled ? 'var(--color-text-muted)' : i.status === 'error' ? 'var(--color-state-error)' : 'var(--color-state-success)'
   return (
-    <motion.div layout className="hive-card overflow-hidden">
-      <div className="flex flex-wrap items-center gap-3 p-4">
-        <span className="relative grid size-10 place-items-center rounded-xl" style={{ background: `color-mix(in oklab, ${hue(i.kind === 'mcp' ? 285 : 200)} 14%, transparent)` }}>
-          {i.kind === 'mcp' ? <Plug className="size-4.5" style={{ color: hue(285, 55) }} /> : <Globe className="size-4.5" style={{ color: hue(200, 55) }} />}
-          <span className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full ring-2 ring-bg-surface" style={{ background: tone }} />
+    <div>
+      <div className="flex flex-wrap items-center gap-3 py-4">
+        <span className="relative grid size-9 place-items-center rounded-[var(--hv-r-btn)] bg-[var(--hv-fill)] text-[var(--hv-text-2)]">
+          {i.kind === 'mcp' ? <Plug className="size-4" /> : <Globe className="size-4" />}
+          <span className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full ring-2 ring-[var(--hv-bg,var(--color-bg-app))]" style={{ background: tone }} aria-hidden="true" />
         </span>
         <div className="min-w-0 flex-1">
-          <div className="truncate text-[14px] font-semibold">{i.name}</div>
+          <div className="truncate text-[14px] font-medium">
+            {i.name}
+            <span className="sr-only">{!i.enabled ? ' (off)' : i.status === 'error' ? ' (not working)' : ' (working)'}</span>
+          </div>
           <div className="truncate text-[12px] text-text-muted">
             {i.kind === 'mcp' ? `${i.tools.length} tools · ${i.url}` : i.url || 'API'} · by @{i.createdBy}
             {i.checkedAt ? ` · checked ${timeAgo(i.checkedAt)}` : ''}
@@ -442,17 +419,28 @@ function IntegrationCard({ i, reload }: { i: Integration; reload: () => void }) 
             </>
           )}
           <Toggle on={i.enabled} label={`${i.enabled ? 'Disable' : 'Enable'} ${i.name}`} onChange={(v) => act('toggle', () => hiveApi.updateIntegration(i.id, { enabled: v }))} />
-          <Tooltip label="Remove">
-            <Button size="icon-sm" variant="ghost" aria-label={`Remove ${i.name}`} onClick={() => act('remove', () => hiveApi.removeIntegration(i.id), 'Removed')} loading={busy === 'remove'}>
-              <Trash2 />
-            </Button>
-          </Tooltip>
+          {confirmRemove ? (
+            <>
+              <Button size="sm" variant="secondary" onClick={() => act('remove', () => hiveApi.removeIntegration(i.id), 'Removed')} loading={busy === 'remove'}>
+                Remove
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => setConfirmRemove(false)}>
+                Keep
+              </Button>
+            </>
+          ) : (
+            <Tooltip label="Remove">
+              <Button size="icon-sm" variant="ghost" aria-label={`Remove ${i.name}`} onClick={() => setConfirmRemove(true)}>
+                <Trash2 />
+              </Button>
+            </Tooltip>
+          )}
         </div>
       </div>
       <AnimatePresence initial={false}>
         {open && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22, ease: EASE }} className="overflow-hidden border-t hive-line">
-            <div className="grid gap-2 p-3 sm:grid-cols-2">
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.22, ease: [0.2, 0.8, 0.2, 1] }} className="overflow-hidden">
+            <div className="grid gap-2 pb-4 sm:grid-cols-2">
               {i.tools.map((t) => (
                 <ToolTry key={t.name} integrationId={i.id} t={t} />
               ))}
@@ -460,7 +448,7 @@ function IntegrationCard({ i, reload }: { i: Integration; reload: () => void }) 
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }
 
@@ -488,7 +476,7 @@ function ToolTry({ integrationId, t }: { integrationId: string; t: McpToolInfo }
     }
   }
   return (
-    <div className="rounded-xl bg-text-primary/[0.03] p-3">
+    <div className="rounded-[var(--hv-r-card)] bg-[var(--hv-fill)] p-3">
       <div className="flex items-start gap-2">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5 font-mono text-[12.5px] font-medium text-text-primary">
@@ -497,7 +485,7 @@ function ToolTry({ integrationId, t }: { integrationId: string; t: McpToolInfo }
           </div>
           <p className="mt-0.5 line-clamp-2 text-[12px] text-text-muted">{t.description || 'No description'}</p>
         </div>
-        <Button size="sm" variant="ghost" onClick={() => setOpen((v) => !v)}>
+        <Button size="sm" variant="ghost" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={`Try ${t.name}`}>
           <Play /> Try
         </Button>
       </div>
@@ -512,7 +500,7 @@ function ToolTry({ integrationId, t }: { integrationId: string; t: McpToolInfo }
               <Input value={vals[k] ?? ''} onChange={(e) => setVals((v) => ({ ...v, [k]: e.target.value }))} placeholder={p.description ?? ''} className="h-8 text-[12.5px]" />
             </label>
           ))}
-          <Button size="sm" onClick={run} loading={busy}>
+          <Button size="sm" variant="secondary" onClick={run} loading={busy}>
             <Play /> Run
           </Button>
           {out && <pre className={cn('hive-code hive-scroll max-h-56 overflow-auto whitespace-pre-wrap rounded-lg p-2 text-[11.5px]', out.isError && 'text-state-error')}>{out.content}</pre>}
@@ -537,19 +525,20 @@ function Directories({ data }: { data: Toolbox }) {
       <p className="mb-4 max-w-2xl text-[13.5px] text-text-secondary">
         Curated directories with thousands more MCP servers, skills, agents and tools. Found something you like? Connect its MCP URL or import its skill from the buttons above. Catalogue snapshot: {data.snapshot}.
       </p>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {data.directories.map((d, i) => (
-          <motion.a key={d.name} href={d.url ?? '#'} target="_blank" rel="noreferrer" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0, transition: { delay: i * 0.015, duration: 0.2 } }} className="hive-card hive-card-hover group flex items-start gap-3 p-4">
-            <Library className="mt-0.5 size-4.5 shrink-0 text-accent-brand" />
+      <div className="divide-y divide-[var(--hv-border)] border-y border-[var(--hv-border)]">
+        {data.directories.map((d) => (
+          <a key={d.name} href={d.url ?? '#'} target="_blank" rel="noreferrer" className="group flex items-start gap-3 px-1 py-3.5 hover:bg-[var(--hv-fill)]">
+            <Library className="mt-0.5 size-4 shrink-0 text-[var(--hv-text-3)]" aria-hidden="true" />
             <div className="min-w-0 flex-1">
               <div className="text-[13.5px] font-semibold text-text-primary">{d.name}</div>
               <p className="mt-0.5 text-[12.5px] text-text-muted">{d.what}</p>
             </div>
-            <ArrowUpRight className="size-4 shrink-0 text-text-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </motion.a>
+            <ArrowUpRight className="size-4 shrink-0 text-text-muted transition-transform motion-reduce:transition-none group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+            <span className="sr-only">(opens in a new tab)</span>
+          </a>
         ))}
       </div>
-      <div className="hive-card mt-6 p-4 text-[12.5px] leading-relaxed text-text-muted">
+      <div className="mt-6 text-[12.5px] leading-relaxed text-text-muted">
         <b className="text-text-secondary">Before you connect anything:</b> check it's maintained and its licence fits; prefer read-only tokens; remember every connected tool's description is sent with each request — keep the set small (the Token Steward warns when it grows).
       </div>
     </div>
@@ -609,7 +598,7 @@ function ConnectDialog({ state, engines, onClose, onDone }: { state: { kind: 'mc
         {kind === 'search' && (
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {Object.entries(engines).map(([id, e]) => (
-              <button key={id} type="button" onClick={() => setEngine(id)} className={cn('rounded-xl border p-2.5 text-left transition-colors', engine === id ? 'border-accent-brand/50 bg-accent-brand/8' : 'hive-line hover:bg-text-primary/[0.03]')}>
+              <button key={id} type="button" onClick={() => setEngine(id)} aria-pressed={engine === id} className={cn('rounded-[var(--hv-r-btn)] border p-2.5 text-left transition-colors', engine === id ? 'border-[var(--hv-text-1)] bg-[var(--hv-fill)]' : 'border-[var(--hv-border)] hover:bg-[var(--hv-fill)]')}>
                 <div className="text-[13px] font-medium">{e.label}</div>
                 <div className="text-[11px] text-text-muted">{e.does.join(' + ')}</div>
               </button>
@@ -630,20 +619,22 @@ function ConnectDialog({ state, engines, onClose, onDone }: { state: { kind: 'mc
           <Field label={kind === 'mcp' ? 'Access token (optional)' : eng?.needs === 'key-optional' ? 'API key (optional — higher limits)' : 'API key'}>
             <SecretInput value={token} onChange={(e) => setToken(e.target.value)} placeholder="Stored encrypted, shared with the team" />
             {kind === 'search' && eng && (
-              <a href={eng.docs} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-[12px] text-accent-brand">
+              <a href={eng.docs} target="_blank" rel="noreferrer" className="mt-1 inline-flex items-center gap-1 text-[12px] underline underline-offset-2">
                 Get a key <ExternalLink className="size-3" />
               </a>
             )}
           </Field>
         )}
         {kind === 'skill' && project && (
-          <div className="flex gap-1 rounded-xl bg-text-primary/[0.04] p-1 text-[12.5px]">
-            {(['all', 'project'] as const).map((s) => (
-              <button key={s} type="button" onClick={() => setScope(s)} className={cn('h-8 flex-1 rounded-lg', scope === s ? 'bg-bg-surface font-medium shadow-sm' : 'text-text-muted')}>
-                {s === 'all' ? 'Every project' : `Only ${project.name}`}
-              </button>
-            ))}
-          </div>
+          <SegmentedControl
+            label="Use it in"
+            value={scope}
+            onChange={setScope}
+            options={[
+              { value: 'all', label: 'Every project' },
+              { value: 'project', label: `Only ${project.name}` },
+            ]}
+          />
         )}
         <div className="flex justify-end gap-2 pt-1">
           <Button variant="ghost" onClick={onClose}>

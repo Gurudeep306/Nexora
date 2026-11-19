@@ -87,7 +87,7 @@ export default function PluginsPage() {
             </option>
           ))}
         </Select>
-        <p className="text-[13px] text-[var(--hv-text-2)]">{scope === '*' ? 'What every project uses unless it changes a plugin.' : 'This project follows All projects, except where it changes a plugin.'}</p>
+        <p className="mb-0 text-[13px] text-[var(--hv-text-2)]">{scope === '*' ? 'What every project uses unless it changes a plugin.' : 'This project follows All projects, except where it changes a plugin.'}</p>
       </div>
 
       {groups.map(([cat, list]) => (
@@ -160,7 +160,7 @@ function PluginRow({ p, onToggle, onConfig, onReset, locked, inherited, projectV
               </span>
             )}
           </div>
-          <p className="mt-0.5 text-[13px] leading-relaxed text-text-muted">{p.description}</p>
+          <p className="mb-0 mt-0.5 text-[13px] leading-relaxed text-text-muted">{p.description}</p>
           {hasConfig && p.enabled && (
             <button type="button" onClick={() => setOpen((o) => !o)} className="mt-1.5 text-[12.5px] text-accent-brand hover:underline">
               {open ? 'Hide settings' : 'Settings'}
