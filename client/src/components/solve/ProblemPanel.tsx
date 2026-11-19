@@ -166,6 +166,9 @@ export function ProblemPanel({
     renderMathIn(bodyRef.current)
   }, [statement, translated, tab])
 
+  // A statement read out of its PDF keeps the PDF one click away (open at once when it has a picture).
+  const [pdfOpen, setPdfOpen] = useState(false)
+
   if (!problem) return <LoadingBlock rows={6} className="p-4" />
 
   const tags = parseTags(problem.tags)
@@ -312,7 +315,12 @@ export function ProblemPanel({
                 {extra.interactive && (
                   <Notice icon={<Plug />}>Interactive problem: your program talks to a judge that answers queries. Samples show one conversation; submit on {sourceName} to be judged.</Notice>
                 )}
-                {extra.figures && (
+                {extra.figures && extra.fromPdf && extra.pdf && (
+                  <Notice icon={<ImageOff />}>
+                    <p>This problem has a picture. It is in the original PDF under the statement.</p>
+                  </Notice>
+                )}
+                {extra.figures && !(extra.fromPdf && extra.pdf) && (
                   <Notice icon={<ImageOff />}>
                     <p>
                       This problem refers to a picture that isn't in the copy shown here.{' '}
@@ -412,7 +420,12 @@ export function ProblemPanel({
                   </article>
                 )}
 
-                {extra.pdf && (
+                {extra.pdf && extra.fromPdf && !extra.figures && !pdfOpen && (
+                  <button type="button" onClick={() => setPdfOpen(true)} className="mt-5 inline-flex cursor-pointer items-center gap-1.5 text-[13px] text-text-secondary hover:text-text-primary">
+                    <FileText className="size-4" /> Show the original PDF
+                  </button>
+                )}
+                {extra.pdf && (!extra.fromPdf || extra.figures || pdfOpen) && (
                   <div className="mt-5">
                     <iframe
                       src={`/api/problem-pdf/${problem.id}`}

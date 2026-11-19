@@ -50,6 +50,8 @@ function boot() {
       OWNER_USERNAME: OWNER,
       SESSION_SECRET: "traffic-mix-secret-0123456789abcdef0123456789",
       DISABLE_PUPPETEER: "1",
+      // The statement backfill is measured on its own (docs/ops/db-usage.md).
+      STATEMENT_BACKFILL: "0",
       JUDGE_MODE: "remote",
       STUDIO_PASSWORD: "traffic-mix-studio-password-0123456789",
       ...(process.env.MIX_EXTRA_ENV ? JSON.parse(process.env.MIX_EXTRA_ENV) : {}),

@@ -4,7 +4,7 @@
 const express = require("express");
 const sources = require("../sources");
 
-function createSourcesRouter({ can, me, invalidateCatalog }) {
+function createSourcesRouter({ can, me, invalidateCatalog, backfill = null }) {
   const router = express.Router();
   const guard = (req, res, next) => (can(req, "problems.manage") ? next() : res.status(403).json({ ok: false, error: "You need the Problems permission" }));
   const fail = (res, e) => res.status(e.status || 500).json({ ok: false, error: e.message || String(e) });
@@ -15,6 +15,31 @@ function createSourcesRouter({ can, me, invalidateCatalog }) {
       const list = await sources.listSources({ statements: false });
       res.set("Cache-Control", "public, max-age=60");
       res.json({ ok: true, sources: list.filter((s) => s.enabled).map((s) => ({ id: s.id, label: s.label, kind: s.kind, problems: s.problems })) });
+    } catch (e) {
+      fail(res, e);
+    }
+  });
+
+  // Statement backfill: how many statements, samples and retries per judge,
+  // and the run in this server (start / pause). The coverage is a full scan,
+  // so it is computed only when an admin asks.
+  router.get("/api/problem-sources/backfill", guard, async (_req, res) => {
+    try {
+      const [coverage, st] = await Promise.all([require("../sources/backfill").coverage(), backfill ? backfill.status() : null]);
+      res.json({ ok: true, coverage, paused: !!st?.paused, run: st?.run || null, available: !!backfill });
+    } catch (e) {
+      fail(res, e);
+    }
+  });
+  router.post("/api/problem-sources/backfill", guard, async (req, res) => {
+    try {
+      if (!backfill) throw Object.assign(new Error("Not available here"), { status: 503 });
+      const action = req.body?.action;
+      if (action === "start") await backfill.start();
+      else if (action === "pause") await backfill.pause();
+      else throw Object.assign(new Error("action must be start or pause"), { status: 400 });
+      const st = await backfill.status();
+      res.json({ ok: true, paused: !!st.paused, run: st.run });
     } catch (e) {
       fail(res, e);
     }

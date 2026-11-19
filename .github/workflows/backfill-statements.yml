@@ -1,0 +1,61 @@
+# Fill problem statements ahead of time (statements, sample tests, figures)
+# straight into the live database, so no problem ever waits on its judge.
+#
+# The web service runs the same filler while it is awake; on the free plan it
+# sleeps when nobody visits, so this job keeps the work going. Each run stops
+# after about 5½ hours; it starts every 6 hours until everything is stored,
+# then each run finds little or nothing to do.
+#
+# Needs two repository secrets (Settings → Secrets and variables → Actions):
+#   TURSO_DATABASE_URL   libsql://nexora-<you>.aws-us-east-1.turso.io
+#   TURSO_AUTH_TOKEN     a Turso token that can WRITE (not the read-only backup one)
+# Without them the job skips itself.
+name: Fill problem statements
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: "Hours to run (max 5.5)"
+        default: "5.5"
+      platforms:
+        description: "Only these judges, comma-separated (empty = all)"
+        default: ""
+
+concurrency:
+  group: backfill-statements
+  cancel-in-progress: false
+
+jobs:
+  fill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 345
+    env:
+      PUPPETEER_SKIP_DOWNLOAD: "1"
+      TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
+      TURSO_AUTH_TOKEN: ${{ secrets.TURSO_AUTH_TOKEN }}
+    steps:
+      - name: Skip when secrets are not configured yet
+        id: check
+        run: |
+          if [ -z "$TURSO_DATABASE_URL" ] || [ -z "$TURSO_AUTH_TOKEN" ]; then
+            echo "TURSO_DATABASE_URL / TURSO_AUTH_TOKEN not set — skipping."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/checkout@v7
+        if: steps.check.outputs.skip != 'true'
+      - uses: actions/setup-node@v7
+        if: steps.check.outputs.skip != 'true'
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci --omit=dev --no-audit --no-fund
+        if: steps.check.outputs.skip != 'true'
+      - name: Fill statements
+        if: steps.check.outputs.skip != 'true'
+        run: node scripts/backfill-statements.js --hours "${HOURS}" --platforms "${PLATFORMS}"
+        env:
+          HOURS: ${{ github.event.inputs.hours || '5.5' }}
+          PLATFORMS: ${{ github.event.inputs.platforms || '' }}
