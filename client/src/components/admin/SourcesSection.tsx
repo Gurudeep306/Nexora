@@ -7,6 +7,7 @@ import { api, ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { Chip, Failed, Panel, Skeleton, Toggle } from './kit'
 import { ago } from './format'
+import { SourceBackfill } from './SourceBackfill'
 import { SourceGaps } from './SourceGaps'
 import { SourceTopics } from './SourceTopics'
 
@@ -165,6 +166,8 @@ export function SourcesSection() {
           ))}
         </ul>
       </Panel>
+
+      <SourceBackfill />
 
       <SourceGaps />
 

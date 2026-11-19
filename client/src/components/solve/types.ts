@@ -88,6 +88,8 @@ export interface StatementExtra {
   source?: { name: string; url: string; license: string; note?: string }
   /** The statement mentions a picture the copy we have doesn't include. */
   figures?: boolean
+  /** The text was read out of the judge's PDF (the PDF is still shown, folded). */
+  fromPdf?: boolean
   /** Non-standard input/output files (old Codeforces rounds). */
   files?: { input?: string; output?: string }
   examples?: { input: string; output: string; explanation?: string }[]

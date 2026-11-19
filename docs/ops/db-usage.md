@@ -114,13 +114,9 @@ writes, and every request read the session again.
     bans and force-sign-out (db write hooks).
   * A manual DB edit made outside the process applies within the 30 s TTL.
 * **Background jobs.**
-  * The pre-scraper is now opt-in: it only runs with `BG_SCRAPE=1`, and never
-    with `DISABLE_SCRAPER=1` or in tests. Statements are still fetched on
-    demand when someone opens a problem.
-  * When enabled, it is strictly incremental. It reads the cached-statement
-    ids once and takes pending problems from the in-memory catalog. Every
-    problem it tries is remembered, so it never re-scans or retries a dead
-    page.
+  * The old pre-scraper is gone; the statement backfill replaced it (see
+    "Statement backfill" below): one read of each judge's problems per pass,
+    then about one read and one write per statement.
   * The achievement back-fill at boot runs once, behind a settings marker. CF
     sync now awards achievements immediately, which is what the boot scan
     used to catch.
@@ -221,10 +217,18 @@ scraper and by `/api/problems`, well ahead of the user count.
 * **Per-user progress reads.** These grow with each user's progress. If heavy
   users reach thousands of rows, a short per-user progress cache is the next
   step.
-* **Do not re-enable the pre-scraper on the free plan.** `BG_SCRAPE=1` is
-  incremental now, but every saved statement is a write. Production has
-  `DISABLE_SCRAPER=1` as well, and the staging service shares the same Turso
-  quota if it uses the same org: keep it off there too.
+* **Statement backfill (replaces the old pre-scraper).** Every problem's
+  statement, samples and figures are fetched ahead of time
+  (`src/sources/backfill.js`): in the server while it is awake (newest
+  first, `STATEMENT_BACKFILL=0` turns it off, Admin → Problem sources can
+  pause it) and by the "Fill problem statements" GitHub Actions job every 6
+  hours (oldest first, `scripts/backfill-statements.js`, needs the
+  `TURSO_DATABASE_URL` and a writing `TURSO_AUTH_TOKEN` secret). Cost: one
+  pass reads each judge's problems once (~38k rows for the whole catalog),
+  then about one read and one write per statement, plus figures within the
+  `STATEMENT_MEDIA_MAX_MB` budget. A refused problem is written to
+  `statement_fetch_failures` and waits 1h, 4h, 16h … 30 days, so dead pages
+  are not retried forever. The old `BG_SCRAPE` pre-scraper is gone.
 * **Remaining full scans (not hot paths).**
   * The catalog rebuild after a `problems` change.
   * AI "find problems" scoring in `src/ai-assist.js`. It is user-triggered,
