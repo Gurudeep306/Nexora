@@ -592,7 +592,7 @@
 .today-live .nxv-svg {
   max-height: 220px;
 }
-.today-live :is(.nxv-controls, .nxv-alt, .nxv-captions, .nxv-figcaption) {
+.today-live :is(.nxv-transport, .nxv-controls, .nxv-alt, .nxv-captions, .nxv-figcaption) {
   display: none;
 }
 .today-live :is(.viz-side, .viz-code, .viz-tabs, .viz-log, .viz-controls, .viz-progress, .viz-head) {

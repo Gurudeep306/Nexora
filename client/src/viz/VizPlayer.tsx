@@ -158,38 +158,55 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
       </div>
 
       {!isStatic && (
-        <>
+        <div className="nxv-deck">
           <p className="nxv-caption" aria-live="polite">
-            <span className="nxv-step">
-              {i === 0 ? 'Start' : `Step ${i} of ${last}`}
+            <span className="nxv-step" aria-hidden="true">
+              {i === 0 ? 'Start' : `${String(i).padStart(2, '0')} / ${String(last).padStart(2, '0')}`}
             </span>
-            {frame.caption}
+            <span className="sr-only">{i === 0 ? 'Start. ' : `Step ${i} of ${last}. `}</span>
+            <span className="nxv-caption-text">{frame.caption}</span>
           </p>
-          <div className="nxv-controls" role="group" aria-label="Diagram controls">
-            <button type="button" className="nxv-btn" onClick={() => go(i - 1)} disabled={i === 0} aria-label="Previous step">
-              <span className="inline-flex" style={{ transform: 'scaleX(-1)' }}><Icon name="play" className="size-4" /></span>
+          <div className="nxv-transport" role="group" aria-label="Diagram controls">
+            <button type="button" className="nxv-key" onClick={() => go(i - 1)} disabled={i === 0} aria-label="Previous step" title="Previous step (←)">
+              <Icon name="skip-back" className="size-4" />
             </button>
-            <button type="button" className="nxv-btn nxv-btn--main" onClick={toggle} aria-label={running ? 'Pause' : i >= last ? 'Replay' : 'Play'}>
+            <button type="button" className="nxv-key nxv-key--play" onClick={toggle} aria-label={running ? 'Pause' : i >= last ? 'Replay' : 'Play'} title={running ? 'Pause (Space)' : i >= last ? 'Replay' : 'Play (Space)'}>
               <Icon name={running ? 'pause' : i >= last ? 'refresh' : 'play'} className="size-4" />
-              <span>{running ? 'Pause' : i >= last ? 'Replay' : 'Play'}</span>
             </button>
-            <button type="button" className="nxv-btn" onClick={() => go(i + 1)} disabled={i >= last} aria-label="Next step">
-              <Icon name="play" className="size-4" />
+            <button type="button" className="nxv-key" onClick={() => go(i + 1)} disabled={i >= last} aria-label="Next step" title="Next step (→)">
+              <Icon name="skip-forward" className="size-4" />
             </button>
-            <input
-              type="range"
-              className="nxv-scrub"
-              min={0}
-              max={last}
-              step={1}
-              value={i}
-              onChange={(e) => go(Number(e.target.value))}
-              aria-label="Scrub through the steps"
-              aria-valuetext={i === 0 ? 'Start' : `Step ${i} of ${last}`}
-            />
+            {last <= 24 ? (
+              <div className="nxv-ticks" role="group" aria-label="Go to a step">
+                {frames.map((f) => (
+                  <button
+                    key={f.index}
+                    type="button"
+                    className={cn('nxv-tick', f.index <= i && 'is-past', f.index === i && 'is-now')}
+                    onClick={() => go(f.index)}
+                    aria-label={f.index === 0 ? 'Start' : `Step ${f.index} of ${last}`}
+                    aria-current={f.index === i ? 'step' : undefined}
+                  >
+                    <span aria-hidden="true" />
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <input
+                type="range"
+                className="nxv-scrub"
+                min={0}
+                max={last}
+                step={1}
+                value={i}
+                onChange={(e) => go(Number(e.target.value))}
+                aria-label="Scrub through the steps"
+                aria-valuetext={i === 0 ? 'Start' : `Step ${i} of ${last}`}
+              />
+            )}
             <CleanToggle on={cleanLines} onChange={onCleanLines} />
           </div>
-        </>
+        </div>
       )}
 
       {isStatic && (
@@ -205,7 +222,7 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
           {caption && <span>{caption}</span>}
           {!isStatic && (
             <details className="nxv-alt">
-              <summary>Text description</summary>
+              <summary>Read it as text</summary>
               <ol>
                 {frames.map((f) => (
                   <li key={f.index}>{f.caption}</li>
@@ -225,11 +242,13 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
 }
 
 function CleanToggle({ on, onChange }: { on: boolean; onChange: (on: boolean) => void }) {
+  // Hand-drawn strokes or clean ones: a quiet two-way switch.
   return (
-    <label className="nxv-clean">
-      <input type="checkbox" checked={on} onChange={(e) => onChange(e.target.checked)} />
-      <span>Clean lines</span>
-    </label>
+    <button type="button" className="nxv-style" aria-pressed={on} onClick={() => onChange(!on)} title={on ? 'Show hand-drawn lines' : 'Show clean lines'}>
+      <span className={cn('nxv-style-opt', !on && 'is-on')}>Sketch</span>
+      <span className={cn('nxv-style-opt', on && 'is-on')}>Clean</span>
+      <span className="sr-only">{on ? 'Clean lines on' : 'Clean lines off'}</span>
+    </button>
   )
 }
 

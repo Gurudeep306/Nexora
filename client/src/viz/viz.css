@@ -3,10 +3,10 @@
 .nxv {
   --viz-subject: var(--notes-subject-ink, var(--color-accent-brand));
   margin: 1.75rem 0;
-  border: 1px solid var(--color-border);
-  border-radius: 14px;
-  background: var(--color-bg-surface);
-  padding: 12px 12px 10px;
+  border: 1px solid var(--ed-line, var(--color-border));
+  border-radius: 18px;
+  background: var(--ed-card, var(--color-bg-surface));
+  padding: 20px 12px 10px;
   break-inside: avoid;
 }
 .nxv-slot {
@@ -51,93 +51,177 @@
     stroke 360ms var(--ease-standard);
 }
 
+/* ── The deck under the drawing: caption, then a slim transport ── */
+.nxv-deck {
+  margin: 0 -12px -10px;
+  padding: 14px 18px 12px;
+  border-top: 1px solid var(--ed-line, var(--color-border));
+}
 .nxv-caption {
-  margin: 8px 4px 0;
-  min-height: 3em;
-  font-size: 0.95em;
-  line-height: 1.5;
-  color: var(--color-text-primary);
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 0;
+  min-height: 3.1em;
+  font-family: var(--ed-serif, var(--font-body));
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--ed-ink, var(--color-text-primary));
 }
 .nxv-step {
-  display: inline-block;
-  margin-right: 0.5em;
-  font-family: var(--font-body);
-  font-size: 0.72em;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  flex: none;
+  min-width: 4.6em;
+  font-family: var(--ed-mono, var(--font-mono));
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--viz-subject);
+  color: var(--ed-muted, var(--color-text-muted));
+}
+.nxv-caption-text {
+  min-width: 0;
 }
 
-.nxv-controls {
+.nxv-transport {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 6px;
-  margin-top: 8px;
-  font-family: var(--font-body);
-  font-size: 13px;
+  gap: 4px;
+  margin-top: 12px;
+  font-family: var(--ed-sans, var(--font-body));
 }
 .nxv-controls--static {
+  display: flex;
   justify-content: flex-end;
+  margin-top: 8px;
 }
-.nxv-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-width: 40px;
-  height: 40px;
-  padding: 0 10px;
-  border: 1px solid var(--color-border-strong);
-  border-radius: 10px;
-  background: var(--color-bg-surface);
-  color: var(--color-text-primary);
-  font-weight: 600;
+.nxv-key {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  color: var(--ed-ink-2, var(--color-text-secondary));
   cursor: pointer;
+  transition:
+    background-color 200ms var(--ed-ease, ease),
+    color 200ms var(--ed-ease, ease),
+    transform 200ms var(--ed-ease, ease);
 }
-.nxv-btn:hover:not(:disabled) {
-  background: var(--color-bg-surface-2);
+.nxv-key:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--ed-ink, var(--color-text-primary)) 7%, transparent);
+  color: var(--ed-ink, var(--color-text-primary));
 }
-.nxv-btn:disabled {
-  opacity: 0.45;
+.nxv-key:active:not(:disabled) {
+  transform: scale(0.94);
+}
+.nxv-key:disabled {
+  opacity: 0.32;
   cursor: default;
 }
-.nxv-btn--main {
-  border-color: transparent;
-  background: var(--color-accent-brand);
-  color: var(--color-on-accent-brand);
-  padding: 0 14px;
+.nxv-key--play {
+  width: 40px;
+  height: 40px;
+  margin: 0 2px;
+  background: var(--ed-ink, var(--color-text-primary));
+  color: var(--ed-card, var(--color-bg-surface));
 }
-.nxv-btn--main:hover:not(:disabled) {
-  background: var(--color-accent-brand-hover);
+.nxv-key--play:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--ed-ink, var(--color-text-primary)) 86%, var(--ed-card, var(--color-bg-surface)));
+  color: var(--ed-card, var(--color-bg-surface));
 }
-.nxv-btn:focus-visible,
-.nxv-scrub:focus-visible,
-.nxv-clean input:focus-visible {
-  outline: 2px solid var(--focus-ring-color, var(--color-accent-brand));
-  outline-offset: 2px;
+
+/* One mark per step: walked steps in ink, the current one longer in the subject colour. */
+.nxv-ticks {
+  display: flex;
+  flex: 1 1 140px;
+  align-items: center;
+  gap: 3px;
+  min-width: 120px;
+  height: 36px;
+  margin: 0 8px;
+}
+.nxv-tick {
+  display: grid;
+  flex: 1;
+  align-items: center;
+  height: 100%;
+  cursor: pointer;
+}
+.nxv-tick > span {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ed-line-strong, var(--color-border-strong));
+  transition:
+    background-color 300ms var(--ed-ease, ease),
+    height 300ms var(--ed-ease, ease);
+}
+.nxv-tick:hover > span {
+  background: var(--ed-muted, var(--color-text-muted));
+}
+.nxv-tick.is-past > span {
+  background: var(--ed-ink-2, var(--color-text-secondary));
+}
+.nxv-tick.is-now > span {
+  height: 6px;
+  background: var(--viz-subject);
 }
 .nxv-scrub {
-  flex: 1 1 120px;
+  flex: 1 1 140px;
   min-width: 100px;
-  height: 40px;
-  accent-color: var(--color-accent-brand);
+  height: 36px;
+  margin: 0 8px;
+  accent-color: var(--viz-subject);
 }
-.nxv-clean {
+
+/* Sketch | Clean */
+.nxv-style {
   display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 40px;
-  padding: 0 4px;
-  color: var(--color-text-secondary);
+  flex: none;
+  margin-left: auto;
+  padding: 2px;
+  border: 1px solid var(--ed-line, var(--color-border));
+  border-radius: 999px;
   cursor: pointer;
-  user-select: none;
 }
-.nxv-clean input {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--color-accent-brand);
+.nxv-style-opt {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--ed-muted, var(--color-text-muted));
+  transition:
+    background-color 200ms var(--ed-ease, ease),
+    color 200ms var(--ed-ease, ease);
+}
+.nxv-style-opt.is-on {
+  background: color-mix(in oklab, var(--ed-ink, var(--color-text-primary)) 9%, transparent);
+  color: var(--ed-ink, var(--color-text-primary));
+  font-weight: 600;
+}
+.nxv-key:focus-visible,
+.nxv-tick:focus-visible,
+.nxv-scrub:focus-visible,
+.nxv-style:focus-visible,
+.nxv-alt summary:focus-visible {
+  outline: 2px solid var(--ed-focus, var(--color-focus));
+  outline-offset: 2px;
+}
+@media (max-width: 479px) {
+  .nxv-deck {
+    padding: 12px 12px 10px;
+  }
+  .nxv-caption {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .nxv-ticks {
+    flex-basis: 100%;
+    order: 5;
+    margin: 4px 0 0;
+  }
 }
 
 .nxv-captions {
@@ -152,7 +236,7 @@
   margin-top: 2px;
 }
 .nxv-figcaption {
-  margin: 6px 4px 0;
+  margin: 4px 6px 0;
   font-size: 0.85em;
   color: var(--color-text-secondary);
 }

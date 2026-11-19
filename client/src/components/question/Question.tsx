@@ -186,7 +186,7 @@ export function QuestionActions({ children, timer }: { children: ReactNode; time
 /** The one clay action on the card. */
 export function CheckButton({ children = 'Check', className, ...rest }: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
-    <button type="button" className={cn('ed-btn ed-btn-clay qc-check', className)} {...rest}>
+    <button type="button" className={cn('ed-btn qc-check', className)} {...rest}>
       {children}
     </button>
   )

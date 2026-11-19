@@ -8,9 +8,10 @@
     position: relative;
     background: var(--ed-card);
     border: 1px solid var(--ed-line);
-    border-radius: 24px;
+    border-radius: 20px;
     color: var(--ed-ink);
     scroll-margin-top: 6rem;
+    overflow: hidden;
   }
   .qc:focus-visible {
     outline: 2px solid var(--ed-focus);
@@ -20,13 +21,13 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    min-height: 3rem;
-    padding: 0.75rem 1.25rem;
+    min-height: 2.75rem;
+    padding: 0.7rem 1rem;
     border-bottom: 1px solid var(--ed-line);
   }
   @media (min-width: 640px) {
     .qc-masthead {
-      padding: 0.75rem 1.75rem;
+      padding: 0.7rem 1.25rem;
     }
   }
   .qc-masthead-line {
@@ -36,8 +37,10 @@
     min-width: 0;
     flex: 1;
     font-family: var(--ed-mono);
-    font-size: 12px;
+    font-size: 11px;
     line-height: 1.6;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: var(--ed-muted);
   }
   .qc-masthead-line a {
@@ -74,7 +77,7 @@
   }
   @media (min-width: 640px) {
     .qc-body {
-      padding: 1.75rem;
+      padding: 1.5rem 1.25rem 1.375rem;
     }
   }
 
@@ -100,12 +103,6 @@
     .qc-text {
       font-size: 1.2rem;
     }
-  }
-  .qc-text :where(p) {
-    margin: 0 0 0.75em;
-  }
-  .qc-text :where(p:last-child) {
-    margin-bottom: 0;
   }
   .qc-text :where(pre) {
     font-family: var(--ed-mono);
@@ -147,43 +144,40 @@
     color: var(--ed-muted);
   }
 
-  /* ── Options: hairline rows ── */
+  /* ── Options: separate keys, the letter on the line of the answer ── */
   .qc-options {
     display: grid;
-    border-top: 1px solid var(--ed-line);
+    gap: 0.5rem;
   }
   .qc-option {
     position: relative;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 0.875rem;
     width: 100%;
     min-height: 3.25rem;
-    padding: 0.75rem 0.75rem 0.75rem 0.625rem;
-    border-bottom: 1px solid var(--ed-line);
-    background: transparent;
+    padding: 0.625rem 1rem 0.625rem 0.75rem;
+    border: 1px solid var(--ed-line);
+    border-radius: 14px;
+    background: var(--ed-card);
     color: var(--ed-ink);
     text-align: left;
     cursor: pointer;
-    transition: background-color 300ms var(--ed-ease);
-  }
-  .qc-option::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: -1px;
-    bottom: -1px;
-    width: 2px;
-    background: transparent;
-    transition: background-color 300ms var(--ed-ease);
+    transition:
+      background-color 200ms var(--ed-ease),
+      border-color 200ms var(--ed-ease),
+      transform 200ms var(--ed-ease);
   }
   .qc-option:hover:not(:disabled) {
-    background: color-mix(in oklab, var(--ed-oat) 55%, transparent);
+    border-color: var(--ed-line-strong);
+    background: color-mix(in oklab, var(--ed-ink) 3%, var(--ed-card));
+  }
+  .qc-option:active:not(:disabled) {
+    transform: scale(0.995);
   }
   .qc-option:focus-visible {
     outline: 2px solid var(--ed-focus);
-    outline-offset: -2px;
-    border-radius: 6px;
+    outline-offset: 2px;
   }
   /* Answered rows stay fully legible (the base rule fades disabled buttons). */
   .qc-option:disabled {
@@ -196,20 +190,20 @@
     width: 28px;
     height: 28px;
     flex-shrink: 0;
-    border-radius: 999px;
+    border-radius: 9px;
     border: 1px solid var(--ed-line-strong);
     font-family: var(--ed-mono);
     font-size: 12px;
-    color: var(--ed-muted);
-    transition: border-color 300ms var(--ed-ease), color 300ms var(--ed-ease), background-color 300ms var(--ed-ease);
+    font-weight: 500;
+    color: var(--ed-ink-2);
+    transition: border-color 200ms var(--ed-ease), color 200ms var(--ed-ease), background-color 200ms var(--ed-ease);
   }
-  .qc-option.is-multi .qc-letter {
-    border-radius: 6px;
+  .qc-option:not(.is-multi) .qc-letter {
+    border-radius: 999px;
   }
   .qc-option-text {
     flex: 1;
     min-width: 0;
-    padding-top: 0.125rem;
     font-family: var(--ed-serif);
     font-size: 1.0625rem;
     line-height: 1.5;
@@ -227,16 +221,12 @@
     overflow-x: auto;
     overflow-y: hidden;
   }
-  .qc-option-text :where(p) {
-    margin: 0;
+  .qc-option.is-on {
+    border-color: var(--ed-ink);
+    background: color-mix(in oklab, var(--ed-ink) 4%, var(--ed-card));
   }
   .qc-option.is-on .qc-letter {
     border-color: var(--ed-ink);
-    border-width: 1.5px;
-    color: var(--ed-ink);
-    font-weight: 600;
-  }
-  .qc-option.is-multi.is-on .qc-letter {
     background: var(--ed-ink);
     color: var(--ed-card);
   }
@@ -247,9 +237,10 @@
     font-size: 0.8125rem;
     font-weight: 600;
   }
-  /* After checking: a moss or brick left hairline, a symbol and a word. */
-  .qc-option[data-state='right']::before {
-    background: var(--qc-right);
+  /* After checking: the row takes the state's colour, with a symbol and a word. */
+  .qc-option[data-state='right'] {
+    border-color: var(--qc-right);
+    background: color-mix(in oklab, var(--qc-right) 8%, var(--ed-card));
   }
   .qc-option[data-state='right'] .qc-letter {
     border-color: var(--qc-right);
@@ -259,8 +250,9 @@
   .qc-option[data-state='right'] .qc-word {
     color: var(--qc-right);
   }
-  .qc-option[data-state='wrong']::before {
-    background: var(--qc-wrong);
+  .qc-option[data-state='wrong'] {
+    border-color: var(--qc-wrong);
+    background: color-mix(in oklab, var(--qc-wrong) 7%, var(--ed-card));
   }
   .qc-option[data-state='wrong'] .qc-letter {
     border-color: var(--qc-wrong);
@@ -270,8 +262,9 @@
   .qc-option[data-state='wrong'] .qc-word {
     color: var(--qc-wrong);
   }
-  .qc-option[data-state='missed']::before {
-    background: repeating-linear-gradient(to bottom, var(--qc-right) 0 4px, transparent 4px 7px);
+  .qc-option[data-state='missed'] {
+    border-style: dashed;
+    border-color: var(--qc-right);
   }
   .qc-option[data-state='missed'] .qc-letter {
     border-style: dashed;
@@ -280,6 +273,9 @@
   }
   .qc-option[data-state='missed'] .qc-word {
     color: var(--qc-right);
+  }
+  .qc-option[data-state='dim'] {
+    background: transparent;
   }
   .qc-option[data-state='dim'] .qc-option-text {
     color: var(--ed-ink-2);
@@ -359,8 +355,26 @@
     gap: 0.75rem 1.5rem;
     padding-top: 0.25rem;
   }
-  .qc-check:disabled {
-    opacity: 0.45;
+  /* Check: solid ink; before an answer is picked, a quiet outline instead of a faded colour. */
+  .qc .qc-check {
+    min-height: 2.5rem;
+    padding: 0 1.25rem;
+    border: 1px solid var(--ed-ink);
+    border-radius: 999px;
+    background: var(--ed-ink);
+    color: var(--ed-card);
+    font-family: var(--ed-sans);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .qc .qc-check:hover:not(:disabled) {
+    background: color-mix(in oklab, var(--ed-ink) 86%, var(--ed-card));
+  }
+  .qc .qc-check:disabled {
+    border-color: var(--ed-line-strong);
+    background: transparent;
+    color: var(--ed-muted);
+    opacity: 1;
     cursor: not-allowed;
   }
   .qc-text-action {
@@ -465,16 +479,14 @@
   }
   .qc-steps > li {
     display: grid;
-    grid-template-columns: 2.5rem minmax(0, 1fr);
+    grid-template-columns: 2.25rem minmax(0, 1fr);
+    align-items: baseline;
     gap: 0.5rem;
   }
   .qc-step-no {
     font-size: 1.125rem;
     line-height: 1.6;
     color: var(--ed-muted);
-  }
-  .qc-step-body :where(p) {
-    margin: 0 0 0.5em;
   }
   .qc-credit {
     margin: 1.25rem 0 0;
@@ -524,4 +536,26 @@
       transition-duration: 0ms !important;
     }
   }
+}
+
+/* Paragraph spacing inside the card. Outside the layer on purpose: the notes
+   reader's unlayered paragraph margins would otherwise win and push answers
+   and solution steps a line below their letter or numeral. */
+.qc .qc-option-text p {
+  margin: 0;
+}
+.qc .qc-text p {
+  margin: 0 0 0.75em;
+}
+.qc .qc-text p:last-child {
+  margin-bottom: 0;
+}
+.qc .qc-step-body p {
+  margin: 0 0 0.5em;
+}
+.qc .qc-step-body > :first-child {
+  margin-top: 0;
+}
+.qc .qc-step-body > :last-child {
+  margin-bottom: 0;
 }

@@ -569,33 +569,74 @@
   border-radius: 12px;
 }
 
-/* Figures: the manilla spread */
+/* Figures: a specimen plate. Paper, one hairline, a slim header with the
+   figure number; the drawing sits straight on the plate (no box in a box). */
 [data-kit='journal'] .nr-figure {
-  padding: 1.5rem;
-  border-radius: 24px;
-  background: var(--ed-feature);
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid var(--ed-line, var(--color-border));
+  border-radius: 20px;
+  background: var(--ed-card, var(--color-bg-surface));
+}
+[data-kit='journal'] .nr-figure > .nr-figure-label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0.8rem 1.25rem;
+  border-bottom: 1px solid var(--ed-line, var(--color-border));
+  font-family: var(--font-display, var(--font-body));
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  text-transform: none;
+  color: var(--ed-ink, var(--color-text-primary));
+}
+[data-kit='journal'] .nr-figure > .nr-figure-label .nr-fig-no {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ed-muted, var(--color-text-muted));
+}
+[data-kit='journal'] .nr-figure > .nr-figure-label .nr-fig-no::before {
+  content: 'Fig. ' counter(nr-fig);
+}
+[data-kit='journal'] .nr-figure > :not(.nr-figure-label, .nxv, .nxv-slot) {
+  margin-inline: 1.25rem;
+}
+[data-kit='journal'] .nr-figure .nxv {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  padding: 1.25rem 1.25rem 0.625rem;
+}
+[data-kit='journal'] .nr-figure .nxv .nxv-deck {
+  margin: 0.75rem -1.25rem -0.625rem;
+  padding: 0.875rem 1.25rem 0.75rem;
 }
 @media (max-width: 639px) {
   [data-kit='journal'] .nr-figure {
-    padding: 1rem;
     border-radius: 16px;
   }
-}
-[data-kit='journal'] .nr-figure :is(.nr-figure-label, .nr-figure-caption) {
-  color: var(--ed-muted-on-feature, var(--color-text-secondary));
-}
-/* Field Journal's own manilla: the exact muted ink that holds 4.5:1 on it. */
-[data-kit='journal'][data-palette='parchment'][data-mode='light'] .nr-figure,
-[data-kit='journal'][data-palette='parchment'] [data-mode='light'] .nr-figure {
-  --ed-muted-on-feature: #5c5b55;
-}
-[data-kit='journal'][data-palette='parchment'][data-mode='dark'] .nr-figure,
-[data-kit='journal'][data-palette='parchment'] [data-mode='dark'] .nr-figure {
-  --ed-muted-on-feature: #aaa79e;
+  [data-kit='journal'] .nr-figure > .nr-figure-label {
+    padding: 0.7rem 1rem;
+  }
+  [data-kit='journal'] .nr-figure > .nxv {
+    padding: 1rem 0.75rem 0.5rem;
+  }
+  [data-kit='journal'] .nr-figure .nxv .nxv-deck {
+    margin: 0.5rem -0.75rem -0.5rem;
+    padding: 0.75rem;
+  }
 }
 [data-kit='journal'] .nr-figure-caption {
   font-family: var(--kit-read);
   font-style: italic;
+  color: var(--ed-muted, var(--color-text-secondary));
 }
 
 /* Callouts: a label and one hairline, no fill */
@@ -677,8 +718,44 @@
   background: var(--color-bg-surface);
   box-shadow: none;
 }
-[data-kit='journal'] .nr-figure .viz-player {
-  border-color: color-mix(in oklab, var(--color-text-primary) 14%, transparent);
+/* Inside a figure plate the player sits flush: the plate is the frame, and
+   the plate's header already names the figure, so the player's own title
+   (and its badge) step aside; inputs and full screen stay. */
+[data-kit='journal'] .nr-figure .viz-player:not(.viz-focus) {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+[data-kit='journal'] .nr-figure > .viz-player:not(.viz-focus),
+[data-kit='journal'] .nr-figure > :not(.nr-figure-label) > .viz-player:not(.viz-focus) {
+  margin: 0;
+}
+[data-kit='journal'] .nr-figure:has(.viz-player) > :not(.nr-figure-label, .nr-figure-caption) {
+  margin-inline: 0;
+}
+[data-kit='journal'] .nr-figure .viz-player:not(.viz-focus) .viz-head :is(.viz-badge, p) {
+  display: none;
+}
+/* Full screen moves up into the plate's header line instead of a row of its own. */
+[data-kit='journal'] .nr-figure:has(.viz-player) {
+  position: relative;
+}
+[data-kit='journal'] .nr-figure .viz-player:not(.viz-focus) {
+  overflow: visible;
+}
+[data-kit='journal'] .nr-figure .viz-player:not(.viz-focus) .viz-head > :first-child {
+  position: absolute;
+  top: 0.45rem;
+  right: 0.75rem;
+}
+[data-kit='journal'] .nr-figure:has(.viz-player) > .nr-figure-label {
+  padding-right: 3.5rem;
+}
+[data-kit='journal'] .nr-figure .viz-player:not(.viz-focus) .viz-head:not(:has(> :nth-child(2))) {
+  display: none;
+}
+[data-kit='journal'] .nr-figure .viz-player:not(.viz-focus) .viz-head > :nth-child(2) {
+  margin-top: 0;
 }
 [data-kit='journal'] .viz-head,
 [data-kit='journal'] .viz-side,
@@ -812,14 +889,15 @@
   color: var(--color-text-primary);
   box-shadow: inset 0 0 0 1px var(--color-text-primary);
 }
+/* Play: the same ink circle as the notes animations (viz/viz.css .nxv-key--play). */
 [data-kit='journal'] .viz-play {
-  background: var(--ed-clay);
-  color: var(--ed-on-clay, var(--color-text-primary));
+  background: var(--ed-ink, var(--color-text-primary));
+  color: var(--ed-card, var(--color-bg-surface));
   box-shadow: none;
-  border-radius: var(--kit-btn-radius, 0 0 8px 8px);
+  border-radius: 999px;
 }
 [data-kit='journal'] .viz-play:hover {
-  background: var(--ed-clay-deep);
+  background: color-mix(in oklab, var(--ed-ink, var(--color-text-primary)) 86%, var(--ed-card, var(--color-bg-surface)));
   transform: none !important;
 }
 [data-kit='journal'] .viz-progress > div {
@@ -849,50 +927,23 @@
   opacity: 1;
 }
 
-/* Field Journal — GATE notes animations (client/src/viz). The figure is the
-   manilla spread (from .nr-figure); the drawing sits on ivory with a hairline;
-   the "current" colour is clay; step labels are ink in label style; the main
-   button is the clay tab with ink text, like the landing player. */
+/* Field Journal — GATE notes animations (client/src/viz). The figure is a
+   specimen plate (from .nr-figure); the drawing sits straight on it; the
+   "current" colour is clay (marks only, never text). */
 [data-kit='journal'] .nr-figure .nxv {
   --viz-subject: var(--ed-clay, var(--color-accent-brand));
-  margin: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  padding: 0;
 }
 [data-kit='journal'] .nr-figure .nxv-stage {
-  /* The frame may span the figure; the drawing inside stays capped (viz.css). */
+  /* The drawing sits straight on the plate; it stays capped inside (viz.css). */
   max-width: none;
-  padding: 18px 16px;
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  background: var(--color-bg-surface);
 }
-[data-kit='journal'] .nxv-step {
-  font-family: var(--font-mono);
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  color: var(--color-text-primary);
+[data-kit='journal'] .nr-figure :is(.nxv-caption, .nxv-captions) {
+  font-family: var(--kit-read, var(--font-display));
+  color: var(--ed-ink, var(--color-text-primary));
 }
-[data-kit='journal'] .nxv-btn {
-  border-radius: 8px;
-  border-color: var(--color-border);
-  background: var(--color-bg-surface);
-  box-shadow: 0 0 #0000;
-}
-[data-kit='journal'] .nxv-btn--main {
-  border-color: transparent;
-  border-radius: var(--kit-btn-radius, 0 0 8px 8px);
-  background: var(--ed-clay, var(--color-accent-brand));
-  color: var(--ed-on-clay, var(--color-on-accent-brand));
-}
-[data-kit='journal'] .nxv-btn--main:hover:not(:disabled) {
-  background: var(--ed-clay-deep, var(--color-accent-brand-hover));
-}
-[data-kit='journal'] .nr-figure :is(.nxv-caption, .nxv-figcaption, .nxv-captions) {
-  font-family: var(--font-display);
-  color: var(--ed-muted-on-feature, var(--color-text-secondary));
+[data-kit='journal'] .nr-figure .nxv-figcaption {
+  font-family: var(--font-body);
+  color: var(--ed-muted, var(--color-text-secondary));
 }
 
 /* Notes front page: the subject's animation on a manilla plate. */
