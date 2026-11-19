@@ -20,6 +20,7 @@ import { pushRecentSearch, useRecentSearches } from '@/lib/recentSearches'
 import { describeRecent, pageMatches, usePageEntries, type PageEntry } from './searchSources'
 import { LESSON_GROUP, LESSON_ICON, useLessonSearch } from '@/lib/lessonSearch'
 import { ClearRecents } from './ClearRecents'
+import { FocusTimer } from './FocusTimer'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
 
@@ -247,6 +248,7 @@ export function Topbar() {
             </button>
           </Tooltip>
         )}
+        {user && <FocusTimer />}
         <LookPopover />
         <Notifications />
         {user && (
