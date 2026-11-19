@@ -5,8 +5,8 @@ export const meta = {
 }
 
 const MAIN = '/Users/gurudeep/Desktop/Projects/nexora'
-// The past-paper PDFs live in the private repo nexora-gate-materials, cloned next to this one.
-const GATE_PYQ = process.env.GATE_PYQ_DIR || `${MAIN}/../nexora-gate-materials/GATE_PYQ`
+// The past-paper PDFs live in the private repo Materials, cloned next to this one.
+const GATE_PYQ = process.env.GATE_PYQ_DIR || `${MAIN}/../Materials/GATE_PYQ`
 const CONCURRENCY = 4
 
 const RESULT_SCHEMA = {

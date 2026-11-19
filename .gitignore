@@ -66,3 +66,7 @@ content/gate-notes/_digest/
 
 # AI courses: paywalled and downloaded papers stay private (never committed)
 docs/ai-courses/private/
+
+# GATE source materials live in the private repo Gurudeep306/Materials (clone it next to this one).
+GATE_PYQ/
+/*.pdf
