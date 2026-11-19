@@ -74,7 +74,7 @@ function ProjectMemory() {
   }, [items, q])
 
   if (!boot) return null
-  if (!projectId) return <Empty icon={<Brain />} title="No projects yet">Create a project first; its memory appears here.</Empty>
+  if (!projectId) return <Empty level={2} icon={<Brain />} title="No projects yet">Create a project first; its memory appears here.</Empty>
 
   const add = async () => {
     setBusy(true)
@@ -106,7 +106,7 @@ function ProjectMemory() {
           </Select>
         )}
         {n > 0 && (
-          <p className="text-[13px] text-[var(--hv-text-2)]">
+          <p className="mb-0 text-[13px] text-[var(--hv-text-2)]">
             {sharing && !sharing.enabled ? (
               <>
                 Shared memory is off for this project, so agents don't see these notes.{' '}
@@ -139,7 +139,7 @@ function ProjectMemory() {
       {items === null ? (
         <div className="hive-shimmer h-24 rounded-[var(--hv-r-card)]" />
       ) : n === 0 ? (
-        <Empty icon={<Brain />} title="Nothing remembered yet">
+        <Empty level={2} icon={<Brain />} title="Nothing remembered yet">
           Add a fact above. With Shared memory on, agents add what they learn here too.
         </Empty>
       ) : shown.length === 0 ? (
@@ -228,8 +228,8 @@ function MemoryRow({ m, sent, sharingOn, onChange }: { m: MemoryItem; sent: bool
               )}
               {sharingOn && !sent && <span className="text-[11.5px] text-[var(--color-state-warning)]">Not sent to agents (past the limit)</span>}
             </div>
-            <p className="mt-0.5 whitespace-pre-wrap break-words text-[13.5px] leading-relaxed text-[var(--hv-text-2)]">{m.body}</p>
-            <p className="mt-1.5 text-[12px] text-[var(--hv-text-3)]">
+            <p className="mb-0 mt-0.5 whitespace-pre-wrap break-words text-[13.5px] leading-relaxed text-[var(--hv-text-2)]">{m.body}</p>
+            <p className="mb-0 mt-1.5 text-[12px] text-[var(--hv-text-3)]">
               {m.author === 'launchpad' ? 'From the project plan' : agent ? `${who} (agent)` : who} · {timeAgo(m.created_at)}
             </p>
           </>
@@ -320,7 +320,7 @@ function PersonalMemory() {
       {facts === null ? (
         <div className="hive-shimmer h-24 rounded-[var(--hv-r-card)]" />
       ) : n === 0 ? (
-        <Empty icon={<User />} title="Chats don't know anything about you yet">
+        <Empty level={2} icon={<User />} title="Chats don't know anything about you yet">
           Add a fact above, or tell a chat “remember that…”.
         </Empty>
       ) : (
@@ -333,8 +333,8 @@ function PersonalMemory() {
             {facts.map((f, i) => (
               <li key={f.id} className="flex items-start gap-3 py-3">
                 <div className="min-w-0 flex-1">
-                  <p className="break-words text-[14px] text-[var(--hv-text-1)]">{f.fact}</p>
-                  <p className="mt-0.5 text-[12px] text-[var(--hv-text-3)]">
+                  <p className="mb-0 break-words text-[14px] text-[var(--hv-text-1)]">{f.fact}</p>
+                  <p className="mb-0 mt-0.5 text-[12px] text-[var(--hv-text-3)]">
                     {f.source === 'chat' ? 'Saved by a chat' : 'Added by you'} · {timeAgo(f.created_at)}
                     {i >= 60 && ' · not read by chats (past the newest 60)'}
                   </p>
