@@ -51,8 +51,11 @@ test("counts what is missing, and only what the judge publishes", async () => {
   );
   assert.equal(s.codechef.missing.limits, 0, "CodeChef publishes no memory limit: not a gap");
   assert.equal(s.codechef.published.rating, false, "no CodeChef problem here has a rating: n/a, not missing");
-  assert.equal(s.uva.published.samples, false, "UVa statements are PDFs");
-  assert.equal(s.uva.missing.samples, 0);
+  // UVa's statements are PDFs; their samples are read out of them now
+  // (src/sources/pdf-statement.js), so a UVa statement with no samples is a gap.
+  assert.equal(s.uva.published.samples, true, "UVa samples are read from the PDFs");
+  assert.equal(s.uva.published.limits, false, "UVa PDFs print no limits");
+  assert.equal(s.uva.missing.limits, 0);
   assert.equal(s.euler.published.samples, false, "answer-only: no samples");
 });
 

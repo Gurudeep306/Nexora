@@ -251,7 +251,7 @@ async function main() {
   const base = `http://localhost:${PORT}`;
   const proc = spawn(process.execPath, ["src/server.js"], {
     cwd: path.join(__dirname, ".."),
-    env: { ...process.env, PORT: String(PORT), NODE_ENV: "development", DB_PATH: dbPath, DISABLE_PUPPETEER: "1", DISABLE_SCRAPER: "1", OWNER_USERNAME: OWNER, HIVE_GITHUB_API: mock.url, HIVE_ANTHROPIC_API: mock.url, HIVE_DEMO: "1" },
+    env: { ...process.env, PORT: String(PORT), NODE_ENV: "development", DB_PATH: dbPath, DISABLE_PUPPETEER: "1", DISABLE_SCRAPER: "1", STATEMENT_BACKFILL: "0", OWNER_USERNAME: OWNER, HIVE_GITHUB_API: mock.url, HIVE_ANTHROPIC_API: mock.url, HIVE_DEMO: "1" },
     stdio: ["ignore", "pipe", "pipe"],
   });
   let log = "";

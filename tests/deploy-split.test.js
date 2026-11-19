@@ -90,6 +90,7 @@ async function startServer(extraEnv) {
       DB_PATH: ':memory:',
       DISABLE_PUPPETEER: '1',
       DISABLE_SCRAPER: '1',
+      STATEMENT_BACKFILL: '0',
       TURSO_DATABASE_URL: '',
       SENTRY_DSN: '',
       ...extraEnv,
