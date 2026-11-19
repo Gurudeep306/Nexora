@@ -72,6 +72,7 @@ export const hiveApi = {
   deleteMemory: (id: string) => api.delete<Ok<object>>(`/api/hive/memory/${id}`),
 
   plugins: (projectId?: string | null) => api.get<Ok<{ builtins: Plugin[]; custom: Plugin[] }>>('/api/hive/plugins', { query: { projectId: projectId ?? undefined } }),
+  resetPlugin: (id: string, scope: string) => api.delete<Ok<{ reset: boolean }>>(`/api/hive/plugins/builtin/${id}?scope=${encodeURIComponent(scope)}`),
   setPlugin: (id: string, body: { scope: string; enabled?: boolean; config?: Record<string, unknown> }) => api.put<Ok<object>>(`/api/hive/plugins/builtin/${id}`, body),
   addCustomPlugin: (body: { scope: string; name: string; description?: string; instructions: string; appliesTo: string }) => api.post<Ok<{ id: string }>>('/api/hive/plugins/custom', body),
   updateCustomPlugin: (id: string, body: Record<string, unknown>) => api.patch<Ok<object>>(`/api/hive/plugins/custom/${id}`, body),
