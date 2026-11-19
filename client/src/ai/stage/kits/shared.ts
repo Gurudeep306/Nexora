@@ -6,6 +6,7 @@
 import { useMemo } from 'react'
 import type { ThreeEvent } from '@react-three/fiber'
 import { toScene, type V3 } from '../../three/coords'
+export { toScene }
 import { mix, type Palette3D } from '../../three/theme3d'
 import { compile } from '../expr'
 import type { StageTone } from '../spec'
@@ -38,4 +39,46 @@ export function useFormula(src: string | undefined, params: Record<string, numbe
   const names = Object.keys(params).sort().join(',')
   const fn = useMemo(() => (src ? compile(src, ['x', 'y', ...names.split(',').filter(Boolean)]) : null), [src, names])
   return useMemo(() => (fn ? (x: number, y: number) => fn({ ...params, x, y }) : null), [fn, params])
+}
+
+/** A formula in the given variables and the scene's parameters, compiled once. Returns null when there is no formula. */
+export function useFn(src: string | undefined, vars: string[], params: Record<string, number>) {
+  const names = Object.keys(params).sort().join(',')
+  const vs = vars.join(',')
+  const fn = useMemo(() => (src ? compile(src, [...vs.split(','), ...names.split(',').filter(Boolean)]) : null), [src, vs, names])
+  return useMemo(() => {
+    if (!fn) return null
+    const keys = vs.split(',')
+    return (...args: number[]) => {
+      const env: Record<string, number> = { ...params }
+      keys.forEach((k, i) => (env[k] = args[i]))
+      const v = fn(env)
+      return Number.isFinite(v) ? v : NaN
+    }
+  }, [fn, vs, params])
+}
+/** Opacity of an element: its own, times how much it is in focus. */
+export const opOf = (el: { id: string; opacity?: number }, c: ElCtx) => (el.opacity ?? 1) * c.dim(el.id)
+/** Categorical tones for classes and series, in a fixed order. */
+export const SERIES: StageTone[] = ['info', 'warning', 'success', 'error', 'ink2', 'accent']
+
+/**
+ * A flat diagram's plane. Offsets (X right, Y up the page) map to the scene;
+ * with `stand`, the plane lies on the floor in 2D and stands upright in 3D
+ * (it turns up about its bottom edge as the scene lifts). Z lifts off the plane.
+ */
+export function planeMap(at: V3 | undefined, lift: number, stand = false) {
+  const [ax, ay, az] = at ?? [0, 0, 0]
+  const s = stand ? lift : 0
+  return (X: number, Y: number, Z = 0): V3 => toScene(ax + X, ay + Y * (1 - s) - Z * s, az * lift + Y * s + Z * (1 - s) * Math.max(lift, 0.002))
+}
+/** "Nice" tick values covering [lo, hi]. */
+export function ticks(lo: number, hi: number, n = 4): number[] {
+  if (!(hi > lo)) return [lo]
+  const raw = (hi - lo) / n
+  const mag = 10 ** Math.floor(Math.log10(raw))
+  const step = [1, 2, 2.5, 5, 10].map((k) => k * mag).find((k) => k >= raw) ?? raw
+  const out: number[] = []
+  for (let v = Math.ceil(lo / step - 1e-9) * step; v <= hi + 1e-9; v += step) out.push(Math.abs(v) < step * 1e-9 ? 0 : v)
+  return out
 }

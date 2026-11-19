@@ -9,6 +9,7 @@ import { OPTIMIZERS } from '@/ai/engine/optim'
 import { Stage } from '@/ai/stage/Stage'
 import { attentionScene, attentionTraceScene, mlpTraceScene, networkScene, scoreScene, tensorScene } from '@/ai/stage/demos'
 import { KITS } from '@/ai/stage/registry'
+import { KIT_DEMOS } from '@/ai/stage/kitDemos'
 
 function Tex({ src }: { src: string }) {
   // Wide formulas scroll sideways on phones, so the block can take focus for keyboard scrolling.
@@ -89,7 +90,19 @@ export default function AiLabPage() {
       <BackButton />
       <PageHeader eyebrow="AI courses · engine preview" title="3D lab" subtitle="Every scene is computed live in your browser. Drag to turn, scroll or pinch to zoom, and step through it." />
       <nav aria-label="Scenes on this page" className="flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
-        <section aria-labelledby="gen-h" className="space-y-3 border-t border-border pt-6">
+        {[
+          ['gen-h', 'Generated scenes'],
+          ['kits-h', 'The library'],
+          ['demos-h', 'One scene per kit'],
+          ['stage-h', '2D into 3D'],
+          ...SECTIONS.map((s) => [`${s.id}-h`, s.title]),
+        ].map(([id, t]) => (
+          <a key={id} href={`#${id}`} className="text-text-secondary underline-offset-[3px] hover:text-text-primary hover:underline">
+            {t}
+          </a>
+        ))}
+      </nav>
+      <section aria-labelledby="gen-h" className="space-y-3 border-t border-border pt-6">
         <p className="m-0 text-[11px] font-semibold tracking-wider text-text-muted uppercase">Generated from the computation</p>
         <h2 id="gen-h" className="m-0 text-xl font-semibold text-text-primary">
           Write the model once; the scene builds itself
@@ -127,12 +140,25 @@ export default function AiLabPage() {
           ))}
         </dl>
       </section>
-      {SECTIONS.map((s) => (
-          <a key={s.id} href={`#${s.id}`} className="text-text-secondary underline-offset-[3px] hover:text-text-primary hover:underline">
-            {s.title}
-          </a>
-        ))}
-      </nav>
+      <section aria-labelledby="demos-h" className="space-y-3 border-t border-border pt-6">
+        <p className="m-0 text-[11px] font-semibold tracking-wider text-text-muted uppercase">One scene per kit</p>
+        <h2 id="demos-h" className="m-0 text-xl font-semibold text-text-primary">
+          Every kit at work
+        </h2>
+        <p className="m-0 max-w-3xl text-[15px] leading-relaxed text-text-secondary">
+          Each scene computes its own numbers: the dice are simulated, the classifier is trained, the grid world is solved by value iteration, the memory is counted byte by byte. Every one of the 225 topics in the curriculum is drawn with these pieces.
+        </p>
+      </section>
+      {KIT_DEMOS.map(({ kit, make }) => {
+        const spec = make()
+        return (
+          <section key={spec.title} aria-label={spec.title} className="space-y-2">
+            <p className="m-0 text-[11px] font-semibold tracking-wider text-text-muted uppercase">{kit}</p>
+            <h3 className="m-0 text-[17px] font-semibold text-text-primary">{spec.title}</h3>
+            <Stage spec={spec} />
+          </section>
+        )
+      })}
       <section aria-labelledby="stage-h" className="space-y-3 border-t border-border pt-6">
         <p className="m-0 text-[11px] font-semibold tracking-wider text-text-muted uppercase">Nexora Stage · one engine for 2D and 3D</p>
         <h2 id="stage-h" className="m-0 text-xl font-semibold text-text-primary">
