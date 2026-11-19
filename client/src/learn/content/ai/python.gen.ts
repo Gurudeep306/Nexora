@@ -20,6 +20,11 @@ export const PY_RECORDINGS: Record<string, PyRecording> = {
     "ok": true,
     "figures": 0
   },
+  "36697039": {
+    "out": "[72, 85, 64]\n[72, 85, 64, 91, 58]\n[99, 72, 85, 64, 91, 58]\n[99, 72, 85, 64, 91, 58, 1, 2]\n[99, 72, 85, 64, 91, 58]\n",
+    "ok": true,
+    "figures": 0
+  },
   "74a05698": {
     "out": "Passed\nWell done\nThis line always runs\n",
     "ok": true,
@@ -167,6 +172,86 @@ export const PY_RECORDINGS: Record<string, PyRecording> = {
   },
   "5a9818a2": {
     "out": "87.5\n{'km': <class 'float'>, 'per_km': <class 'float'>, 'return': <class 'float'>}\n",
+    "ok": true,
+    "figures": 0
+  },
+  "6db192f8": {
+    "out": "[72, 85, 64, 91]\n4\n[17, 'Asha', 72.5, True] []\n",
+    "ok": true,
+    "figures": 0
+  },
+  "2a1fc09a": {
+    "out": "72 91\n[85, 64]\n[91, 64, 85, 72]\nTrue False\n",
+    "ok": true,
+    "figures": 0
+  },
+  "4be9c1ee": {
+    "out": "[72, 85, 70, 91]\n[75, 88, 70, 91]\n",
+    "ok": true,
+    "figures": 0
+  },
+  "07bcadcc": {
+    "out": "312 64 91\nmean: 78.0\nrange: 27\n",
+    "ok": true,
+    "figures": 0
+  },
+  "5fef4bad": {
+    "out": "91 [99, 72, 85, 64]\n99 [72, 85, 64]\n[72, 64]\n[64]\n",
+    "ok": true,
+    "figures": 0
+  },
+  "e3627248": {
+    "out": "[64, 72, 85, 91]\n[91, 85, 72, 64]\n[72, 85, 64, 91]\n[64, 72, 85, 91] None\n",
+    "ok": true,
+    "figures": 0
+  },
+  "cf80b5f1": {
+    "out": "3\n1\n['dog', 'cat', 'cat', 'dog', 'cat']\n",
+    "ok": true,
+    "figures": 0
+  },
+  "913ecac3": {
+    "out": "[72, 85, 64] [72, 85, 64] [72, 85, 64, 99]\n",
+    "ok": true,
+    "figures": 0
+  },
+  "a6703622": {
+    "out": "True True\nTrue False\n",
+    "ok": true,
+    "figures": 0
+  },
+  "7a0875c6": {
+    "out": "[[99, 2], [3, 4]]\n[[1, 2], [3, 4]]\n",
+    "ok": true,
+    "figures": 0
+  },
+  "3c4a9976": {
+    "out": "[91, 58, 77]\n77\n73.66666666666667\n75.33333333333333\n74.66666666666667\n",
+    "ok": true,
+    "figures": 0
+  },
+  "154b6327": {
+    "out": "[85, 58, 70] 71.0\n",
+    "ok": true,
+    "figures": 0
+  },
+  "fb5d97ad": {
+    "out": "[[5, 0, 0], [5, 0, 0], [5, 0, 0]]\n[[5, 0, 0], [0, 0, 0], [0, 0, 0]]\n",
+    "ok": true,
+    "figures": 0
+  },
+  "8d743d8a": {
+    "out": "3 (28, 28)\n<class 'tuple'>\n<class 'tuple'> <class 'int'>\n",
+    "ok": true,
+    "figures": 0
+  },
+  "c143710e": {
+    "out": "Traceback (most recent call last):\n  File \"lesson.py\", line 2, in <module>\n    point[0] = 10\n    ~~~~~^^^\nTypeError: 'tuple' object does not support item assignment\n",
+    "ok": false,
+    "figures": 0
+  },
+  "23ad21f1": {
+    "out": "3 4\n72 [85, 64, 91]\n[72, 85, 64] 91\nAsha scored 72\nRavi scored 85\n",
     "ok": true,
     "figures": 0
   },

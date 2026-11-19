@@ -188,7 +188,8 @@ function Rig({ controls, camera3, target3, lift, onApi }: { controls: React.RefO
   // Frame once the canvas has a size: the 3D home pose.
   useEffect(() => {
     if (home.current || !size.width || !size.height) return
-    const k = Math.min(2.2, Math.max(1, 1.25 / (size.width / size.height)))
+    // Scenes are framed for a wide view (about 1.6 : 1); narrower screens step back until the same width fits.
+    const k = Math.min(2.4, Math.max(1, 1.6 / (size.width / size.height)))
     back.current = k
     const t = new Vector3(...target3)
     const off = new Vector3(...camera3).sub(t).multiplyScalar(k)
