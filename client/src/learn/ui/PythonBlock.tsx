@@ -26,7 +26,6 @@ function Highlighted({ code, active, done, errorLine }: { code: string; active?:
                 {t.t}
               </span>
             ))}
-            {l.includes('#') && <span className="tok-com">{l.slice(l.indexOf('#'))}</span>}
             {!l && ' '}
           </span>
         </div>

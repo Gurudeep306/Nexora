@@ -148,6 +148,165 @@ export const AI_SEARCH: Record<string, AiPageIndex[]> = {
       ]
     }
   ],
+  "f-py-control": [
+    {
+      "page": "decisions",
+      "title": "Decisions: if, elif and else",
+      "sections": [
+        "Indentation is part of the language",
+        "Two ways: else",
+        "Many ways: elif",
+        "A one-line choice",
+        "Indentation errors"
+      ]
+    },
+    {
+      "page": "for",
+      "title": "for loops and range",
+      "sections": [
+        "Counting with range()",
+        "Adding up as you go",
+        "A loop inside a loop"
+      ]
+    },
+    {
+      "page": "while",
+      "title": "while loops",
+      "sections": [
+        "A while loop goes round until its test says no",
+        "The loop that never ends"
+      ]
+    },
+    {
+      "page": "break",
+      "title": "break, continue, pass and else on loops",
+      "sections": [
+        "break: leave the loop now",
+        "continue: skip to the next pass",
+        "else on a loop",
+        "pass: a block that does nothing"
+      ]
+    },
+    {
+      "page": "match",
+      "title": "Choosing by shape: match",
+      "sections": []
+    },
+    {
+      "page": "check",
+      "title": "Check yourself",
+      "sections": [
+        "Questions"
+      ]
+    }
+  ],
+  "f-py-functions": [
+    {
+      "page": "def",
+      "title": "Defining and calling a function",
+      "sections": [
+        "Why write functions?",
+        "return is not print"
+      ]
+    },
+    {
+      "page": "args",
+      "title": "Arguments: positional, keyword and default",
+      "sections": [
+        "Default values",
+        "Any number of arguments: *args and **kwargs",
+        "Wrong number of arguments"
+      ]
+    },
+    {
+      "page": "scope",
+      "title": "Scope: where a name lives",
+      "sections": [
+        "Each call gets its own box of variables",
+        "Local and global"
+      ]
+    },
+    {
+      "page": "values",
+      "title": "More than one result, functions as values, and lambda",
+      "sections": [
+        "Returning several values",
+        "A function is a value too",
+        "lambda: a function in one line",
+        "A function that calls itself"
+      ]
+    },
+    {
+      "page": "docs",
+      "title": "Docstrings and help()",
+      "sections": [
+        "Type hints"
+      ]
+    },
+    {
+      "page": "check",
+      "title": "Check yourself",
+      "sections": [
+        "Questions"
+      ]
+    }
+  ],
+  "f-py-strings": [
+    {
+      "page": "text",
+      "title": "Strings: text in quotes",
+      "sections": [
+        "Special characters: escapes",
+        "Strings over many lines",
+        "How long is it? len()"
+      ]
+    },
+    {
+      "page": "index",
+      "title": "Indexing and slicing",
+      "sections": [
+        "A string is a row of characters with numbered places",
+        "One character: s[i]",
+        "A stretch: s[start:stop:step]",
+        "Strings cannot be changed"
+      ]
+    },
+    {
+      "page": "methods",
+      "title": "String methods",
+      "sections": [
+        "Case and spaces",
+        "Finding and checking",
+        "Replacing",
+        "Splitting into words, joining back",
+        "Is it a number?"
+      ]
+    },
+    {
+      "page": "formatting",
+      "title": "f-strings and printing",
+      "sections": [
+        "Format specifications",
+        "Show the name too: {x=}",
+        "print() has options too",
+        "New in Python 3.14: template strings"
+      ]
+    },
+    {
+      "page": "unicode",
+      "title": "Characters, Unicode and UTF-8",
+      "sections": [
+        "From characters to bytes: UTF-8"
+      ]
+    },
+    {
+      "page": "check",
+      "title": "Check yourself",
+      "sections": [
+        "Questions"
+      ]
+    }
+  ],
   "f-python": [
     {
       "page": "why",

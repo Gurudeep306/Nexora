@@ -3,6 +3,9 @@ import { AI_COURSES, AI_TOPIC_INFO } from './web.gen'
 import fNumbers from './foundations/f-numbers/meta'
 import fFunctions from './foundations/f-functions/meta'
 import fPython from './foundations/f-python/meta'
+import fPyStrings from './foundations/f-py-strings/meta'
+import fPyControl from './foundations/f-py-control/meta'
+import fPyFunctions from './foundations/f-py-functions/meta'
 
 /**
  * The AI courses: every topic of docs/ai-courses/curriculum.json, in teaching
@@ -13,6 +16,9 @@ const WRITTEN: Record<string, { meta: TopicMeta; load: () => Promise<{ default: 
   'f-numbers': { meta: fNumbers, load: () => import('./foundations/f-numbers') },
   'f-functions': { meta: fFunctions, load: () => import('./foundations/f-functions') },
   'f-python': { meta: fPython, load: () => import('./foundations/f-python') },
+  'f-py-strings': { meta: fPyStrings, load: () => import('./foundations/f-py-strings') },
+  'f-py-control': { meta: fPyControl, load: () => import('./foundations/f-py-control') },
+  'f-py-functions': { meta: fPyFunctions, load: () => import('./foundations/f-py-functions') },
 }
 
 export const AI_TOPICS: SyllabusEntry[] = AI_COURSES.flatMap((c) =>
