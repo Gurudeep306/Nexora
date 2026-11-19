@@ -1,0 +1,5920 @@
+{
+ "checkedAt": "2026-11-18T20:18:25.953Z",
+ "papers": [
+  {
+   "id": "shannon-1948",
+   "title": "A Mathematical Theory of Communication",
+   "authors": "Shannon",
+   "year": 1948,
+   "course": "math-for-ai",
+   "topics": [
+    "entropy",
+    "information"
+   ],
+   "doi": "10.1002/j.1538-7305.1948.tb01338.x",
+   "check": {
+    "id": "shannon-1948",
+    "ok": true,
+    "found": "A Mathematical Theory of Communication",
+    "foundYear": 1948,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1002/j.1538-7305.1948.tb01338.x"
+   }
+  },
+  {
+   "id": "kullback-1951",
+   "title": "On Information and Sufficiency",
+   "authors": "Kullback, Leibler",
+   "year": 1951,
+   "course": "math-for-ai",
+   "topics": [
+    "kl-divergence"
+   ],
+   "doi": "10.1214/aoms/1177729694",
+   "check": {
+    "id": "kullback-1951",
+    "ok": true,
+    "found": "On Information and Sufficiency",
+    "foundYear": 1951,
+    "why": "",
+    "access": "open",
+    "read": "https://projecteuclid.org/journals/annals-of-mathematical-statistics/volume-22/issue-1/On-Information-and-Sufficiency/10.1214/aoms/1177729694.pdf"
+   }
+  },
+  {
+   "id": "robbins-1951",
+   "title": "A Stochastic Approximation Method",
+   "authors": "Robbins, Monro",
+   "year": 1951,
+   "course": "math-for-ai",
+   "topics": [
+    "sgd"
+   ],
+   "doi": "10.1214/aoms/1177729586",
+   "check": {
+    "id": "robbins-1951",
+    "ok": true,
+    "found": "A Stochastic Approximation Method",
+    "foundYear": 1951,
+    "why": "",
+    "access": "open",
+    "read": "https://projecteuclid.org/journals/annals-of-mathematical-statistics/volume-22/issue-3/A-Stochastic-Approximation-Method/10.1214/aoms/1177729586.pdf"
+   }
+  },
+  {
+   "id": "polyak-1964",
+   "title": "Some methods of speeding up the convergence of iteration methods",
+   "authors": "Polyak",
+   "year": 1964,
+   "course": "math-for-ai",
+   "topics": [
+    "momentum"
+   ],
+   "doi": "10.1016/0041-5553(64)90137-5",
+   "check": {
+    "id": "polyak-1964",
+    "ok": true,
+    "found": "Some methods of speeding up the convergence of iteration methods",
+    "foundYear": 1964,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1016/0041-5553(64)90137-5"
+   }
+  },
+  {
+   "id": "metropolis-1953",
+   "title": "Equation of State Calculations by Fast Computing Machines",
+   "authors": "Metropolis et al.",
+   "year": 1953,
+   "course": "math-for-ai",
+   "topics": [
+    "mcmc"
+   ],
+   "doi": "10.1063/1.1699114",
+   "check": {
+    "id": "metropolis-1953",
+    "ok": true,
+    "found": "Equation of State Calculations by Fast Computing Machines",
+    "foundYear": 1953,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1063/1.1699114"
+   }
+  },
+  {
+   "id": "hastings-1970",
+   "title": "Monte Carlo sampling methods using Markov chains and their applications",
+   "authors": "Hastings",
+   "year": 1970,
+   "course": "math-for-ai",
+   "topics": [
+    "mcmc"
+   ],
+   "doi": "10.1093/biomet/57.1.97",
+   "check": {
+    "id": "hastings-1970",
+    "ok": true,
+    "found": "Monte Carlo sampling methods using Markov chains and their applications",
+    "foundYear": 1970,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1093/biomet/57.1.97"
+   }
+  },
+  {
+   "id": "baydin-2015",
+   "title": "Automatic differentiation in machine learning: a survey",
+   "authors": "Baydin et al.",
+   "year": 2015,
+   "course": "math-for-ai",
+   "topics": [
+    "autodiff"
+   ],
+   "arxiv": "1502.05767",
+   "check": {
+    "id": "baydin-2015",
+    "ok": true,
+    "found": "Automatic differentiation in machine learning: a survey",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1502.05767"
+   }
+  },
+  {
+   "id": "duchi-2011",
+   "title": "Adaptive Subgradient Methods for Online Learning and Stochastic Optimization",
+   "authors": "Duchi, Hazan, Singer",
+   "year": 2011,
+   "course": "math-for-ai",
+   "topics": [
+    "adagrad"
+   ],
+   "url": "https://jmlr.org/papers/v12/duchi11a.html",
+   "check": {
+    "id": "duchi-2011",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://jmlr.org/papers/v12/duchi11a.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "kingma-2014",
+   "title": "Adam: A Method for Stochastic Optimization",
+   "authors": "Kingma, Ba",
+   "year": 2014,
+   "course": "math-for-ai",
+   "topics": [
+    "adam"
+   ],
+   "arxiv": "1412.6980",
+   "check": {
+    "id": "kingma-2014",
+    "ok": true,
+    "found": "Adam: A Method for Stochastic Optimization",
+    "foundYear": 2014,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1412.6980"
+   }
+  },
+  {
+   "id": "loshchilov-2017",
+   "title": "Decoupled Weight Decay Regularization",
+   "authors": "Loshchilov, Hutter",
+   "year": 2017,
+   "course": "math-for-ai",
+   "topics": [
+    "adamw"
+   ],
+   "arxiv": "1711.05101",
+   "check": {
+    "id": "loshchilov-2017",
+    "ok": true,
+    "found": "Decoupled Weight Decay Regularization",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1711.05101"
+   }
+  },
+  {
+   "id": "loshchilov-2016",
+   "title": "SGDR: Stochastic Gradient Descent with Warm Restarts",
+   "authors": "Loshchilov, Hutter",
+   "year": 2016,
+   "course": "math-for-ai",
+   "topics": [
+    "lr-schedules"
+   ],
+   "arxiv": "1608.03983",
+   "check": {
+    "id": "loshchilov-2016",
+    "ok": true,
+    "found": "SGDR: Stochastic Gradient Descent with Warm Restarts",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1608.03983"
+   }
+  },
+  {
+   "id": "blei-2016",
+   "title": "Variational Inference: A Review for Statisticians",
+   "authors": "Blei, Kucukelbir, McAuliffe",
+   "year": 2016,
+   "course": "math-for-ai",
+   "topics": [
+    "variational-inference"
+   ],
+   "arxiv": "1601.00670",
+   "check": {
+    "id": "blei-2016",
+    "ok": true,
+    "found": "Variational Inference: A Review for Statisticians",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1601.00670"
+   }
+  },
+  {
+   "id": "cox-1958",
+   "title": "The Regression Analysis of Binary Sequences",
+   "authors": "Cox",
+   "year": 1958,
+   "course": "machine-learning",
+   "topics": [
+    "logistic-regression"
+   ],
+   "doi": "10.1111/j.2517-6161.1958.tb00292.x",
+   "check": {
+    "id": "cox-1958",
+    "ok": true,
+    "found": "The Regression Analysis of Binary Sequences",
+    "foundYear": 1958,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1111/j.2517-6161.1958.tb00292.x"
+   }
+  },
+  {
+   "id": "hoerl-1970",
+   "title": "Ridge Regression: Biased Estimation for Nonorthogonal Problems",
+   "authors": "Hoerl, Kennard",
+   "year": 1970,
+   "course": "machine-learning",
+   "topics": [
+    "ridge"
+   ],
+   "doi": "10.1080/00401706.1970.10488634",
+   "check": {
+    "id": "hoerl-1970",
+    "ok": true,
+    "found": "Ridge Regression: Biased Estimation for Nonorthogonal Problems",
+    "foundYear": 1970,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1080/00401706.1970.10488634"
+   }
+  },
+  {
+   "id": "tibshirani-1996",
+   "title": "Regression Shrinkage and Selection via the Lasso",
+   "authors": "Tibshirani",
+   "year": 1996,
+   "course": "machine-learning",
+   "topics": [
+    "lasso"
+   ],
+   "doi": "10.1111/j.2517-6161.1996.tb02080.x",
+   "check": {
+    "id": "tibshirani-1996",
+    "ok": true,
+    "found": "Regression Shrinkage and Selection Via the Lasso",
+    "foundYear": 1996,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1111/j.2517-6161.1996.tb02080.x"
+   }
+  },
+  {
+   "id": "zou-2005",
+   "title": "Regularization and variable selection via the elastic net",
+   "authors": "Zou, Hastie",
+   "year": 2005,
+   "course": "machine-learning",
+   "topics": [
+    "elastic-net"
+   ],
+   "doi": "10.1111/j.1467-9868.2005.00503.x",
+   "check": {
+    "id": "zou-2005",
+    "ok": true,
+    "found": "Regularization and Variable Selection Via the Elastic Net",
+    "foundYear": 2005,
+    "why": "",
+    "access": "open",
+    "read": "https://academic.oup.com/jrsssb/article-pdf/67/2/301/49795094/jrsssb_67_2_301.pdf"
+   }
+  },
+  {
+   "id": "cover-1967",
+   "title": "Nearest neighbor pattern classification",
+   "authors": "Cover, Hart",
+   "year": 1967,
+   "course": "machine-learning",
+   "topics": [
+    "knn"
+   ],
+   "doi": "10.1109/TIT.1967.1053964",
+   "check": {
+    "id": "cover-1967",
+    "ok": true,
+    "found": "Nearest neighbor pattern classification",
+    "foundYear": 1967,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1109/TIT.1967.1053964"
+   }
+  },
+  {
+   "id": "quinlan-1986",
+   "title": "Induction of decision trees",
+   "authors": "Quinlan",
+   "year": 1986,
+   "course": "machine-learning",
+   "topics": [
+    "decision-trees"
+   ],
+   "doi": "10.1007/BF00116251",
+   "check": {
+    "id": "quinlan-1986",
+    "ok": true,
+    "found": "Induction of decision trees",
+    "foundYear": 1986,
+    "why": "",
+    "access": "open",
+    "read": "https://link.springer.com/content/pdf/10.1007/BF00116251.pdf"
+   }
+  },
+  {
+   "id": "breiman-1996",
+   "title": "Bagging predictors",
+   "authors": "Breiman",
+   "year": 1996,
+   "course": "machine-learning",
+   "topics": [
+    "bagging"
+   ],
+   "doi": "10.1007/BF00058655",
+   "check": {
+    "id": "breiman-1996",
+    "ok": true,
+    "found": "Bagging predictors",
+    "foundYear": 1996,
+    "why": "",
+    "access": "open",
+    "read": "https://link.springer.com/content/pdf/10.1007/BF00058655.pdf"
+   }
+  },
+  {
+   "id": "breiman-2001",
+   "title": "Random Forests",
+   "authors": "Breiman",
+   "year": 2001,
+   "course": "machine-learning",
+   "topics": [
+    "random-forest"
+   ],
+   "doi": "10.1023/A:1010933404324",
+   "check": {
+    "id": "breiman-2001",
+    "ok": true,
+    "found": "Random Forests",
+    "foundYear": 2001,
+    "why": "",
+    "access": "open",
+    "read": "https://www.ine.es/up/zEkXkJIZ"
+   }
+  },
+  {
+   "id": "freund-1997",
+   "title": "A Decision-Theoretic Generalization of On-Line Learning and an Application to Boosting",
+   "authors": "Freund, Schapire",
+   "year": 1997,
+   "course": "machine-learning",
+   "topics": [
+    "adaboost"
+   ],
+   "doi": "10.1006/jcss.1997.1504",
+   "check": {
+    "id": "freund-1997",
+    "ok": true,
+    "found": "A Decision-Theoretic Generalization of On-Line Learning and an Application to Boosting",
+    "foundYear": 1997,
+    "why": "",
+    "access": "open",
+    "read": "https://doi.org/10.1006/jcss.1997.1504"
+   }
+  },
+  {
+   "id": "friedman-2001",
+   "title": "Greedy function approximation: A gradient boosting machine",
+   "authors": "Friedman",
+   "year": 2001,
+   "course": "machine-learning",
+   "topics": [
+    "gradient-boosting"
+   ],
+   "doi": "10.1214/aos/1013203451",
+   "check": {
+    "id": "friedman-2001",
+    "ok": true,
+    "found": "Greedy function approximation: A gradient boosting machine.",
+    "foundYear": 2001,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1214/aos/1013203451"
+   }
+  },
+  {
+   "id": "chen-2016",
+   "title": "XGBoost: A Scalable Tree Boosting System",
+   "authors": "Chen, Guestrin",
+   "year": 2016,
+   "course": "machine-learning",
+   "topics": [
+    "xgboost"
+   ],
+   "arxiv": "1603.02754",
+   "check": {
+    "id": "chen-2016",
+    "ok": true,
+    "found": "XGBoost: A Scalable Tree Boosting System",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1603.02754"
+   }
+  },
+  {
+   "id": "ke-2017",
+   "title": "LightGBM: A Highly Efficient Gradient Boosting Decision Tree",
+   "authors": "Ke et al.",
+   "year": 2017,
+   "course": "machine-learning",
+   "topics": [
+    "lightgbm"
+   ],
+   "url": "https://papers.nips.cc/paper_files/paper/2017/hash/6449f44a102fde848669bdd9eb6b76fa-Abstract.html",
+   "check": {
+    "id": "ke-2017",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://papers.nips.cc/paper_files/paper/2017/hash/6449f44a102fde848669bdd9eb6b76fa-Abstract.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "prokhorenkova-2017",
+   "title": "CatBoost: unbiased boosting with categorical features",
+   "authors": "Prokhorenkova et al.",
+   "year": 2017,
+   "course": "machine-learning",
+   "topics": [
+    "catboost"
+   ],
+   "arxiv": "1706.09516",
+   "check": {
+    "id": "prokhorenkova-2017",
+    "ok": true,
+    "found": "CatBoost: unbiased boosting with categorical features",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1706.09516"
+   }
+  },
+  {
+   "id": "boser-1992",
+   "title": "A training algorithm for optimal margin classifiers",
+   "authors": "Boser, Guyon, Vapnik",
+   "year": 1992,
+   "course": "machine-learning",
+   "topics": [
+    "svm",
+    "kernels"
+   ],
+   "doi": "10.1145/130385.130401",
+   "check": {
+    "id": "boser-1992",
+    "ok": true,
+    "found": "A training algorithm for optimal margin classifiers",
+    "foundYear": 1992,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1145/130385.130401"
+   }
+  },
+  {
+   "id": "cortes-1995",
+   "title": "Support-vector networks",
+   "authors": "Cortes, Vapnik",
+   "year": 1995,
+   "course": "machine-learning",
+   "topics": [
+    "svm"
+   ],
+   "doi": "10.1007/BF00994018",
+   "check": {
+    "id": "cortes-1995",
+    "ok": true,
+    "found": "Support-vector networks",
+    "foundYear": 1995,
+    "why": "",
+    "access": "open",
+    "read": "https://link.springer.com/content/pdf/10.1007/BF00994018.pdf"
+   }
+  },
+  {
+   "id": "lloyd-1982",
+   "title": "Least squares quantization in PCM",
+   "authors": "Lloyd",
+   "year": 1982,
+   "course": "machine-learning",
+   "topics": [
+    "k-means"
+   ],
+   "doi": "10.1109/TIT.1982.1056489",
+   "check": {
+    "id": "lloyd-1982",
+    "ok": true,
+    "found": "Least squares quantization in PCM",
+    "foundYear": 1982,
+    "why": "",
+    "access": "open",
+    "read": "https://hal.science/hal-04614938"
+   }
+  },
+  {
+   "id": "dempster-1977",
+   "title": "Maximum Likelihood from Incomplete Data via the EM Algorithm",
+   "authors": "Dempster, Laird, Rubin",
+   "year": 1977,
+   "course": "machine-learning",
+   "topics": [
+    "em",
+    "gmm"
+   ],
+   "doi": "10.1111/j.2517-6161.1977.tb01600.x",
+   "check": {
+    "id": "dempster-1977",
+    "ok": true,
+    "found": "Maximum Likelihood from Incomplete Data Via the\n                    <i>EM</i>\n                    Algorithm",
+    "foundYear": 1977,
+    "why": "",
+    "access": "open",
+    "read": "http://nrs.harvard.edu/urn-3:HUL.InstRepos:3426318"
+   }
+  },
+  {
+   "id": "pearson-1901",
+   "title": "On lines and planes of closest fit to systems of points in space",
+   "authors": "Pearson",
+   "year": 1901,
+   "course": "machine-learning",
+   "topics": [
+    "pca"
+   ],
+   "doi": "10.1080/14786440109462720",
+   "check": {
+    "id": "pearson-1901",
+    "ok": true,
+    "found": "LIII.\n                    <i>On lines and planes of closest fit to systems of points in space</i>",
+    "foundYear": 1901,
+    "why": "",
+    "access": "open",
+    "read": "https://zenodo.org/records/1430636"
+   }
+  },
+  {
+   "id": "hotelling-1933",
+   "title": "Analysis of a complex of statistical variables into principal components",
+   "authors": "Hotelling",
+   "year": 1933,
+   "course": "machine-learning",
+   "topics": [
+    "pca"
+   ],
+   "doi": "10.1037/h0071325",
+   "check": {
+    "id": "hotelling-1933",
+    "ok": true,
+    "found": "Analysis of a complex of statistical variables into principal components.",
+    "foundYear": 1933,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1037/h0071325"
+   }
+  },
+  {
+   "id": "hyvarinen-2000",
+   "title": "Independent component analysis: algorithms and applications",
+   "authors": "Hyvärinen, Oja",
+   "year": 2000,
+   "course": "machine-learning",
+   "topics": [
+    "ica"
+   ],
+   "doi": "10.1016/S0893-6080(00)00026-5",
+   "check": {
+    "id": "hyvarinen-2000",
+    "ok": true,
+    "found": "Independent component analysis: algorithms and applications",
+    "foundYear": 2000,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1016/S0893-6080(00)00026-5"
+   }
+  },
+  {
+   "id": "vandermaaten-2008",
+   "title": "Visualizing Data using t-SNE",
+   "authors": "van der Maaten, Hinton",
+   "year": 2008,
+   "course": "machine-learning",
+   "topics": [
+    "t-sne"
+   ],
+   "url": "https://jmlr.org/papers/v9/vandermaaten08a.html",
+   "check": {
+    "id": "vandermaaten-2008",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://jmlr.org/papers/v9/vandermaaten08a.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "mcinnes-2018",
+   "title": "UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction",
+   "authors": "McInnes, Healy, Melville",
+   "year": 2018,
+   "course": "machine-learning",
+   "topics": [
+    "umap"
+   ],
+   "arxiv": "1802.03426",
+   "check": {
+    "id": "mcinnes-2018",
+    "ok": true,
+    "found": "UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1802.03426"
+   }
+  },
+  {
+   "id": "ester-1996",
+   "title": "A density-based algorithm for discovering clusters in large spatial databases with noise",
+   "authors": "Ester et al.",
+   "year": 1996,
+   "course": "machine-learning",
+   "topics": [
+    "dbscan"
+   ],
+   "url": "https://cdn.aaai.org/KDD/1996/KDD96-037.pdf",
+   "check": {
+    "id": "ester-1996",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://cdn.aaai.org/KDD/1996/KDD96-037.pdf",
+    "manual": true
+   }
+  },
+  {
+   "id": "vonluxburg-2007",
+   "title": "A Tutorial on Spectral Clustering",
+   "authors": "von Luxburg",
+   "year": 2007,
+   "course": "machine-learning",
+   "topics": [
+    "spectral-clustering"
+   ],
+   "arxiv": "0711.0189",
+   "check": {
+    "id": "vonluxburg-2007",
+    "ok": true,
+    "found": "A Tutorial on Spectral Clustering",
+    "foundYear": 2007,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/0711.0189"
+   }
+  },
+  {
+   "id": "blei-2003",
+   "title": "Latent Dirichlet Allocation",
+   "authors": "Blei, Ng, Jordan",
+   "year": 2003,
+   "course": "machine-learning",
+   "topics": [
+    "lda-topics"
+   ],
+   "url": "https://jmlr.org/papers/v3/blei03a.html",
+   "check": {
+    "id": "blei-2003",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://jmlr.org/papers/v3/blei03a.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "rabiner-1989",
+   "title": "A tutorial on hidden Markov models and selected applications in speech recognition",
+   "authors": "Rabiner",
+   "year": 1989,
+   "course": "machine-learning",
+   "topics": [
+    "hmm"
+   ],
+   "doi": "10.1109/5.18626",
+   "check": {
+    "id": "rabiner-1989",
+    "ok": true,
+    "found": "A tutorial on hidden Markov models and selected applications in speech recognition",
+    "foundYear": 1989,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1109/5.18626"
+   }
+  },
+  {
+   "id": "valiant-1984",
+   "title": "A theory of the learnable",
+   "authors": "Valiant",
+   "year": 1984,
+   "course": "machine-learning",
+   "topics": [
+    "pac"
+   ],
+   "doi": "10.1145/1968.1972",
+   "check": {
+    "id": "valiant-1984",
+    "ok": true,
+    "found": "A theory of the learnable",
+    "foundYear": 1984,
+    "why": "",
+    "access": "open",
+    "read": "https://dl.acm.org/doi/pdf/10.1145/1968.1972"
+   }
+  },
+  {
+   "id": "vapnik-1971",
+   "title": "On the Uniform Convergence of Relative Frequencies of Events to Their Probabilities",
+   "authors": "Vapnik, Chervonenkis",
+   "year": 1971,
+   "course": "machine-learning",
+   "topics": [
+    "vc-dimension"
+   ],
+   "doi": "10.1137/1116025",
+   "check": {
+    "id": "vapnik-1971",
+    "ok": true,
+    "found": "On the Uniform Convergence of Relative Frequencies of Events to Their Probabilities",
+    "foundYear": 1971,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1137/1116025"
+   }
+  },
+  {
+   "id": "geman-1992",
+   "title": "Neural Networks and the Bias/Variance Dilemma",
+   "authors": "Geman, Bienenstock, Doursat",
+   "year": 1992,
+   "course": "machine-learning",
+   "topics": [
+    "bias-variance"
+   ],
+   "doi": "10.1162/neco.1992.4.1.1",
+   "check": {
+    "id": "geman-1992",
+    "ok": true,
+    "found": "Neural Networks and the Bias/Variance Dilemma",
+    "foundYear": 1992,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1162/neco.1992.4.1.1"
+   }
+  },
+  {
+   "id": "belkin-2019",
+   "title": "Reconciling modern machine learning practice and the bias-variance trade-off",
+   "authors": "Belkin et al.",
+   "year": 2019,
+   "course": "machine-learning",
+   "topics": [
+    "double-descent"
+   ],
+   "arxiv": "1812.11118",
+   "check": {
+    "id": "belkin-2019",
+    "ok": true,
+    "found": "Reconciling modern machine learning practice and the bias-variance trade-off",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1812.11118"
+   }
+  },
+  {
+   "id": "ribeiro-2016",
+   "title": "\"Why Should I Trust You?\": Explaining the Predictions of Any Classifier",
+   "authors": "Ribeiro, Singh, Guestrin",
+   "year": 2016,
+   "course": "machine-learning",
+   "topics": [
+    "lime"
+   ],
+   "arxiv": "1602.04938",
+   "check": {
+    "id": "ribeiro-2016",
+    "ok": true,
+    "found": "\"Why Should I Trust You?\": Explaining the Predictions of Any Classifier",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1602.04938"
+   }
+  },
+  {
+   "id": "lundberg-2017",
+   "title": "A Unified Approach to Interpreting Model Predictions",
+   "authors": "Lundberg, Lee",
+   "year": 2017,
+   "course": "machine-learning",
+   "topics": [
+    "shap"
+   ],
+   "arxiv": "1705.07874",
+   "check": {
+    "id": "lundberg-2017",
+    "ok": true,
+    "found": "A Unified Approach to Interpreting Model Predictions",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1705.07874"
+   }
+  },
+  {
+   "id": "hardt-2016",
+   "title": "Equality of Opportunity in Supervised Learning",
+   "authors": "Hardt, Price, Srebro",
+   "year": 2016,
+   "course": "machine-learning",
+   "topics": [
+    "fairness"
+   ],
+   "arxiv": "1610.02413",
+   "check": {
+    "id": "hardt-2016",
+    "ok": true,
+    "found": "Equality of Opportunity in Supervised Learning",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1610.02413"
+   }
+  },
+  {
+   "id": "mcculloch-1943",
+   "title": "A logical calculus of the ideas immanent in nervous activity",
+   "authors": "McCulloch, Pitts",
+   "year": 1943,
+   "course": "deep-learning",
+   "topics": [
+    "neuron"
+   ],
+   "doi": "10.1007/BF02478259",
+   "check": {
+    "id": "mcculloch-1943",
+    "ok": true,
+    "found": "A logical calculus of the ideas immanent in nervous activity",
+    "foundYear": 1943,
+    "why": "",
+    "access": "open",
+    "read": "https://doi.org/10.57702/nz4qsm7x"
+   }
+  },
+  {
+   "id": "rosenblatt-1958",
+   "title": "The perceptron: A probabilistic model for information storage and organization in the brain",
+   "authors": "Rosenblatt",
+   "year": 1958,
+   "course": "deep-learning",
+   "topics": [
+    "perceptron"
+   ],
+   "doi": "10.1037/h0042519",
+   "check": {
+    "id": "rosenblatt-1958",
+    "ok": true,
+    "found": "The perceptron: A probabilistic model for information storage and organization in the brain.",
+    "foundYear": 1958,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1037/h0042519"
+   }
+  },
+  {
+   "id": "hopfield-1982",
+   "title": "Neural networks and physical systems with emergent collective computational abilities",
+   "authors": "Hopfield",
+   "year": 1982,
+   "course": "deep-learning",
+   "topics": [
+    "hopfield"
+   ],
+   "doi": "10.1073/pnas.79.8.2554",
+   "check": {
+    "id": "hopfield-1982",
+    "ok": true,
+    "found": "Neural networks and physical systems with emergent collective computational abilities.",
+    "foundYear": 1982,
+    "why": "",
+    "access": "open",
+    "read": "https://www.ncbi.nlm.nih.gov/pmc/articles/346238"
+   }
+  },
+  {
+   "id": "rumelhart-1986",
+   "title": "Learning representations by back-propagating errors",
+   "authors": "Rumelhart, Hinton, Williams",
+   "year": 1986,
+   "course": "deep-learning",
+   "topics": [
+    "backprop"
+   ],
+   "doi": "10.1038/323533a0",
+   "check": {
+    "id": "rumelhart-1986",
+    "ok": true,
+    "found": "Learning representations by back-propagating errors",
+    "foundYear": 1986,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1038/323533a0"
+   }
+  },
+  {
+   "id": "cybenko-1989",
+   "title": "Approximation by superpositions of a sigmoidal function",
+   "authors": "Cybenko",
+   "year": 1989,
+   "course": "deep-learning",
+   "topics": [
+    "universal-approximation"
+   ],
+   "doi": "10.1007/BF02551274",
+   "check": {
+    "id": "cybenko-1989",
+    "ok": true,
+    "found": "Approximation by superpositions of a sigmoidal function",
+    "foundYear": 1989,
+    "why": "",
+    "access": "open",
+    "read": "https://hal.science/hal-03753170"
+   }
+  },
+  {
+   "id": "hornik-1989",
+   "title": "Multilayer feedforward networks are universal approximators",
+   "authors": "Hornik, Stinchcombe, White",
+   "year": 1989,
+   "course": "deep-learning",
+   "topics": [
+    "universal-approximation"
+   ],
+   "doi": "10.1016/0893-6080(89)90020-8",
+   "check": {
+    "id": "hornik-1989",
+    "ok": true,
+    "found": "Multilayer feedforward networks are universal approximators",
+    "foundYear": 1989,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1016/0893-6080(89)90020-8"
+   }
+  },
+  {
+   "id": "bengio-1994",
+   "title": "Learning long-term dependencies with gradient descent is difficult",
+   "authors": "Bengio, Simard, Frasconi",
+   "year": 1994,
+   "course": "deep-learning",
+   "topics": [
+    "vanishing-gradients"
+   ],
+   "doi": "10.1109/72.279181",
+   "check": {
+    "id": "bengio-1994",
+    "ok": true,
+    "found": "Learning long-term dependencies with gradient descent is difficult",
+    "foundYear": 1994,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1109/72.279181"
+   }
+  },
+  {
+   "id": "hochreiter-1997",
+   "title": "Long Short-Term Memory",
+   "authors": "Hochreiter, Schmidhuber",
+   "year": 1997,
+   "course": "deep-learning",
+   "topics": [
+    "lstm"
+   ],
+   "doi": "10.1162/neco.1997.9.8.1735",
+   "check": {
+    "id": "hochreiter-1997",
+    "ok": true,
+    "found": "Long Short-Term Memory",
+    "foundYear": 1997,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1162/neco.1997.9.8.1735"
+   }
+  },
+  {
+   "id": "lecun-1998",
+   "title": "Gradient-based learning applied to document recognition",
+   "authors": "LeCun et al.",
+   "year": 1998,
+   "course": "deep-learning",
+   "topics": [
+    "cnn",
+    "lenet"
+   ],
+   "doi": "10.1109/5.726791",
+   "check": {
+    "id": "lecun-1998",
+    "ok": true,
+    "found": "Gradient-based learning applied to document recognition",
+    "foundYear": 1998,
+    "why": "",
+    "access": "open",
+    "read": "https://hal.science/hal-03926082/document"
+   }
+  },
+  {
+   "id": "fukushima-1980",
+   "title": "Neocognitron",
+   "authors": "Fukushima",
+   "year": 1980,
+   "course": "deep-learning",
+   "topics": [
+    "cnn"
+   ],
+   "doi": "10.1007/BF00344251",
+   "check": {
+    "id": "fukushima-1980",
+    "ok": true,
+    "found": "Neocognitron: A self-organizing neural network model for a mechanism of pattern recognition unaffected by shift in position",
+    "foundYear": 1980,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1007/BF00344251"
+   }
+  },
+  {
+   "id": "hinton-2006",
+   "title": "A Fast Learning Algorithm for Deep Belief Nets",
+   "authors": "Hinton, Osindero, Teh",
+   "year": 2006,
+   "course": "deep-learning",
+   "topics": [
+    "dbn"
+   ],
+   "doi": "10.1162/neco.2006.18.7.1527",
+   "check": {
+    "id": "hinton-2006",
+    "ok": true,
+    "found": "A Fast Learning Algorithm for Deep Belief Nets",
+    "foundYear": 2006,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1162/neco.2006.18.7.1527"
+   }
+  },
+  {
+   "id": "hinton-2006b",
+   "title": "Reducing the Dimensionality of Data with Neural Networks",
+   "authors": "Hinton, Salakhutdinov",
+   "year": 2006,
+   "course": "deep-learning",
+   "topics": [
+    "autoencoders"
+   ],
+   "doi": "10.1126/science.1127647",
+   "check": {
+    "id": "hinton-2006b",
+    "ok": true,
+    "found": "Reducing the Dimensionality of Data with Neural Networks",
+    "foundYear": 2006,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1126/science.1127647"
+   }
+  },
+  {
+   "id": "vincent-2008",
+   "title": "Extracting and composing robust features with denoising autoencoders",
+   "authors": "Vincent et al.",
+   "year": 2008,
+   "course": "deep-learning",
+   "topics": [
+    "denoising-autoencoders"
+   ],
+   "doi": "10.1145/1390156.1390294",
+   "check": {
+    "id": "vincent-2008",
+    "ok": true,
+    "found": "Extracting and composing robust features with denoising autoencoders",
+    "foundYear": 2008,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1145/1390156.1390294"
+   }
+  },
+  {
+   "id": "glorot-2010",
+   "title": "Understanding the difficulty of training deep feedforward neural networks",
+   "authors": "Glorot, Bengio",
+   "year": 2010,
+   "course": "deep-learning",
+   "topics": [
+    "init"
+   ],
+   "url": "https://proceedings.mlr.press/v9/glorot10a.html",
+   "check": {
+    "id": "glorot-2010",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://proceedings.mlr.press/v9/glorot10a.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "he-2015",
+   "title": "Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification",
+   "authors": "He et al.",
+   "year": 2015,
+   "course": "deep-learning",
+   "topics": [
+    "init",
+    "prelu"
+   ],
+   "arxiv": "1502.01852",
+   "check": {
+    "id": "he-2015",
+    "ok": true,
+    "found": "Delving Deep into Rectifiers: Surpassing Human-Level Performance on ImageNet Classification",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1502.01852"
+   }
+  },
+  {
+   "id": "hinton-2012",
+   "title": "Improving neural networks by preventing co-adaptation of feature detectors",
+   "authors": "Hinton et al.",
+   "year": 2012,
+   "course": "deep-learning",
+   "topics": [
+    "dropout"
+   ],
+   "arxiv": "1207.0580",
+   "check": {
+    "id": "hinton-2012",
+    "ok": true,
+    "found": "Improving neural networks by preventing co-adaptation of feature detectors",
+    "foundYear": 2012,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1207.0580"
+   }
+  },
+  {
+   "id": "srivastava-2014",
+   "title": "Dropout: A Simple Way to Prevent Neural Networks from Overfitting",
+   "authors": "Srivastava et al.",
+   "year": 2014,
+   "course": "deep-learning",
+   "topics": [
+    "dropout"
+   ],
+   "url": "https://jmlr.org/papers/v15/srivastava14a.html",
+   "check": {
+    "id": "srivastava-2014",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://jmlr.org/papers/v15/srivastava14a.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "ioffe-2015",
+   "title": "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift",
+   "authors": "Ioffe, Szegedy",
+   "year": 2015,
+   "course": "deep-learning",
+   "topics": [
+    "batchnorm"
+   ],
+   "arxiv": "1502.03167",
+   "check": {
+    "id": "ioffe-2015",
+    "ok": true,
+    "found": "Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1502.03167"
+   }
+  },
+  {
+   "id": "ba-2016",
+   "title": "Layer Normalization",
+   "authors": "Ba, Kiros, Hinton",
+   "year": 2016,
+   "course": "deep-learning",
+   "topics": [
+    "layernorm"
+   ],
+   "arxiv": "1607.06450",
+   "check": {
+    "id": "ba-2016",
+    "ok": true,
+    "found": "Layer Normalization",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1607.06450"
+   }
+  },
+  {
+   "id": "hendrycks-2016",
+   "title": "Gaussian Error Linear Units (GELUs)",
+   "authors": "Hendrycks, Gimpel",
+   "year": 2016,
+   "course": "deep-learning",
+   "topics": [
+    "activations"
+   ],
+   "arxiv": "1606.08415",
+   "check": {
+    "id": "hendrycks-2016",
+    "ok": true,
+    "found": "Gaussian Error Linear Units (GELUs)",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1606.08415"
+   }
+  },
+  {
+   "id": "pascanu-2013",
+   "title": "On the difficulty of training Recurrent Neural Networks",
+   "authors": "Pascanu, Mikolov, Bengio",
+   "year": 2013,
+   "course": "deep-learning",
+   "topics": [
+    "vanishing-gradients",
+    "clipping"
+   ],
+   "arxiv": "1211.5063",
+   "check": {
+    "id": "pascanu-2013",
+    "ok": true,
+    "found": "On the difficulty of training Recurrent Neural Networks",
+    "foundYear": 2012,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1211.5063"
+   }
+  },
+  {
+   "id": "lecun-2015",
+   "title": "Deep learning",
+   "authors": "LeCun, Bengio, Hinton",
+   "year": 2015,
+   "course": "deep-learning",
+   "topics": [
+    "overview"
+   ],
+   "doi": "10.1038/nature14539",
+   "check": {
+    "id": "lecun-2015",
+    "ok": true,
+    "found": "Deep learning",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://hal.science/hal-04206682"
+   }
+  },
+  {
+   "id": "schmidhuber-2015",
+   "title": "Deep Learning in Neural Networks: An Overview",
+   "authors": "Schmidhuber",
+   "year": 2015,
+   "course": "deep-learning",
+   "topics": [
+    "overview",
+    "history"
+   ],
+   "arxiv": "1404.7828",
+   "check": {
+    "id": "schmidhuber-2015",
+    "ok": true,
+    "found": "Deep Learning in Neural Networks: An Overview",
+    "foundYear": 2014,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1404.7828"
+   }
+  },
+  {
+   "id": "krizhevsky-2012",
+   "title": "ImageNet Classification with Deep Convolutional Neural Networks",
+   "authors": "Krizhevsky, Sutskever, Hinton",
+   "year": 2012,
+   "course": "deep-learning",
+   "topics": [
+    "alexnet"
+   ],
+   "doi": "10.1145/3065386",
+   "check": {
+    "id": "krizhevsky-2012",
+    "ok": true,
+    "found": "ImageNet classification with deep convolutional neural networks",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "http://dl.acm.org/ft_gateway.cfm?id=3065386&type=pdf"
+   }
+  },
+  {
+   "id": "deng-2009",
+   "title": "ImageNet: A large-scale hierarchical image database",
+   "authors": "Deng et al.",
+   "year": 2009,
+   "course": "deep-learning",
+   "topics": [
+    "datasets"
+   ],
+   "doi": "10.1109/CVPR.2009.5206848",
+   "check": {
+    "id": "deng-2009",
+    "ok": true,
+    "found": "ImageNet: A large-scale hierarchical image database",
+    "foundYear": 2009,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1109/CVPR.2009.5206848"
+   }
+  },
+  {
+   "id": "zeiler-2014",
+   "title": "Visualizing and Understanding Convolutional Networks",
+   "authors": "Zeiler, Fergus",
+   "year": 2014,
+   "course": "deep-learning",
+   "topics": [
+    "cnn-visualisation"
+   ],
+   "arxiv": "1311.2901",
+   "check": {
+    "id": "zeiler-2014",
+    "ok": true,
+    "found": "Visualizing and Understanding Convolutional Networks",
+    "foundYear": 2013,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1311.2901"
+   }
+  },
+  {
+   "id": "simonyan-2014",
+   "title": "Very Deep Convolutional Networks for Large-Scale Image Recognition",
+   "authors": "Simonyan, Zisserman",
+   "year": 2014,
+   "course": "deep-learning",
+   "topics": [
+    "vgg"
+   ],
+   "arxiv": "1409.1556",
+   "check": {
+    "id": "simonyan-2014",
+    "ok": true,
+    "found": "Very Deep Convolutional Networks for Large-Scale Image Recognition",
+    "foundYear": 2014,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1409.1556"
+   }
+  },
+  {
+   "id": "szegedy-2014",
+   "title": "Going Deeper with Convolutions",
+   "authors": "Szegedy et al.",
+   "year": 2014,
+   "course": "deep-learning",
+   "topics": [
+    "inception"
+   ],
+   "arxiv": "1409.4842",
+   "check": {
+    "id": "szegedy-2014",
+    "ok": true,
+    "found": "Going Deeper with Convolutions",
+    "foundYear": 2014,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1409.4842"
+   }
+  },
+  {
+   "id": "he-2016",
+   "title": "Deep Residual Learning for Image Recognition",
+   "authors": "He et al.",
+   "year": 2016,
+   "course": "deep-learning",
+   "topics": [
+    "resnet"
+   ],
+   "arxiv": "1512.03385",
+   "check": {
+    "id": "he-2016",
+    "ok": true,
+    "found": "Deep Residual Learning for Image Recognition",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1512.03385"
+   }
+  },
+  {
+   "id": "he-2016b",
+   "title": "Identity Mappings in Deep Residual Networks",
+   "authors": "He et al.",
+   "year": 2016,
+   "course": "deep-learning",
+   "topics": [
+    "resnet"
+   ],
+   "arxiv": "1603.05027",
+   "check": {
+    "id": "he-2016b",
+    "ok": true,
+    "found": "Identity Mappings in Deep Residual Networks",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1603.05027"
+   }
+  },
+  {
+   "id": "huang-2017",
+   "title": "Densely Connected Convolutional Networks",
+   "authors": "Huang et al.",
+   "year": 2017,
+   "course": "deep-learning",
+   "topics": [
+    "densenet"
+   ],
+   "arxiv": "1608.06993",
+   "check": {
+    "id": "huang-2017",
+    "ok": true,
+    "found": "Densely Connected Convolutional Networks",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1608.06993"
+   }
+  },
+  {
+   "id": "howard-2017",
+   "title": "MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications",
+   "authors": "Howard et al.",
+   "year": 2017,
+   "course": "deep-learning",
+   "topics": [
+    "mobilenet"
+   ],
+   "arxiv": "1704.04861",
+   "check": {
+    "id": "howard-2017",
+    "ok": true,
+    "found": "MobileNets: Efficient Convolutional Neural Networks for Mobile Vision Applications",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1704.04861"
+   }
+  },
+  {
+   "id": "tan-2019",
+   "title": "EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks",
+   "authors": "Tan, Le",
+   "year": 2019,
+   "course": "deep-learning",
+   "topics": [
+    "efficientnet"
+   ],
+   "arxiv": "1905.11946",
+   "check": {
+    "id": "tan-2019",
+    "ok": true,
+    "found": "EfficientNet: Rethinking Model Scaling for Convolutional Neural Networks",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1905.11946"
+   }
+  },
+  {
+   "id": "cho-2014",
+   "title": "Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation",
+   "authors": "Cho et al.",
+   "year": 2014,
+   "course": "deep-learning",
+   "topics": [
+    "gru",
+    "seq2seq"
+   ],
+   "arxiv": "1406.1078",
+   "check": {
+    "id": "cho-2014",
+    "ok": true,
+    "found": "Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation",
+    "foundYear": 2014,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1406.1078"
+   }
+  },
+  {
+   "id": "sutskever-2014",
+   "title": "Sequence to Sequence Learning with Neural Networks",
+   "authors": "Sutskever, Vinyals, Le",
+   "year": 2014,
+   "course": "deep-learning",
+   "topics": [
+    "seq2seq"
+   ],
+   "arxiv": "1409.3215",
+   "check": {
+    "id": "sutskever-2014",
+    "ok": true,
+    "found": "Sequence to Sequence Learning with Neural Networks",
+    "foundYear": 2014,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1409.3215"
+   }
+  },
+  {
+   "id": "bahdanau-2014",
+   "title": "Neural Machine Translation by Jointly Learning to Align and Translate",
+   "authors": "Bahdanau, Cho, Bengio",
+   "year": 2014,
+   "course": "deep-learning",
+   "topics": [
+    "attention"
+   ],
+   "arxiv": "1409.0473",
+   "check": {
+    "id": "bahdanau-2014",
+    "ok": true,
+    "found": "Neural Machine Translation by Jointly Learning to Align and Translate",
+    "foundYear": 2014,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1409.0473"
+   }
+  },
+  {
+   "id": "luong-2015",
+   "title": "Effective Approaches to Attention-based Neural Machine Translation",
+   "authors": "Luong, Pham, Manning",
+   "year": 2015,
+   "course": "deep-learning",
+   "topics": [
+    "attention"
+   ],
+   "arxiv": "1508.04025",
+   "check": {
+    "id": "luong-2015",
+    "ok": true,
+    "found": "Effective Approaches to Attention-based Neural Machine Translation",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1508.04025"
+   }
+  },
+  {
+   "id": "vaswani-2017",
+   "title": "Attention Is All You Need",
+   "authors": "Vaswani et al.",
+   "year": 2017,
+   "course": "deep-learning",
+   "topics": [
+    "transformer"
+   ],
+   "arxiv": "1706.03762",
+   "check": {
+    "id": "vaswani-2017",
+    "ok": true,
+    "found": "Attention Is All You Need",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1706.03762"
+   }
+  },
+  {
+   "id": "xiong-2020",
+   "title": "On Layer Normalization in the Transformer Architecture",
+   "authors": "Xiong et al.",
+   "year": 2020,
+   "course": "deep-learning",
+   "topics": [
+    "pre-ln"
+   ],
+   "arxiv": "2002.04745",
+   "check": {
+    "id": "xiong-2020",
+    "ok": true,
+    "found": "On Layer Normalization in the Transformer Architecture",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2002.04745"
+   }
+  },
+  {
+   "id": "hinton-2015",
+   "title": "Distilling the Knowledge in a Neural Network",
+   "authors": "Hinton, Vinyals, Dean",
+   "year": 2015,
+   "course": "deep-learning",
+   "topics": [
+    "distillation"
+   ],
+   "arxiv": "1503.02531",
+   "check": {
+    "id": "hinton-2015",
+    "ok": true,
+    "found": "Distilling the Knowledge in a Neural Network",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1503.02531"
+   }
+  },
+  {
+   "id": "frankle-2018",
+   "title": "The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks",
+   "authors": "Frankle, Carbin",
+   "year": 2018,
+   "course": "deep-learning",
+   "topics": [
+    "pruning"
+   ],
+   "arxiv": "1803.03635",
+   "check": {
+    "id": "frankle-2018",
+    "ok": true,
+    "found": "The Lottery Ticket Hypothesis: Finding Sparse, Trainable Neural Networks",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1803.03635"
+   }
+  },
+  {
+   "id": "chen-2018",
+   "title": "Neural Ordinary Differential Equations",
+   "authors": "Chen et al.",
+   "year": 2018,
+   "course": "deep-learning",
+   "topics": [
+    "neural-ode"
+   ],
+   "arxiv": "1806.07366",
+   "check": {
+    "id": "chen-2018",
+    "ok": true,
+    "found": "Neural Ordinary Differential Equations",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1806.07366"
+   }
+  },
+  {
+   "id": "kipf-2016",
+   "title": "Semi-Supervised Classification with Graph Convolutional Networks",
+   "authors": "Kipf, Welling",
+   "year": 2016,
+   "course": "deep-learning",
+   "topics": [
+    "gcn"
+   ],
+   "arxiv": "1609.02907",
+   "check": {
+    "id": "kipf-2016",
+    "ok": true,
+    "found": "Semi-Supervised Classification with Graph Convolutional Networks",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1609.02907"
+   }
+  },
+  {
+   "id": "hamilton-2017",
+   "title": "Inductive Representation Learning on Large Graphs",
+   "authors": "Hamilton, Ying, Leskovec",
+   "year": 2017,
+   "course": "deep-learning",
+   "topics": [
+    "graphsage"
+   ],
+   "arxiv": "1706.02216",
+   "check": {
+    "id": "hamilton-2017",
+    "ok": true,
+    "found": "Inductive Representation Learning on Large Graphs",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1706.02216"
+   }
+  },
+  {
+   "id": "velickovic-2017",
+   "title": "Graph Attention Networks",
+   "authors": "Veličković et al.",
+   "year": 2017,
+   "course": "deep-learning",
+   "topics": [
+    "gat"
+   ],
+   "arxiv": "1710.10903",
+   "check": {
+    "id": "velickovic-2017",
+    "ok": true,
+    "found": "Graph Attention Networks",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1710.10903"
+   }
+  },
+  {
+   "id": "gilmer-2017",
+   "title": "Neural Message Passing for Quantum Chemistry",
+   "authors": "Gilmer et al.",
+   "year": 2017,
+   "course": "deep-learning",
+   "topics": [
+    "mpnn"
+   ],
+   "arxiv": "1704.01212",
+   "check": {
+    "id": "gilmer-2017",
+    "ok": true,
+    "found": "Neural Message Passing for Quantum Chemistry",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1704.01212"
+   }
+  },
+  {
+   "id": "xu-2018",
+   "title": "How Powerful are Graph Neural Networks?",
+   "authors": "Xu et al.",
+   "year": 2018,
+   "course": "deep-learning",
+   "topics": [
+    "gin"
+   ],
+   "arxiv": "1810.00826",
+   "check": {
+    "id": "xu-2018",
+    "ok": true,
+    "found": "How Powerful are Graph Neural Networks?",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1810.00826"
+   }
+  },
+  {
+   "id": "szegedy-2013",
+   "title": "Intriguing properties of neural networks",
+   "authors": "Szegedy et al.",
+   "year": 2013,
+   "course": "deep-learning",
+   "topics": [
+    "adversarial"
+   ],
+   "arxiv": "1312.6199",
+   "check": {
+    "id": "szegedy-2013",
+    "ok": true,
+    "found": "Intriguing properties of neural networks",
+    "foundYear": 2013,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1312.6199"
+   }
+  },
+  {
+   "id": "goodfellow-2014b",
+   "title": "Explaining and Harnessing Adversarial Examples",
+   "authors": "Goodfellow, Shlens, Szegedy",
+   "year": 2014,
+   "course": "deep-learning",
+   "topics": [
+    "adversarial",
+    "fgsm"
+   ],
+   "arxiv": "1412.6572",
+   "check": {
+    "id": "goodfellow-2014b",
+    "ok": true,
+    "found": "Explaining and Harnessing Adversarial Examples",
+    "foundYear": 2014,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1412.6572"
+   }
+  },
+  {
+   "id": "madry-2017",
+   "title": "Towards Deep Learning Models Resistant to Adversarial Attacks",
+   "authors": "Madry et al.",
+   "year": 2017,
+   "course": "deep-learning",
+   "topics": [
+    "adversarial",
+    "pgd"
+   ],
+   "arxiv": "1706.06083",
+   "check": {
+    "id": "madry-2017",
+    "ok": true,
+    "found": "Towards Deep Learning Models Resistant to Adversarial Attacks",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1706.06083"
+   }
+  },
+  {
+   "id": "selvaraju-2016",
+   "title": "Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization",
+   "authors": "Selvaraju et al.",
+   "year": 2016,
+   "course": "deep-learning",
+   "topics": [
+    "interpretability"
+   ],
+   "arxiv": "1610.02391",
+   "check": {
+    "id": "selvaraju-2016",
+    "ok": true,
+    "found": "Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1610.02391"
+   }
+  },
+  {
+   "id": "sundararajan-2017",
+   "title": "Axiomatic Attribution for Deep Networks",
+   "authors": "Sundararajan, Taly, Yan",
+   "year": 2017,
+   "course": "deep-learning",
+   "topics": [
+    "integrated-gradients"
+   ],
+   "arxiv": "1703.01365",
+   "check": {
+    "id": "sundararajan-2017",
+    "ok": true,
+    "found": "Axiomatic Attribution for Deep Networks",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1703.01365"
+   }
+  },
+  {
+   "id": "kingma-2013",
+   "title": "Auto-Encoding Variational Bayes",
+   "authors": "Kingma, Welling",
+   "year": 2013,
+   "course": "generative-models",
+   "topics": [
+    "vae"
+   ],
+   "arxiv": "1312.6114",
+   "check": {
+    "id": "kingma-2013",
+    "ok": true,
+    "found": "Auto-Encoding Variational Bayes",
+    "foundYear": 2013,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1312.6114"
+   }
+  },
+  {
+   "id": "rezende-2014",
+   "title": "Stochastic Backpropagation and Approximate Inference in Deep Generative Models",
+   "authors": "Rezende, Mohamed, Wierstra",
+   "year": 2014,
+   "course": "generative-models",
+   "topics": [
+    "vae"
+   ],
+   "arxiv": "1401.4082",
+   "check": {
+    "id": "rezende-2014",
+    "ok": true,
+    "found": "Stochastic Backpropagation and Approximate Inference in Deep Generative Models",
+    "foundYear": 2014,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1401.4082"
+   }
+  },
+  {
+   "id": "goodfellow-2014",
+   "title": "Generative Adversarial Networks",
+   "authors": "Goodfellow et al.",
+   "year": 2014,
+   "course": "generative-models",
+   "topics": [
+    "gan"
+   ],
+   "arxiv": "1406.2661",
+   "check": {
+    "id": "goodfellow-2014",
+    "ok": true,
+    "found": "Generative Adversarial Networks",
+    "foundYear": 2014,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1406.2661"
+   }
+  },
+  {
+   "id": "mirza-2014",
+   "title": "Conditional Generative Adversarial Nets",
+   "authors": "Mirza, Osindero",
+   "year": 2014,
+   "course": "generative-models",
+   "topics": [
+    "cgan"
+   ],
+   "arxiv": "1411.1784",
+   "check": {
+    "id": "mirza-2014",
+    "ok": true,
+    "found": "Conditional Generative Adversarial Nets",
+    "foundYear": 2014,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1411.1784"
+   }
+  },
+  {
+   "id": "radford-2015",
+   "title": "Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks",
+   "authors": "Radford, Metz, Chintala",
+   "year": 2015,
+   "course": "generative-models",
+   "topics": [
+    "dcgan"
+   ],
+   "arxiv": "1511.06434",
+   "check": {
+    "id": "radford-2015",
+    "ok": true,
+    "found": "Unsupervised Representation Learning with Deep Convolutional Generative Adversarial Networks",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1511.06434"
+   }
+  },
+  {
+   "id": "arjovsky-2017",
+   "title": "Wasserstein GAN",
+   "authors": "Arjovsky, Chintala, Bottou",
+   "year": 2017,
+   "course": "generative-models",
+   "topics": [
+    "wgan"
+   ],
+   "arxiv": "1701.07875",
+   "check": {
+    "id": "arjovsky-2017",
+    "ok": true,
+    "found": "Wasserstein GAN",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1701.07875"
+   }
+  },
+  {
+   "id": "gulrajani-2017",
+   "title": "Improved Training of Wasserstein GANs",
+   "authors": "Gulrajani et al.",
+   "year": 2017,
+   "course": "generative-models",
+   "topics": [
+    "wgan-gp"
+   ],
+   "arxiv": "1704.00028",
+   "check": {
+    "id": "gulrajani-2017",
+    "ok": true,
+    "found": "Improved Training of Wasserstein GANs",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1704.00028"
+   }
+  },
+  {
+   "id": "isola-2016",
+   "title": "Image-to-Image Translation with Conditional Adversarial Networks",
+   "authors": "Isola et al.",
+   "year": 2016,
+   "course": "generative-models",
+   "topics": [
+    "pix2pix"
+   ],
+   "arxiv": "1611.07004",
+   "check": {
+    "id": "isola-2016",
+    "ok": true,
+    "found": "Image-to-Image Translation with Conditional Adversarial Networks",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1611.07004"
+   }
+  },
+  {
+   "id": "zhu-2017",
+   "title": "Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks",
+   "authors": "Zhu et al.",
+   "year": 2017,
+   "course": "generative-models",
+   "topics": [
+    "cyclegan"
+   ],
+   "arxiv": "1703.10593",
+   "check": {
+    "id": "zhu-2017",
+    "ok": true,
+    "found": "Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1703.10593"
+   }
+  },
+  {
+   "id": "karras-2018",
+   "title": "A Style-Based Generator Architecture for Generative Adversarial Networks",
+   "authors": "Karras, Laine, Aila",
+   "year": 2018,
+   "course": "generative-models",
+   "topics": [
+    "stylegan"
+   ],
+   "arxiv": "1812.04948",
+   "check": {
+    "id": "karras-2018",
+    "ok": true,
+    "found": "A Style-Based Generator Architecture for Generative Adversarial Networks",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1812.04948"
+   }
+  },
+  {
+   "id": "rezende-2015",
+   "title": "Variational Inference with Normalizing Flows",
+   "authors": "Rezende, Mohamed",
+   "year": 2015,
+   "course": "generative-models",
+   "topics": [
+    "flows"
+   ],
+   "arxiv": "1505.05770",
+   "check": {
+    "id": "rezende-2015",
+    "ok": true,
+    "found": "Variational Inference with Normalizing Flows",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1505.05770"
+   }
+  },
+  {
+   "id": "dinh-2016",
+   "title": "Density estimation using Real NVP",
+   "authors": "Dinh, Sohl-Dickstein, Bengio",
+   "year": 2016,
+   "course": "generative-models",
+   "topics": [
+    "flows"
+   ],
+   "arxiv": "1605.08803",
+   "check": {
+    "id": "dinh-2016",
+    "ok": true,
+    "found": "Density estimation using Real NVP",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1605.08803"
+   }
+  },
+  {
+   "id": "kingma-2018",
+   "title": "Glow: Generative Flow with Invertible 1x1 Convolutions",
+   "authors": "Kingma, Dhariwal",
+   "year": 2018,
+   "course": "generative-models",
+   "topics": [
+    "flows"
+   ],
+   "arxiv": "1807.03039",
+   "check": {
+    "id": "kingma-2018",
+    "ok": true,
+    "found": "Glow: Generative Flow with Invertible 1x1 Convolutions",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1807.03039"
+   }
+  },
+  {
+   "id": "oord-2016",
+   "title": "Pixel Recurrent Neural Networks",
+   "authors": "van den Oord, Kalchbrenner, Kavukcuoglu",
+   "year": 2016,
+   "course": "generative-models",
+   "topics": [
+    "autoregressive"
+   ],
+   "arxiv": "1601.06759",
+   "check": {
+    "id": "oord-2016",
+    "ok": true,
+    "found": "Pixel Recurrent Neural Networks",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1601.06759"
+   }
+  },
+  {
+   "id": "oord-2017",
+   "title": "Neural Discrete Representation Learning",
+   "authors": "van den Oord, Vinyals, Kavukcuoglu",
+   "year": 2017,
+   "course": "generative-models",
+   "topics": [
+    "vq-vae"
+   ],
+   "arxiv": "1711.00937",
+   "check": {
+    "id": "oord-2017",
+    "ok": true,
+    "found": "Neural Discrete Representation Learning",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1711.00937"
+   }
+  },
+  {
+   "id": "sohl-dickstein-2015",
+   "title": "Deep Unsupervised Learning using Nonequilibrium Thermodynamics",
+   "authors": "Sohl-Dickstein et al.",
+   "year": 2015,
+   "course": "generative-models",
+   "topics": [
+    "diffusion"
+   ],
+   "arxiv": "1503.03585",
+   "check": {
+    "id": "sohl-dickstein-2015",
+    "ok": true,
+    "found": "Deep Unsupervised Learning using Nonequilibrium Thermodynamics",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1503.03585"
+   }
+  },
+  {
+   "id": "song-2019",
+   "title": "Generative Modeling by Estimating Gradients of the Data Distribution",
+   "authors": "Song, Ermon",
+   "year": 2019,
+   "course": "generative-models",
+   "topics": [
+    "score-matching"
+   ],
+   "arxiv": "1907.05600",
+   "check": {
+    "id": "song-2019",
+    "ok": true,
+    "found": "Generative Modeling by Estimating Gradients of the Data Distribution",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1907.05600"
+   }
+  },
+  {
+   "id": "ho-2020",
+   "title": "Denoising Diffusion Probabilistic Models",
+   "authors": "Ho, Jain, Abbeel",
+   "year": 2020,
+   "course": "generative-models",
+   "topics": [
+    "ddpm"
+   ],
+   "arxiv": "2006.11239",
+   "check": {
+    "id": "ho-2020",
+    "ok": true,
+    "found": "Denoising Diffusion Probabilistic Models",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2006.11239"
+   }
+  },
+  {
+   "id": "song-2020",
+   "title": "Denoising Diffusion Implicit Models",
+   "authors": "Song, Meng, Ermon",
+   "year": 2020,
+   "course": "generative-models",
+   "topics": [
+    "ddim"
+   ],
+   "arxiv": "2010.02502",
+   "check": {
+    "id": "song-2020",
+    "ok": true,
+    "found": "Denoising Diffusion Implicit Models",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2010.02502"
+   }
+  },
+  {
+   "id": "song-2020b",
+   "title": "Score-Based Generative Modeling through Stochastic Differential Equations",
+   "authors": "Song et al.",
+   "year": 2020,
+   "course": "generative-models",
+   "topics": [
+    "score-sde"
+   ],
+   "arxiv": "2011.13456",
+   "check": {
+    "id": "song-2020b",
+    "ok": true,
+    "found": "Score-Based Generative Modeling through Stochastic Differential Equations",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2011.13456"
+   }
+  },
+  {
+   "id": "nichol-2021",
+   "title": "Improved Denoising Diffusion Probabilistic Models",
+   "authors": "Nichol, Dhariwal",
+   "year": 2021,
+   "course": "generative-models",
+   "topics": [
+    "ddpm"
+   ],
+   "arxiv": "2102.09672",
+   "check": {
+    "id": "nichol-2021",
+    "ok": true,
+    "found": "Improved Denoising Diffusion Probabilistic Models",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2102.09672"
+   }
+  },
+  {
+   "id": "dhariwal-2021",
+   "title": "Diffusion Models Beat GANs on Image Synthesis",
+   "authors": "Dhariwal, Nichol",
+   "year": 2021,
+   "course": "generative-models",
+   "topics": [
+    "guidance"
+   ],
+   "arxiv": "2105.05233",
+   "check": {
+    "id": "dhariwal-2021",
+    "ok": true,
+    "found": "Diffusion Models Beat GANs on Image Synthesis",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2105.05233"
+   }
+  },
+  {
+   "id": "ho-2022",
+   "title": "Classifier-Free Diffusion Guidance",
+   "authors": "Ho, Salimans",
+   "year": 2022,
+   "course": "generative-models",
+   "topics": [
+    "guidance"
+   ],
+   "arxiv": "2207.12598",
+   "check": {
+    "id": "ho-2022",
+    "ok": true,
+    "found": "Classifier-Free Diffusion Guidance",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2207.12598"
+   }
+  },
+  {
+   "id": "rombach-2021",
+   "title": "High-Resolution Image Synthesis with Latent Diffusion Models",
+   "authors": "Rombach et al.",
+   "year": 2021,
+   "course": "generative-models",
+   "topics": [
+    "latent-diffusion"
+   ],
+   "arxiv": "2112.10752",
+   "check": {
+    "id": "rombach-2021",
+    "ok": true,
+    "found": "High-Resolution Image Synthesis with Latent Diffusion Models",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2112.10752"
+   }
+  },
+  {
+   "id": "ramesh-2022",
+   "title": "Hierarchical Text-Conditional Image Generation with CLIP Latents",
+   "authors": "Ramesh et al.",
+   "year": 2022,
+   "course": "generative-models",
+   "topics": [
+    "text-to-image"
+   ],
+   "arxiv": "2204.06125",
+   "check": {
+    "id": "ramesh-2022",
+    "ok": true,
+    "found": "Hierarchical Text-Conditional Image Generation with CLIP Latents",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2204.06125"
+   }
+  },
+  {
+   "id": "saharia-2022",
+   "title": "Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding",
+   "authors": "Saharia et al.",
+   "year": 2022,
+   "course": "generative-models",
+   "topics": [
+    "text-to-image"
+   ],
+   "arxiv": "2205.11487",
+   "check": {
+    "id": "saharia-2022",
+    "ok": true,
+    "found": "Photorealistic Text-to-Image Diffusion Models with Deep Language Understanding",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2205.11487"
+   }
+  },
+  {
+   "id": "peebles-2022",
+   "title": "Scalable Diffusion Models with Transformers",
+   "authors": "Peebles, Xie",
+   "year": 2022,
+   "course": "generative-models",
+   "topics": [
+    "dit"
+   ],
+   "arxiv": "2212.09748",
+   "check": {
+    "id": "peebles-2022",
+    "ok": true,
+    "found": "Scalable Diffusion Models with Transformers",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2212.09748"
+   }
+  },
+  {
+   "id": "lipman-2022",
+   "title": "Flow Matching for Generative Modeling",
+   "authors": "Lipman et al.",
+   "year": 2022,
+   "course": "generative-models",
+   "topics": [
+    "flow-matching"
+   ],
+   "arxiv": "2210.02747",
+   "check": {
+    "id": "lipman-2022",
+    "ok": true,
+    "found": "Flow Matching for Generative Modeling",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2210.02747"
+   }
+  },
+  {
+   "id": "liu-2022",
+   "title": "Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow",
+   "authors": "Liu, Gong, Liu",
+   "year": 2022,
+   "course": "generative-models",
+   "topics": [
+    "rectified-flow"
+   ],
+   "arxiv": "2209.03003",
+   "check": {
+    "id": "liu-2022",
+    "ok": true,
+    "found": "Flow Straight and Fast: Learning to Generate and Transfer Data with Rectified Flow",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2209.03003"
+   }
+  },
+  {
+   "id": "song-2023",
+   "title": "Consistency Models",
+   "authors": "Song et al.",
+   "year": 2023,
+   "course": "generative-models",
+   "topics": [
+    "consistency"
+   ],
+   "arxiv": "2303.01469",
+   "check": {
+    "id": "song-2023",
+    "ok": true,
+    "found": "Consistency Models",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2303.01469"
+   }
+  },
+  {
+   "id": "girshick-2013",
+   "title": "Rich feature hierarchies for accurate object detection and semantic segmentation",
+   "authors": "Girshick et al.",
+   "year": 2013,
+   "course": "computer-vision",
+   "topics": [
+    "r-cnn"
+   ],
+   "arxiv": "1311.2524",
+   "check": {
+    "id": "girshick-2013",
+    "ok": true,
+    "found": "Rich feature hierarchies for accurate object detection and semantic segmentation",
+    "foundYear": 2013,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1311.2524"
+   }
+  },
+  {
+   "id": "girshick-2015",
+   "title": "Fast R-CNN",
+   "authors": "Girshick",
+   "year": 2015,
+   "course": "computer-vision",
+   "topics": [
+    "detection"
+   ],
+   "arxiv": "1504.08083",
+   "check": {
+    "id": "girshick-2015",
+    "ok": true,
+    "found": "Fast R-CNN",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1504.08083"
+   }
+  },
+  {
+   "id": "ren-2015",
+   "title": "Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks",
+   "authors": "Ren et al.",
+   "year": 2015,
+   "course": "computer-vision",
+   "topics": [
+    "detection"
+   ],
+   "arxiv": "1506.01497",
+   "check": {
+    "id": "ren-2015",
+    "ok": true,
+    "found": "Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1506.01497"
+   }
+  },
+  {
+   "id": "redmon-2015",
+   "title": "You Only Look Once: Unified, Real-Time Object Detection",
+   "authors": "Redmon et al.",
+   "year": 2015,
+   "course": "computer-vision",
+   "topics": [
+    "yolo"
+   ],
+   "arxiv": "1506.02640",
+   "check": {
+    "id": "redmon-2015",
+    "ok": true,
+    "found": "You Only Look Once: Unified, Real-Time Object Detection",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1506.02640"
+   }
+  },
+  {
+   "id": "liu-2015",
+   "title": "SSD: Single Shot MultiBox Detector",
+   "authors": "Liu et al.",
+   "year": 2015,
+   "course": "computer-vision",
+   "topics": [
+    "detection"
+   ],
+   "arxiv": "1512.02325",
+   "check": {
+    "id": "liu-2015",
+    "ok": true,
+    "found": "SSD: Single Shot MultiBox Detector",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1512.02325"
+   }
+  },
+  {
+   "id": "lin-2016",
+   "title": "Feature Pyramid Networks for Object Detection",
+   "authors": "Lin et al.",
+   "year": 2016,
+   "course": "computer-vision",
+   "topics": [
+    "fpn"
+   ],
+   "arxiv": "1612.03144",
+   "check": {
+    "id": "lin-2016",
+    "ok": true,
+    "found": "Feature Pyramid Networks for Object Detection",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1612.03144"
+   }
+  },
+  {
+   "id": "lin-2017",
+   "title": "Focal Loss for Dense Object Detection",
+   "authors": "Lin et al.",
+   "year": 2017,
+   "course": "computer-vision",
+   "topics": [
+    "focal-loss"
+   ],
+   "arxiv": "1708.02002",
+   "check": {
+    "id": "lin-2017",
+    "ok": true,
+    "found": "Focal Loss for Dense Object Detection",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1708.02002"
+   }
+  },
+  {
+   "id": "he-2017",
+   "title": "Mask R-CNN",
+   "authors": "He et al.",
+   "year": 2017,
+   "course": "computer-vision",
+   "topics": [
+    "instance-segmentation"
+   ],
+   "arxiv": "1703.06870",
+   "check": {
+    "id": "he-2017",
+    "ok": true,
+    "found": "Mask R-CNN",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1703.06870"
+   }
+  },
+  {
+   "id": "long-2014",
+   "title": "Fully Convolutional Networks for Semantic Segmentation",
+   "authors": "Long, Shelhamer, Darrell",
+   "year": 2014,
+   "course": "computer-vision",
+   "topics": [
+    "segmentation"
+   ],
+   "arxiv": "1411.4038",
+   "check": {
+    "id": "long-2014",
+    "ok": true,
+    "found": "Fully Convolutional Networks for Semantic Segmentation",
+    "foundYear": 2014,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1411.4038"
+   }
+  },
+  {
+   "id": "ronneberger-2015",
+   "title": "U-Net: Convolutional Networks for Biomedical Image Segmentation",
+   "authors": "Ronneberger, Fischer, Brox",
+   "year": 2015,
+   "course": "computer-vision",
+   "topics": [
+    "u-net"
+   ],
+   "arxiv": "1505.04597",
+   "check": {
+    "id": "ronneberger-2015",
+    "ok": true,
+    "found": "U-Net: Convolutional Networks for Biomedical Image Segmentation",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1505.04597"
+   }
+  },
+  {
+   "id": "carion-2020",
+   "title": "End-to-End Object Detection with Transformers",
+   "authors": "Carion et al.",
+   "year": 2020,
+   "course": "computer-vision",
+   "topics": [
+    "detr"
+   ],
+   "arxiv": "2005.12872",
+   "check": {
+    "id": "carion-2020",
+    "ok": true,
+    "found": "End-to-End Object Detection with Transformers",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2005.12872"
+   }
+  },
+  {
+   "id": "dosovitskiy-2020",
+   "title": "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+   "authors": "Dosovitskiy et al.",
+   "year": 2020,
+   "course": "computer-vision",
+   "topics": [
+    "vit"
+   ],
+   "arxiv": "2010.11929",
+   "check": {
+    "id": "dosovitskiy-2020",
+    "ok": true,
+    "found": "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2010.11929"
+   }
+  },
+  {
+   "id": "liu-2021",
+   "title": "Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+   "authors": "Liu et al.",
+   "year": 2021,
+   "course": "computer-vision",
+   "topics": [
+    "swin"
+   ],
+   "arxiv": "2103.14030",
+   "check": {
+    "id": "liu-2021",
+    "ok": true,
+    "found": "Swin Transformer: Hierarchical Vision Transformer using Shifted Windows",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2103.14030"
+   }
+  },
+  {
+   "id": "radford-2021",
+   "title": "Learning Transferable Visual Models From Natural Language Supervision",
+   "authors": "Radford et al.",
+   "year": 2021,
+   "course": "computer-vision",
+   "topics": [
+    "clip"
+   ],
+   "arxiv": "2103.00020",
+   "check": {
+    "id": "radford-2021",
+    "ok": true,
+    "found": "Learning Transferable Visual Models From Natural Language Supervision",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2103.00020"
+   }
+  },
+  {
+   "id": "chen-2020",
+   "title": "A Simple Framework for Contrastive Learning of Visual Representations",
+   "authors": "Chen et al.",
+   "year": 2020,
+   "course": "computer-vision",
+   "topics": [
+    "simclr"
+   ],
+   "arxiv": "2002.05709",
+   "check": {
+    "id": "chen-2020",
+    "ok": true,
+    "found": "A Simple Framework for Contrastive Learning of Visual Representations",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2002.05709"
+   }
+  },
+  {
+   "id": "he-2019",
+   "title": "Momentum Contrast for Unsupervised Visual Representation Learning",
+   "authors": "He et al.",
+   "year": 2019,
+   "course": "computer-vision",
+   "topics": [
+    "moco"
+   ],
+   "arxiv": "1911.05722",
+   "check": {
+    "id": "he-2019",
+    "ok": true,
+    "found": "Momentum Contrast for Unsupervised Visual Representation Learning",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1911.05722"
+   }
+  },
+  {
+   "id": "grill-2020",
+   "title": "Bootstrap your own latent: A new approach to self-supervised Learning",
+   "authors": "Grill et al.",
+   "year": 2020,
+   "course": "computer-vision",
+   "topics": [
+    "byol"
+   ],
+   "arxiv": "2006.07733",
+   "check": {
+    "id": "grill-2020",
+    "ok": true,
+    "found": "Bootstrap your own latent: A new approach to self-supervised Learning",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2006.07733"
+   }
+  },
+  {
+   "id": "caron-2021",
+   "title": "Emerging Properties in Self-Supervised Vision Transformers",
+   "authors": "Caron et al.",
+   "year": 2021,
+   "course": "computer-vision",
+   "topics": [
+    "dino"
+   ],
+   "arxiv": "2104.14294",
+   "check": {
+    "id": "caron-2021",
+    "ok": true,
+    "found": "Emerging Properties in Self-Supervised Vision Transformers",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2104.14294"
+   }
+  },
+  {
+   "id": "he-2021",
+   "title": "Masked Autoencoders Are Scalable Vision Learners",
+   "authors": "He et al.",
+   "year": 2021,
+   "course": "computer-vision",
+   "topics": [
+    "mae"
+   ],
+   "arxiv": "2111.06377",
+   "check": {
+    "id": "he-2021",
+    "ok": true,
+    "found": "Masked Autoencoders Are Scalable Vision Learners",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2111.06377"
+   }
+  },
+  {
+   "id": "kirillov-2023",
+   "title": "Segment Anything",
+   "authors": "Kirillov et al.",
+   "year": 2023,
+   "course": "computer-vision",
+   "topics": [
+    "sam"
+   ],
+   "arxiv": "2304.02643",
+   "check": {
+    "id": "kirillov-2023",
+    "ok": true,
+    "found": "Segment Anything",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2304.02643"
+   }
+  },
+  {
+   "id": "mildenhall-2020",
+   "title": "NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis",
+   "authors": "Mildenhall et al.",
+   "year": 2020,
+   "course": "computer-vision",
+   "topics": [
+    "nerf"
+   ],
+   "arxiv": "2003.08934",
+   "check": {
+    "id": "mildenhall-2020",
+    "ok": true,
+    "found": "NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2003.08934"
+   }
+  },
+  {
+   "id": "kerbl-2023",
+   "title": "3D Gaussian Splatting for Real-Time Radiance Field Rendering",
+   "authors": "Kerbl et al.",
+   "year": 2023,
+   "course": "computer-vision",
+   "topics": [
+    "gaussian-splatting"
+   ],
+   "arxiv": "2308.04079",
+   "check": {
+    "id": "kerbl-2023",
+    "ok": true,
+    "found": "3D Gaussian Splatting for Real-Time Radiance Field Rendering",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2308.04079"
+   }
+  },
+  {
+   "id": "mikolov-2013",
+   "title": "Efficient Estimation of Word Representations in Vector Space",
+   "authors": "Mikolov et al.",
+   "year": 2013,
+   "course": "nlp",
+   "topics": [
+    "word2vec"
+   ],
+   "arxiv": "1301.3781",
+   "check": {
+    "id": "mikolov-2013",
+    "ok": true,
+    "found": "Efficient Estimation of Word Representations in Vector Space",
+    "foundYear": 2013,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1301.3781"
+   }
+  },
+  {
+   "id": "mikolov-2013b",
+   "title": "Distributed Representations of Words and Phrases and their Compositionality",
+   "authors": "Mikolov et al.",
+   "year": 2013,
+   "course": "nlp",
+   "topics": [
+    "word2vec"
+   ],
+   "arxiv": "1310.4546",
+   "check": {
+    "id": "mikolov-2013b",
+    "ok": true,
+    "found": "Distributed Representations of Words and Phrases and their Compositionality",
+    "foundYear": 2013,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1310.4546"
+   }
+  },
+  {
+   "id": "pennington-2014",
+   "title": "GloVe: Global Vectors for Word Representation",
+   "authors": "Pennington, Socher, Manning",
+   "year": 2014,
+   "course": "nlp",
+   "topics": [
+    "glove"
+   ],
+   "doi": "10.3115/v1/D14-1162",
+   "check": {
+    "id": "pennington-2014",
+    "ok": true,
+    "found": "Glove: Global Vectors for Word Representation",
+    "foundYear": 2014,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.3115/v1/D14-1162"
+   }
+  },
+  {
+   "id": "sennrich-2015",
+   "title": "Neural Machine Translation of Rare Words with Subword Units",
+   "authors": "Sennrich, Haddow, Birch",
+   "year": 2015,
+   "course": "nlp",
+   "topics": [
+    "bpe"
+   ],
+   "arxiv": "1508.07909",
+   "check": {
+    "id": "sennrich-2015",
+    "ok": true,
+    "found": "Neural Machine Translation of Rare Words with Subword Units",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1508.07909"
+   }
+  },
+  {
+   "id": "kudo-2018",
+   "title": "SentencePiece: A simple and language independent subword tokenizer and detokenizer for Neural Text Processing",
+   "authors": "Kudo, Richardson",
+   "year": 2018,
+   "course": "nlp",
+   "topics": [
+    "tokenization"
+   ],
+   "arxiv": "1808.06226",
+   "check": {
+    "id": "kudo-2018",
+    "ok": true,
+    "found": "SentencePiece: A simple and language independent subword tokenizer and detokenizer for Neural Text Processing",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1808.06226"
+   }
+  },
+  {
+   "id": "peters-2018",
+   "title": "Deep contextualized word representations",
+   "authors": "Peters et al.",
+   "year": 2018,
+   "course": "nlp",
+   "topics": [
+    "elmo"
+   ],
+   "arxiv": "1802.05365",
+   "check": {
+    "id": "peters-2018",
+    "ok": true,
+    "found": "Deep contextualized word representations",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1802.05365"
+   }
+  },
+  {
+   "id": "radford-2018",
+   "title": "Improving Language Understanding by Generative Pre-Training",
+   "authors": "Radford et al.",
+   "year": 2018,
+   "course": "nlp",
+   "topics": [
+    "gpt"
+   ],
+   "url": "https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf",
+   "check": {
+    "id": "radford-2018",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf",
+    "manual": true
+   }
+  },
+  {
+   "id": "devlin-2018",
+   "title": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+   "authors": "Devlin et al.",
+   "year": 2018,
+   "course": "nlp",
+   "topics": [
+    "bert"
+   ],
+   "arxiv": "1810.04805",
+   "check": {
+    "id": "devlin-2018",
+    "ok": true,
+    "found": "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1810.04805"
+   }
+  },
+  {
+   "id": "radford-2019",
+   "title": "Language Models are Unsupervised Multitask Learners",
+   "authors": "Radford et al.",
+   "year": 2019,
+   "course": "nlp",
+   "topics": [
+    "gpt-2"
+   ],
+   "url": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+   "check": {
+    "id": "radford-2019",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf",
+    "manual": true
+   }
+  },
+  {
+   "id": "liu-2019",
+   "title": "RoBERTa: A Robustly Optimized BERT Pretraining Approach",
+   "authors": "Liu et al.",
+   "year": 2019,
+   "course": "nlp",
+   "topics": [
+    "roberta"
+   ],
+   "arxiv": "1907.11692",
+   "check": {
+    "id": "liu-2019",
+    "ok": true,
+    "found": "RoBERTa: A Robustly Optimized BERT Pretraining Approach",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1907.11692"
+   }
+  },
+  {
+   "id": "raffel-2019",
+   "title": "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",
+   "authors": "Raffel et al.",
+   "year": 2019,
+   "course": "nlp",
+   "topics": [
+    "t5"
+   ],
+   "arxiv": "1910.10683",
+   "check": {
+    "id": "raffel-2019",
+    "ok": true,
+    "found": "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1910.10683"
+   }
+  },
+  {
+   "id": "brown-2020",
+   "title": "Language Models are Few-Shot Learners",
+   "authors": "Brown et al.",
+   "year": 2020,
+   "course": "nlp",
+   "topics": [
+    "gpt-3",
+    "in-context-learning"
+   ],
+   "arxiv": "2005.14165",
+   "check": {
+    "id": "brown-2020",
+    "ok": true,
+    "found": "Language Models are Few-Shot Learners",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2005.14165"
+   }
+  },
+  {
+   "id": "kaplan-2020",
+   "title": "Scaling Laws for Neural Language Models",
+   "authors": "Kaplan et al.",
+   "year": 2020,
+   "course": "llms",
+   "topics": [
+    "scaling-laws"
+   ],
+   "arxiv": "2001.08361",
+   "check": {
+    "id": "kaplan-2020",
+    "ok": true,
+    "found": "Scaling Laws for Neural Language Models",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2001.08361"
+   }
+  },
+  {
+   "id": "hoffmann-2022",
+   "title": "Training Compute-Optimal Large Language Models",
+   "authors": "Hoffmann et al.",
+   "year": 2022,
+   "course": "llms",
+   "topics": [
+    "chinchilla"
+   ],
+   "arxiv": "2203.15556",
+   "check": {
+    "id": "hoffmann-2022",
+    "ok": true,
+    "found": "Training Compute-Optimal Large Language Models",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2203.15556"
+   }
+  },
+  {
+   "id": "shazeer-2017",
+   "title": "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer",
+   "authors": "Shazeer et al.",
+   "year": 2017,
+   "course": "llms",
+   "topics": [
+    "moe"
+   ],
+   "arxiv": "1701.06538",
+   "check": {
+    "id": "shazeer-2017",
+    "ok": true,
+    "found": "Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1701.06538"
+   }
+  },
+  {
+   "id": "fedus-2021",
+   "title": "Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity",
+   "authors": "Fedus, Zoph, Shazeer",
+   "year": 2021,
+   "course": "llms",
+   "topics": [
+    "moe"
+   ],
+   "arxiv": "2101.03961",
+   "check": {
+    "id": "fedus-2021",
+    "ok": true,
+    "found": "Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2101.03961"
+   }
+  },
+  {
+   "id": "su-2021",
+   "title": "RoFormer: Enhanced Transformer with Rotary Position Embedding",
+   "authors": "Su et al.",
+   "year": 2021,
+   "course": "llms",
+   "topics": [
+    "rope"
+   ],
+   "arxiv": "2104.09864",
+   "check": {
+    "id": "su-2021",
+    "ok": true,
+    "found": "RoFormer: Enhanced Transformer with Rotary Position Embedding",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2104.09864"
+   }
+  },
+  {
+   "id": "shazeer-2020",
+   "title": "GLU Variants Improve Transformer",
+   "authors": "Shazeer",
+   "year": 2020,
+   "course": "llms",
+   "topics": [
+    "swiglu"
+   ],
+   "arxiv": "2002.05202",
+   "check": {
+    "id": "shazeer-2020",
+    "ok": true,
+    "found": "GLU Variants Improve Transformer",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2002.05202"
+   }
+  },
+  {
+   "id": "shazeer-2019",
+   "title": "Fast Transformer Decoding: One Write-Head is All You Need",
+   "authors": "Shazeer",
+   "year": 2019,
+   "course": "llms",
+   "topics": [
+    "mqa"
+   ],
+   "arxiv": "1911.02150",
+   "check": {
+    "id": "shazeer-2019",
+    "ok": true,
+    "found": "Fast Transformer Decoding: One Write-Head is All You Need",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1911.02150"
+   }
+  },
+  {
+   "id": "ainslie-2023",
+   "title": "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints",
+   "authors": "Ainslie et al.",
+   "year": 2023,
+   "course": "llms",
+   "topics": [
+    "gqa"
+   ],
+   "arxiv": "2305.13245",
+   "check": {
+    "id": "ainslie-2023",
+    "ok": true,
+    "found": "GQA: Training Generalized Multi-Query Transformer Models from Multi-Head Checkpoints",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2305.13245"
+   }
+  },
+  {
+   "id": "dao-2022",
+   "title": "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness",
+   "authors": "Dao et al.",
+   "year": 2022,
+   "course": "llms",
+   "topics": [
+    "flash-attention"
+   ],
+   "arxiv": "2205.14135",
+   "check": {
+    "id": "dao-2022",
+    "ok": true,
+    "found": "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2205.14135"
+   }
+  },
+  {
+   "id": "kwon-2023",
+   "title": "Efficient Memory Management for Large Language Model Serving with PagedAttention",
+   "authors": "Kwon et al.",
+   "year": 2023,
+   "course": "llms",
+   "topics": [
+    "serving"
+   ],
+   "arxiv": "2309.06180",
+   "check": {
+    "id": "kwon-2023",
+    "ok": true,
+    "found": "Efficient Memory Management for Large Language Model Serving with PagedAttention",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2309.06180"
+   }
+  },
+  {
+   "id": "touvron-2023",
+   "title": "LLaMA: Open and Efficient Foundation Language Models",
+   "authors": "Touvron et al.",
+   "year": 2023,
+   "course": "llms",
+   "topics": [
+    "llama"
+   ],
+   "arxiv": "2302.13971",
+   "check": {
+    "id": "touvron-2023",
+    "ok": true,
+    "found": "LLaMA: Open and Efficient Foundation Language Models",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2302.13971"
+   }
+  },
+  {
+   "id": "touvron-2023b",
+   "title": "Llama 2: Open Foundation and Fine-Tuned Chat Models",
+   "authors": "Touvron et al.",
+   "year": 2023,
+   "course": "llms",
+   "topics": [
+    "llama"
+   ],
+   "arxiv": "2307.09288",
+   "check": {
+    "id": "touvron-2023b",
+    "ok": true,
+    "found": "Llama 2: Open Foundation and Fine-Tuned Chat Models",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2307.09288"
+   }
+  },
+  {
+   "id": "jiang-2023",
+   "title": "Mistral 7B",
+   "authors": "Jiang et al.",
+   "year": 2023,
+   "course": "llms",
+   "topics": [
+    "open-models"
+   ],
+   "arxiv": "2310.06825",
+   "check": {
+    "id": "jiang-2023",
+    "ok": true,
+    "found": "Mistral 7B",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2310.06825"
+   }
+  },
+  {
+   "id": "christiano-2017",
+   "title": "Deep reinforcement learning from human preferences",
+   "authors": "Christiano et al.",
+   "year": 2017,
+   "course": "llms",
+   "topics": [
+    "rlhf"
+   ],
+   "arxiv": "1706.03741",
+   "check": {
+    "id": "christiano-2017",
+    "ok": true,
+    "found": "Deep reinforcement learning from human preferences",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1706.03741"
+   }
+  },
+  {
+   "id": "ouyang-2022",
+   "title": "Training language models to follow instructions with human feedback",
+   "authors": "Ouyang et al.",
+   "year": 2022,
+   "course": "llms",
+   "topics": [
+    "instructgpt",
+    "rlhf"
+   ],
+   "arxiv": "2203.02155",
+   "check": {
+    "id": "ouyang-2022",
+    "ok": true,
+    "found": "Training language models to follow instructions with human feedback",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2203.02155"
+   }
+  },
+  {
+   "id": "bai-2022",
+   "title": "Constitutional AI: Harmlessness from AI Feedback",
+   "authors": "Bai et al.",
+   "year": 2022,
+   "course": "llms",
+   "topics": [
+    "rlaif"
+   ],
+   "arxiv": "2212.08073",
+   "check": {
+    "id": "bai-2022",
+    "ok": true,
+    "found": "Constitutional AI: Harmlessness from AI Feedback",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2212.08073"
+   }
+  },
+  {
+   "id": "rafailov-2023",
+   "title": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+   "authors": "Rafailov et al.",
+   "year": 2023,
+   "course": "llms",
+   "topics": [
+    "dpo"
+   ],
+   "arxiv": "2305.18290",
+   "check": {
+    "id": "rafailov-2023",
+    "ok": true,
+    "found": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2305.18290"
+   }
+  },
+  {
+   "id": "hu-2021",
+   "title": "LoRA: Low-Rank Adaptation of Large Language Models",
+   "authors": "Hu et al.",
+   "year": 2021,
+   "course": "llms",
+   "topics": [
+    "lora"
+   ],
+   "arxiv": "2106.09685",
+   "check": {
+    "id": "hu-2021",
+    "ok": true,
+    "found": "LoRA: Low-Rank Adaptation of Large Language Models",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2106.09685"
+   }
+  },
+  {
+   "id": "dettmers-2023",
+   "title": "QLoRA: Efficient Finetuning of Quantized LLMs",
+   "authors": "Dettmers et al.",
+   "year": 2023,
+   "course": "llms",
+   "topics": [
+    "qlora"
+   ],
+   "arxiv": "2305.14314",
+   "check": {
+    "id": "dettmers-2023",
+    "ok": true,
+    "found": "QLoRA: Efficient Finetuning of Quantized LLMs",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2305.14314"
+   }
+  },
+  {
+   "id": "dettmers-2022",
+   "title": "LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale",
+   "authors": "Dettmers et al.",
+   "year": 2022,
+   "course": "llms",
+   "topics": [
+    "quantization"
+   ],
+   "arxiv": "2208.07339",
+   "check": {
+    "id": "dettmers-2022",
+    "ok": true,
+    "found": "LLM.int8(): 8-bit Matrix Multiplication for Transformers at Scale",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2208.07339"
+   }
+  },
+  {
+   "id": "frantar-2022",
+   "title": "GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers",
+   "authors": "Frantar et al.",
+   "year": 2022,
+   "course": "llms",
+   "topics": [
+    "quantization"
+   ],
+   "arxiv": "2210.17323",
+   "check": {
+    "id": "frantar-2022",
+    "ok": true,
+    "found": "GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2210.17323"
+   }
+  },
+  {
+   "id": "lewis-2020",
+   "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+   "authors": "Lewis et al.",
+   "year": 2020,
+   "course": "llms",
+   "topics": [
+    "rag"
+   ],
+   "arxiv": "2005.11401",
+   "check": {
+    "id": "lewis-2020",
+    "ok": true,
+    "found": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2005.11401"
+   }
+  },
+  {
+   "id": "wei-2022",
+   "title": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+   "authors": "Wei et al.",
+   "year": 2022,
+   "course": "llms",
+   "topics": [
+    "chain-of-thought"
+   ],
+   "arxiv": "2201.11903",
+   "check": {
+    "id": "wei-2022",
+    "ok": true,
+    "found": "Chain-of-Thought Prompting Elicits Reasoning in Large Language Models",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2201.11903"
+   }
+  },
+  {
+   "id": "wang-2022",
+   "title": "Self-Consistency Improves Chain of Thought Reasoning in Language Models",
+   "authors": "Wang et al.",
+   "year": 2022,
+   "course": "llms",
+   "topics": [
+    "self-consistency"
+   ],
+   "arxiv": "2203.11171",
+   "check": {
+    "id": "wang-2022",
+    "ok": true,
+    "found": "Self-Consistency Improves Chain of Thought Reasoning in Language Models",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2203.11171"
+   }
+  },
+  {
+   "id": "yao-2022",
+   "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+   "authors": "Yao et al.",
+   "year": 2022,
+   "course": "llms",
+   "topics": [
+    "agents"
+   ],
+   "arxiv": "2210.03629",
+   "check": {
+    "id": "yao-2022",
+    "ok": true,
+    "found": "ReAct: Synergizing Reasoning and Acting in Language Models",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2210.03629"
+   }
+  },
+  {
+   "id": "schick-2023",
+   "title": "Toolformer: Language Models Can Teach Themselves to Use Tools",
+   "authors": "Schick et al.",
+   "year": 2023,
+   "course": "llms",
+   "topics": [
+    "tools"
+   ],
+   "arxiv": "2302.04761",
+   "check": {
+    "id": "schick-2023",
+    "ok": true,
+    "found": "Toolformer: Language Models Can Teach Themselves to Use Tools",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2302.04761"
+   }
+  },
+  {
+   "id": "holtzman-2019",
+   "title": "The Curious Case of Neural Text Degeneration",
+   "authors": "Holtzman et al.",
+   "year": 2019,
+   "course": "llms",
+   "topics": [
+    "sampling"
+   ],
+   "arxiv": "1904.09751",
+   "check": {
+    "id": "holtzman-2019",
+    "ok": true,
+    "found": "The Curious Case of Neural Text Degeneration",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1904.09751"
+   }
+  },
+  {
+   "id": "gu-2021",
+   "title": "Efficiently Modeling Long Sequences with Structured State Spaces",
+   "authors": "Gu, Goel, Ré",
+   "year": 2021,
+   "course": "llms",
+   "topics": [
+    "s4"
+   ],
+   "arxiv": "2111.00396",
+   "check": {
+    "id": "gu-2021",
+    "ok": true,
+    "found": "Efficiently Modeling Long Sequences with Structured State Spaces",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2111.00396"
+   }
+  },
+  {
+   "id": "gu-2023",
+   "title": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+   "authors": "Gu, Dao",
+   "year": 2023,
+   "course": "llms",
+   "topics": [
+    "mamba"
+   ],
+   "arxiv": "2312.00752",
+   "check": {
+    "id": "gu-2023",
+    "ok": true,
+    "found": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2312.00752"
+   }
+  },
+  {
+   "id": "sutton-1988",
+   "title": "Learning to predict by the methods of temporal differences",
+   "authors": "Sutton",
+   "year": 1988,
+   "course": "reinforcement-learning",
+   "topics": [
+    "td"
+   ],
+   "doi": "10.1007/BF00115009",
+   "check": {
+    "id": "sutton-1988",
+    "ok": true,
+    "found": "Learning to predict by the methods of temporal differences",
+    "foundYear": 1988,
+    "why": "",
+    "access": "open",
+    "read": "https://link.springer.com/content/pdf/10.1007/BF00115009.pdf"
+   }
+  },
+  {
+   "id": "watkins-1992",
+   "title": "Q-learning",
+   "authors": "Watkins, Dayan",
+   "year": 1992,
+   "course": "reinforcement-learning",
+   "topics": [
+    "q-learning"
+   ],
+   "doi": "10.1007/BF00992698",
+   "check": {
+    "id": "watkins-1992",
+    "ok": true,
+    "found": "Q-learning",
+    "foundYear": 1992,
+    "why": "",
+    "access": "open",
+    "read": "https://link.springer.com/content/pdf/10.1007/BF00992698.pdf"
+   }
+  },
+  {
+   "id": "williams-1992",
+   "title": "Simple statistical gradient-following algorithms for connectionist reinforcement learning",
+   "authors": "Williams",
+   "year": 1992,
+   "course": "reinforcement-learning",
+   "topics": [
+    "reinforce"
+   ],
+   "doi": "10.1007/BF00992696",
+   "check": {
+    "id": "williams-1992",
+    "ok": true,
+    "found": "Simple statistical gradient-following algorithms for connectionist reinforcement learning",
+    "foundYear": 1992,
+    "why": "",
+    "access": "open",
+    "read": "https://link.springer.com/content/pdf/10.1007/BF00992696.pdf"
+   }
+  },
+  {
+   "id": "sutton-1999",
+   "title": "Policy Gradient Methods for Reinforcement Learning with Function Approximation",
+   "authors": "Sutton et al.",
+   "year": 1999,
+   "course": "reinforcement-learning",
+   "topics": [
+    "policy-gradient"
+   ],
+   "url": "https://papers.nips.cc/paper_files/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html",
+   "check": {
+    "id": "sutton-1999",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://papers.nips.cc/paper_files/paper/1999/hash/464d828b85b0bed98e80ade0a5c43b0f-Abstract.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "mnih-2013",
+   "title": "Playing Atari with Deep Reinforcement Learning",
+   "authors": "Mnih et al.",
+   "year": 2013,
+   "course": "reinforcement-learning",
+   "topics": [
+    "dqn"
+   ],
+   "arxiv": "1312.5602",
+   "check": {
+    "id": "mnih-2013",
+    "ok": true,
+    "found": "Playing Atari with Deep Reinforcement Learning",
+    "foundYear": 2013,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1312.5602"
+   }
+  },
+  {
+   "id": "mnih-2015",
+   "title": "Human-level control through deep reinforcement learning",
+   "authors": "Mnih et al.",
+   "year": 2015,
+   "course": "reinforcement-learning",
+   "topics": [
+    "dqn"
+   ],
+   "doi": "10.1038/nature14236",
+   "check": {
+    "id": "mnih-2015",
+    "ok": true,
+    "found": "Human-level control through deep reinforcement learning",
+    "foundYear": 2015,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1038/nature14236"
+   }
+  },
+  {
+   "id": "vanhasselt-2015",
+   "title": "Deep Reinforcement Learning with Double Q-learning",
+   "authors": "van Hasselt, Guez, Silver",
+   "year": 2015,
+   "course": "reinforcement-learning",
+   "topics": [
+    "double-dqn"
+   ],
+   "arxiv": "1509.06461",
+   "check": {
+    "id": "vanhasselt-2015",
+    "ok": true,
+    "found": "Deep Reinforcement Learning with Double Q-learning",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1509.06461"
+   }
+  },
+  {
+   "id": "wang-2015",
+   "title": "Dueling Network Architectures for Deep Reinforcement Learning",
+   "authors": "Wang et al.",
+   "year": 2015,
+   "course": "reinforcement-learning",
+   "topics": [
+    "dueling"
+   ],
+   "arxiv": "1511.06581",
+   "check": {
+    "id": "wang-2015",
+    "ok": true,
+    "found": "Dueling Network Architectures for Deep Reinforcement Learning",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1511.06581"
+   }
+  },
+  {
+   "id": "schaul-2015",
+   "title": "Prioritized Experience Replay",
+   "authors": "Schaul et al.",
+   "year": 2015,
+   "course": "reinforcement-learning",
+   "topics": [
+    "replay"
+   ],
+   "arxiv": "1511.05952",
+   "check": {
+    "id": "schaul-2015",
+    "ok": true,
+    "found": "Prioritized Experience Replay",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1511.05952"
+   }
+  },
+  {
+   "id": "schulman-2015",
+   "title": "Trust Region Policy Optimization",
+   "authors": "Schulman et al.",
+   "year": 2015,
+   "course": "reinforcement-learning",
+   "topics": [
+    "trpo"
+   ],
+   "arxiv": "1502.05477",
+   "check": {
+    "id": "schulman-2015",
+    "ok": true,
+    "found": "Trust Region Policy Optimization",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1502.05477"
+   }
+  },
+  {
+   "id": "schulman-2015b",
+   "title": "High-Dimensional Continuous Control Using Generalized Advantage Estimation",
+   "authors": "Schulman et al.",
+   "year": 2015,
+   "course": "reinforcement-learning",
+   "topics": [
+    "gae"
+   ],
+   "arxiv": "1506.02438",
+   "check": {
+    "id": "schulman-2015b",
+    "ok": true,
+    "found": "High-Dimensional Continuous Control Using Generalized Advantage Estimation",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1506.02438"
+   }
+  },
+  {
+   "id": "lillicrap-2015",
+   "title": "Continuous control with deep reinforcement learning",
+   "authors": "Lillicrap et al.",
+   "year": 2015,
+   "course": "reinforcement-learning",
+   "topics": [
+    "ddpg"
+   ],
+   "arxiv": "1509.02971",
+   "check": {
+    "id": "lillicrap-2015",
+    "ok": true,
+    "found": "Continuous control with deep reinforcement learning",
+    "foundYear": 2015,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1509.02971"
+   }
+  },
+  {
+   "id": "mnih-2016",
+   "title": "Asynchronous Methods for Deep Reinforcement Learning",
+   "authors": "Mnih et al.",
+   "year": 2016,
+   "course": "reinforcement-learning",
+   "topics": [
+    "a3c"
+   ],
+   "arxiv": "1602.01783",
+   "check": {
+    "id": "mnih-2016",
+    "ok": true,
+    "found": "Asynchronous Methods for Deep Reinforcement Learning",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1602.01783"
+   }
+  },
+  {
+   "id": "schulman-2017",
+   "title": "Proximal Policy Optimization Algorithms",
+   "authors": "Schulman et al.",
+   "year": 2017,
+   "course": "reinforcement-learning",
+   "topics": [
+    "ppo"
+   ],
+   "arxiv": "1707.06347",
+   "check": {
+    "id": "schulman-2017",
+    "ok": true,
+    "found": "Proximal Policy Optimization Algorithms",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1707.06347"
+   }
+  },
+  {
+   "id": "fujimoto-2018",
+   "title": "Addressing Function Approximation Error in Actor-Critic Methods",
+   "authors": "Fujimoto, van Hoof, Meger",
+   "year": 2018,
+   "course": "reinforcement-learning",
+   "topics": [
+    "td3"
+   ],
+   "arxiv": "1802.09477",
+   "check": {
+    "id": "fujimoto-2018",
+    "ok": true,
+    "found": "Addressing Function Approximation Error in Actor-Critic Methods",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1802.09477"
+   }
+  },
+  {
+   "id": "haarnoja-2018",
+   "title": "Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor",
+   "authors": "Haarnoja et al.",
+   "year": 2018,
+   "course": "reinforcement-learning",
+   "topics": [
+    "sac"
+   ],
+   "arxiv": "1801.01290",
+   "check": {
+    "id": "haarnoja-2018",
+    "ok": true,
+    "found": "Soft Actor-Critic: Off-Policy Maximum Entropy Deep Reinforcement Learning with a Stochastic Actor",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1801.01290"
+   }
+  },
+  {
+   "id": "silver-2016",
+   "title": "Mastering the game of Go with deep neural networks and tree search",
+   "authors": "Silver et al.",
+   "year": 2016,
+   "course": "reinforcement-learning",
+   "topics": [
+    "alphago"
+   ],
+   "doi": "10.1038/nature16961",
+   "check": {
+    "id": "silver-2016",
+    "ok": true,
+    "found": "Mastering the game of Go with deep neural networks and tree search",
+    "foundYear": 2016,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1038/nature16961"
+   }
+  },
+  {
+   "id": "silver-2017",
+   "title": "Mastering the game of Go without human knowledge",
+   "authors": "Silver et al.",
+   "year": 2017,
+   "course": "reinforcement-learning",
+   "topics": [
+    "alphago-zero"
+   ],
+   "doi": "10.1038/nature24270",
+   "check": {
+    "id": "silver-2017",
+    "ok": true,
+    "found": "Mastering the game of Go without human knowledge",
+    "foundYear": 2017,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1038/nature24270"
+   }
+  },
+  {
+   "id": "silver-2017b",
+   "title": "Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm",
+   "authors": "Silver et al.",
+   "year": 2017,
+   "course": "reinforcement-learning",
+   "topics": [
+    "alphazero"
+   ],
+   "arxiv": "1712.01815",
+   "check": {
+    "id": "silver-2017b",
+    "ok": true,
+    "found": "Mastering Chess and Shogi by Self-Play with a General Reinforcement Learning Algorithm",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1712.01815"
+   }
+  },
+  {
+   "id": "schrittwieser-2019",
+   "title": "Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model",
+   "authors": "Schrittwieser et al.",
+   "year": 2019,
+   "course": "reinforcement-learning",
+   "topics": [
+    "muzero"
+   ],
+   "arxiv": "1911.08265",
+   "check": {
+    "id": "schrittwieser-2019",
+    "ok": true,
+    "found": "Mastering Atari, Go, Chess and Shogi by Planning with a Learned Model",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1911.08265"
+   }
+  },
+  {
+   "id": "nickolls-2008",
+   "title": "Scalable Parallel Programming with CUDA",
+   "authors": "Nickolls et al.",
+   "year": 2008,
+   "course": "ai-systems",
+   "topics": [
+    "gpu",
+    "cuda"
+   ],
+   "doi": "10.1145/1365490.1365500",
+   "check": {
+    "id": "nickolls-2008",
+    "ok": true,
+    "found": "Scalable Parallel Programming with CUDA",
+    "foundYear": 2008,
+    "why": "",
+    "access": "open",
+    "read": "https://dl.acm.org/doi/pdf/10.1145/1365490.1365500"
+   }
+  },
+  {
+   "id": "jouppi-2017",
+   "title": "In-Datacenter Performance Analysis of a Tensor Processing Unit",
+   "authors": "Jouppi et al.",
+   "year": 2017,
+   "course": "ai-systems",
+   "topics": [
+    "tpu"
+   ],
+   "arxiv": "1704.04760",
+   "check": {
+    "id": "jouppi-2017",
+    "ok": true,
+    "found": "In-Datacenter Performance Analysis of a Tensor Processing Unit",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1704.04760"
+   }
+  },
+  {
+   "id": "williams-2009",
+   "title": "Roofline: an insightful visual performance model for multicore architectures",
+   "authors": "Williams, Waterman, Patterson",
+   "year": 2009,
+   "course": "ai-systems",
+   "topics": [
+    "roofline"
+   ],
+   "doi": "10.1145/1498765.1498785",
+   "check": {
+    "id": "williams-2009",
+    "ok": true,
+    "found": "Roofline",
+    "foundYear": 2009,
+    "why": "",
+    "access": "open",
+    "read": "https://www.osti.gov/servlets/purl/1407073"
+   }
+  },
+  {
+   "id": "micikevicius-2017",
+   "title": "Mixed Precision Training",
+   "authors": "Micikevicius et al.",
+   "year": 2017,
+   "course": "ai-systems",
+   "topics": [
+    "mixed-precision"
+   ],
+   "arxiv": "1710.03740",
+   "check": {
+    "id": "micikevicius-2017",
+    "ok": true,
+    "found": "Mixed Precision Training",
+    "foundYear": 2017,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1710.03740"
+   }
+  },
+  {
+   "id": "chen-2016b",
+   "title": "Training Deep Nets with Sublinear Memory Cost",
+   "authors": "Chen et al.",
+   "year": 2016,
+   "course": "ai-systems",
+   "topics": [
+    "checkpointing"
+   ],
+   "arxiv": "1604.06174",
+   "check": {
+    "id": "chen-2016b",
+    "ok": true,
+    "found": "Training Deep Nets with Sublinear Memory Cost",
+    "foundYear": 2016,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1604.06174"
+   }
+  },
+  {
+   "id": "korthikanti-2022",
+   "title": "Reducing Activation Recomputation in Large Transformer Models",
+   "authors": "Korthikanti et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "checkpointing"
+   ],
+   "arxiv": "2205.05198",
+   "check": {
+    "id": "korthikanti-2022",
+    "ok": true,
+    "found": "Reducing Activation Recomputation in Large Transformer Models",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2205.05198"
+   }
+  },
+  {
+   "id": "patarasuk-2009",
+   "title": "Bandwidth optimal all-reduce algorithms for clusters of workstations",
+   "authors": "Patarasuk, Yuan",
+   "year": 2009,
+   "course": "ai-systems",
+   "topics": [
+    "all-reduce"
+   ],
+   "doi": "10.1016/j.jpdc.2008.09.002",
+   "check": {
+    "id": "patarasuk-2009",
+    "ok": true,
+    "found": "Bandwidth optimal all-reduce algorithms for clusters of workstations",
+    "foundYear": 2009,
+    "why": "",
+    "access": "paywalled",
+    "read": "https://doi.org/10.1016/j.jpdc.2008.09.002"
+   }
+  },
+  {
+   "id": "rajbhandari-2019",
+   "title": "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models",
+   "authors": "Rajbhandari et al.",
+   "year": 2019,
+   "course": "ai-systems",
+   "topics": [
+    "zero"
+   ],
+   "arxiv": "1910.02054",
+   "check": {
+    "id": "rajbhandari-2019",
+    "ok": true,
+    "found": "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1910.02054"
+   }
+  },
+  {
+   "id": "zhao-2023",
+   "title": "PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel",
+   "authors": "Zhao et al.",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "fsdp"
+   ],
+   "arxiv": "2304.11277",
+   "check": {
+    "id": "zhao-2023",
+    "ok": true,
+    "found": "PyTorch FSDP: Experiences on Scaling Fully Sharded Data Parallel",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2304.11277"
+   }
+  },
+  {
+   "id": "shoeybi-2019",
+   "title": "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism",
+   "authors": "Shoeybi et al.",
+   "year": 2019,
+   "course": "ai-systems",
+   "topics": [
+    "tensor-parallel"
+   ],
+   "arxiv": "1909.08053",
+   "check": {
+    "id": "shoeybi-2019",
+    "ok": true,
+    "found": "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1909.08053"
+   }
+  },
+  {
+   "id": "huang-2018",
+   "title": "GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism",
+   "authors": "Huang et al.",
+   "year": 2018,
+   "course": "ai-systems",
+   "topics": [
+    "pipeline-parallel"
+   ],
+   "arxiv": "1811.06965",
+   "check": {
+    "id": "huang-2018",
+    "ok": true,
+    "found": "GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism",
+    "foundYear": 2018,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1811.06965"
+   }
+  },
+  {
+   "id": "narayanan-2021",
+   "title": "Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM",
+   "authors": "Narayanan et al.",
+   "year": 2021,
+   "course": "ai-systems",
+   "topics": [
+    "3d-parallel"
+   ],
+   "arxiv": "2104.04473",
+   "check": {
+    "id": "narayanan-2021",
+    "ok": true,
+    "found": "Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2104.04473"
+   }
+  },
+  {
+   "id": "lepikhin-2020",
+   "title": "GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding",
+   "authors": "Lepikhin et al.",
+   "year": 2020,
+   "course": "ai-systems",
+   "topics": [
+    "expert-parallel"
+   ],
+   "arxiv": "2006.16668",
+   "check": {
+    "id": "lepikhin-2020",
+    "ok": true,
+    "found": "GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2006.16668"
+   }
+  },
+  {
+   "id": "liu-2023",
+   "title": "Ring Attention with Blockwise Transformers for Near-Infinite Context",
+   "authors": "Liu, Zaharia, Abbeel",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "sequence-parallel"
+   ],
+   "arxiv": "2310.01889",
+   "check": {
+    "id": "liu-2023",
+    "ok": true,
+    "found": "Ring Attention with Blockwise Transformers for Near-Infinite Context",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2310.01889"
+   }
+  },
+  {
+   "id": "dao-2023",
+   "title": "FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning",
+   "authors": "Dao",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "flash-attention"
+   ],
+   "arxiv": "2307.08691",
+   "check": {
+    "id": "dao-2023",
+    "ok": true,
+    "found": "FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2307.08691"
+   }
+  },
+  {
+   "id": "gao-2020",
+   "title": "The Pile: An 800GB Dataset of Diverse Text for Language Modeling",
+   "authors": "Gao et al.",
+   "year": 2020,
+   "course": "ai-systems",
+   "topics": [
+    "data"
+   ],
+   "arxiv": "2101.00027",
+   "check": {
+    "id": "gao-2020",
+    "ok": true,
+    "found": "The Pile: An 800GB Dataset of Diverse Text for Language Modeling",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2101.00027"
+   }
+  },
+  {
+   "id": "penedo-2023",
+   "title": "The RefinedWeb Dataset for Falcon LLM: Outperforming Curated Corpora with Web Data, and Web Data Only",
+   "authors": "Penedo et al.",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "data"
+   ],
+   "arxiv": "2306.01116",
+   "check": {
+    "id": "penedo-2023",
+    "ok": true,
+    "found": "The RefinedWeb Dataset for Falcon LLM: Outperforming Curated Corpora with Web Data, and Web Data Only",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2306.01116"
+   }
+  },
+  {
+   "id": "penedo-2024",
+   "title": "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale",
+   "authors": "Penedo et al.",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "data"
+   ],
+   "arxiv": "2406.17557",
+   "check": {
+    "id": "penedo-2024",
+    "ok": true,
+    "found": "The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale",
+    "foundYear": 2024,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2406.17557"
+   }
+  },
+  {
+   "id": "openai-2023",
+   "title": "GPT-4 Technical Report",
+   "authors": "OpenAI",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "frontier-report"
+   ],
+   "arxiv": "2303.08774",
+   "check": {
+    "id": "openai-2023",
+    "ok": true,
+    "found": "GPT-4 Technical Report",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2303.08774"
+   }
+  },
+  {
+   "id": "grattafiori-2024",
+   "title": "The Llama 3 Herd of Models",
+   "authors": "Grattafiori et al. (Llama Team)",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "frontier-report"
+   ],
+   "arxiv": "2407.21783",
+   "check": {
+    "id": "grattafiori-2024",
+    "ok": true,
+    "found": "The Llama 3 Herd of Models",
+    "foundYear": 2024,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2407.21783"
+   }
+  },
+  {
+   "id": "deepseek-2024",
+   "title": "DeepSeek-V3 Technical Report",
+   "authors": "DeepSeek-AI",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "frontier-report"
+   ],
+   "arxiv": "2412.19437",
+   "check": {
+    "id": "deepseek-2024",
+    "ok": true,
+    "found": "DeepSeek-V3 Technical Report",
+    "foundYear": 2024,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2412.19437"
+   }
+  },
+  {
+   "id": "wei-2021",
+   "title": "Finetuned Language Models Are Zero-Shot Learners",
+   "authors": "Wei et al.",
+   "year": 2021,
+   "course": "ai-systems",
+   "topics": [
+    "instruction-tuning"
+   ],
+   "arxiv": "2109.01652",
+   "check": {
+    "id": "wei-2021",
+    "ok": true,
+    "found": "Finetuned Language Models Are Zero-Shot Learners",
+    "foundYear": 2021,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2109.01652"
+   }
+  },
+  {
+   "id": "chung-2022",
+   "title": "Scaling Instruction-Finetuned Language Models",
+   "authors": "Chung et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "instruction-tuning"
+   ],
+   "arxiv": "2210.11416",
+   "check": {
+    "id": "chung-2022",
+    "ok": true,
+    "found": "Scaling Instruction-Finetuned Language Models",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2210.11416"
+   }
+  },
+  {
+   "id": "bai-2022a",
+   "title": "Training a Helpful and Harmless Assistant with Reinforcement Learning from Human Feedback",
+   "authors": "Bai et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "rlhf"
+   ],
+   "arxiv": "2204.05862",
+   "check": {
+    "id": "bai-2022a",
+    "ok": true,
+    "found": "Training a Helpful and Harmless Assistant with Reinforcement Learning from Human Feedback",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2204.05862"
+   }
+  },
+  {
+   "id": "shao-2024",
+   "title": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+   "authors": "Shao et al.",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "grpo"
+   ],
+   "arxiv": "2402.03300",
+   "check": {
+    "id": "shao-2024",
+    "ok": true,
+    "found": "DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models",
+    "foundYear": 2024,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2402.03300"
+   }
+  },
+  {
+   "id": "lightman-2023",
+   "title": "Let's Verify Step by Step",
+   "authors": "Lightman et al.",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "process-reward"
+   ],
+   "arxiv": "2305.20050",
+   "check": {
+    "id": "lightman-2023",
+    "ok": true,
+    "found": "Let's Verify Step by Step",
+    "foundYear": 2023,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2305.20050"
+   }
+  },
+  {
+   "id": "deepseek-2025",
+   "title": "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+   "authors": "DeepSeek-AI",
+   "year": 2025,
+   "course": "ai-systems",
+   "topics": [
+    "reasoning-rl"
+   ],
+   "arxiv": "2501.12948",
+   "check": {
+    "id": "deepseek-2025",
+    "ok": true,
+    "found": "DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning",
+    "foundYear": 2025,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2501.12948"
+   }
+  },
+  {
+   "id": "snell-2024",
+   "title": "Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters",
+   "authors": "Snell et al.",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "test-time-compute"
+   ],
+   "arxiv": "2408.03314",
+   "check": {
+    "id": "snell-2024",
+    "ok": true,
+    "found": "Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters",
+    "foundYear": 2024,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2408.03314"
+   }
+  },
+  {
+   "id": "hendrycks-2020",
+   "title": "Measuring Massive Multitask Language Understanding",
+   "authors": "Hendrycks et al.",
+   "year": 2020,
+   "course": "ai-systems",
+   "topics": [
+    "evaluation"
+   ],
+   "arxiv": "2009.03300",
+   "check": {
+    "id": "hendrycks-2020",
+    "ok": true,
+    "found": "Measuring Massive Multitask Language Understanding",
+    "foundYear": 2020,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2009.03300"
+   }
+  },
+  {
+   "id": "liang-2022",
+   "title": "Holistic Evaluation of Language Models",
+   "authors": "Liang et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "evaluation"
+   ],
+   "arxiv": "2211.09110",
+   "check": {
+    "id": "liang-2022",
+    "ok": true,
+    "found": "Holistic Evaluation of Language Models",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2211.09110"
+   }
+  },
+  {
+   "id": "pope-2022",
+   "title": "Efficiently Scaling Transformer Inference",
+   "authors": "Pope et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "inference"
+   ],
+   "arxiv": "2211.05102",
+   "check": {
+    "id": "pope-2022",
+    "ok": true,
+    "found": "Efficiently Scaling Transformer Inference",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2211.05102"
+   }
+  },
+  {
+   "id": "leviathan-2022",
+   "title": "Fast Inference from Transformers via Speculative Decoding",
+   "authors": "Leviathan, Kalman, Matias",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "speculative-decoding"
+   ],
+   "arxiv": "2211.17192",
+   "check": {
+    "id": "leviathan-2022",
+    "ok": true,
+    "found": "Fast Inference from Transformers via Speculative Decoding",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2211.17192"
+   }
+  },
+  {
+   "id": "elhage-2021",
+   "title": "A Mathematical Framework for Transformer Circuits",
+   "authors": "Elhage et al.",
+   "year": 2021,
+   "course": "ai-systems",
+   "topics": [
+    "circuits"
+   ],
+   "url": "https://transformer-circuits.pub/2021/framework/index.html",
+   "check": {
+    "id": "elhage-2021",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://transformer-circuits.pub/2021/framework/index.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "olsson-2022",
+   "title": "In-context Learning and Induction Heads",
+   "authors": "Olsson et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "induction-heads"
+   ],
+   "arxiv": "2209.11895",
+   "check": {
+    "id": "olsson-2022",
+    "ok": true,
+    "found": "In-context Learning and Induction Heads",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2209.11895"
+   }
+  },
+  {
+   "id": "elhage-2022",
+   "title": "Toy Models of Superposition",
+   "authors": "Elhage et al.",
+   "year": 2022,
+   "course": "ai-systems",
+   "topics": [
+    "superposition"
+   ],
+   "arxiv": "2209.10652",
+   "check": {
+    "id": "elhage-2022",
+    "ok": true,
+    "found": "Toy Models of Superposition",
+    "foundYear": 2022,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/2209.10652"
+   }
+  },
+  {
+   "id": "bricken-2023",
+   "title": "Towards Monosemanticity: Decomposing Language Models With Dictionary Learning",
+   "authors": "Bricken et al.",
+   "year": 2023,
+   "course": "ai-systems",
+   "topics": [
+    "sparse-autoencoders"
+   ],
+   "url": "https://transformer-circuits.pub/2023/monosemantic-features/index.html",
+   "check": {
+    "id": "bricken-2023",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://transformer-circuits.pub/2023/monosemantic-features/index.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "templeton-2024",
+   "title": "Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet",
+   "authors": "Templeton et al.",
+   "year": 2024,
+   "course": "ai-systems",
+   "topics": [
+    "sparse-autoencoders"
+   ],
+   "url": "https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html",
+   "check": {
+    "id": "templeton-2024",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://transformer-circuits.pub/2024/scaling-monosemanticity/index.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "zhang-2019",
+   "title": "Root Mean Square Layer Normalization",
+   "authors": "Zhang, Sennrich",
+   "year": 2019,
+   "course": "llms",
+   "topics": [
+    "rmsnorm"
+   ],
+   "arxiv": "1910.07467",
+   "check": {
+    "id": "zhang-2019",
+    "ok": true,
+    "found": "Root Mean Square Layer Normalization",
+    "foundYear": 2019,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/abs/1910.07467"
+   }
+  }
+ ],
+ "books": [
+  {
+   "id": "mml",
+   "title": "Mathematics for Machine Learning",
+   "authors": "Deisenroth, Faisal, Ong",
+   "year": 2020,
+   "url": "https://mml-book.github.io/",
+   "use": "Spine of the Math for AI course: linear algebra, matrix calculus, probability, optimisation, then PCA/GMM/SVM derived.",
+   "licence": "Free PDF from the authors (personal use). Read and cite; do not copy text.",
+   "courses": [
+    "math-for-ai"
+   ],
+   "check": {
+    "id": "mml",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://mml-book.github.io/",
+    "manual": true
+   }
+  },
+  {
+   "id": "boyd-cvx",
+   "title": "Convex Optimization",
+   "authors": "Boyd, Vandenberghe",
+   "year": 2004,
+   "url": "https://web.stanford.edu/~boyd/cvxbook/",
+   "use": "Convexity, duality, KKT: the math under SVMs and regularisation.",
+   "licence": "Free PDF from the authors. Read and cite.",
+   "courses": [
+    "math-for-ai",
+    "machine-learning"
+   ],
+   "check": {
+    "id": "boyd-cvx",
+    "ok": true,
+    "unreachable": true,
+    "why": "could not reach from here (fetch failed)",
+    "access": "open",
+    "read": "https://web.stanford.edu/~boyd/cvxbook/",
+    "manual": true
+   }
+  },
+  {
+   "id": "axler-ladr",
+   "title": "Linear Algebra Done Right (4th ed.)",
+   "authors": "Axler",
+   "year": 2024,
+   "url": "https://linear.axler.net/",
+   "use": "Proof-first linear algebra: eigen-things, spectral theorem, SVD.",
+   "licence": "Open access (CC BY-NC). Reuse with attribution, non-commercial only: check before adapting.",
+   "courses": [
+    "math-for-ai"
+   ],
+   "check": {
+    "id": "axler-ladr",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://linear.axler.net/",
+    "manual": true
+   }
+  },
+  {
+   "id": "kochenderfer-opt",
+   "title": "Algorithms for Optimization",
+   "authors": "Kochenderfer, Wheeler",
+   "year": 2019,
+   "url": "https://algorithmsbook.com/optimization/",
+   "use": "Gradient methods, line search, second order, stochastic methods; many figures to learn from.",
+   "licence": "Free PDF from the authors. Read and cite.",
+   "courses": [
+    "math-for-ai"
+   ],
+   "check": {
+    "id": "kochenderfer-opt",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://algorithmsbook.com/optimization/",
+    "manual": true
+   }
+  },
+  {
+   "id": "mackay-itila",
+   "title": "Information Theory, Inference, and Learning Algorithms",
+   "authors": "MacKay",
+   "year": 2003,
+   "url": "https://www.inference.org.uk/itila/book.html",
+   "use": "Entropy, KL, coding, Bayesian inference, early neural nets.",
+   "licence": "Free to read on screen from the author's site.",
+   "courses": [
+    "math-for-ai",
+    "machine-learning"
+   ],
+   "check": {
+    "id": "mackay-itila",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://www.inference.org.uk/itila/book.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "isl",
+   "title": "An Introduction to Statistical Learning (Python ed.)",
+   "authors": "James, Witten, Hastie, Tibshirani, Taylor",
+   "year": 2023,
+   "url": "https://www.statlearning.com/",
+   "use": "Gentle first ML course: regression, classification, resampling, trees, SVMs, unsupervised.",
+   "licence": "Free PDF from the authors. Read and cite.",
+   "courses": [
+    "machine-learning"
+   ],
+   "check": {
+    "id": "isl",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://www.statlearning.com/",
+    "manual": true
+   }
+  },
+  {
+   "id": "esl",
+   "title": "The Elements of Statistical Learning (2nd ed.)",
+   "authors": "Hastie, Tibshirani, Friedman",
+   "year": 2009,
+   "url": "https://hastie.su.domains/ElemStatLearn/",
+   "use": "The rigorous ML reference: every classical method with the math.",
+   "licence": "Free PDF from the authors. Read and cite.",
+   "courses": [
+    "machine-learning"
+   ],
+   "check": {
+    "id": "esl",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://hastie.su.domains/ElemStatLearn/",
+    "manual": true
+   }
+  },
+  {
+   "id": "prml",
+   "title": "Pattern Recognition and Machine Learning",
+   "authors": "Bishop",
+   "year": 2006,
+   "url": "https://www.microsoft.com/en-us/research/people/cmbishop/prml-book/",
+   "use": "Bayesian view of ML: probability, linear models, kernels, graphical models, EM, sampling.",
+   "licence": "Free PDF from Microsoft Research. Read and cite.",
+   "courses": [
+    "machine-learning",
+    "math-for-ai"
+   ],
+   "check": {
+    "id": "prml",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://www.microsoft.com/en-us/research/people/cmbishop/prml-book/",
+    "manual": true
+   }
+  },
+  {
+   "id": "pml1",
+   "title": "Probabilistic Machine Learning: An Introduction",
+   "authors": "Murphy",
+   "year": 2022,
+   "url": "https://probml.github.io/pml-book/book1.html",
+   "use": "Modern, complete ML from a probabilistic view; ties classical ML to deep learning.",
+   "licence": "Free PDF (CC BY-NC-ND): read and cite, no derivatives.",
+   "courses": [
+    "machine-learning",
+    "deep-learning"
+   ],
+   "check": {
+    "id": "pml1",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://probml.github.io/pml-book/book1.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "pml2",
+   "title": "Probabilistic Machine Learning: Advanced Topics",
+   "authors": "Murphy",
+   "year": 2023,
+   "url": "https://probml.github.io/pml-book/book2.html",
+   "use": "Generative models, variational inference, diffusion, RL, causality.",
+   "licence": "Free PDF (CC BY-NC-ND): read and cite, no derivatives.",
+   "courses": [
+    "generative-models",
+    "reinforcement-learning"
+   ],
+   "check": {
+    "id": "pml2",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://probml.github.io/pml-book/book2.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "uml",
+   "title": "Understanding Machine Learning: From Theory to Algorithms",
+   "authors": "Shalev-Shwartz, Ben-David",
+   "year": 2014,
+   "url": "https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/",
+   "use": "Learning theory: PAC, VC dimension, uniform convergence, with proofs.",
+   "licence": "Free PDF from the authors (personal use). Read and cite.",
+   "courses": [
+    "machine-learning"
+   ],
+   "check": {
+    "id": "uml",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/",
+    "manual": true
+   }
+  },
+  {
+   "id": "fml",
+   "title": "Foundations of Machine Learning (2nd ed.)",
+   "authors": "Mohri, Rostamizadeh, Talwalkar",
+   "year": 2018,
+   "url": "https://cs.nyu.edu/~mohri/mlbook/",
+   "use": "Theory: Rademacher complexity, boosting and kernels with proofs.",
+   "licence": "Open access from MIT Press. Read and cite.",
+   "courses": [
+    "machine-learning"
+   ],
+   "check": {
+    "id": "fml",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://cs.nyu.edu/~mohri/mlbook/",
+    "manual": true
+   }
+  },
+  {
+   "id": "gpml",
+   "title": "Gaussian Processes for Machine Learning",
+   "authors": "Rasmussen, Williams",
+   "year": 2006,
+   "url": "https://gaussianprocess.org/gpml/",
+   "use": "Gaussian processes from scratch.",
+   "licence": "Free PDF from the authors. Read and cite.",
+   "courses": [
+    "machine-learning"
+   ],
+   "check": {
+    "id": "gpml",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://gaussianprocess.org/gpml/",
+    "manual": true
+   }
+  },
+  {
+   "id": "barber-brml",
+   "title": "Bayesian Reasoning and Machine Learning",
+   "authors": "Barber",
+   "year": 2012,
+   "url": "https://web4.cs.ucl.ac.uk/staff/D.Barber/pmwiki/pmwiki.php?n=Brml.HomePage",
+   "use": "Graphical models and inference.",
+   "licence": "Free PDF from the author. Read and cite.",
+   "courses": [
+    "machine-learning"
+   ],
+   "check": {
+    "id": "barber-brml",
+    "ok": true,
+    "unreachable": true,
+    "why": "could not reach from here (fetch failed)",
+    "access": "open",
+    "read": "https://web4.cs.ucl.ac.uk/staff/D.Barber/pmwiki/pmwiki.php?n=Brml.HomePage",
+    "manual": true
+   }
+  },
+  {
+   "id": "dlbook",
+   "title": "Deep Learning",
+   "authors": "Goodfellow, Bengio, Courville",
+   "year": 2016,
+   "url": "https://www.deeplearningbook.org/",
+   "use": "The classic DL text: math background, MLPs, regularisation, optimisation, CNNs, RNNs, generative models.",
+   "licence": "Free to read online (HTML only). Read and cite.",
+   "courses": [
+    "deep-learning",
+    "math-for-ai"
+   ],
+   "check": {
+    "id": "dlbook",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://www.deeplearningbook.org/",
+    "manual": true
+   }
+  },
+  {
+   "id": "bishop-dl",
+   "title": "Deep Learning: Foundations and Concepts",
+   "authors": "Bishop, Bishop",
+   "year": 2024,
+   "url": "https://www.bishopbook.com/",
+   "use": "Modern DL text: transformers, diffusion, GNNs, with clean math.",
+   "licence": "Free to read online from the authors. Read and cite.",
+   "courses": [
+    "deep-learning",
+    "generative-models"
+   ],
+   "check": {
+    "id": "bishop-dl",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://www.bishopbook.com/",
+    "manual": true
+   }
+  },
+  {
+   "id": "udl",
+   "title": "Understanding Deep Learning",
+   "authors": "Prince",
+   "year": 2023,
+   "url": "https://udlbook.github.io/udlbook/",
+   "use": "Best figures and notebooks for intuition; transformers, diffusion, RL included.",
+   "licence": "Free PDF (CC BY-NC-ND). Read and cite; its notebooks have their own licence.",
+   "courses": [
+    "deep-learning",
+    "generative-models"
+   ],
+   "check": {
+    "id": "udl",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://udlbook.github.io/udlbook/",
+    "manual": true
+   }
+  },
+  {
+   "id": "d2l",
+   "title": "Dive into Deep Learning",
+   "authors": "Zhang, Lipton, Li, Smola",
+   "year": 2023,
+   "url": "https://d2l.ai/",
+   "use": "Runnable chapters (PyTorch/JAX) for every DL idea; the reference for our code labs.",
+   "licence": "Text CC BY-SA 4.0, code MIT-0: we MAY adapt with attribution (share-alike for text).",
+   "courses": [
+    "deep-learning",
+    "computer-vision",
+    "nlp"
+   ],
+   "check": {
+    "id": "d2l",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://d2l.ai/",
+    "manual": true
+   }
+  },
+  {
+   "id": "nielsen",
+   "title": "Neural Networks and Deep Learning",
+   "authors": "Nielsen",
+   "year": 2015,
+   "url": "https://neuralnetworksanddeeplearning.com/",
+   "use": "The clearest first derivation of backprop, with interactive pieces.",
+   "licence": "CC BY-NC 3.0: adapt with attribution, non-commercial only: check before adapting.",
+   "courses": [
+    "deep-learning"
+   ],
+   "check": {
+    "id": "nielsen",
+    "ok": true,
+    "unreachable": true,
+    "why": "could not reach from here (fetch failed)",
+    "access": "open",
+    "read": "https://neuralnetworksanddeeplearning.com/",
+    "manual": true
+   }
+  },
+  {
+   "id": "slp3",
+   "title": "Speech and Language Processing (3rd ed. draft)",
+   "authors": "Jurafsky, Martin",
+   "year": 2025,
+   "url": "https://web.stanford.edu/~jurafsky/slp3/",
+   "use": "NLP from n-grams to transformers and LLMs.",
+   "licence": "Free draft PDFs from the authors. Read and cite.",
+   "courses": [
+    "nlp",
+    "llms"
+   ],
+   "check": {
+    "id": "slp3",
+    "ok": true,
+    "unreachable": true,
+    "why": "could not reach from here (fetch failed)",
+    "access": "open",
+    "read": "https://web.stanford.edu/~jurafsky/slp3/",
+    "manual": true
+   }
+  },
+  {
+   "id": "sutton-barto",
+   "title": "Reinforcement Learning: An Introduction (2nd ed.)",
+   "authors": "Sutton, Barto",
+   "year": 2018,
+   "url": "https://incompleteideas.net/book/the-book-2nd.html",
+   "use": "The RL text: MDPs, DP, MC, TD, function approximation, policy gradients.",
+   "licence": "Free PDF from the authors. Read and cite.",
+   "courses": [
+    "reinforcement-learning"
+   ],
+   "check": {
+    "id": "sutton-barto",
+    "ok": true,
+    "unreachable": true,
+    "why": "could not reach from here (fetch failed)",
+    "access": "open",
+    "read": "https://incompleteideas.net/book/the-book-2nd.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "szeliski",
+   "title": "Computer Vision: Algorithms and Applications (2nd ed.)",
+   "authors": "Szeliski",
+   "year": 2022,
+   "url": "https://szeliski.org/Book/",
+   "use": "Classical and deep vision: geometry, features, stereo, recognition.",
+   "licence": "Free PDF from the author (personal use). Read and cite.",
+   "courses": [
+    "computer-vision"
+   ],
+   "check": {
+    "id": "szeliski",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://szeliski.org/Book/",
+    "manual": true
+   }
+  },
+  {
+   "id": "hartley-zisserman",
+   "title": "Multiple View Geometry in Computer Vision",
+   "authors": "Hartley, Zisserman",
+   "year": 2004,
+   "url": "https://www.robots.ox.ac.uk/~vgg/hzbook/",
+   "use": "Camera models and 3D geometry (paid book; the site has free sample chapters).",
+   "licence": "Paid book: cite only.",
+   "courses": [
+    "computer-vision"
+   ],
+   "check": {
+    "id": "hartley-zisserman",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://www.robots.ox.ac.uk/~vgg/hzbook/",
+    "manual": true
+   }
+  },
+  {
+   "id": "pmpp",
+   "title": "Programming Massively Parallel Processors (4th ed.)",
+   "authors": "Hwu, Kirk, El Hajj",
+   "year": 2022,
+   "url": "https://www.sciencedirect.com/book/9780323912310/programming-massively-parallel-processors",
+   "use": "The GPU programming textbook: threads, memory, tiling, reductions, convolution kernels.",
+   "licence": "Paid book (owner's Elsevier access): read and cite only.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "pmpp",
+    "ok": true,
+    "unreachable": true,
+    "why": "refused an automated check (403)",
+    "access": "open",
+    "read": "https://www.sciencedirect.com/book/9780323912310/programming-massively-parallel-processors",
+    "manual": true
+   }
+  }
+ ],
+ "courses": [
+  {
+   "id": "cs229",
+   "title": "Stanford CS229: Machine Learning",
+   "url": "https://cs229.stanford.edu/",
+   "use": "Lecture notes with full derivations (GLMs, SVMs, EM, learning theory).",
+   "courses": [
+    "machine-learning"
+   ],
+   "check": {
+    "id": "cs229",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://cs229.stanford.edu/",
+    "manual": true
+   }
+  },
+  {
+   "id": "cs231n",
+   "title": "Stanford CS231n: Deep Learning for Computer Vision",
+   "url": "https://cs231n.stanford.edu/",
+   "use": "Backprop on computational graphs, CNNs; the best written notes for vision.",
+   "courses": [
+    "deep-learning",
+    "computer-vision"
+   ],
+   "check": {
+    "id": "cs231n",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://cs231n.stanford.edu/",
+    "manual": true
+   }
+  },
+  {
+   "id": "cs224n",
+   "title": "Stanford CS224N: NLP with Deep Learning",
+   "url": "https://web.stanford.edu/class/cs224n/",
+   "use": "Word vectors to transformers and LLMs.",
+   "courses": [
+    "nlp",
+    "llms"
+   ],
+   "check": {
+    "id": "cs224n",
+    "ok": true,
+    "unreachable": true,
+    "why": "could not reach from here (fetch failed)",
+    "access": "open",
+    "read": "https://web.stanford.edu/class/cs224n/",
+    "manual": true
+   }
+  },
+  {
+   "id": "cs236",
+   "title": "Stanford CS236: Deep Generative Models",
+   "url": "https://deepgenerativemodels.github.io/",
+   "use": "VAEs, flows, GANs, diffusion, with derivations.",
+   "courses": [
+    "generative-models"
+   ],
+   "check": {
+    "id": "cs236",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://deepgenerativemodels.github.io/",
+    "manual": true
+   }
+  },
+  {
+   "id": "cs285",
+   "title": "Berkeley CS285: Deep Reinforcement Learning",
+   "url": "https://rail.eecs.berkeley.edu/deeprlcourse/",
+   "use": "Policy gradients, actor-critic, Q-learning, model-based RL.",
+   "courses": [
+    "reinforcement-learning"
+   ],
+   "check": {
+    "id": "cs285",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://rail.eecs.berkeley.edu/deeprlcourse/",
+    "manual": true
+   }
+  },
+  {
+   "id": "silver-rl",
+   "title": "David Silver: Introduction to Reinforcement Learning (UCL)",
+   "url": "https://www.davidsilver.uk/teaching/",
+   "use": "The classic RL lecture series.",
+   "courses": [
+    "reinforcement-learning"
+   ],
+   "check": {
+    "id": "silver-rl",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://www.davidsilver.uk/teaching/",
+    "manual": true
+   }
+  },
+  {
+   "id": "mit-1806",
+   "title": "MIT 18.06: Linear Algebra (Strang)",
+   "url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/",
+   "use": "Linear algebra the way engineers use it. OCW: CC BY-NC-SA.",
+   "courses": [
+    "math-for-ai"
+   ],
+   "check": {
+    "id": "mit-1806",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/",
+    "manual": true
+   }
+  },
+  {
+   "id": "mit-18065",
+   "title": "MIT 18.065: Matrix Methods in Data Analysis and ML",
+   "url": "https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/",
+   "use": "SVD, low rank, gradient descent, the math of deep nets. OCW: CC BY-NC-SA.",
+   "courses": [
+    "math-for-ai"
+   ],
+   "check": {
+    "id": "mit-18065",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/",
+    "manual": true
+   }
+  },
+  {
+   "id": "mit-6s191",
+   "title": "MIT 6.S191: Introduction to Deep Learning",
+   "url": "https://introtodeeplearning.com/",
+   "use": "Short modern overview with labs.",
+   "courses": [
+    "deep-learning"
+   ],
+   "check": {
+    "id": "mit-6s191",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://introtodeeplearning.com/",
+    "manual": true
+   }
+  },
+  {
+   "id": "zero-to-hero",
+   "title": "Karpathy: Neural Networks: Zero to Hero",
+   "url": "https://karpathy.ai/zero-to-hero.html",
+   "use": "Build micrograd, makemore and GPT from scratch: the model for our from-scratch labs.",
+   "courses": [
+    "deep-learning",
+    "llms"
+   ],
+   "check": {
+    "id": "zero-to-hero",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://karpathy.ai/zero-to-hero.html",
+    "manual": true
+   }
+  },
+  {
+   "id": "fastai",
+   "title": "fast.ai: Practical Deep Learning",
+   "url": "https://course.fast.ai/",
+   "use": "Top-down practical deep learning.",
+   "courses": [
+    "deep-learning"
+   ],
+   "check": {
+    "id": "fastai",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://course.fast.ai/",
+    "manual": true
+   }
+  },
+  {
+   "id": "spinning-up",
+   "title": "OpenAI Spinning Up in Deep RL",
+   "url": "https://spinningup.openai.com/",
+   "use": "Clean derivations and reference code (MIT) for policy-gradient methods.",
+   "courses": [
+    "reinforcement-learning"
+   ],
+   "check": {
+    "id": "spinning-up",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://spinningup.openai.com/",
+    "manual": true
+   }
+  },
+  {
+   "id": "hf-course",
+   "title": "Hugging Face LLM Course",
+   "url": "https://huggingface.co/learn/llm-course",
+   "use": "Transformers in practice: tokenizers, fine-tuning, datasets.",
+   "courses": [
+    "llms",
+    "nlp"
+   ],
+   "check": {
+    "id": "hf-course",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://huggingface.co/learn/llm-course",
+    "manual": true
+   }
+  },
+  {
+   "id": "distill",
+   "title": "Distill (journal)",
+   "url": "https://distill.pub/",
+   "use": "Interactive explanations; articles are CC BY 4.0 (adapt with attribution). Our bar for visual quality.",
+   "courses": [
+    "deep-learning"
+   ],
+   "check": {
+    "id": "distill",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://distill.pub/",
+    "manual": true
+   }
+  },
+  {
+   "id": "3b1b-nn",
+   "title": "3Blue1Brown: Neural networks series",
+   "url": "https://www.3blue1brown.com/topics/neural-networks",
+   "use": "Visual intuition for nets, backprop, transformers. Inspiration only; we draw our own.",
+   "courses": [
+    "deep-learning"
+   ],
+   "check": {
+    "id": "3b1b-nn",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://www.3blue1brown.com/topics/neural-networks",
+    "manual": true
+   }
+  },
+  {
+   "id": "gate-da",
+   "title": "GATE Data Science & AI (official syllabus)",
+   "url": "https://gate2026.iitg.ac.in/",
+   "use": "GATE DA exam: map our chapters to its syllabus so Indian students can prepare.",
+   "courses": [
+    "math-for-ai",
+    "machine-learning"
+   ],
+   "check": {
+    "id": "gate-da",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://gate2026.iitg.ac.in/",
+    "manual": true
+   }
+  },
+  {
+   "id": "paperswithcode",
+   "title": "Papers with Code (archive) / arXiv listings",
+   "url": "https://arxiv.org/list/cs.LG/recent",
+   "use": "Where new papers appear; for keeping the course current.",
+   "courses": [
+    "llms"
+   ],
+   "check": {
+    "id": "paperswithcode",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://arxiv.org/list/cs.LG/recent",
+    "manual": true
+   }
+  },
+  {
+   "id": "cs336",
+   "title": "Stanford CS336: Language Modeling from Scratch",
+   "url": "https://stanford-cs336.github.io/",
+   "use": "Build an LLM end to end: tokenizer, transformer, GPU kernels, parallelism, data, alignment. The model for our systems course.",
+   "courses": [
+    "ai-systems",
+    "llms"
+   ],
+   "check": {
+    "id": "cs336",
+    "ok": true,
+    "unreachable": true,
+    "why": "could not reach from here (fetch failed)",
+    "access": "open",
+    "read": "https://stanford-cs336.github.io/",
+    "manual": true
+   }
+  },
+  {
+   "id": "ultrascale",
+   "title": "Hugging Face: The Ultra-Scale Playbook",
+   "url": "https://huggingface.co/spaces/nanotron/ultrascale-playbook",
+   "use": "Training on many GPUs, measured: data, tensor, pipeline, context and expert parallelism, ZeRO.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "ultrascale",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://huggingface.co/spaces/nanotron/ultrascale-playbook",
+    "manual": true
+   }
+  },
+  {
+   "id": "scaling-book",
+   "title": "How to Scale Your Model (Google DeepMind)",
+   "url": "https://jax-ml.github.io/scaling-book/",
+   "use": "Rooflines, sharding and the arithmetic of training and serving big transformers on TPUs and GPUs.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "scaling-book",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://jax-ml.github.io/scaling-book/",
+    "manual": true
+   }
+  },
+  {
+   "id": "cuda-guide",
+   "title": "NVIDIA CUDA C++ Programming Guide",
+   "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/",
+   "use": "The official description of threads, blocks, warps, memory spaces and tensor cores.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "cuda-guide",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://docs.nvidia.com/cuda/cuda-programming-guide/",
+    "manual": true
+   }
+  },
+  {
+   "id": "gpu-mode",
+   "title": "GPU MODE lectures",
+   "url": "https://github.com/gpu-mode/lectures",
+   "use": "Free lectures on writing GPU kernels (CUDA, Triton) for deep learning.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "gpu-mode",
+    "ok": true,
+    "unreachable": true,
+    "why": "refused an automated check (403)",
+    "access": "open",
+    "read": "https://github.com/gpu-mode/lectures",
+    "manual": true
+   }
+  },
+  {
+   "id": "nanogpt",
+   "title": "nanoGPT (Karpathy)",
+   "url": "https://github.com/karpathy/nanoGPT",
+   "use": "The smallest clear GPT training code (MIT licence): the reference for our build-a-GPT capstone.",
+   "courses": [
+    "ai-systems",
+    "llms"
+   ],
+   "check": {
+    "id": "nanogpt",
+    "ok": true,
+    "unreachable": true,
+    "why": "refused an automated check (403)",
+    "access": "open",
+    "read": "https://github.com/karpathy/nanoGPT",
+    "manual": true
+   }
+  },
+  {
+   "id": "llm-c",
+   "title": "llm.c (Karpathy)",
+   "url": "https://github.com/karpathy/llm.c",
+   "use": "GPT-2 training in plain C and CUDA (MIT licence): every kernel visible.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "llm-c",
+    "ok": true,
+    "unreachable": true,
+    "why": "refused an automated check (403)",
+    "access": "open",
+    "read": "https://github.com/karpathy/llm.c",
+    "manual": true
+   }
+  },
+  {
+   "id": "transformer-circuits",
+   "title": "Transformer Circuits Thread (Anthropic)",
+   "url": "https://transformer-circuits.pub/",
+   "use": "Anthropic's published interpretability research: circuits, superposition, features.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "transformer-circuits",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://transformer-circuits.pub/",
+    "manual": true
+   }
+  },
+  {
+   "id": "llm-viz",
+   "title": "LLM Visualization (Bycroft)",
+   "url": "https://bbycroft.net/llm",
+   "use": "A 3D walk through a GPT's forward pass. Inspiration for our 3D model explorer only; we build our own.",
+   "courses": [
+    "ai-systems"
+   ],
+   "check": {
+    "id": "llm-viz",
+    "ok": true,
+    "why": "",
+    "access": "open",
+    "read": "https://bbycroft.net/llm",
+    "manual": true
+   }
+  }
+ ]
+}

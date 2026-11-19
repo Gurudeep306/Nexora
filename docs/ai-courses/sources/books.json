@@ -1,0 +1,304 @@
+{
+ "about": "Free books for the AI courses. Licence notes are as the publisher states them: re-read the licence before adapting anything. Check links with node scripts/ai-courses/verify-sources.mjs --links",
+ "books": [
+  {
+   "id": "mml",
+   "title": "Mathematics for Machine Learning",
+   "authors": "Deisenroth, Faisal, Ong",
+   "year": 2020,
+   "url": "https://mml-book.github.io/",
+   "use": "Spine of the Math for AI course: linear algebra, matrix calculus, probability, optimisation, then PCA/GMM/SVM derived.",
+   "licence": "Free PDF from the authors (personal use). Read and cite; do not copy text.",
+   "courses": [
+    "math-for-ai"
+   ]
+  },
+  {
+   "id": "boyd-cvx",
+   "title": "Convex Optimization",
+   "authors": "Boyd, Vandenberghe",
+   "year": 2004,
+   "url": "https://web.stanford.edu/~boyd/cvxbook/",
+   "use": "Convexity, duality, KKT: the math under SVMs and regularisation.",
+   "licence": "Free PDF from the authors. Read and cite.",
+   "courses": [
+    "math-for-ai",
+    "machine-learning"
+   ]
+  },
+  {
+   "id": "axler-ladr",
+   "title": "Linear Algebra Done Right (4th ed.)",
+   "authors": "Axler",
+   "year": 2024,
+   "url": "https://linear.axler.net/",
+   "use": "Proof-first linear algebra: eigen-things, spectral theorem, SVD.",
+   "licence": "Open access (CC BY-NC). Reuse with attribution, non-commercial only: check before adapting.",
+   "courses": [
+    "math-for-ai"
+   ]
+  },
+  {
+   "id": "kochenderfer-opt",
+   "title": "Algorithms for Optimization",
+   "authors": "Kochenderfer, Wheeler",
+   "year": 2019,
+   "url": "https://algorithmsbook.com/optimization/",
+   "use": "Gradient methods, line search, second order, stochastic methods; many figures to learn from.",
+   "licence": "Free PDF from the authors. Read and cite.",
+   "courses": [
+    "math-for-ai"
+   ]
+  },
+  {
+   "id": "mackay-itila",
+   "title": "Information Theory, Inference, and Learning Algorithms",
+   "authors": "MacKay",
+   "year": 2003,
+   "url": "https://www.inference.org.uk/itila/book.html",
+   "use": "Entropy, KL, coding, Bayesian inference, early neural nets.",
+   "licence": "Free to read on screen from the author's site.",
+   "courses": [
+    "math-for-ai",
+    "machine-learning"
+   ]
+  },
+  {
+   "id": "isl",
+   "title": "An Introduction to Statistical Learning (Python ed.)",
+   "authors": "James, Witten, Hastie, Tibshirani, Taylor",
+   "year": 2023,
+   "url": "https://www.statlearning.com/",
+   "use": "Gentle first ML course: regression, classification, resampling, trees, SVMs, unsupervised.",
+   "licence": "Free PDF from the authors. Read and cite.",
+   "courses": [
+    "machine-learning"
+   ]
+  },
+  {
+   "id": "esl",
+   "title": "The Elements of Statistical Learning (2nd ed.)",
+   "authors": "Hastie, Tibshirani, Friedman",
+   "year": 2009,
+   "url": "https://hastie.su.domains/ElemStatLearn/",
+   "use": "The rigorous ML reference: every classical method with the math.",
+   "licence": "Free PDF from the authors. Read and cite.",
+   "courses": [
+    "machine-learning"
+   ]
+  },
+  {
+   "id": "prml",
+   "title": "Pattern Recognition and Machine Learning",
+   "authors": "Bishop",
+   "year": 2006,
+   "url": "https://www.microsoft.com/en-us/research/people/cmbishop/prml-book/",
+   "use": "Bayesian view of ML: probability, linear models, kernels, graphical models, EM, sampling.",
+   "licence": "Free PDF from Microsoft Research. Read and cite.",
+   "courses": [
+    "machine-learning",
+    "math-for-ai"
+   ]
+  },
+  {
+   "id": "pml1",
+   "title": "Probabilistic Machine Learning: An Introduction",
+   "authors": "Murphy",
+   "year": 2022,
+   "url": "https://probml.github.io/pml-book/book1.html",
+   "use": "Modern, complete ML from a probabilistic view; ties classical ML to deep learning.",
+   "licence": "Free PDF (CC BY-NC-ND): read and cite, no derivatives.",
+   "courses": [
+    "machine-learning",
+    "deep-learning"
+   ]
+  },
+  {
+   "id": "pml2",
+   "title": "Probabilistic Machine Learning: Advanced Topics",
+   "authors": "Murphy",
+   "year": 2023,
+   "url": "https://probml.github.io/pml-book/book2.html",
+   "use": "Generative models, variational inference, diffusion, RL, causality.",
+   "licence": "Free PDF (CC BY-NC-ND): read and cite, no derivatives.",
+   "courses": [
+    "generative-models",
+    "reinforcement-learning"
+   ]
+  },
+  {
+   "id": "uml",
+   "title": "Understanding Machine Learning: From Theory to Algorithms",
+   "authors": "Shalev-Shwartz, Ben-David",
+   "year": 2014,
+   "url": "https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/",
+   "use": "Learning theory: PAC, VC dimension, uniform convergence, with proofs.",
+   "licence": "Free PDF from the authors (personal use). Read and cite.",
+   "courses": [
+    "machine-learning"
+   ]
+  },
+  {
+   "id": "fml",
+   "title": "Foundations of Machine Learning (2nd ed.)",
+   "authors": "Mohri, Rostamizadeh, Talwalkar",
+   "year": 2018,
+   "url": "https://cs.nyu.edu/~mohri/mlbook/",
+   "use": "Theory: Rademacher complexity, boosting and kernels with proofs.",
+   "licence": "Open access from MIT Press. Read and cite.",
+   "courses": [
+    "machine-learning"
+   ]
+  },
+  {
+   "id": "gpml",
+   "title": "Gaussian Processes for Machine Learning",
+   "authors": "Rasmussen, Williams",
+   "year": 2006,
+   "url": "https://gaussianprocess.org/gpml/",
+   "use": "Gaussian processes from scratch.",
+   "licence": "Free PDF from the authors. Read and cite.",
+   "courses": [
+    "machine-learning"
+   ]
+  },
+  {
+   "id": "barber-brml",
+   "title": "Bayesian Reasoning and Machine Learning",
+   "authors": "Barber",
+   "year": 2012,
+   "url": "https://web4.cs.ucl.ac.uk/staff/D.Barber/pmwiki/pmwiki.php?n=Brml.HomePage",
+   "use": "Graphical models and inference.",
+   "licence": "Free PDF from the author. Read and cite.",
+   "courses": [
+    "machine-learning"
+   ]
+  },
+  {
+   "id": "dlbook",
+   "title": "Deep Learning",
+   "authors": "Goodfellow, Bengio, Courville",
+   "year": 2016,
+   "url": "https://www.deeplearningbook.org/",
+   "use": "The classic DL text: math background, MLPs, regularisation, optimisation, CNNs, RNNs, generative models.",
+   "licence": "Free to read online (HTML only). Read and cite.",
+   "courses": [
+    "deep-learning",
+    "math-for-ai"
+   ]
+  },
+  {
+   "id": "bishop-dl",
+   "title": "Deep Learning: Foundations and Concepts",
+   "authors": "Bishop, Bishop",
+   "year": 2024,
+   "url": "https://www.bishopbook.com/",
+   "use": "Modern DL text: transformers, diffusion, GNNs, with clean math.",
+   "licence": "Free to read online from the authors. Read and cite.",
+   "courses": [
+    "deep-learning",
+    "generative-models"
+   ]
+  },
+  {
+   "id": "udl",
+   "title": "Understanding Deep Learning",
+   "authors": "Prince",
+   "year": 2023,
+   "url": "https://udlbook.github.io/udlbook/",
+   "use": "Best figures and notebooks for intuition; transformers, diffusion, RL included.",
+   "licence": "Free PDF (CC BY-NC-ND). Read and cite; its notebooks have their own licence.",
+   "courses": [
+    "deep-learning",
+    "generative-models"
+   ]
+  },
+  {
+   "id": "d2l",
+   "title": "Dive into Deep Learning",
+   "authors": "Zhang, Lipton, Li, Smola",
+   "year": 2023,
+   "url": "https://d2l.ai/",
+   "use": "Runnable chapters (PyTorch/JAX) for every DL idea; the reference for our code labs.",
+   "licence": "Text CC BY-SA 4.0, code MIT-0: we MAY adapt with attribution (share-alike for text).",
+   "courses": [
+    "deep-learning",
+    "computer-vision",
+    "nlp"
+   ]
+  },
+  {
+   "id": "nielsen",
+   "title": "Neural Networks and Deep Learning",
+   "authors": "Nielsen",
+   "year": 2015,
+   "url": "https://neuralnetworksanddeeplearning.com/",
+   "use": "The clearest first derivation of backprop, with interactive pieces.",
+   "licence": "CC BY-NC 3.0: adapt with attribution, non-commercial only: check before adapting.",
+   "courses": [
+    "deep-learning"
+   ]
+  },
+  {
+   "id": "slp3",
+   "title": "Speech and Language Processing (3rd ed. draft)",
+   "authors": "Jurafsky, Martin",
+   "year": 2025,
+   "url": "https://web.stanford.edu/~jurafsky/slp3/",
+   "use": "NLP from n-grams to transformers and LLMs.",
+   "licence": "Free draft PDFs from the authors. Read and cite.",
+   "courses": [
+    "nlp",
+    "llms"
+   ]
+  },
+  {
+   "id": "sutton-barto",
+   "title": "Reinforcement Learning: An Introduction (2nd ed.)",
+   "authors": "Sutton, Barto",
+   "year": 2018,
+   "url": "https://incompleteideas.net/book/the-book-2nd.html",
+   "use": "The RL text: MDPs, DP, MC, TD, function approximation, policy gradients.",
+   "licence": "Free PDF from the authors. Read and cite.",
+   "courses": [
+    "reinforcement-learning"
+   ]
+  },
+  {
+   "id": "szeliski",
+   "title": "Computer Vision: Algorithms and Applications (2nd ed.)",
+   "authors": "Szeliski",
+   "year": 2022,
+   "url": "https://szeliski.org/Book/",
+   "use": "Classical and deep vision: geometry, features, stereo, recognition.",
+   "licence": "Free PDF from the author (personal use). Read and cite.",
+   "courses": [
+    "computer-vision"
+   ]
+  },
+  {
+   "id": "hartley-zisserman",
+   "title": "Multiple View Geometry in Computer Vision",
+   "authors": "Hartley, Zisserman",
+   "year": 2004,
+   "url": "https://www.robots.ox.ac.uk/~vgg/hzbook/",
+   "use": "Camera models and 3D geometry (paid book; the site has free sample chapters).",
+   "licence": "Paid book: cite only.",
+   "courses": [
+    "computer-vision"
+   ]
+  },
+  {
+   "id": "pmpp",
+   "title": "Programming Massively Parallel Processors (4th ed.)",
+   "authors": "Hwu, Kirk, El Hajj",
+   "year": 2022,
+   "url": "https://www.sciencedirect.com/book/9780323912310/programming-massively-parallel-processors",
+   "use": "The GPU programming textbook: threads, memory, tiling, reductions, convolution kernels.",
+   "licence": "Paid book (owner's Elsevier access): read and cite only.",
+   "courses": [
+    "ai-systems"
+   ]
+  }
+ ]
+}

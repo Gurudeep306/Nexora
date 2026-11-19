@@ -258,6 +258,10 @@ Hive is the staff-only multi-agent workspace at `/hive`. The full guide is
   Hive with the Copilot, Dispatcher, Judge, pipelines, automations, Drive,
   health checks, budgets, subscriptions (Claude Code, Codex, Vibe), per-project
   chat and the model farm.
+- **AI courses (planned, not built):** the plan, agent rules, notation, the
+  200-topic curriculum and the verified sources are in `docs/ai-courses/`
+  (start with its README). Any agent working on AI content follows
+  `docs/ai-courses/AGENT_RULES.md`.
 - Ideas not built yet:
   - Fine-tuned Nexora models trained on our own data (GATE solutions,
     animation scenes).

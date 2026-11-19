@@ -51,7 +51,7 @@ const KW: Record<Lang, string[]> = {
   pseudo: ['function', 'for', 'to', 'downto', 'while', 'do', 'if', 'else', 'then', 'return', 'and', 'or', 'not', 'end', 'each', 'in', 'step', 'swap', 'break', 'continue', 'true', 'false'],
   cpp: ['int', 'long', 'void', 'for', 'while', 'if', 'else', 'return', 'auto', 'const', 'vector', 'std', 'using', 'namespace', 'bool', 'true', 'false', 'break', 'continue', 'size_t', 'include', 'string', 'double', 'swap', 'new', 'delete', 'nullptr', 'struct', 'class', 'template', 'typename', 'unordered_map', 'cin', 'cout', 'main'],
   java: ['int', 'long', 'void', 'for', 'while', 'if', 'else', 'return', 'public', 'static', 'class', 'new', 'boolean', 'true', 'false', 'break', 'continue', 'final', 'private', 'import', 'String', 'double', 'null', 'HashMap', 'Map', 'ArrayList', 'List'],
-  python: ['def', 'for', 'in', 'range', 'while', 'if', 'elif', 'else', 'return', 'and', 'or', 'not', 'True', 'False', 'None', 'break', 'continue', 'len', 'import', 'from', 'class', 'lambda', 'print', 'self'],
+  python: ['def', 'for', 'in', 'range', 'while', 'if', 'elif', 'else', 'return', 'and', 'or', 'not', 'is', 'True', 'False', 'None', 'break', 'continue', 'pass', 'len', 'import', 'from', 'as', 'class', 'lambda', 'print', 'self', 'try', 'except', 'finally', 'raise', 'with', 'yield', 'global', 'nonlocal', 'assert', 'del', 'async', 'await', 'match', 'case'],
   js: ['function', 'for', 'while', 'if', 'else', 'return', 'const', 'let', 'var', 'of', 'in', 'true', 'false', 'null', 'undefined', 'break', 'continue', 'new', 'class', 'Map', 'Math'],
   c: ['int', 'long', 'void', 'for', 'while', 'if', 'else', 'return', 'const', 'struct', 'sizeof', 'malloc', 'free', 'realloc', 'include', 'break', 'continue', 'NULL', 'bool', 'true', 'false', 'size_t', 'printf', 'scanf', 'main'],
 }
@@ -61,12 +61,26 @@ export interface Tok {
   k?: 'kw' | 'str' | 'num' | 'com' | 'fn'
 }
 
+/** Where a comment starts on this line, skipping comment marks inside quotes ("C#" is not a comment); −1 if none. */
+function commentStart(line: string, mark: string): number {
+  let quote = ''
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i]
+    if (quote) {
+      if (ch === '\\') i++
+      else if (ch === quote) quote = ''
+    } else if (ch === '"' || ch === "'") quote = ch
+    else if (line.startsWith(mark, i)) return i
+  }
+  return -1
+}
+
 export function tokenize(line: string, lang: Lang): Tok[] {
   const kws = new Set(KW[lang])
   const out: Tok[] = []
   const comment = lang === 'python' ? '#' : lang === 'pseudo' ? '//' : '//'
   const re = /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(\b\d+(?:\.\d+)?\b)|([A-Za-z_]\w*)(?=\s*\()|([A-Za-z_]\w*)|(\s+)|(.)/g
-  const ci = line.indexOf(comment)
+  const ci = commentStart(line, comment)
   const code = ci >= 0 ? line.slice(0, ci) : line
   let m: RegExpExecArray | null
   while ((m = re.exec(code))) {

@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { lazy, Suspense, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Sidenote } from '@/components/reader/Sidenote'
 import { useScrollSync } from '@/components/reader/useScrollSync'
@@ -13,6 +13,8 @@ import type { Question } from '../questions/types'
 import type { Block, CalloutKind } from '../types'
 import { CodeTabs } from './CodeTabs'
 import { QuestionCard } from './QuestionCard'
+import { PythonBlock } from './PythonBlock'
+import { AI_BOOKS } from '../content/ai/web.gen'
 
 // Special blocks follow the site's reading design: a label and a hairline, no
 // box. Notes, tips and interview asides are sidenotes (in the margin when
@@ -100,6 +102,10 @@ export function ScrollyFigure({ viz, steps }: { viz: Extract<Block, { t: 'viz' }
   )
 }
 const EMPTY_BANK = new Map<string, Question>()
+// The books a lesson may point to (checked by the tests against docs/ai-courses/sources/books.json).
+const BOOKS: Record<string, { title: string; authors: string; url: string }> = AI_BOOKS
+// The 2D/3D engine is large, so it loads only on pages that have a stage block.
+const Stage = lazy(() => import('@/ai/stage/Stage'))
 
 /** Renders one lesson block. */
 export function LessonBlock({ b, bank }: { b: Block; bank: Map<string, Question> }) {
@@ -108,6 +114,15 @@ export function LessonBlock({ b, bank }: { b: Block; bank: Map<string, Question>
       return <Markdown md={b.md} />
     case 'viz':
       return <Figure b={b} />
+    case 'stage':
+      return (
+        <figure className="m-0 space-y-2" data-wide>
+          <Suspense fallback={<div className="ai3d-view" aria-busy="true" aria-label={`Loading: ${b.scene.title}`} />}>
+            <Stage spec={b.scene} />
+          </Suspense>
+          {b.caption && <figcaption className="text-[13px] text-text-secondary">{b.caption}</figcaption>}
+        </figure>
+      )
     case 'code':
       return <CodeTabs code={b.code} title={b.title} note={b.note} />
     case 'callout': {
@@ -166,6 +181,62 @@ export function LessonBlock({ b, bank }: { b: Block; bank: Map<string, Question>
     }
     case 'practice':
       return <PracticeList ids={b.ids} title={b.title} bank={bank} />
+    case 'python':
+      return <PythonBlock code={b.code} title={b.title} note={b.note} stdin={b.stdin} browser={b.browser} step={b.step} />
+    case 'derive':
+      return (
+        <section className="nr-derive" aria-label={b.title ?? 'Derivation'}>
+          {b.title && <h3 className="!mt-0">{b.title}</h3>}
+          <ol>
+            {b.lines.map((l, i) => (
+              <li key={i}>
+                <span className="nr-derive-n" aria-hidden="true">
+                  ({i + 1})
+                </span>
+                <span className="nr-derive-tex" tabIndex={0} role="group" aria-label={`Step ${i + 1}`}>
+                  <Markdown md={`$$${l.tex}$$`} />
+                </span>
+                <span className="nr-derive-why">
+                  <Markdown md={l.why} />
+                </span>
+              </li>
+            ))}
+          </ol>
+          {b.result && (
+            <div className="nr-derive-result">
+              <span className="nx-aside-label">Result</span>
+              <Markdown md={b.result} />
+            </div>
+          )}
+        </section>
+      )
+    case 'readmore':
+      return (
+        <section className="nr-readmore" aria-label="Read more">
+          <h3 className="!mt-0">Read more</h3>
+          <ul>
+            {b.items.map((it, i) => {
+              const book = BOOKS[it.book]
+              return (
+                <li key={i}>
+                  <span className="font-semibold text-text-primary">
+                    {book ? (
+                      <a href={book.url} target="_blank" rel="noreferrer">
+                        {book.title}
+                      </a>
+                    ) : (
+                      it.book
+                    )}
+                  </span>
+                  {book?.authors && <span className="text-text-muted"> · {book.authors}</span>}
+                  <span className="text-text-secondary">, {it.where}. </span>
+                  <Markdown md={it.why} />
+                </li>
+              )
+            })}
+          </ul>
+        </section>
+      )
     case 'steps':
       return (
         <ol className="nx-steps">

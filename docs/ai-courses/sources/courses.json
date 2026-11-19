@@ -1,0 +1,310 @@
+{
+  "about": "Free lecture courses and reference sites for the AI courses. Watch and read to learn; never copy slides, text or figures. Check links with node scripts/ai-courses/verify-sources.mjs --links",
+  "courses": [
+    {
+      "id": "cs229",
+      "title": "Stanford CS229: Machine Learning",
+      "url": "https://cs229.stanford.edu/",
+      "use": "Lecture notes with full derivations (GLMs, SVMs, EM, learning theory).",
+      "courses": [
+        "machine-learning"
+      ]
+    },
+    {
+      "id": "cs231n",
+      "title": "Stanford CS231n: Deep Learning for Computer Vision",
+      "url": "https://cs231n.stanford.edu/",
+      "use": "Backprop on computational graphs, CNNs; the best written notes for vision.",
+      "courses": [
+        "deep-learning",
+        "computer-vision"
+      ]
+    },
+    {
+      "id": "cs224n",
+      "title": "Stanford CS224N: NLP with Deep Learning",
+      "url": "https://web.stanford.edu/class/cs224n/",
+      "use": "Word vectors to transformers and LLMs.",
+      "courses": [
+        "nlp",
+        "llms"
+      ]
+    },
+    {
+      "id": "cs236",
+      "title": "Stanford CS236: Deep Generative Models",
+      "url": "https://deepgenerativemodels.github.io/",
+      "use": "VAEs, flows, GANs, diffusion, with derivations.",
+      "courses": [
+        "generative-models"
+      ]
+    },
+    {
+      "id": "cs285",
+      "title": "Berkeley CS285: Deep Reinforcement Learning",
+      "url": "https://rail.eecs.berkeley.edu/deeprlcourse/",
+      "use": "Policy gradients, actor-critic, Q-learning, model-based RL.",
+      "courses": [
+        "reinforcement-learning"
+      ]
+    },
+    {
+      "id": "silver-rl",
+      "title": "David Silver: Introduction to Reinforcement Learning (UCL)",
+      "url": "https://www.davidsilver.uk/teaching/",
+      "use": "The classic RL lecture series.",
+      "courses": [
+        "reinforcement-learning"
+      ]
+    },
+    {
+      "id": "mit-1806",
+      "title": "MIT 18.06: Linear Algebra (Strang)",
+      "url": "https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/",
+      "use": "Linear algebra the way engineers use it. OCW: CC BY-NC-SA.",
+      "courses": [
+        "math-for-ai"
+      ]
+    },
+    {
+      "id": "mit-18065",
+      "title": "MIT 18.065: Matrix Methods in Data Analysis and ML",
+      "url": "https://ocw.mit.edu/courses/18-065-matrix-methods-in-data-analysis-signal-processing-and-machine-learning-spring-2018/",
+      "use": "SVD, low rank, gradient descent, the math of deep nets. OCW: CC BY-NC-SA.",
+      "courses": [
+        "math-for-ai"
+      ]
+    },
+    {
+      "id": "mit-6s191",
+      "title": "MIT 6.S191: Introduction to Deep Learning",
+      "url": "https://introtodeeplearning.com/",
+      "use": "Short modern overview with labs.",
+      "courses": [
+        "deep-learning"
+      ]
+    },
+    {
+      "id": "zero-to-hero",
+      "title": "Karpathy: Neural Networks: Zero to Hero",
+      "url": "https://karpathy.ai/zero-to-hero.html",
+      "use": "Build micrograd, makemore and GPT from scratch: the model for our from-scratch labs.",
+      "courses": [
+        "deep-learning",
+        "llms"
+      ]
+    },
+    {
+      "id": "fastai",
+      "title": "fast.ai: Practical Deep Learning",
+      "url": "https://course.fast.ai/",
+      "use": "Top-down practical deep learning.",
+      "courses": [
+        "deep-learning"
+      ]
+    },
+    {
+      "id": "spinning-up",
+      "title": "OpenAI Spinning Up in Deep RL",
+      "url": "https://spinningup.openai.com/",
+      "use": "Clean derivations and reference code (MIT) for policy-gradient methods.",
+      "courses": [
+        "reinforcement-learning"
+      ]
+    },
+    {
+      "id": "hf-course",
+      "title": "Hugging Face LLM Course",
+      "url": "https://huggingface.co/learn/llm-course",
+      "use": "Transformers in practice: tokenizers, fine-tuning, datasets.",
+      "courses": [
+        "llms",
+        "nlp"
+      ]
+    },
+    {
+      "id": "distill",
+      "title": "Distill (journal)",
+      "url": "https://distill.pub/",
+      "use": "Interactive explanations; articles are CC BY 4.0 (adapt with attribution). Our bar for visual quality.",
+      "courses": [
+        "deep-learning"
+      ]
+    },
+    {
+      "id": "3b1b-nn",
+      "title": "3Blue1Brown: Neural networks series",
+      "url": "https://www.3blue1brown.com/topics/neural-networks",
+      "use": "Visual intuition for nets, backprop, transformers. Inspiration only; we draw our own.",
+      "courses": [
+        "deep-learning"
+      ]
+    },
+    {
+      "id": "gate-da",
+      "title": "GATE Data Science & AI (official syllabus)",
+      "url": "https://gate2026.iitg.ac.in/",
+      "use": "GATE DA exam: map our chapters to its syllabus so Indian students can prepare.",
+      "courses": [
+        "math-for-ai",
+        "machine-learning"
+      ]
+    },
+    {
+      "id": "paperswithcode",
+      "title": "Papers with Code (archive) / arXiv listings",
+      "url": "https://arxiv.org/list/cs.LG/recent",
+      "use": "Where new papers appear; for keeping the course current.",
+      "courses": [
+        "llms"
+      ]
+    },
+    {
+      "id": "cs336",
+      "title": "Stanford CS336: Language Modeling from Scratch",
+      "url": "https://stanford-cs336.github.io/",
+      "use": "Build an LLM end to end: tokenizer, transformer, GPU kernels, parallelism, data, alignment. The model for our systems course.",
+      "courses": [
+        "ai-systems",
+        "llms"
+      ]
+    },
+    {
+      "id": "ultrascale",
+      "title": "Hugging Face: The Ultra-Scale Playbook",
+      "url": "https://huggingface.co/spaces/nanotron/ultrascale-playbook",
+      "use": "Training on many GPUs, measured: data, tensor, pipeline, context and expert parallelism, ZeRO.",
+      "courses": [
+        "ai-systems"
+      ]
+    },
+    {
+      "id": "scaling-book",
+      "title": "How to Scale Your Model (Google DeepMind)",
+      "url": "https://jax-ml.github.io/scaling-book/",
+      "use": "Rooflines, sharding and the arithmetic of training and serving big transformers on TPUs and GPUs.",
+      "courses": [
+        "ai-systems"
+      ]
+    },
+    {
+      "id": "cuda-guide",
+      "title": "NVIDIA CUDA C++ Programming Guide",
+      "url": "https://docs.nvidia.com/cuda/cuda-programming-guide/",
+      "use": "The official description of threads, blocks, warps, memory spaces and tensor cores.",
+      "courses": [
+        "ai-systems"
+      ]
+    },
+    {
+      "id": "gpu-mode",
+      "title": "GPU MODE lectures",
+      "url": "https://github.com/gpu-mode/lectures",
+      "use": "Free lectures on writing GPU kernels (CUDA, Triton) for deep learning.",
+      "courses": [
+        "ai-systems"
+      ]
+    },
+    {
+      "id": "nanogpt",
+      "title": "nanoGPT (Karpathy)",
+      "url": "https://github.com/karpathy/nanoGPT",
+      "use": "The smallest clear GPT training code (MIT licence): the reference for our build-a-GPT capstone.",
+      "courses": [
+        "ai-systems",
+        "llms"
+      ]
+    },
+    {
+      "id": "llm-c",
+      "title": "llm.c (Karpathy)",
+      "url": "https://github.com/karpathy/llm.c",
+      "use": "GPT-2 training in plain C and CUDA (MIT licence): every kernel visible.",
+      "courses": [
+        "ai-systems"
+      ]
+    },
+    {
+      "id": "transformer-circuits",
+      "title": "Transformer Circuits Thread (Anthropic)",
+      "url": "https://transformer-circuits.pub/",
+      "use": "Anthropic's published interpretability research: circuits, superposition, features.",
+      "courses": [
+        "ai-systems"
+      ]
+    },
+    {
+      "id": "llm-viz",
+      "title": "LLM Visualization (Bycroft)",
+      "url": "https://bbycroft.net/llm",
+      "use": "A 3D walk through a GPT's forward pass. Inspiration for our 3D model explorer only; we build our own.",
+      "courses": [
+        "ai-systems"
+      ]
+    },
+    {
+      "id": "python-docs",
+      "title": "Python 3.15 documentation",
+      "url": "https://docs.python.org/3.15/",
+      "use": "Official tutorial, language reference and standard library: the source for every Python lesson.",
+      "courses": [
+        "foundations"
+      ]
+    },
+    {
+      "id": "numpy-docs",
+      "title": "NumPy 2.5 documentation",
+      "url": "https://numpy.org/doc/stable/",
+      "use": "Official user guide and API reference for arrays.",
+      "courses": [
+        "foundations"
+      ]
+    },
+    {
+      "id": "pandas-docs",
+      "title": "pandas 3.1 documentation",
+      "url": "https://pandas.pydata.org/docs/",
+      "use": "Official user guide and API reference for DataFrames.",
+      "courses": [
+        "foundations"
+      ]
+    },
+    {
+      "id": "matplotlib-docs",
+      "title": "Matplotlib 3.11 documentation",
+      "url": "https://matplotlib.org/stable/",
+      "use": "Official user guide and gallery for plotting.",
+      "courses": [
+        "foundations"
+      ]
+    },
+    {
+      "id": "sklearn-docs",
+      "title": "scikit-learn 1.9 documentation",
+      "url": "https://scikit-learn.org/stable/",
+      "use": "Official user guide for classical machine learning in Python.",
+      "courses": [
+        "machine-learning"
+      ]
+    },
+    {
+      "id": "pytorch-docs",
+      "title": "PyTorch 2.15 documentation",
+      "url": "https://docs.pytorch.org/docs/stable/",
+      "use": "Official API reference and tutorials for tensors, autograd and training.",
+      "courses": [
+        "foundations",
+        "deep-learning"
+      ]
+    },
+    {
+      "id": "pyodide-docs",
+      "title": "Pyodide documentation",
+      "url": "https://pyodide.org/en/stable/",
+      "use": "The in-browser Python the lessons run code with.",
+      "courses": [
+        "foundations"
+      ]
+    }
+  ]
+}

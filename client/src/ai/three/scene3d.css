@@ -1,0 +1,278 @@
+/* The 3D scene frame (Scene3D.tsx). Hairlines, no shadows, tokens only. */
+.ai3d {
+  margin: 0;
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.ai3d-view {
+  position: relative;
+  height: clamp(300px, 64vw, 500px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg, 12px);
+  background: var(--color-bg-surface);
+  overflow: hidden;
+  touch-action: none; /* the canvas owns drag and pinch */
+  cursor: grab;
+}
+.ai3d-view:active {
+  cursor: grabbing;
+}
+.ai3d-view:focus-visible {
+  outline: 2px solid var(--color-accent-brand);
+  outline-offset: 2px;
+}
+.ai3d-view canvas {
+  display: block;
+}
+.ai3d-hint {
+  position: absolute;
+  left: 0.75rem;
+  bottom: 0.5rem;
+  margin: 0;
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+}
+.ai3d-fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 1rem;
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+.ai3d-note {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  min-height: 2.9rem;
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+.ai3d-step {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.ai3d-of {
+  font-weight: 400;
+  color: var(--color-text-muted);
+}
+.ai3d-text {
+  color: var(--color-text-secondary);
+}
+.ai3d-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.ai3d-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.ai3d-scrub {
+  width: clamp(72px, 20vw, 220px);
+  accent-color: var(--color-accent-brand);
+}
+/* Labels drawn in the scene (drei Html): plain text in the page's own fonts. */
+.ai3d-label {
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--color-text-primary);
+  background: color-mix(in oklab, var(--color-bg-surface) 82%, transparent);
+  padding: 1px 5px;
+  border-radius: 4px;
+  pointer-events: none;
+  user-select: none;
+  font-variant-numeric: tabular-nums;
+}
+.ai3d-label.is-muted {
+  color: var(--color-text-secondary);
+}
+.ai3d-speed {
+  display: inline-flex;
+  margin-left: 0.25rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.ai3d-speed button {
+  padding: 0.15rem 0.55rem;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+.ai3d-speed button + button {
+  border-left: 1px solid var(--color-border);
+}
+.ai3d-speed button[aria-pressed='true'] {
+  color: var(--color-text-primary);
+  background: color-mix(in oklab, var(--color-text-primary) 9%, transparent);
+  font-weight: 600;
+}
+.ai3d-speed button:focus-visible {
+  outline: 2px solid var(--color-accent-brand);
+  outline-offset: -2px;
+}
+.ai3d-tex {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.1rem 0;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  min-height: 2.4rem;
+}
+.ai3d-tex .katex-display {
+  margin: 0.2rem 0;
+  text-align: left;
+}
+.ai3d-tex:focus-visible {
+  outline: 2px solid var(--color-accent-brand);
+  outline-offset: 2px;
+}
+/* Full screen: the view takes the space the steps and controls leave. */
+.ai3d:fullscreen {
+  background: var(--color-bg-app);
+  padding: 1rem;
+  grid-template-rows: 1fr auto auto auto;
+  align-content: stretch;
+}
+.ai3d:fullscreen .ai3d-view {
+  height: auto;
+  min-height: 0;
+}
+/* The value under the pointer. */
+.ai3d-tip {
+  position: absolute;
+  z-index: 20;
+  max-width: 260px;
+  padding: 3px 8px;
+  font-size: 12px;
+  line-height: 1.35;
+  white-space: pre-line;
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: 6px;
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+.ai3d-cam button[aria-pressed='true'] {
+  color: var(--color-text-primary);
+  background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+}
+.ai3d-cam button[aria-pressed='false'] {
+  color: var(--color-text-muted);
+}
+/* A word in a Stage caption that points at part of the scene. */
+.stage-ref {
+  display: inline;
+  padding: 0;
+  font: inherit;
+  color: var(--color-text-primary);
+  background: none;
+  border: 0;
+  border-bottom: 1px dashed var(--color-text-muted);
+  cursor: help;
+}
+.stage-ref:hover,
+.stage-ref:focus-visible {
+  border-bottom-color: var(--color-accent-brand);
+  outline: none;
+}
+.ai3d-label.ai3d-label-sm {
+  font-size: 10px;
+  padding: 0 3px;
+}
+/* Holds the formula's height while steps change, so the page doesn't jump. */
+.ai3d-texbox {
+  min-width: 0;
+}
+/* Stage text kit: a code panel and a small table, pinned in the scene. */
+.ai3d-code,
+.ai3d-table {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+.ai3d-code pre {
+  margin: 0;
+  padding: 6px 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+.ai3d-code pre > div {
+  padding: 0 10px 0 6px;
+  border-left: 2px solid transparent;
+}
+.ai3d-code pre > div.is-active {
+  border-left-color: var(--color-accent-brand);
+  background: color-mix(in oklab, var(--color-text-primary) 7%, transparent);
+}
+.ai3d-code-n {
+  display: inline-block;
+  width: 1.6em;
+  margin-right: 6px;
+  text-align: right;
+  color: var(--color-text-muted);
+}
+.ai3d-code-vars {
+  margin: 0;
+  padding: 6px 10px;
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  gap: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.ai3d-code-vars > div {
+  display: flex;
+  gap: 8px;
+}
+.ai3d-code-vars dt {
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+.ai3d-code-vars dd {
+  margin: 0;
+}
+.ai3d-table {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.ai3d-table th,
+.ai3d-table td {
+  padding: 2px 8px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: right;
+}
+.ai3d-table th {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+.ai3d-table td.is-hl {
+  font-weight: 700;
+  text-decoration: underline 2px var(--color-accent-brand);
+  text-underline-offset: 3px;
+}
+@media (max-width: 480px) {
+  .ai3d-code,
+  .ai3d-table {
+    font-size: 10.5px;
+  }
+}
