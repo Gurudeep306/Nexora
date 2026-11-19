@@ -934,9 +934,9 @@ function describe(name, input = {}) {
 }
 
 async function remember(projectId, title, body, author) {
-  const id = newId("mem");
-  await run("INSERT INTO hive_memory(id, project_id, title, body, author, created_at) VALUES(?,?,?,?,?,?)", [id, projectId, title, body, author, now()]);
+  const r = await require("./memory").rememberProject(projectId, title, body, author);
   hub.emit("memory", { projectId });
+  return r;
 }
 
 function summarizeInput(name, input) {
