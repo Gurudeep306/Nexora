@@ -77,6 +77,7 @@ The owner is the founder. These preferences come from many sessions. Follow them
 |---|---|
 | `src/routes/` | API routers (auth, learn, gate, gate-me, gate-notes, hive, hive-v4, hive-ops, admin, social, …) |
 | `src/gate/` | GATE grading, spaced-repetition review, figures |
+| `src/db.js`, `src/db-stores.js` | Database layer. Tables are split into stores (core, hive, files, cache, logs), each optionally its own database; no statement may touch two stores (`docs/ops/DATA_SPLIT.md`) |
 | `src/nexus/` | Nexus subjects, mastery and per-user cache (`invalidateNexusUser` on every progress write) |
 | `src/learn/` | Learn problems (`src/learn/problems/<topic>.json`) |
 | `src/hive/` | Hive: agents, router, keys, Copilot, Dispatcher, Drive, health, providers |

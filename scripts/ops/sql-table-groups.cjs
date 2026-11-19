@@ -30,16 +30,20 @@ for (const f of files) for (const m of fs.readFileSync(f, 'utf8').matchAll(/CREA
 /** Every string literal (', ", `) that looks like SQL. */
 function sqlStrings(text) {
   const out = []
+  // Regex literals can hold quote characters; blank them out (same length, so positions hold).
+  text = text.replace(/(?<=[=(,:!&|?]\s*)\/(?![/*])(?:\\.|\[[^\]\n]*\]|[^/\n\\])+\/[dgimsuy]*/g, (m) => ' '.repeat(m.length))
   const re = /`(?:[^`\\]|\\.)*`|'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"/g
   for (const m of text.matchAll(re)) {
     const s = m[0].slice(1, -1)
-    if (/\b(SELECT|INSERT|UPDATE|DELETE|REPLACE|CREATE|ALTER|DROP)\b/i.test(s) && /\b(FROM|INTO|UPDATE|TABLE|JOIN)\b/i.test(s)) out.push({ s, at: m.index })
+    if (/\b(SELECT|INSERT|UPDATE|DELETE|REPLACE|CREATE|ALTER|DROP)\b/i.test(s) && /\b(FROM|INTO|UPDATE|TABLE|JOIN|TRIGGER)\b/i.test(s)) out.push({ s, at: m.index })
   }
   return out
 }
 const touched = (s) => {
   const t = new Set()
   for (const m of s.matchAll(/\b(?:FROM|JOIN|INTO|UPDATE|TABLE(?: IF (?:NOT )?EXISTS)?|EXISTS\s*\(\s*SELECT[^)]*?FROM)\s+"?([a-z_][a-z0-9_]*)/gi)) if (tables.has(m[1])) t.add(m[1])
+  // A trigger's own table: CREATE TRIGGER … AFTER INSERT ON problems
+  for (const m of s.matchAll(/\b(?:BEFORE|AFTER|INSTEAD\s+OF)\s+(?:INSERT|DELETE|UPDATE(?:\s+OF\s+[\w\s,]+?)?)\s+ON\s+"?([a-z_][a-z0-9_]*)/gi)) if (tables.has(m[1])) t.add(m[1])
   // Comma joins: FROM a, b
   for (const m of s.matchAll(/\bFROM\s+([a-z_][a-z0-9_]*(?:\s+[a-z]\w*)?(?:\s*,\s*[a-z_][a-z0-9_]*(?:\s+[a-z]\w*)?)+)/gi))
     for (const part of m[1].split(',')) {

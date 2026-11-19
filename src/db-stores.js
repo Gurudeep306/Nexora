@@ -6,7 +6,9 @@
 //          (everything a student's pages read and write; joined together a lot)
 //   hive   the staff AI workspace (hive_*): only ever used with each other
 //   files  uploaded files and statement images, stored in chunks
-//   cache  data the server can always rebuild (translations, catalog snapshot)
+//   cache  data the server can always rebuild (translations, catalog snapshot).
+//          catalog_meta stays in core: triggers on problems bump it, and a
+//          trigger can only write to its own database.
 //   logs   append-only records (audit trail, code replays)
 //
 // Each store can point at its own database (TURSO_<STORE>_URL and
@@ -20,12 +22,13 @@
 const STORES = ['core', 'hive', 'files', 'cache', 'logs'];
 
 const FILES = new Set(['uploads', 'upload_chunks', 'statement_media', 'statement_media_chunks']);
-const CACHE = new Set(['translation_cache', 'catalog_snapshot', 'catalog_meta']);
+const CACHE = new Set(['translation_cache', 'catalog_snapshot']);
 const LOGS = new Set(['audit_log', 'code_replays']);
 
 /** The store a table belongs to. */
 function storeOfTable(name) {
-  const t = String(name).toLowerCase();
+  // A table rebuilt under a temporary name (progress__peruser) stays with it.
+  const t = String(name).toLowerCase().replace(/__\w+$/, '');
   if (t.startsWith('hive_')) return 'hive';
   if (FILES.has(t)) return 'files';
   if (CACHE.has(t)) return 'cache';
@@ -33,7 +36,8 @@ function storeOfTable(name) {
   return 'core';
 }
 
-const TABLE_RE = /\b(?:FROM|JOIN|INTO|UPDATE|TABLE(?:\s+IF\s+(?:NOT\s+)?EXISTS)?|INDEX\s+(?:IF\s+NOT\s+EXISTS\s+)?[a-z_][a-z0-9_]*\s+ON)\s+"?([a-z_][a-z0-9_]*)/gi;
+// Table names follow these words; also PRAGMA table_info(x) and a trigger's ON x.
+const TABLE_RE = /\b(?:FROM|JOIN|INTO|UPDATE|TABLE(?:\s+IF\s+(?:NOT\s+)?EXISTS)?|INDEX\s+(?:IF\s+NOT\s+EXISTS\s+)?[a-z_][a-z0-9_]*\s+ON|(?:BEFORE|AFTER|INSTEAD\s+OF)\s+(?:INSERT|DELETE|UPDATE(?:\s+OF\s+[\w\s,]+?)?)\s+ON|PRAGMA\s+\w+\s*\()\s*"?([a-z_][a-z0-9_]*)/gi;
 const cache = new Map();
 
 /**

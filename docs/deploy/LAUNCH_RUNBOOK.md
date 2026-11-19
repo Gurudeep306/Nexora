@@ -119,6 +119,8 @@ Do this at a quiet time, right before step 6, because anything written to the ol
 
 ✅ `turso db shell nexora-in "select count(*) from users"` shows the same number as the old database.
 
+Later, once the site runs on the VM: the data can be split into several databases, and the VM can keep a local copy of each for fast reads. See `docs/ops/DATA_SPLIT.md`.
+
 ## 5. Run setup.sh on the VM
 
 On the VM, as the `ubuntu` user:
