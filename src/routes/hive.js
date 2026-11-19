@@ -850,25 +850,18 @@ function createHiveRouter() {
   router.get(
     "/api/hive/projects/:id/memory",
     h(async (req, res) => {
-      res.json({ ok: true, memory: await all("SELECT * FROM hive_memory WHERE project_id=? ORDER BY pinned DESC, created_at DESC LIMIT 300", [req.params.id]) });
+      const p = (await plugins.resolvePlugins(req.params.id)).builtins.shared_memory;
+      // What agents actually get: the first `limit` of this order, while sharing is on.
+      res.json({ ok: true, memory: await all("SELECT * FROM hive_memory WHERE project_id=? ORDER BY pinned DESC, created_at DESC LIMIT 300", [req.params.id]), sharing: { enabled: !!p?.enabled, limit: Number(p?.config?.maxItems) || 30 } });
     }),
   );
   router.post(
     "/api/hive/projects/:id/memory",
     h(async (req, res) => {
       await projectRow(req.params.id);
-      const id = newId("mem");
-      await run("INSERT INTO hive_memory(id, project_id, title, body, author, pinned, created_at) VALUES(?,?,?,?,?,?,?)", [
-        id,
-        req.params.id,
-        str(req.body?.title, "title", { max: 120 }),
-        str(req.body?.body, "note", { max: 1500 }),
-        `@${req.hiveUser}`,
-        req.body?.pinned ? 1 : 0,
-        now(),
-      ]);
+      const r = await require("../hive/memory").rememberProject(req.params.id, str(req.body?.title, "title", { max: 120 }), str(req.body?.body, "note", { max: 1500 }), `@${req.hiveUser}`, { pinned: !!req.body?.pinned });
       hub.emit("memory", { projectId: req.params.id });
-      res.json({ ok: true, id });
+      res.json({ ok: true, id: r.id, updated: r.updated });
     }),
   );
   router.patch(

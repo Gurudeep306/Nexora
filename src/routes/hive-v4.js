@@ -385,8 +385,7 @@ function mount(router, { h, str, audit, isAdmin, githubToken, projectRow, taskRo
     "/api/hive/me/memory",
     h(async (req, res) => {
       const fact = str(req.body?.fact, "fact", { max: 400 });
-      const id = newId("um");
-      await run("INSERT INTO hive_user_memory(id, username, fact, source, created_at) VALUES(?,?,?,?,?)", [id, req.hiveUser, fact, "user", now()]);
+      const { id } = await require("../hive/memory").rememberPerson(req.hiveUser, fact, "user");
       res.json({ ok: true, id });
     }),
   );
