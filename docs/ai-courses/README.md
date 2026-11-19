@@ -13,6 +13,7 @@ any agent can build a topic to the same standard.
 | [STYLE.md](STYLE.md) | How we explain: every lesson is a story, code is built up step by step, no student stays stuck. |
 | [UPDATING.md](UPDATING.md) | How new models and papers join the web as they come out. |
 | [MODELS.md](MODELS.md) | The models timeline (LeNet to today), each linked to the lessons that explain it. Generated. |
+| [STAGE.md](STAGE.md) | **Nexora Stage**, the animation library every course uses: one 2D/3D scene format, kits, the generator that builds scenes from a computation, and how to add a kit. |
 | [ANIMATION.md](ANIMATION.md) | How every idea is animated: the technology, which scene type fits which idea, how time and autoplay work, the rules. The engine and 7 example scenes are live at `/ai-lab`. |
 | [PIPELINE.md](PIPELINE.md) | How a topic goes from papers to a finished lesson, the new tools to build first (3D, live training in the browser, derivation stepper, paper walks, labs), and the phases. |
 | [AGENT_RULES.md](AGENT_RULES.md) | The rules every agent follows. Give this file to any agent. |

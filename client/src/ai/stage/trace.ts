@@ -131,6 +131,24 @@ export function traceScene(tape: Tape, opts: TraceOptions): StageSpec {
     return [x, y - dims(nodes[id].value)[0] * cell - gapY * 0.6]
   }
 
+  // A camera that frames some nodes (and their gradients) with room for labels.
+  const frame = (ids: number[], grads = false, near = 4.5): { camera: V3; target: V3 } => {
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity
+    for (const id of ids) {
+      const [x, y] = pos.get(id)!
+      const [r, c] = dims(nodes[id].value)
+      x0 = Math.min(x0, x - (c * cell) / 2)
+      x1 = Math.max(x1, x + (c * cell) / 2)
+      y1 = Math.max(y1, y + (r * cell) / 2 + 0.5)
+      y0 = Math.min(y0, y - (r * cell) / 2 - (grads ? r * cell + gapY * 0.6 + 0.5 : 0))
+    }
+    const cx = (x0 + x1) / 2
+    const cy = (y0 + y1) / 2
+    const d = Math.max(near, (x1 - x0 + 1.6) / 1.05, (y1 - y0 + 1.2) / 0.68)
+    return { camera: [cx, d * 0.66, -cy + d * 0.75], target: [cx, 0, -cy] }
+  }
+  const whole = frame(nodes.map((n) => n.id), withGrad)
+
   const els: StageElement[] = []
   const computed = nodes.filter((n) => n.op !== 'input' && n.op !== 'param')
   for (const n of nodes) {
@@ -185,6 +203,7 @@ export function traceScene(tape: Tape, opts: TraceOptions): StageSpec {
       label: 'What goes in',
       caption: `${inputs.map((n) => `[${n.label}](#n${n.id})`).join(', ')}: the ${inputs.some((n) => n.op === 'param') ? 'inputs and the parameters' : 'inputs'}, with their real numbers.`,
       focus: inputs.flatMap((n) => [`n${n.id}`, `l${n.id}`]),
+      view: whole,
       ms: 1800,
     },
   ]
@@ -200,10 +219,11 @@ export function traceScene(tape: Tape, opts: TraceOptions): StageSpec {
         { id: `b${n.id}`, set: { progress: 1 } },
       ],
       focus: [`n${n.id}`, `l${n.id}`, `b${n.id}`, ...deps],
+      view: frame([n.id, ...n.inputs]),
       ms: 2400,
     })
   }
-  steps.push({ label: 'Every value as height', caption: 'Rise into 3D: every cell stands as tall as its value, so the whole computation can be compared at a glance.', dim: 3, ms: 2200, pause: !withGrad })
+  steps.push({ label: 'Every value as height', caption: 'Rise into 3D: every cell stands as tall as its value, so the whole computation can be compared at a glance.', dim: 3, view: whole, ms: 2200, pause: !withGrad })
   if (withGrad) {
     for (const n of [...nodes].reverse()) {
       if (n.op === 'input' || n.id === opts.loss || !n.grad) continue
@@ -216,23 +236,20 @@ export function traceScene(tape: Tape, opts: TraceOptions): StageSpec {
           { id: `gl${n.id}`, set: { hidden: false } },
         ],
         focus: [`g${n.id}`, `gl${n.id}`, `n${n.id}`, `l${n.id}`],
+        // In 3D the bars stand tall, so the camera stays further back.
+        view: frame([n.id], true, 9),
         ms: 1900,
       })
     }
     steps[steps.length - 1].pause = true
   }
 
-  // Frame the whole computation.
-  const xs = [...pos.values()].map(([x]) => x)
-  const ys = [...pos.values()].map(([, y]) => y)
-  const span = Math.max(4, Math.max(...xs) - Math.min(...xs) + 3, Math.max(...ys) - Math.min(...ys) + 3)
-  const cy = (Math.max(...ys) + Math.min(...ys)) / 2 - (withGrad ? 0.8 : 0)
   return {
     version: 1,
     title: opts.title,
     description: opts.description,
     dim: 2,
-    camera: { position: [0, span * 0.75, -cy + span * 0.85], target: [0, 0, -cy] },
+    camera: { position: whole.camera, target: whole.target },
     elements: els,
     steps,
   }

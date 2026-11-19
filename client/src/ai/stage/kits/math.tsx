@@ -10,7 +10,7 @@ import { Arrow, Axes, Contours, GridWarp, Label, PathLine, Points3D, SurfaceMesh
 import { toScene, type V3 } from '../../three/coords'
 import { Mat } from '../../three/studio'
 import type { StageElement, StageTone } from '../spec'
-import { at3, fmt, heightRamp, surfaceTint, toneColor, useFormula, type ElCtx } from './shared'
+import { at3, clamp01, fmt, heightRamp, surfaceTint, toneColor, useFormula, type ElCtx } from './shared'
 
 type El<T extends StageElement['type']> = { el: Extract<StageElement, { type: T }>; c: ElCtx }
 const op = (el: { id: string; opacity?: number }, c: ElCtx) => (el.opacity ?? 1) * c.dim(el.id)
@@ -134,8 +134,11 @@ export function ArrowEl({ el, c }: El<'arrow'>) {
   return <Arrow from={at3(el.from, c.lift)} to={at3(el.to, c.lift)} color={tone(el, c, 'accent')} radius={el.r ?? 0.022} />
 }
 export function LabelEl({ el, c }: El<'label'>) {
+  // In 3D, names of parts that are not in focus step aside, so they don't pile up in depth.
+  const away = c.dim(el.id) < 0.99 ? 1 - clamp01((c.lift - 0.4) / 0.4) : 1
+  const o = op(el, c) * away
   return (
-    <Label at={at3(el.at, c.lift)} muted={el.tone === 'muted'} opacity={op(el, c)}>
+    <Label at={at3(el.at, c.lift)} muted={el.tone === 'muted'} opacity={o}>
       {el.text}
     </Label>
   )

@@ -19,7 +19,7 @@
 import { useMemo } from 'react'
 import { CylinderGeometry, DoubleSide } from 'three'
 import { Line } from '@react-three/drei'
-import { CellGrid, Label } from '../../three/prims'
+import { CellGrid, Label, NumberPlane } from '../../three/prims'
 import type { V3 } from '../../three/coords'
 import { mix } from '../../three/theme3d'
 import type { StageElement } from '../spec'
@@ -204,14 +204,9 @@ export function NetworkEl({ el, c }: { el: Net; c: ElCtx }) {
           <Label at={at3([xm, top + (Wm.length * cell) / 2 + 0.3, bz], lift)} muted opacity={o}>
             {`W${l} (${Wm.length} × ${Wm[0].length})`}
           </Label>
-          {Wm.length * Wm[0].length <= 30 &&
-            Wm.flatMap((row, a) =>
-              row.map((wv, b) => (
-                <Label key={`w${l}-${a}-${b}`} at={at3([xm + (b - (row.length - 1) / 2) * cell, top - (a - (Wm.length - 1) / 2) * cell, bz + 0.1], lift)} className="ai3d-label-sm" opacity={o}>
-                  {fmt(wv)}
-                </Label>
-              )),
-            )}
+          {Wm.length * Wm[0].length <= 30 && lift < 0.6 && (
+            <NumberPlane values={Wm} at={((g) => [g[0], g[1] + 0.02 + 0.06 * Math.max(0.2, lift) + 0.012, g[2]] as V3)(at3([xm, top, bz], lift))} cell={cell} ink={p.ink} paper={p.surface} opacity={o * (1 - lift / 0.6)} format={fmt} small />
+          )}
         </group>,
       )
     }
