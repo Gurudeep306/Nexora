@@ -1,22 +1,31 @@
-# Deploys the API to the Oracle VM after CI passes on main.
+# Deploys the site to its server after CI passes on main.
 #
-#   push to main → CI (tests + client build) → this workflow → SSH to the VM:
-#     git checkout <the tested commit> · npm ci --omit=dev · pm2 reload
-#   → health check (on the VM, then https://api.nexoraguru.in/api/health).
-#   If the new version doesn't come up healthy on the VM it is rolled back.
+#   push to main → CI (tests + client build) → this workflow:
+#     1. builds the website pages (client/dist) here, on GitHub's runner
+#        (the server is small; building there takes minutes and would leave
+#        the site without pages while it runs)
+#     2. copies them to the server, then on the server:
+#        git checkout <the tested commit> · npm ci --omit=dev · swap in the
+#        new pages · pm2 reload
+#     3. health check on the server, then the public one.
+#   If the new version doesn't come up healthy it is rolled back (code and
+#   pages).
 #
 # Repository secrets (Settings → Secrets and variables → Actions → Secrets):
-#   ORACLE_HOST         the VM's public IP address
-#   ORACLE_USER         deploy
-#   ORACLE_SSH_KEY      the PRIVATE key whose .pub is in /home/deploy/.ssh/authorized_keys
-#   ORACLE_KNOWN_HOSTS  (optional) output of `ssh-keyscan <ip>`; without it the
+#   DEPLOY_HOST         the server's public IP address
+#   DEPLOY_USER         deploy
+#   DEPLOY_SSH_KEY      the PRIVATE key whose .pub is in /home/deploy/.ssh/authorized_keys
+#   DEPLOY_KNOWN_HOSTS  (optional) output of `ssh-keyscan <ip>`; without it the
 #                       host key is trusted on first use
+#   (The older ORACLE_HOST / ORACLE_USER / ORACLE_SSH_KEY / ORACLE_KNOWN_HOSTS
+#   names still work.)
 # Repository variable (… → Variables), optional:
-#   API_HEALTH_URL      default https://api.nexoraguru.in/api/health
+#   API_HEALTH_URL      default https://nexoraguru.in/api/health
 #
-# Without the secrets the job is skipped (green), so forks and the Render-only
-# setup are unaffected. The website itself is deployed by Cloudflare Pages.
-name: Deploy API (Oracle)
+# Without the secrets the job is skipped (green), so forks are unaffected.
+# The server itself is set up once with deploy/oracle/setup.sh (any Ubuntu
+# server: Oracle, Azure, …); docs/deploy/SERVER.md has the current setup.
+name: Deploy site
 
 on:
   workflow_run:
@@ -38,70 +47,112 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
-      ORACLE_HOST: ${{ secrets.ORACLE_HOST }}
-      ORACLE_USER: ${{ secrets.ORACLE_USER }}
-      ORACLE_SSH_KEY: ${{ secrets.ORACLE_SSH_KEY }}
-      ORACLE_KNOWN_HOSTS: ${{ secrets.ORACLE_KNOWN_HOSTS }}
+      DEPLOY_HOST: ${{ secrets.DEPLOY_HOST || secrets.ORACLE_HOST }}
+      DEPLOY_USER: ${{ secrets.DEPLOY_USER || secrets.ORACLE_USER }}
+      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY || secrets.ORACLE_SSH_KEY }}
+      DEPLOY_KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS || secrets.ORACLE_KNOWN_HOSTS }}
       SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
-      HEALTH_URL: ${{ vars.API_HEALTH_URL || 'https://api.nexoraguru.in/api/health' }}
+      HEALTH_URL: ${{ vars.API_HEALTH_URL || 'https://nexoraguru.in/api/health' }}
     steps:
-      - name: Skip when the Oracle secrets are not configured
+      - name: Skip when the deploy secrets are not configured
         id: check
         run: |
-          if [ -z "$ORACLE_HOST" ] || [ -z "$ORACLE_USER" ] || [ -z "$ORACLE_SSH_KEY" ]; then
-            echo "ORACLE_HOST / ORACLE_USER / ORACLE_SSH_KEY not set — skipping the API deploy."
+          if [ -z "$DEPLOY_HOST" ] || [ -z "$DEPLOY_USER" ] || [ -z "$DEPLOY_SSH_KEY" ]; then
+            echo "DEPLOY_HOST / DEPLOY_USER / DEPLOY_SSH_KEY not set — skipping the deploy."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           fi
+
+      - uses: actions/checkout@v7
+        if: steps.check.outputs.skip != 'true'
+        with:
+          ref: ${{ env.SHA }}
+
+      - uses: actions/setup-node@v7
+        if: steps.check.outputs.skip != 'true'
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+
+      - name: Build the website pages
+        if: steps.check.outputs.skip != 'true'
+        # CI has already type-checked this commit; only the bundle is needed.
+        run: |
+          npm ci --prefix client --include=dev --no-audit --no-fund
+          (cd client && npx vite build)
+          tar -C client -czf dist.tgz dist
+          ls -lh dist.tgz
 
       - name: SSH key
         if: steps.check.outputs.skip != 'true'
         run: |
           install -m 700 -d ~/.ssh
-          printf '%s\n' "$ORACLE_SSH_KEY" > ~/.ssh/id_deploy
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/id_deploy
           chmod 600 ~/.ssh/id_deploy
-          if [ -n "$ORACLE_KNOWN_HOSTS" ]; then
-            printf '%s\n' "$ORACLE_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          if [ -n "$DEPLOY_KNOWN_HOSTS" ]; then
+            printf '%s\n' "$DEPLOY_KNOWN_HOSTS" > ~/.ssh/known_hosts
             echo "STRICT=yes" >> "$GITHUB_ENV"
           else
             echo "STRICT=accept-new" >> "$GITHUB_ENV"
           fi
 
+      - name: Copy the pages to the server
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          scp -i ~/.ssh/id_deploy -o StrictHostKeyChecking="$STRICT" -o ConnectTimeout=20 \
+              dist.tgz "$DEPLOY_USER@$DEPLOY_HOST:/tmp/nexora-dist-$SHA.tgz"
+
       - name: Deploy ${{ env.SHA }}
         if: steps.check.outputs.skip != 'true'
         run: |
           ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking="$STRICT" -o ConnectTimeout=20 \
-              -o ServerAliveInterval=15 "$ORACLE_USER@$ORACLE_HOST" \
+              -o ServerAliveInterval=15 "$DEPLOY_USER@$DEPLOY_HOST" \
               "SHA=$SHA bash -s" <<'REMOTE'
           set -euo pipefail
           cd /opt/nexora
           PREV="$(git rev-parse HEAD)"
           echo "current: $PREV  →  deploying: $SHA"
 
+          # New pages, unpacked next to the live ones.
+          rm -rf /tmp/nexora-dist-new && mkdir -p /tmp/nexora-dist-new
+          tar -C /tmp/nexora-dist-new -xzf "/tmp/nexora-dist-$SHA.tgz"
+          rm -f "/tmp/nexora-dist-$SHA.tgz"
+
           healthy() {
-            for _ in $(seq 1 30); do
+            for _ in $(seq 1 45); do
               if curl -fsS http://127.0.0.1:3000/api/health | grep -q "\"commit\":\"${1:0:7}\""; then return 0; fi
               sleep 2
             done
             return 1
           }
-          release() {
+          code() {
             git fetch --quiet origin
             git checkout --quiet --force "$1"
             PUPPETEER_SKIP_DOWNLOAD=1 npm ci --omit=dev --no-audit --no-fund
+          }
+          reload() {
             GIT_COMMIT="$1" pm2 reload deploy/oracle/ecosystem.config.cjs --update-env
             pm2 save >/dev/null
           }
 
-          release "$SHA"
+          code "$SHA"
+          # Swap the pages in one step; keep the old ones for a rollback.
+          rm -rf client/dist.prev
+          [ -d client/dist ] && mv client/dist client/dist.prev
+          mv /tmp/nexora-dist-new/dist client/dist
+          reload "$SHA"
+
           if healthy "$SHA"; then
-            echo "✓ $SHA is healthy on the VM"
+            echo "✓ $SHA is healthy on the server"
           else
             echo "✗ $SHA did not become healthy — rolling back to $PREV"
             pm2 logs nexora --lines 60 --nostream || true
-            release "$PREV"
-            healthy "$PREV" && echo "rolled back to $PREV" || echo "rollback ALSO unhealthy — check the VM"
+            code "$PREV"
+            if [ -d client/dist.prev ]; then rm -rf client/dist && mv client/dist.prev client/dist; fi
+            reload "$PREV"
+            healthy "$PREV" && echo "rolled back to $PREV" || echo "rollback ALSO unhealthy — check the server"
             exit 1
           fi
           REMOTE
