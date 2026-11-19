@@ -186,6 +186,59 @@
 .notes-root .nb-emoji {
   display: none;
 }
+
+/* ── Plates: what you study and come back to (definitions, theorems, the
+   summary) sits on the same paper plate as the figures and questions: one
+   hairline, a slim header with a mono label, then the body. Asides
+   (intuition, trick, trap, note) stay as margin rules, so the page has a
+   rhythm of plates and asides. */
+.notes-root :is(.nb-definition, .nb-theorem, .nb-summary) {
+  overflow: hidden;
+  padding: 0;
+  border: 1px solid var(--ed-line, var(--read-rule-strong));
+  border-radius: 18px;
+  background: var(--ed-card, transparent);
+}
+.notes-root :is(.nb-definition, .nb-theorem, .nb-summary) > .nb-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25em 0.75em;
+  margin: 0;
+  padding: 0.7em 1.15em;
+  border-bottom: 1px solid var(--ed-line, var(--read-rule));
+}
+.notes-root :is(.nb-definition, .nb-theorem, .nb-summary) > .nb-head .nb-kicker {
+  font-family: var(--font-mono);
+  font-size: 0.68em;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--read-muted);
+}
+.notes-root :is(.nb-definition, .nb-theorem, .nb-summary) > .nb-head .nb-title {
+  font-family: var(--read-heading, inherit);
+  font-size: 1.02em;
+  font-weight: 600;
+}
+.notes-root :is(.nb-definition, .nb-theorem, .nb-summary) > .nb-body {
+  padding: 1em 1.15em 1.1em;
+}
+.notes-root .nb-definition dfn {
+  font-style: normal;
+}
+/* The theorem's proof reads as its continuation, under the plate. */
+.notes-root .nb-theorem + .nb-proof {
+  margin-top: 0.6em;
+}
+@media (max-width: 639px) {
+  .notes-root :is(.nb-definition, .nb-theorem, .nb-summary) {
+    border-radius: 14px;
+  }
+  .notes-root :is(.nb-definition, .nb-theorem, .nb-summary) > :is(.nb-head, .nb-body) {
+    padding-inline: 0.9em;
+  }
+}
 .notes-root .nb-aside,
 .notes-root .nb-aside :is(.nb-kicker, .nb-title) {
   color: inherit;
