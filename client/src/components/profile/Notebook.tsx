@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { langName } from '@/lib/langNames'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'motion/react'
 import { Icon } from '@/components/icon/Icon'
@@ -165,7 +166,7 @@ export function LanguageList({ langs }: { langs: NonNullable<Showcase['languages
         const pct = Math.round((l.submissions / total) * 100)
         return (
           <li key={l.language} className="pf-topic">
-            <span className="pf-topic-name">{l.language}</span>
+            <span className="pf-topic-name">{langName(l.language)}</span>
             <span className="pf-topic-num">{pct}%</span>
             <span className="pf-meter" aria-hidden="true">
               <span className="pf-meter-fill" style={{ transform: `scaleX(${pct / 100})` }} />

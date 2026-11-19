@@ -673,6 +673,8 @@ function rowHasTopics(row, ids) {
 
 module.exports = {
   TOPICS,
+  topicsOfTag,
+  topicLabel: (id) => BY_ID.get(id)?.label || id,
   TAG_MAP,
   TEXT_RULES,
   classify,

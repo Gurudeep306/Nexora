@@ -175,13 +175,15 @@ const LEADS = [
   'A few things worth an hour today.',
   'Fresh picks from across the site.',
   'Something new to open — or something you skipped.',
-  'Three doors, chosen for this part of the day.',
-  'Off the beaten path: three corners of the syllabus.',
   'Different every few hours. Pick one that catches your eye.',
 ]
-export function leadFor(seed: string): string {
+// Only when exactly three picks are shown.
+const LEADS_OF_THREE = ['Three doors, chosen for this part of the day.', 'Off the beaten path: three corners of the syllabus.']
+const LEADS_OF_ONE = ['One fresh pick from across the site.', 'Something new to open — or something you skipped.', 'A corner of the syllabus you may not have seen.']
+export function leadFor(seed: string, n = 3): string {
   const r = seeded(`lead:${seed}`)
-  return LEADS[Math.floor(r() * LEADS.length)]
+  const list = n === 1 ? LEADS_OF_ONE : n === 3 ? [...LEADS, ...LEADS_OF_THREE] : LEADS
+  return list[Math.floor(r() * list.length)]
 }
 
 /** The words for a pick's kind, shown small above its title. */

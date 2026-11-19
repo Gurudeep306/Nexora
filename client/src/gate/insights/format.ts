@@ -89,13 +89,25 @@ export function titleCase(s: string): string {
 }
 
 /** Plain one-line preview of question text (markdown/LaTeX stripped). */
+const SUB = '₀₁₂₃₄₅₆₇₈₉'
+
 export function snippet(text: string | undefined, max = 140): string {
   if (!text) return ''
   const t = text
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
-    .replace(/\$\$?([^$]*)\$\$?/g, (_, tex: string) => texToPlain(tex))
+    // Braces from maths are real (a set); park them while stray markup braces go.
+    .replace(/\$\$?([^$]*)\$\$?/g, (_, tex: string) =>
+      texToPlain(tex)
+        .replace(/_(\d+)\b/g, (_m, d: string) => [...d].map((c) => SUB[Number(c)]).join(''))
+        .replace(/_/g, '\u0003')
+        .replace(/\{/g, '\u0001')
+        .replace(/\}/g, '\u0002'),
+    )
     .replace(/\\[a-zA-Z]+/g, ' ')
     .replace(/[*_`#>{}]/g, '')
+    .replace(/\u0001/g, '{')
+    .replace(/\u0002/g, '}')
+    .replace(/\u0003/g, '_')
     .replace(/\s+/g, ' ')
     .trim()
   return t.length > max ? `${t.slice(0, max - 1)}…` : t

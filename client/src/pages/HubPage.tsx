@@ -155,7 +155,9 @@ export default function HubPage() {
       to: '/problems',
       live: nextContest?.startTime
         ? `Next contest in ${until(nextContest.startTime - now)}: ${nextContest.name}.`
-        : `${stats.solved.toLocaleString('en-IN')} solved of ${stats.attempted.toLocaleString('en-IN')} tried.`,
+        : stats.attempted
+          ? `${stats.solved.toLocaleString('en-IN')} solved, ${stats.attempted.toLocaleString('en-IN')} still open.`
+          : `${stats.solved.toLocaleString('en-IN')} solved.`,
       links: [
         { label: 'Contests', to: '/contests' },
         { label: 'Workshop', to: '/workshop' },
