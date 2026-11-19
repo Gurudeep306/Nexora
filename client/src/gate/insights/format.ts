@@ -1,3 +1,4 @@
+import { texToPlain } from '../texPlain.ts'
 /* Formatting and small derivations shared by the GATE insight pages. */
 
 /** Local YYYY-MM-DD. */
@@ -92,8 +93,7 @@ export function snippet(text: string | undefined, max = 140): string {
   if (!text) return ''
   const t = text
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
-    .replace(/\$\$?([^$]*)\$\$?/g, '$1')
-    .replace(/\\(?:text|mathrm|mathbf|operatorname)\{([^}]*)\}/g, '$1')
+    .replace(/\$\$?([^$]*)\$\$?/g, (_, tex: string) => texToPlain(tex))
     .replace(/\\[a-zA-Z]+/g, ' ')
     .replace(/[*_`#>{}]/g, '')
     .replace(/\s+/g, ' ')

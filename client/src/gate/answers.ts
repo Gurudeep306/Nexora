@@ -1,3 +1,4 @@
+import { texToPlain } from './texPlain.ts'
 import type { GateQuestion } from './types'
 
 /** Practice-mode answer logic shared by the question card and the mock review. */
@@ -99,8 +100,7 @@ export function snippet(text: string, max = 140) {
   const s = text
     .replace(/```[\s\S]*?```/g, ' [code] ')
     .replace(/\|/g, ' ')
-    .replace(/\$\$?([^$]*)\$\$?/g, '$1')
-    .replace(/\\(text|mathrm|mathit|mathbf)\{([^}]*)\}/g, '$2')
+    .replace(/\$\$?([^$]*)\$\$?/g, (_, tex: string) => texToPlain(tex))
     .replace(/<[^>]+>/g, '')
     .replace(/_{2,}/g, '___')
     .replace(/(^|\s)_(\S)/g, '$1$2')
