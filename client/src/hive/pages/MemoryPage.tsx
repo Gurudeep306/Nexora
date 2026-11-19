@@ -44,7 +44,8 @@ export default function MemoryPage() {
 function ProjectMemory() {
   const { boot, project, memoryVersion } = useHive()
   const toast = useToast()
-  const [projectId, setProjectId] = useState<string | null>(project?.id ?? boot?.projects[0]?.id ?? null)
+  const [chosen, setProjectId] = useState<string | null>(null)
+  const projectId = chosen ?? project?.id ?? boot?.projects[0]?.id ?? null
   const [items, setItems] = useState<MemoryItem[] | null>(null)
   const [sharing, setSharing] = useState<{ enabled: boolean; limit: number } | null>(null)
   const [q, setQ] = useState('')

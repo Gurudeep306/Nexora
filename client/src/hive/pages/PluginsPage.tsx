@@ -3,7 +3,6 @@ import { ArrowDown, ArrowUp, Brain, Database, FileMinus, Globe, Infinity as Infi
 import { Button, Input, Modal, Select, Textarea, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { hiveApi } from '../api'
-import { projectColor } from '../projectColor'
 import { useHive } from '../store'
 import type { Plugin } from '../types'
 import { PageTitle, ProviderGlyph, Toggle, vendorName } from '../ui'
@@ -28,7 +27,9 @@ const CATEGORY_ORDER = ['Token saver', 'Reliability', 'Context', 'Control', 'Qua
 export default function PluginsPage() {
   const { boot, project, pluginsVersion } = useHive()
   const toast = useToast()
-  const [scope, setScope] = useState<string>(project?.id ?? '*')
+  // Starts on the project you're in (even if it loads after this page); your pick wins after that.
+  const [chosen, setScope] = useState<string | null>(null)
+  const scope = chosen ?? project?.id ?? '*'
   const [data, setData] = useState<{ builtins: Plugin[]; custom: Plugin[] } | null>(null)
   const [editing, setEditing] = useState<Plugin | 'new' | null>(null)
   const load = useCallback(() => hiveApi.plugins(scope === '*' ? null : scope).then(setData).catch(() => {}), [scope])
@@ -53,35 +54,48 @@ export default function PluginsPage() {
       toast.error(e instanceof Error ? e.message : 'Could not save')
     }
   }
+  const reset = async (p: Plugin) => {
+    try {
+      await hiveApi.resetPlugin(p.id, scope)
+      load()
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Could not reset')
+    }
+  }
+  const toggleCustom = (c: Plugin, v: boolean) =>
+    hiveApi
+      .updateCustomPlugin(c.id, { enabled: v })
+      .then(load)
+      .catch((e) => toast.error(e instanceof Error ? e.message : 'Could not save'))
   const custom = (data?.custom ?? []).filter((c) => scope === '*' || c.scope === scope || c.scope === '*')
   const enabledCount = (data?.builtins ?? []).filter((p) => p.enabled).length + custom.filter((c) => c.enabled).length
 
   return (
-    <div className="mx-auto w-full max-w-[920px] px-8 pb-20 pt-10">
+    <div className="mx-auto w-full max-w-[920px] px-4 pb-20 pt-10 sm:px-8">
       <PageTitle icon={<Puzzle />} title="Plugins" sub={`${enabledCount} active · they cut token use, keep work going when limits hit, and share context between agents.`}>
         <Button onClick={() => setEditing('new')}>
           <Plus /> New plugin
         </Button>
       </PageTitle>
 
-      <div className="mb-8 flex flex-wrap items-center gap-1 rounded-xl bg-text-primary/[0.04] p-1">
-        <button type="button" disabled={!canWorkspace} onClick={() => setScope('*')} className={cn('h-8 rounded-lg px-3 text-[13px] disabled:opacity-40', scope === '*' ? 'bg-bg-surface text-text-primary shadow-sm' : 'text-text-muted')} title={canWorkspace ? 'Defaults for every project' : 'Only admins change workspace defaults'}>
-          All projects
-        </button>
-        {boot.projects.map((p) => (
-          <button key={p.id} type="button" onClick={() => setScope(p.id)} className={cn('flex h-8 items-center gap-1.5 rounded-lg px-3 text-[13px]', scope === p.id ? 'bg-bg-surface text-text-primary shadow-sm' : 'text-text-muted')}>
-            <span className="rounded-full size-2.5" style={{ background: projectColor(p.color) }} />
-            {p.name}
-          </button>
-        ))}
+      <div className="mb-8 flex flex-wrap items-center gap-3">
+        <Select value={scope} onValueChange={setScope} className="w-60" aria-label="Settings for">
+          {canWorkspace && <option value="*">All projects (the default)</option>}
+          {boot.projects.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+            </option>
+          ))}
+        </Select>
+        <p className="text-[13px] text-[var(--hv-text-2)]">{scope === '*' ? 'What every project uses unless it changes a plugin.' : 'This project follows All projects, except where it changes a plugin.'}</p>
       </div>
 
       {groups.map(([cat, list]) => (
         <section key={cat} className="mb-10">
           <h2 className="mb-3 text-[13px] font-medium text-text-secondary">{cat}</h2>
-          <div className="hive-card divide-y divide-[var(--hive-line)] p-0">
+          <div className="divide-y divide-[var(--hv-border)] border-y border-[var(--hv-border)]">
             {list.map((p) => (
-              <PluginRow key={p.id} p={p} onToggle={(v) => set(p, { enabled: v })} onConfig={(config) => set(p, { config })} locked={scope === '*' && !canWorkspace} inherited={scope !== '*' && p.scope !== scope} />
+              <PluginRow key={p.id} p={p} onToggle={(v) => set(p, { enabled: v })} onConfig={(config) => set(p, { config })} onReset={p.scope === scope && (scope !== '*' || canWorkspace) ? () => reset(p) : undefined} locked={scope === '*' && !canWorkspace} inherited={scope !== '*' && p.scope !== scope} projectView={scope !== '*'} />
             ))}
           </div>
         </section>
@@ -90,8 +104,8 @@ export default function PluginsPage() {
       <section className="mb-10">
         <h2 className="mb-3 text-[13px] font-medium text-text-secondary">Your plugins</h2>
         {custom.length === 0 ? (
-          <button type="button" onClick={() => setEditing('new')} className="hive-card hive-card-hover flex w-full items-center gap-4 p-5 text-left">
-            <span className="grid size-10 place-items-center rounded-xl bg-text-primary/[0.06]">
+          <button type="button" onClick={() => setEditing('new')} className="flex w-full items-center gap-4 rounded-[var(--hv-r-card)] border border-dashed border-[var(--hv-border-strong,var(--hv-border))] p-5 text-left transition-colors hover:bg-[var(--hv-fill)]">
+            <span className="grid size-10 place-items-center rounded-xl bg-[var(--hv-fill)]">
               <Puzzle className="size-5 text-text-secondary" />
             </span>
             <span>
@@ -100,10 +114,10 @@ export default function PluginsPage() {
             </span>
           </button>
         ) : (
-          <div className="hive-card divide-y divide-[var(--hive-line)] p-0">
+          <div className="divide-y divide-[var(--hv-border)] border-y border-[var(--hv-border)]">
             {custom.map((c) => (
-              <div key={c.id} className="flex items-center gap-4 px-5 py-4">
-                <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-text-primary/[0.06]">
+              <div key={c.id} className="flex items-center gap-4 py-4">
+                <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--hv-fill)]">
                   <Puzzle className="size-4 text-text-secondary" />
                 </span>
                 <button type="button" onClick={() => setEditing(c)} className="min-w-0 flex-1 text-left">
@@ -112,7 +126,7 @@ export default function PluginsPage() {
                     {c.description || String(c.config.instructions ?? '').slice(0, 120)} · {({ all: 'agents & chat', tasks: 'agents', chat: 'chat' } as Record<string, string>)[String(c.config.appliesTo ?? 'all')]} · {c.scope === '*' ? 'all projects' : boot.projects.find((p) => p.id === c.scope)?.name}
                   </span>
                 </button>
-                <Toggle on={c.enabled} label={c.name} onChange={(v) => hiveApi.updateCustomPlugin(c.id, { enabled: v }).then(load).catch(() => {})} />
+                <Toggle on={c.enabled} label={c.name} onChange={(v) => toggleCustom(c, v)} />
               </div>
             ))}
           </div>
@@ -123,20 +137,28 @@ export default function PluginsPage() {
   )
 }
 
-function PluginRow({ p, onToggle, onConfig, locked, inherited }: { p: Plugin; onToggle: (v: boolean) => void; onConfig: (c: Record<string, unknown>) => void; locked: boolean; inherited: boolean }) {
+function PluginRow({ p, onToggle, onConfig, onReset, locked, inherited, projectView }: { p: Plugin; onToggle: (v: boolean) => void; onConfig: (c: Record<string, unknown>) => void; onReset?: () => void; locked: boolean; inherited: boolean; projectView: boolean }) {
   const Icon = ICONS[p.icon ?? ''] ?? Puzzle
   const [open, setOpen] = useState(false)
   const hasConfig = Object.keys(p.config ?? {}).length > 0
   return (
-    <div className="px-5 py-4">
+    <div className="py-4">
       <div className="flex items-start gap-4">
-        <span className={cn('grid size-9 shrink-0 place-items-center rounded-xl transition-colors', p.enabled ? 'bg-accent-brand/12 text-accent-brand' : 'bg-text-primary/[0.06] text-text-muted')}>
+        <span className={cn('grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--hv-fill)] transition-colors', p.enabled ? 'text-[var(--hv-text-1)]' : 'text-[var(--hv-text-3)]')}>
           <Icon className="size-4" />
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="text-[14px] font-medium text-text-primary">{p.name}</span>
-            {inherited && <span className="text-[11.5px] text-text-muted">· from all projects</span>}
+            {inherited && p.scope === '*' && <span className="text-[11.5px] text-text-muted">· set for all projects</span>}
+            {onReset && (
+              <span className="inline-flex items-center gap-1.5 text-[11.5px] text-text-muted">
+                · {projectView ? 'changed for this project' : 'changed from the default'}
+                <button type="button" onClick={onReset} className="underline underline-offset-2 hover:text-text-primary">
+                  {projectView ? 'Use the default' : 'Reset'}
+                </button>
+              </span>
+            )}
           </div>
           <p className="mt-0.5 text-[13px] leading-relaxed text-text-muted">{p.description}</p>
           {hasConfig && p.enabled && (
@@ -166,7 +188,7 @@ function PluginConfig({ p, onSave }: { p: Plugin; onSave: (c: Record<string, unk
     }
     const keyed = new Set(boot.keys.map((k) => k.provider))
     return (
-      <div className="mt-3 rounded-xl bg-text-primary/[0.03] p-3">
+      <div className="mt-3 rounded-xl bg-[var(--hv-fill)] p-3">
         <p className="mb-2 text-[12.5px] text-text-muted">When a provider runs out, try them in this order (only ones with keys are used):</p>
         <ol className="space-y-1">
           {order.map((id, i) => (
@@ -191,7 +213,7 @@ function PluginConfig({ p, onSave }: { p: Plugin; onSave: (c: Record<string, unk
   }
   if (p.id === 'auto_review') {
     return (
-      <div className="mt-3 flex flex-wrap items-end gap-2 rounded-xl bg-text-primary/[0.03] p-3">
+      <div className="mt-3 flex flex-wrap items-end gap-2 rounded-xl bg-[var(--hv-fill)] p-3">
         <label className="flex flex-col gap-1 text-[12px] text-text-muted">
           Reviewer provider
           <Select value={String(cfg.provider ?? '')} onValueChange={(v) => setCfg({ ...cfg, provider: v })} className="w-44" placeholder="Cheapest available">
@@ -215,7 +237,7 @@ function PluginConfig({ p, onSave }: { p: Plugin; onSave: (c: Record<string, unk
   }
   const LABELS: Record<string, string> = { triggerTokens: 'Trim when context passes (tokens)', maxLines: 'Lines per read', maxTokensPerTask: 'Tokens per task', maxItems: 'Memory items shown to agents', maxEntries: 'Map entries' }
   return (
-    <div className="mt-3 flex flex-wrap items-end gap-2 rounded-xl bg-text-primary/[0.03] p-3">
+    <div className="mt-3 flex flex-wrap items-end gap-2 rounded-xl bg-[var(--hv-fill)] p-3">
       {Object.entries(cfg).map(([k, v]) => (
         <label key={k} className="flex flex-col gap-1 text-[12px] text-text-muted">
           {LABELS[k] ?? k}
@@ -238,6 +260,7 @@ function CustomPluginDialog({ plugin, scope, onClose, onSaved }: { plugin: Plugi
   const [appliesTo, setAppliesTo] = useState(String(plugin?.config.appliesTo ?? 'all'))
   const [where, setWhere] = useState(plugin?.scope ?? scope)
   const [busy, setBusy] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const save = async () => {
     setBusy(true)
     try {
@@ -265,8 +288,13 @@ function CustomPluginDialog({ plugin, scope, onClose, onSaved }: { plugin: Plugi
           </label>
         </div>
         <label className="flex flex-col gap-1.5 text-[12.5px] font-medium text-text-secondary">
-          Instructions
-          <Textarea value={instructions} onChange={(e) => setInstructions(e.target.value)} rows={10} className="font-mono text-[12.5px]" placeholder={'- Validate every input at the API boundary\n- Never log secrets\n- Prefer small pure functions'} />
+          <span className="flex items-baseline justify-between gap-2">
+            Instructions
+            <span className={cn('hv-num text-[11.5px] font-normal', instructions.length > 5400 ? 'text-[var(--color-state-warning)]' : 'text-text-muted')}>
+              {instructions.length.toLocaleString()} / 6,000
+            </span>
+          </span>
+          <Textarea value={instructions} onChange={(e) => setInstructions(e.target.value)} rows={10} maxLength={6000} className="font-mono text-[12.5px]" placeholder={'- Validate every input at the API boundary\n- Never log secrets\n- Prefer small pure functions'} />
         </label>
         <div className="flex flex-wrap items-end gap-3">
           <label className="flex flex-col gap-1.5 text-[12.5px] font-medium text-text-secondary">
@@ -291,9 +319,14 @@ function CustomPluginDialog({ plugin, scope, onClose, onSaved }: { plugin: Plugi
             </label>
           )}
           <span className="flex-1" />
-          {plugin && (
+          {plugin && !confirmDelete && (
+            <Button variant="ghost" onClick={() => setConfirmDelete(true)}>
+              <Trash2 /> Delete
+            </Button>
+          )}
+          {plugin && confirmDelete && (
             <Button
-              variant="ghost"
+              variant="secondary"
               className="text-state-error"
               onClick={() =>
                 hiveApi
@@ -305,7 +338,7 @@ function CustomPluginDialog({ plugin, scope, onClose, onSaved }: { plugin: Plugi
                   .catch((e) => toast.error(e.message))
               }
             >
-              <Trash2 /> Delete
+              <Trash2 /> Delete for good
             </Button>
           )}
           <Button onClick={save} loading={busy} disabled={!name.trim() || !instructions.trim()}>
