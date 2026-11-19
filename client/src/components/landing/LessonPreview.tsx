@@ -50,7 +50,7 @@ export function LessonPreview() {
           </div>
           <Narration>{s.text}</Narration>
         </div>
-        <pre className="lp-code m-0 hidden rounded-xl p-3 text-[13px] leading-6 lg:block" aria-label="The code">
+        <pre className="lp-code m-0 overflow-x-auto rounded-xl p-3 text-[12px] leading-6 sm:text-[13px]" aria-label="The code" tabIndex={0}>
           {CODE.map((line, k) => (
             <div key={k} className={cn('lp-code-line rounded-md px-2 whitespace-pre', k === s.line && 'is-on')}>
               {line}

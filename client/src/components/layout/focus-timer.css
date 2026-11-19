@@ -1,0 +1,163 @@
+/* The Focus timer (FocusTimer.tsx): a ring for the block and a big clock.
+   Accent for the primary action and the running arc only; no glows. */
+.ft-sheet {
+  padding: 0.875rem 1rem 1rem;
+}
+.ft-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.ft-kicker {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.ft-sound {
+  padding: 2px 6px;
+  border-radius: var(--radius-control);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+}
+.ft-sound:hover {
+  color: var(--color-text-primary);
+  background: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
+}
+.ft-dial {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  margin: 0.75rem auto 0.875rem;
+}
+.ft-ring {
+  width: 100%;
+  height: 100%;
+}
+.ft-track,
+.ft-arc {
+  fill: none;
+  stroke-width: 5;
+}
+.ft-track {
+  stroke: var(--color-border);
+}
+.ft-arc {
+  stroke: var(--color-accent-brand);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 500ms linear;
+}
+.ft-sheet:has(.ft-phase[data-break]) .ft-arc {
+  stroke: var(--color-state-success);
+}
+.ft-read {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+.ft-phase {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.ft-clock {
+  color: var(--color-text-primary);
+  font-size: 30px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.ft-actions {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+.ft-primary,
+.ft-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: var(--radius-control);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-standard),
+    border-color var(--dur-fast) var(--ease-standard);
+}
+.ft-primary {
+  background: var(--color-accent-brand);
+  color: var(--color-on-accent-brand);
+}
+.ft-primary:hover {
+  background: var(--color-accent-brand-hover);
+}
+.ft-ghost {
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+.ft-ghost:hover {
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+}
+.ft-icon {
+  width: 34px;
+  padding: 0;
+  justify-content: center;
+}
+.ft-plans {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-top: 0.875rem;
+  padding: 3px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+}
+.ft-plan {
+  height: 28px;
+  border-radius: calc(var(--radius-control) - 2px);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.ft-plan.is-on {
+  background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+.ft-plan:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.ft-today {
+  margin-top: 0.75rem;
+  color: var(--color-text-secondary);
+  font-size: 12.5px;
+  text-align: center;
+}
+.ft-today strong {
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.ft-sound:focus-visible,
+.ft-primary:focus-visible,
+.ft-ghost:focus-visible,
+.ft-plan:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ft-arc {
+    transition: none;
+  }
+}

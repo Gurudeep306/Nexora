@@ -23,7 +23,7 @@ function ThemeDot({ className }: { className?: string }) {
 
 /**
  * The top-bar theme menu — a swatch book. It opens with an ink wipe from the
- * button, and the ten themes fan out as strips: each one a swatch of the
+ * button, and the twelve themes fan out as strips: each one a swatch of the
  * theme's own paper, ink, heading face and accent, then its name. Under them,
  * the accent colours, and the way into everything on the Appearance page.
  */

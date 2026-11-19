@@ -181,7 +181,7 @@ export default function SettingsPage() {
                     <CardContent className="flex flex-wrap items-center justify-between gap-4 px-5 py-4">
                       <div>
                         <p className="mb-0 text-sm font-semibold text-text-primary">Theme</p>
-                        <p className="mb-0 text-[12.5px] text-text-muted">Ten themes, each with its own paper, type, drawings and icons, plus text size and code font.</p>
+                        <p className="mb-0 text-[12.5px] text-text-muted">Twelve themes, each with its own paper, type, drawings and icons, plus text size and code font.</p>
                       </div>
                       <Link to="/theme" className={buttonVariants({ variant: 'secondary', size: 'sm' })}>
                         Open Appearance

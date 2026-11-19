@@ -1,7 +1,7 @@
 /*
   The Look (v5) — what the Appearance page stores in localStorage
   ('nexora:look') and syncs to the account (settings key 'ui_look'): one of
-  the ten themes plus a few personal settings.
+  the twelve themes plus a few personal settings.
 
   sanitizeLookWith() is the one validator. It is deliberately
   self-contained (it reads nothing but its arguments) because vite.config.ts
@@ -56,7 +56,7 @@ type Personal = 'v' | 'style' | 'accent' | 'solutionFont' | 'textSize' | 'ink' |
 type Bundle = Omit<Look, Personal>
 
 export interface LookTables {
-  /** The ten themes people can choose. */
+  /** The twelve themes people can choose. */
   styles: string[]
   /** style id → page kit (styles without one are absent). */
   kits: Record<string, string>

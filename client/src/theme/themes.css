@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   The ten NexoraGuru themes (theme/styles.ts) — what makes each one itself.
+   The twelve NexoraGuru themes (theme/styles.ts) — what makes each one itself.
 
    Every theme dresses the same page kit ([data-kit='journal'] in styles.css
    and styles/journal.css), so every page and feature works in all of them.
@@ -357,4 +357,59 @@ html[data-kit='journal'] body {
 [data-style='clear'] .nr-main {
   --read-leading: 1.7;
   letter-spacing: 0.01em;
+}
+
+/* ═══ Monsoon ══════════════════════════════════════════════════════════════ */
+[data-style='monsoon'] {
+  --kit-hero: var(--kit-display);
+  --kit-hero-weight: 650;
+  --kit-hero-tracking: -0.045em;
+  --kit-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --kit-read: var(--font-body);
+  --kit-heading-weight: 600;
+  --kit-heading-tracking: -0.03em;
+  --kit-card-radius: 1.25rem;
+  --kit-card-radius-sm: 0.875rem;
+  --kit-control-radius: 0.75rem;
+  /* A raindrop: round, then a point. */
+  --kit-btn-radius: 999px 999px 999px 0.375rem;
+  --kit-tool-radius: 0.625rem;
+  --pattern-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240' stroke='black' stroke-width='1.2' fill='none' stroke-linecap='round'%3E %3Cpath d='M24 18 l-8 22 M58 6 l-8 22 M92 30 l-8 22 M140 10 l-8 22 M176 40 l-8 22 M214 16 l-8 22'/%3E %3Cpath d='M36 92 l-8 22 M112 80 l-8 22 M200 96 l-8 22 M70 132 l-8 22 M150 142 l-8 22'/%3E %3Cpath d='M40 196 l-6 16 M226 176 l-6 16 M120 214 l-6 16'/%3E %3Cpath d='M60 66 c-4 6 -6 9 -6 12 a6 6 0 0 0 12 0 c0 -3 -2 -6 -6 -12 z'/%3E %3Cpath d='M188 196 c-4 6 -6 9 -6 12 a6 6 0 0 0 12 0 c0 -3 -2 -6 -6 -12 z'/%3E %3Cellipse cx='108' cy='190' rx='22' ry='5'/%3E%3Cellipse cx='108' cy='190' rx='11' ry='2.4'/%3E %3Cellipse cx='192' cy='68' rx='16' ry='3.6'/%3E %3C/svg%3E");
+  --pattern-size: 240px 240px;
+  --pattern-ink: color-mix(in oklab, var(--color-text-primary) 12%, transparent);
+  --kit-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120' stroke='black' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E %3Cpath d='M42 62 a18 18 0 0 1 6 -35 a26 26 0 0 1 49 -6 a20 20 0 0 1 22 22 a14 14 0 0 1 -3 27 h-74 a14 14 0 0 1 0 -8 z'/%3E %3Cpath d='M52 82 l-6 16 M72 82 l-6 16 M92 82 l-6 16 M112 82 l-6 16'/%3E %3Cpath d='M60 104 l-4 10 M100 104 l-4 10'/%3E %3C/svg%3E");
+}
+[data-style='monsoon'] :is(.ed-label, [data-ui='eyebrow'], [data-ui='stat-label']) {
+  letter-spacing: 0.06em;
+}
+
+/* ═══ Kintsugi ═════════════════════════════════════════════════════════════ */
+[data-style='kintsugi'] {
+  --kit-hero: var(--kit-display);
+  --kit-hero-weight: 400;
+  --kit-hero-tracking: -0.025em;
+  --kit-display: 'Literata Variable', 'Literata', ui-serif, Georgia, serif;
+  --kit-read: 'Literata Variable', 'Literata', ui-serif, Georgia, serif;
+  --kit-heading-weight: 450;
+  --kit-heading-tracking: -0.015em;
+  --kit-card-radius: 0.75rem;
+  --kit-card-radius-sm: 0.5rem;
+  --kit-control-radius: 0.5rem;
+  --kit-btn-radius: 0.5rem;
+  --kit-tool-radius: 0.375rem;
+  --pattern-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260' stroke='black' stroke-width='1.1' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E %3Cpath d='M0 46 l22 6 l14 -10 l20 14 l18 -4 l12 12 l26 -6'/%3E %3Cpath d='M56 56 l6 18 l-8 16 l10 20'/%3E %3Cpath d='M112 58 l10 22 l24 8 l16 -12 l22 10'/%3E %3Cpath d='M146 88 l-6 26 l12 18'/%3E %3Cpath d='M30 170 l18 -8 l16 12 l22 -6 l10 16 l24 2 l14 -14 l20 8'/%3E %3Cpath d='M86 168 l-4 -22 l10 -14'/%3E %3Cpath d='M176 172 l10 24 l-6 18 l14 22'/%3E %3Cpath d='M210 30 l14 16 l-4 20 l14 14'/%3E %3Ccircle cx='224' cy='46' r='1.6'/%3E%3Ccircle cx='64' cy='74' r='1.4'/%3E%3Ccircle cx='186' cy='196' r='1.6'/%3E %3C/svg%3E");
+  --pattern-size: 260px 260px;
+  /* The seams are gold: the theme's own accent, faint. */
+  --pattern-ink: color-mix(in oklab, var(--color-accent-brand) 22%, transparent);
+  --kit-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120' stroke='black' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E %3Cpath d='M24 40 h112 a58 52 0 0 1 -112 0 z'/%3E %3Cpath d='M60 104 h40'/%3E %3Cpath d='M58 40 l8 14 l-6 12 l12 14 l-2 16' stroke-width='2.2'/%3E %3Cpath d='M66 66 l18 -4 l10 10' stroke-width='2.2'/%3E %3Cpath d='M112 40 l-6 16 l10 10'/%3E %3C/svg%3E");
+}
+/* A gold seam along the top of every card, like a mended rim. */
+[data-style='kintsugi'] :is(.ed-card, [data-ui='card'], .nx-panel) {
+  background-image: linear-gradient(var(--color-accent-brand), var(--color-accent-brand));
+  background-size: 2.5rem 1.5px;
+  background-position: 1.25rem 0;
+  background-repeat: no-repeat;
+}
+[data-style='kintsugi'] :is(.ed-label, [data-ui='eyebrow'], [data-ui='stat-label']) {
+  letter-spacing: 0.1em;
 }

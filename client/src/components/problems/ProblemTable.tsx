@@ -124,9 +124,11 @@ export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBo
                           <Badge
                             key={t}
                             variant="outline"
-                            className={cn('max-w-40 truncate px-1.5 py-0 text-[10px]', ti > 0 && 'hidden sm:inline-flex')}
+                            title={t}
+                            className={cn('max-w-40 px-1.5 py-0 text-[10px]', ti > 0 && 'hidden sm:inline-flex')}
                           >
-                            {t}
+                            {/* The badge is a flex box, where text-overflow has no effect: the ellipsis needs its own block. */}
+                            <span className="min-w-0 truncate">{t}</span>
                           </Badge>
                         ))}
                       </span>

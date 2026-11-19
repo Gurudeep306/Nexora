@@ -108,9 +108,7 @@ export function LessonTree({
             <p className="notes-tree-chapter">
               <span className="notes-tree-n">{ch.n}</span>
               <span className="min-w-0 flex-1">{ch.title}</span>
-              <span className="notes-tree-count">
-                {done}/{ch.lessons.length}
-              </span>
+              <span className="notes-tree-count">{ch.lessons.length ? `${done}/${ch.lessons.length}` : 'soon'}</span>
             </p>
             <ol>
               {ch.lessons.map((l) => {

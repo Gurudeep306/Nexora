@@ -42,7 +42,9 @@ export function useNexusWeb() {
   // GATE notes this reader may open (draft subjects are staff-only).
   const notesApi = useNotesSubjects()
   const notes = useMemo(() => new Set((notesApi.data ?? []).map((x) => x.id)), [notesApi.data])
-  return { structure, state, clusters, error, notes }
+  // Published lesson counts, so cards quote the same number as the notes pages.
+  const notesLessons = useMemo(() => new Map((notesApi.data ?? []).map((x) => [x.id, x.lessonCount] as const)), [notesApi.data])
+  return { structure, state, clusters, error, notes, notesLessons }
 }
 
 export const progressOf = (c: WebCluster) => (c.nodes.length ? Math.round(c.nodes.reduce((a, n) => a + n.p, 0) / c.nodes.length) : 0)

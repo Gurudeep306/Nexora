@@ -29,10 +29,10 @@ The building blocks live in:
 |---|---|
 | `client/src/styles/journal.css` | the `ed-*` classes (`ed-title`, `ed-lead`, `ed-label`, `ed-card`, `ed-feature`, `ed-btn-clay`, `ed-tabs`…) and the `--ed-*` roles |
 | `client/src/theme/styles.css` | the kit's look: shared components (`data-ui` hooks), the shell, the dock and the reader, all under `[data-kit='journal']` |
-| `client/src/theme/themes.css` | what makes each of the ten themes itself |
+| `client/src/theme/themes.css` | what makes each of the twelve themes itself |
 | `client/src/components/ui/` | the kit (`Button`, `Card`, `Tabs`, `PageHeader`, `EmptyState`, `LoadingBlock`…) with `data-ui` hooks |
 
-## Ten themes
+## Twelve themes
 
 A theme is a whole design, not a colour. Each has its own palette in light and
 dark, a heading face and a reading face, corners and button shapes, an icon
@@ -50,6 +50,8 @@ set, an original drawing behind the page and one beside page headers.
 | Block Print | indigo, madder and marigold on cotton | Rozha One (also sets Hindi), Onest | buta and rosettes; a stitched rule inside cards | colour, craft and culture |
 | Terminal | green phosphor; green-bar printer paper by day | everything in monospace | scan lines; a prompt before titles | coders who live in the shell |
 | Clear | black and white, one strong accent | Atkinson Hyperlegible | none; two-pixel borders, underlined links, a thick focus ring | low vision, bright rooms, tired eyes |
+| Monsoon | misty grey-green paper; a storm-blue night with peacock teal | Bricolage Grotesque, Figtree | slanting rain, drops and ripples; a rain cloud by titles; raindrop-shaped main button | late-night studiers, rain lovers |
+| Kintsugi | washi paper and bronze-gold ink; black lacquer with gold at night | Literata, Instrument Sans | fine gold seams (in the accent, not the ink); a mended bowl by titles; a gold seam along card tops | patient learners, quiet luxury |
 
 On top of any theme a person can set the **text size**, the **code font** and
 the **handwriting for GATE solutions**. Everything else belongs to the theme.
@@ -103,7 +105,7 @@ Hive wears the person's own look too, dressed as "the desk"
 5. Check the hub, a lesson, Problems, GATE, Profile, Admin and Nexus in light,
    dark and phone with `client/scripts/check-page.cjs` and axe: 0 violations,
    no sideways scroll. Check that `/hive` still renders Studio on Midnight.
-6. Update the test expecting ten themes, and this table.
+6. Update the test expecting twelve themes, and this table.
 
 ## History: the 2026 premium pass
 

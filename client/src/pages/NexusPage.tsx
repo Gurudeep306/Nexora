@@ -337,7 +337,10 @@ function RadialOverview() {
 
   const hud = (d: number) => ({ '--nx-hud-d': `${d}ms` }) as CSSProperties
   return (
-    <div data-intro={introState}>
+    // The long opening choreography belongs to the radial web; the sky map and
+    // the index have none, so their header just fades in instead of waiting
+    // seconds on an empty page for an intro that never plays.
+    <div data-intro={tab === 'map' && view === 'radial' ? introState : introState === 'done' ? 'done' : 'fade'}>
       <div className="nx-hud" style={hud(0)}>
         {header}
       </div>

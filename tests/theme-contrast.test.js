@@ -20,12 +20,12 @@ const { pathToFileURL } = require('node:url');
 
 const theme = (f) => import(pathToFileURL(path.join(__dirname, '..', 'client', 'src', 'theme', f)).href);
 
-test('ten themes, each a whole design with its own palette in both modes', async () => {
+test('twelve themes, each a whole design with its own palette in both modes', async () => {
   const { PALETTES, PALETTE_BY_ID } = await theme('palettes.ts');
   const { THEMES, STYLES, PATTERNS, DISPLAY_FACES } = await theme('styles.ts');
   const { UI_FONTS, CODE_FONTS } = await theme('fonts.ts');
-  assert.equal(THEMES.length, 10, 'there are exactly ten themes');
-  assert.equal(new Set(THEMES.map((t) => t.id)).size, 10, 'theme ids are unique');
+  assert.equal(THEMES.length, 12, 'there are exactly twelve themes');
+  assert.equal(new Set(THEMES.map((t) => t.id)).size, 12, 'theme ids are unique');
   assert.equal(THEMES[0].id, 'journal', 'Field Journal comes first');
   assert.equal(new Set(PALETTES.map((p) => p.id)).size, PALETTES.length, 'palette ids are unique');
   const usedPalettes = new Set();
@@ -45,9 +45,9 @@ test('ten themes, each a whole design with its own palette in both modes', async
     }
     assert.ok(t.tagline && t.about && t.forWho, `${t.id}: has words for the theme card`);
   }
-  // The ten look different: no two share a display face and a pattern and an icon set.
+  // The twelve look different: no two share a display face and a pattern and an icon set.
   const signature = THEMES.map((t) => `${t.displayFont}|${t.bundle.pattern}|${t.bundle.iconSet}/${t.bundle.iconStyle}`);
-  assert.equal(new Set(signature).size, 10, 'every theme has its own type, drawing and icons');
+  assert.equal(new Set(signature).size, 12, 'every theme has its own type, drawing and icons');
   // Hive's own look stays available but is never offered.
   const studio = STYLES.find((s) => s.id === 'studio');
   assert.ok(studio && studio.hidden && !THEMES.includes(studio));
@@ -72,7 +72,7 @@ test('every theme meets the contrast rules in both of its modes', async () => {
   assert.deepEqual(failures, [], `\n${failures.join('\n')}`);
 });
 
-test('every accent colour passes the accent rules on all ten themes, light and dark', async () => {
+test('every accent colour passes the accent rules on all twelve themes, light and dark', async () => {
   const { ACCENTS, PALETTE_BY_ID } = await theme('palettes.ts');
   const { THEMES } = await theme('styles.ts');
   const { auditMode } = await theme('audit.ts');
@@ -91,7 +91,7 @@ test('every accent colour passes the accent rules on all ten themes, light and d
   assert.deepEqual(failures, [], `\n${failures.join('\n')}`);
 });
 
-test('every text ink keeps 4.5:1 (muted text too) on all ten themes, light and dark', async () => {
+test('every text ink keeps 4.5:1 (muted text too) on all twelve themes, light and dark', async () => {
   const { INKS, PALETTE_BY_ID } = await theme('palettes.ts');
   const { THEMES } = await theme('styles.ts');
   const { contrast, mixOklab, formatOklch } = await theme('color.ts');

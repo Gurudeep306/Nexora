@@ -188,6 +188,16 @@
   line-height: 1.6;
   color: var(--color-text-secondary);
 }
+.nh-chapter-soon {
+  margin: 10px 0 0;
+  font-family: var(--read-body, inherit);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+.nh-chapter.is-soon .nh-chapter-title {
+  color: var(--color-text-secondary);
+}
 .nh-lessons {
   display: grid;
   gap: 2px 20px;

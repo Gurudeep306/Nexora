@@ -74,9 +74,7 @@ function Book({ chapters, kicker, aside }: { chapters: BookChapter[]; kicker: st
                 >
                   <span className="ed-serif-numeral sx-toc-num">{roman(c.n)}</span>
                   <span className="min-w-0 flex-1 truncate">{c.title}</span>
-                  <span className="ed-mono text-[11px]">
-                    {done}/{c.lessons.length}
-                  </span>
+                  <span className="ed-mono text-[11px]">{c.lessons.length ? `${done}/${c.lessons.length}` : 'soon'}</span>
                 </a>
               </li>
             )
@@ -107,6 +105,7 @@ function Book({ chapters, kicker, aside }: { chapters: BookChapter[]; kicker: st
               <span className="sr-only">Chapter {c.n}: </span>
               <span className="ed-serif">{c.title}</span>
             </h2>
+            {!c.lessons.length && <p className="ed-caption ed-muted mt-4 mb-0 italic">These lessons are being written and will appear here as each one is checked.</p>}
             <ol className="sx-lessons mt-5 mb-0 list-none p-0">
               {c.lessons.map((l, i) => {
                 const body = (

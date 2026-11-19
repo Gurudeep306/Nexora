@@ -1280,3 +1280,78 @@
   border-left-color: var(--color-accent-brand);
   background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
 }
+
+/* A chapter still being written: shown in the strip, but nothing to open. */
+.nr-mini-ch.is-soon {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* Listen: the lesson read aloud. The bar sits at the foot of the screen so it
+   stays in reach while the page follows the voice; the paragraph being read
+   gets a quiet tint and a rule in the margin (no glow, no motion when reduced). */
+.nr-listen {
+  position: fixed;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  max-width: calc(100vw - 32px);
+  padding: 4px;
+  transform: translateX(-50%);
+  border: 1px solid var(--read-rule);
+  border-radius: var(--radius-card, 12px);
+  /* The app colour is always solid; surface can be see-through in some themes. */
+  background: var(--color-bg-app);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+.nr-listen-main {
+  color: var(--color-text-primary);
+}
+.nr-listen-pos {
+  min-width: 4.5ch;
+  padding: 0 6px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.nr-listen-rate {
+  height: 32px;
+  min-width: 44px;
+  padding: 0 8px;
+  border-radius: var(--radius-control);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.nr-listen-rate:hover {
+  background: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
+  color: var(--color-text-primary);
+}
+.nr-listen-rate:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.notes-prose .is-reading {
+  border-radius: 4px;
+  background: color-mix(in oklab, var(--read-accent) 10%, transparent);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-color var(--dur-fast) var(--ease-standard);
+}
+@media (prefers-reduced-motion: reduce) {
+  .notes-prose .is-reading {
+    transition: none;
+  }
+}
+@media print {
+  .nr-listen {
+    display: none;
+  }
+}
