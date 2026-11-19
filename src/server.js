@@ -1403,7 +1403,7 @@ app.get("/api/activity/:date", async (req, res) => {
 /* ========== TRANSLATE ========== (see src/ai-assist.js) */
 // Translation (with language detection + AI engine) and the coding coach.
 app.use(createAiAssistRouter({ get, all, run, aiLimiter }));
-app.use(require("./routes/coding").createCodingRouter({ get, me, aiLimiter, judgeLimiter }));
+app.use(require("./routes/coding").createCodingRouter({ get, run, me, aiLimiter, judgeLimiter }));
 app.use(require("./routes/sources").createSourcesRouter({ can, me, invalidateCatalog: () => require("./problem-catalog").invalidateCatalog(), backfill: { start: () => startStatementBackfill(), pause: () => pauseStatementBackfill(), status: () => statementBackfillStatus() } }));
 // Topics of every problem: the list, each problem's topics, staff corrections, the backfill (src/topics.js).
 app.use(require("./routes/topics").createTopicsRouter({ can, me }));
@@ -1626,6 +1626,7 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
     let checker = null;
     // What the verdict rests on: a judge's own full tests, or only the examples.
     let coverage = null;
+    let trustedKeys = null; // keys of the cases points may count (platform problems)
     if (problem_id) {
       const prob = await get("SELECT id, platform, problem_id, category, url FROM problems WHERE id=?", [problem_id]);
       if (!prob || (prob.category === "__hidden" && !can(req, "problems.manage"))) return res.status(404).json({ ok: false, error: "Problem not found" });
@@ -1665,6 +1666,27 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
           if (cached == null) {
             if (ds.testsState(prob.problem_id) === "failed") coverage.failed = true;
             else coverage.pending = true;
+          }
+        }
+      }
+      // The tests points can rest on: the problem's own samples and the judge's
+      // official tests — never tests the solver wrote (with their own answers).
+      if (prob.platform === "nexora") trustedKeys = new Set(cases.map((c) => tcKey(c.input, c.expected_output)));
+      else {
+        const st = await get("SELECT samples FROM problem_statements WHERE problem_rowid=?", [prob.id]);
+        trustedKeys = new Set([
+          ...parseJsonList(st?.samples).map((x) => {
+            const c = toCase(x);
+            return tcKey(c.input, c.expected_output);
+          }),
+          ...cases.filter((c) => c.hidden).map((c) => tcKey(c.input, c.expected_output)),
+        ]);
+        // An official test the solver also typed in is still an official test.
+        if (prob.platform === "codeforces") {
+          const official = await require("./sources/cf-dataset").cachedTests(prob.problem_id).catch(() => null);
+          for (const t of official || []) {
+            const c = toCase({ input: t.input, output: t.output });
+            trustedKeys.add(tcKey(c.input, c.expected_output));
           }
         }
       }
@@ -1733,15 +1755,28 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
       const fullPass = accepted && !examplesOnly;
       const firstSolve = fullPass && existing?.status !== "solved";
       const xpBefore = Number(existing?.xp_earned) || 0;
-      const gainedXp = accepted && !xpBefore && existing?.status !== "solved" ? await calcXp(problem_id) : 0;
+      // Owner's rule (2026-11-19): points follow the tests passed. Only the
+      // problem's samples and the judge's official tests count; the best try
+      // counts, and the rest comes when every test passes. Resubmitting never
+      // earns the same points twice.
+      const trusted = result.results.map((r, i) => ({ r, c: cases[i] })).filter(({ c }) => c && trustedKeys && trustedKeys.has(tcKey(c.input, c.expected_output)));
+      const trustedPassed = trusted.filter(({ r }) => r.passed).length;
+      const fullXp = await calcXp(problem_id);
+      // All trusted tests passed (with the whole run accepted): the full points.
+      // Some passed: that share. None to count on: nothing (own tests alone earn no points).
+      const share = !trusted.length ? 0 : accepted ? 1 : trustedPassed / trusted.length;
+      const xpNow = existing?.status === "solved" ? Math.max(xpBefore, fullXp) : Math.round(fullXp * share);
+      const gainedXp = Math.max(0, xpNow - xpBefore);
+      const partial = trusted.length ? { passed: trustedPassed, total: trusted.length, share, ofXp: fullXp } : null;
       // What this submit did to the level: the same calcLevel the Profile shows.
-      if (accepted) {
+      if (accepted || gainedXp > 0) {
         const before = await myTotals();
         const after = { xp: before.xp + gainedXp, solved: before.solved + (firstSolve ? 1 : 0) };
         xpReport = {
           gainedXp,
           firstSolve,
           examplesOnly,
+          partial,
           before: calcLevel(before.xp, before.solved),
           after: calcLevel(after.xp, after.solved),
           solved: after.solved,
@@ -1756,14 +1791,14 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
             fullPass ? "solved" : examplesOnly ? "examples" : "attempted",
             1,
             fullPass ? new Date().toISOString() : null,
-            gainedXp,
+            xpBefore + gainedXp,
           ],
         );
       } else {
         // Solved stays solved; "examples" rises to solved on a full check and
         // never falls back to "attempted" on a later wrong answer.
         const newStatus = existing.status === "solved" || fullPass ? "solved" : examplesOnly || existing.status === "examples" ? "examples" : "attempted";
-        const xp = gainedXp ? gainedXp : existing.xp_earned;
+        const xp = xpBefore + gainedXp;
         await run(
           `UPDATE progress SET status=?, attempts=attempts+1, solved_at=COALESCE(solved_at,?), xp_earned=? WHERE username=? AND problem_rowid=?`,
           [
