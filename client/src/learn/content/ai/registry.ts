@@ -6,6 +6,7 @@ import fPython from './foundations/f-python/meta'
 import fPyStrings from './foundations/f-py-strings/meta'
 import fPyControl from './foundations/f-py-control/meta'
 import fPyFunctions from './foundations/f-py-functions/meta'
+import fPyLists from './foundations/f-py-lists/meta'
 
 /**
  * The AI courses: every topic of docs/ai-courses/curriculum.json, in teaching
@@ -19,6 +20,7 @@ const WRITTEN: Record<string, { meta: TopicMeta; load: () => Promise<{ default: 
   'f-py-strings': { meta: fPyStrings, load: () => import('./foundations/f-py-strings') },
   'f-py-control': { meta: fPyControl, load: () => import('./foundations/f-py-control') },
   'f-py-functions': { meta: fPyFunctions, load: () => import('./foundations/f-py-functions') },
+  'f-py-lists': { meta: fPyLists, load: () => import('./foundations/f-py-lists') },
 }
 
 export const AI_TOPICS: SyllabusEntry[] = AI_COURSES.flatMap((c) =>

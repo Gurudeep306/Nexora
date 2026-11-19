@@ -77,6 +77,7 @@ The owner is the founder. These preferences come from many sessions. Follow them
 |---|---|
 | `src/routes/` | API routers (auth, learn, gate, gate-me, gate-notes, hive, hive-v4, hive-ops, admin, social, …) |
 | `src/gate/` | GATE grading, spaced-repetition review, figures |
+| `src/db.js`, `src/db-stores.js` | Database layer. Tables are split into stores (core, hive, files, cache, logs), each optionally its own database; no statement may touch two stores (`docs/ops/DATA_SPLIT.md`) |
 | `src/nexus/` | Nexus subjects, mastery and per-user cache (`invalidateNexusUser` on every progress write) |
 | `src/learn/` | Learn problems (`src/learn/problems/<topic>.json`) |
 | `src/hive/` | Hive: agents, router, keys, Copilot, Dispatcher, Drive, health, providers |
@@ -84,7 +85,7 @@ The owner is the founder. These preferences come from many sessions. Follow them
 | `client/src/learn/` | Learn engine and course content (`AUTHORING.md` explains it) |
 | `client/src/viz/` | Animation player and scene schema |
 | `content/nexus/` | One JSON file per subject, plus streams, routes and hubs |
-| `content/gate-notes/`, `GATE_PYQ/`, `public/gate-fig/` | GATE notes, past papers and figures |
+| `content/gate-notes/`, `public/gate-fig/` | GATE notes and figures. The past-paper PDFs and third-party reference notes are in the private repo `Gurudeep306/Materials` (clone it next to this one; the GATE scripts find it there or via `GATE_PYQ_DIR`) |
 | `scripts/learn/` | Problem and solution build/verify pipeline |
 | `bridge/` | Hive bridge (runs Claude Code / Codex / Vibe on a worker machine) |
 | `deploy/` | Deploy configs; `deploy/model-farm/` serves open models on a GPU; `deploy/coder-model/` runs NexoraGuru's own small coding model on a free Oracle server (the Solve page's AI tests) |

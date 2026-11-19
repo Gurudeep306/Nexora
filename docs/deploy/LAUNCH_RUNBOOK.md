@@ -9,7 +9,7 @@ This runbook takes the app from Render to your own domain on a free stack. Do th
                     └────────────────────────────────────────┬───────────────────────────┘
                                                              │  Piston :2000 (Docker, local only)
                                                              ▼
-                                                  Turso (database, unchanged)
+                                                  Turso (database, moved to Mumbai: step 4b)
  GitHub: push main → CI tests → (a) Pages builds the site  (b) deploy-api.yml SSHes to the VM
  UptimeRobot pings /api/health · Sentry collects errors · nightly Turso backup in Actions
  Render stays as staging (and as the rollback target).
@@ -68,7 +68,7 @@ DNS records come in steps 6 (site) and 9 (api).
 ## 4. Create the Oracle Cloud account and VM
 
 1. Sign up at https://signup.cloud.oracle.com.
-   - **Home Region:** pick **India South (Hyderabad)** or **India West (Mumbai)**. You can't change this later.
+   - **Home Region:** pick **India South (Hyderabad)**. Mumbai works the same way but its free ARM servers are very often "out of capacity" (reported widely in 2026). You can't change this later.
    - Oracle asks for a card to verify you. Always Free resources are not charged.
 2. Make an SSH key on your Mac:
    ```bash
@@ -79,7 +79,7 @@ DNS records come in steps 6 (site) and 9 (api).
    - **Name:** `nexora-api`
    - **Image and shape → Edit**:
      - **Change image → Ubuntu →** *Canonical Ubuntu 24.04* (**aarch64** build) → Select.
-     - **Change shape → Ampere → VM.Standard.A1.Flex** → **4 OCPUs, 24 GB memory** (the whole Always Free allowance) → Select.
+     - **Change shape → Ampere → VM.Standard.A1.Flex** → the whole Always Free allowance → Select. Several reports say Oracle cut it in June 2026 from 4 OCPUs / 24 GB to **2 OCPUs / 12 GB**; Oracle's page *Always Free Resources* shows the current limit, so use exactly what it lists (going over is charged).
    - **Networking:** create a new VCN and a **public subnet**. Turn on **Assign a public IPv4 address**.
    - **Add SSH keys → Paste public keys** → paste the line you copied.
    - **Boot volume:** optionally set 100 GB (Always Free covers 200 GB in total).
@@ -96,6 +96,30 @@ DNS records come in steps 6 (site) and 9 (api).
 7. *(Optional)* To make the IP survive deleting the VM: **Primary VNIC → IPv4 Addresses → ⋯ → Edit → Reserved public IP**.
 
 ✅ `ssh -i ~/.ssh/oracle_nexora ubuntu@<VM_IP>` logs you in.
+
+## 4b. Move the database next to the server (Mumbai)
+
+The database lives in Turso's **aws-us-east-1** (Virginia), chosen when the server was on Render in Virginia. With the server in India, every query would cross the world (about 200 ms each, and a page makes many), so the database moves to **aws-ap-south-1 (Mumbai)**: about 1–5 ms from Hyderabad or Mumbai.
+
+Do this at a quiet time, right before step 6, because anything written to the old database after the copy is not in the new one.
+
+1. Install the Turso CLI on your Mac and log in (`brew install tursodatabase/tap/turso`, then `turso auth login`).
+2. See the locations and check the Mumbai code: `turso db locations` (it should list `aws-ap-south-1`).
+3. Make a copy of the database in Mumbai. Check the exact flag name with `turso db create --help` first; in recent versions it is:
+   ```bash
+   turso db create nexora-in --from-db nexora --location aws-ap-south-1
+   ```
+4. Get its URL and a token, and put them in your notes:
+   ```bash
+   turso db show nexora-in --url
+   turso db tokens create nexora-in
+   ```
+5. Use these two values as `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in step 6. **Also change them in Render** (**Render → nexora → Environment**), so the old site and the new one use the same database while you switch over.
+6. Keep the old database for a week as a fallback, then delete it (`turso db destroy nexora`). Update `TURSO_DATABASE_URL` and `TURSO_BACKUP_TOKEN` in the GitHub secrets (step 10) so the nightly backup copies the new one.
+
+✅ `turso db shell nexora-in "select count(*) from users"` shows the same number as the old database.
+
+Later, once the site runs on the VM: the data can be split into several databases, and the VM can keep a local copy of each for fast reads. See `docs/ops/DATA_SPLIT.md`.
 
 ## 5. Run setup.sh on the VM
 

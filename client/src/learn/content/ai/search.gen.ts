@@ -251,6 +251,58 @@ export const AI_SEARCH: Record<string, AiPageIndex[]> = {
       ]
     }
   ],
+  "f-py-lists": [
+    {
+      "page": "lists",
+      "title": "Lists: many values in order",
+      "sections": [
+        "Indexing and slicing: exactly like strings",
+        "Lists can change",
+        "Built-in functions for lists"
+      ]
+    },
+    {
+      "page": "methods",
+      "title": "List methods: add, remove, sort, search",
+      "sections": [
+        "Adding items",
+        "Removing items",
+        "Sorting: sort() versus sorted()",
+        "Searching"
+      ]
+    },
+    {
+      "page": "aliasing",
+      "title": "Two names, one list: copying",
+      "sections": [
+        "Two names, one list",
+        "Three ways to copy a list"
+      ]
+    },
+    {
+      "page": "nested",
+      "title": "Lists of lists: tables and grids",
+      "sections": [
+        "Columns need a loop",
+        "A trap: [[0] * 3] * 3"
+      ]
+    },
+    {
+      "page": "tuples",
+      "title": "Tuples: fixed groups, packing and unpacking",
+      "sections": [
+        "Packing and unpacking",
+        "List or tuple?"
+      ]
+    },
+    {
+      "page": "check",
+      "title": "Check yourself",
+      "sections": [
+        "Questions"
+      ]
+    }
+  ],
   "f-py-strings": [
     {
       "page": "text",

@@ -372,6 +372,98 @@ const textCache = new Map<string, { tex: CanvasTexture; aspect: number; uses: nu
  * small image. `tilt` stands it up (0 flat, 1 upright). Cheap enough for hundreds of labels (tokens, graph nodes, code),
  * where page labels would stutter. `size` is the letter height in scene units.
  */
+export interface SheetRow {
+  cells: string[]
+  /** head: a header row; active: the current line (marked); sep: a thin rule above this row. */
+  kind?: 'head' | 'active' | 'normal'
+  sep?: boolean
+  /** Indexes of cells to mark (bold, underlined in the accent). */
+  marked?: number[]
+}
+/**
+ * A small sheet of rows and columns (a code listing, a table) drawn onto one
+ * image and laid flat in the scene, so it scales with the drawing on every
+ * screen. Column widths fit their text. `muted` columns are drawn quieter
+ * (line numbers, types).
+ */
+export function Sheet({ rows, at, colors, opacity = 1, mono, muted = [], align = [], unit = 150 }: { rows: SheetRow[]; at: V3; colors: { ink: string; muted: string; paper: string; border: string; accent: string; shade: string }; opacity?: number; mono?: boolean; muted?: number[]; align?: ('left' | 'right')[]; unit?: number }) {
+  const key = JSON.stringify([rows, colors, mono, muted, align])
+  const { tex, w, h } = useMemo(() => {
+    const px = 26
+    const lh = 42
+    const pad = 22
+    const gap = 26
+    const body = getComputedStyle(document.body)
+    const fam = mono ? body.getPropertyValue('--font-mono') || 'ui-monospace, monospace' : body.fontFamily || 'sans-serif'
+    const cv = document.createElement('canvas')
+    const g0 = cv.getContext('2d')
+    const font = (r: SheetRow, k: number) => `${r.kind === 'head' || r.marked?.includes(k) ? 600 : 400} ${r.kind === 'head' ? px - 3 : px}px ${fam}`
+    const cols = Math.max(1, ...rows.map((r) => r.cells.length))
+    const cw = new Array(cols).fill(0)
+    for (const r of rows)
+      r.cells.forEach((t, k) => {
+        if (!g0) return
+        g0.font = font(r, k)
+        cw[k] = Math.max(cw[k], g0.measureText(t).width)
+      })
+    const W = Math.ceil(pad * 2 + cw.reduce((a, b) => a + b, 0) + gap * (cols - 1) + 8)
+    const H = Math.ceil(pad * 2 + rows.length * lh)
+    cv.width = W
+    cv.height = H
+    const g = cv.getContext('2d')
+    if (g) {
+      g.fillStyle = colors.paper
+      g.strokeStyle = colors.border
+      g.lineWidth = 2
+      g.beginPath()
+      g.roundRect(1, 1, W - 2, H - 2, 16)
+      g.fill()
+      g.stroke()
+      rows.forEach((r, i) => {
+        const y = pad + i * lh
+        if (r.kind === 'active') {
+          g.fillStyle = colors.shade
+          g.fillRect(2, y, W - 4, lh)
+          g.fillStyle = colors.accent
+          g.fillRect(2, y, 5, lh)
+        }
+        if (r.sep || (i > 0 && rows[i - 1].kind === 'head')) {
+          g.fillStyle = colors.border
+          g.fillRect(pad / 2, y, W - pad, 2)
+        }
+        let x = pad + 4
+        r.cells.forEach((t, k) => {
+          g.font = font(r, k)
+          g.fillStyle = r.kind === 'head' || muted.includes(k) ? colors.muted : colors.ink
+          g.textBaseline = 'middle'
+          const right = align[k] === 'right'
+          g.textAlign = right ? 'right' : 'left'
+          g.fillText(t, right ? x + cw[k] : x, y + lh / 2 + 1)
+          if (r.marked?.includes(k)) {
+            g.fillStyle = colors.accent
+            const tw = g.measureText(t).width
+            g.fillRect(right ? x + cw[k] - tw : x, y + lh - 8, tw, 3)
+          }
+          x += cw[k] + gap
+        })
+      })
+    }
+    const t = new CanvasTexture(cv)
+    t.colorSpace = SRGBColorSpace
+    t.anisotropy = 8
+    return { tex: t, w: W / unit, h: H / unit }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, unit])
+  useEffect(() => () => tex.dispose(), [tex])
+  if (opacity <= 0.01) return null
+  return (
+    <mesh position={at} rotation={[-Math.PI / 2, 0, 0]} renderOrder={3} raycast={() => null}>
+      <planeGeometry args={[w, h]} />
+      <meshBasicMaterial map={tex} transparent opacity={opacity} depthWrite={false} toneMapped={false} />
+    </mesh>
+  )
+}
+
 export function FlatText({ text, at, size = 0.2, color, opacity = 1, weight = 500, align = 'center', mono, tilt = 0, rotate = 0 }: { text: string; at: V3; size?: number; color: string; opacity?: number; weight?: number; align?: 'left' | 'center' | 'right'; mono?: boolean; tilt?: number; rotate?: number }) {
   const key = `${text}|${color}|${weight}|${mono ? 1 : 0}`
   const entry = useMemo(() => {

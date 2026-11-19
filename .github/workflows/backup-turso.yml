@@ -5,6 +5,9 @@
 # Needs repository secrets (Settings → Secrets and variables → Actions):
 #   TURSO_DATABASE_URL   libsql://nexora-<you>.aws-us-east-1.turso.io
 #   TURSO_BACKUP_TOKEN   a READ-ONLY Turso token (falls back to TURSO_AUTH_TOKEN)
+# When the data is split (src/db-stores.js), also add the store URLs that are
+# in use; a read-only GROUP token covers every database in the group:
+#   TURSO_HIVE_URL  TURSO_FILES_URL  TURSO_CACHE_URL  TURSO_LOGS_URL
 name: Nightly backup
 
 on:
@@ -20,6 +23,10 @@ jobs:
       PUPPETEER_SKIP_DOWNLOAD: "1"
       TURSO_DATABASE_URL: ${{ secrets.TURSO_DATABASE_URL }}
       TURSO_AUTH_TOKEN: ${{ secrets.TURSO_BACKUP_TOKEN || secrets.TURSO_AUTH_TOKEN }}
+      TURSO_HIVE_URL: ${{ secrets.TURSO_HIVE_URL }}
+      TURSO_FILES_URL: ${{ secrets.TURSO_FILES_URL }}
+      TURSO_CACHE_URL: ${{ secrets.TURSO_CACHE_URL }}
+      TURSO_LOGS_URL: ${{ secrets.TURSO_LOGS_URL }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7

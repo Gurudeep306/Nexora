@@ -7,7 +7,7 @@
 // history, notes, social profile and posts. This walks the live schema instead,
 // so new tables are covered automatically as long as their user column uses
 // one of the names below.
-const { all, run } = require("./db");
+const { all, allEach, run } = require("./db");
 
 // Columns that hold a username, anywhere in the schema.
 const USER_COLUMNS = new Set([
@@ -23,11 +23,15 @@ const SKIP_TABLES = new Set(["users", "sessions"]);
 let schemaCache = null;
 async function userColumnsBySchema() {
   if (schemaCache) return schemaCache;
-  const tables = await all(
+  // Every store: hive, files and logs tables can be in databases of their own.
+  const tables = await allEach(
     "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name NOT LIKE '_litestream%'",
   );
   const out = [];
+  const seen = new Set();
   for (const { name } of tables) {
+    if (seen.has(name)) continue; // an old copy left in core after a move
+    seen.add(name);
     if (SKIP_TABLES.has(name) || !/^[A-Za-z0-9_]+$/.test(name)) continue;
     const cols = await all(`PRAGMA table_info(${name})`);
     for (const c of cols) if (USER_COLUMNS.has(c.name)) out.push([name, c.name]);

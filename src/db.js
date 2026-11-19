@@ -38,14 +38,36 @@ const DB_PATH =
   process.env.DB_PATH ||
   (IS_TEST ? ":memory:" : path.join(__dirname, "..", "tracker.db"));
 
+// The data is split into stores (src/db-stores.js). Each store with a
+// TURSO_<STORE>_URL of its own gets its own client; the rest share core.
+const { storeOfSql, storeUrls } = require("./db-stores");
+const clients = {}; // store -> @libsql/client (cloud mode)
+const targets = {}; // store -> URL, for dbInfo
+
 if (DRIVER === "libsql") {
   // eslint-disable-next-line global-require
   const { createClient } = require("@libsql/client");
-  libsql = createClient({
-    url: REMOTE_URL,
-    authToken: process.env.TURSO_AUTH_TOKEN || undefined,
-    intMode: "number",
-  });
+  // TURSO_REPLICA_DIR (a server with a lasting disk, e.g. the Oracle VM):
+  // each store keeps a local copy that Turso keeps in sync. Reads are then
+  // answered from the disk instead of a network round trip; writes still go
+  // to Turso first, and this server sees its own writes at once.
+  const REPLICA_DIR = (process.env.TURSO_REPLICA_DIR || "").trim();
+  const SYNC_SECONDS = Math.max(1, Number(process.env.TURSO_SYNC_SECONDS) || 15);
+  const open = (store, url, authToken) => {
+    targets[store] = url.replace(/\?.*$/, "");
+    if (!REPLICA_DIR) return createClient({ url, authToken, intMode: "number" });
+    require("fs").mkdirSync(REPLICA_DIR, { recursive: true });
+    return createClient({
+      url: `file:${path.join(REPLICA_DIR, `${store}.db`)}`,
+      syncUrl: url,
+      syncInterval: SYNC_SECONDS,
+      authToken,
+      intMode: "number",
+    });
+  };
+  libsql = open("core", REMOTE_URL, process.env.TURSO_AUTH_TOKEN || undefined);
+  clients.core = libsql;
+  for (const [store, { url, authToken }] of Object.entries(storeUrls())) clients[store] = open(store, url, authToken);
 } else {
   // NOTE: `sqlite3` is a native addon and may fail to load in some environments
   // (e.g. mismatched architecture / prebuilt binaries). We fall back to Node's
@@ -122,9 +144,13 @@ function plainRow(row, columns) {
   for (const c of columns) o[c] = row[c];
   return o;
 }
+/** The client for a statement: its store's own database, else core. */
+function clientFor(sql) {
+  return clients[storeOfSql(sql)] || libsql;
+}
 async function libsqlExec(sql, params) {
   try {
-    return await libsql.execute({ sql, args: toLibsqlArgs(params) });
+    return await clientFor(sql).execute({ sql, args: toLibsqlArgs(params) });
   } catch (err) {
     // Surface the SQL in the message for easier debugging of cloud-only issues.
     if (err && typeof err.message === "string" && !err.message.includes("[sql]")) {
@@ -259,7 +285,7 @@ async function runMany(sql, rows, chunkSize = 200) {
       for (let i = 0; i < rows.length; i += chunkSize) {
         const slice = rows.slice(i, i + chunkSize);
         countQuery();
-        const rs = await libsql.batch(
+        const rs = await clientFor(sql).batch(
           slice.map((p) => ({ sql, args: toLibsqlArgs(p) })),
           "write",
         );
@@ -282,16 +308,29 @@ async function runBatch(stmts) {
   const list = stmts.filter(Boolean);
   if (!list.length) return [];
   if (libsql) {
-    countQuery();
+    // A batch is one transaction inside one database. When the statements
+    // belong to different stores (e.g. schema set-up at boot), each run of
+    // statements for the same database goes as its own batch, in order.
+    const groups = [];
+    for (const st of list) {
+      const c = clientFor(st[0]);
+      if (groups.length && groups[groups.length - 1].c === c) groups[groups.length - 1].stmts.push(st);
+      else groups.push({ c, stmts: [st] });
+    }
+    const out = [];
     try {
-      const rs = await libsql.batch(
-        list.map(([sql, params]) => ({ sql, args: toLibsqlArgs(params) })),
-        "write",
-      );
-      for (let j = 0; j < rs.length; j++) {
-        await dbStats.record(list[j][0], list[j][1] || [], rs[j].rows?.length || 0, Number(rs[j].rowsAffected || 0));
+      for (const { c, stmts: part } of groups) {
+        countQuery();
+        const rs = await c.batch(
+          part.map(([sql, params]) => ({ sql, args: toLibsqlArgs(params) })),
+          "write",
+        );
+        for (let j = 0; j < rs.length; j++) {
+          await dbStats.record(part[j][0], part[j][1] || [], rs[j].rows?.length || 0, Number(rs[j].rowsAffected || 0));
+        }
+        out.push(...rs.map((r) => ({ changes: Number(r.rowsAffected || 0) })));
       }
-      return rs.map((r) => ({ changes: Number(r.rowsAffected || 0) }));
+      return out;
     } finally {
       if (writeHooks.length) for (const [sql] of list) notifyWrite(sql);
     }
@@ -305,10 +344,47 @@ function dbInfo() {
   return {
     driver: libsql ? "libsql" : _usingBuiltinSqlite ? "node:sqlite" : "sqlite3",
     target: libsql ? REMOTE_URL.replace(/\?.*$/, "") : DB_PATH,
+    // Stores with a database of their own (cloud mode only).
+    stores: Object.keys(clients).filter((k) => k !== "core"),
   };
 }
 
+/**
+ * Run one statement on every database (core and each store with its own),
+ * joining the rows. For schema questions such as "which tables exist".
+ */
+async function allEach(sql, params = []) {
+  if (!libsql) return all(sql, params);
+  const out = [];
+  for (const c of new Set(Object.values(clients))) {
+    await beforeQuery(sql);
+    const rs = await c.execute({ sql, args: toLibsqlArgs(params) });
+    out.push(...rs.rows.map((r) => plainRow(r, rs.columns)));
+  }
+  return out;
+}
+
+/**
+ * Bring every local replica up to date now (no-op without TURSO_REPLICA_DIR).
+ * At boot (strict) a failed sync stops the server: reading from an empty or
+ * stale copy would show wrong data. Remove TURSO_REPLICA_DIR to read from
+ * Turso directly instead.
+ */
+async function syncReplicas({ strict = false } = {}) {
+  if (!libsql || !(process.env.TURSO_REPLICA_DIR || "").trim()) return;
+  await Promise.all(
+    [...new Set(Object.values(clients))].map((c) =>
+      c.sync().catch((e) => {
+        if (strict) throw new Error(`[db] first sync of a local replica failed (${e.message}); unset TURSO_REPLICA_DIR to read from Turso directly`);
+        console.warn("[db] sync:", e.message);
+      }),
+    ),
+  );
+}
+
 async function initDb() {
+  // A fresh local replica starts empty: fetch the data before the first read.
+  await syncReplicas({ strict: true });
   // Pragmas tuned for production/dev on-disk DB.
   // In tests (often in-memory), keep pragmas lightweight to avoid slow startups.
   if (!libsql) {
@@ -689,9 +765,10 @@ async function initDb() {
     submission_id INTEGER NOT NULL,
     events TEXT NOT NULL DEFAULT '[]',
     duration_ms INTEGER DEFAULT 0,
-    created_at TEXT NOT NULL,
-    FOREIGN KEY (submission_id) REFERENCES submissions(id)
+    created_at TEXT NOT NULL
   )`);
+  // No foreign key to submissions: replays live in the logs store, which can
+  // be a different database. Deleting a submission's owner deletes both.
 
   // Custom user-created problems
   await run(`CREATE TABLE IF NOT EXISTS custom_problems (
@@ -1711,4 +1788,4 @@ async function migratePerUser() {
   }
 }
 
-module.exports = { run, get, all, runMany, runBatch, initDb, initAdminTables, initSocialTables, dbInfo, migratePerUser, LEGACY_OWNER, onWrite };
+module.exports = { run, get, all, allEach, syncReplicas, runMany, runBatch, initDb, initAdminTables, initSocialTables, dbInfo, migratePerUser, LEGACY_OWNER, onWrite };
