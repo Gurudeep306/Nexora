@@ -43,7 +43,7 @@ export function GraphPreview() {
     <Player label="A lesson playing: breadth-first search explores a graph ring by ring" stepper={stepper}>
       <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_14rem] lg:items-start">
         <div className="min-w-0">
-          <svg viewBox="0 0 400 220" className="lp-graph block h-auto w-full max-w-[34rem]" role="img" aria-label={`Visited so far: ${Object.keys(s.seen).join(', ')}`}>
+          <svg viewBox="0 -28 400 248" className="lp-graph block h-auto w-full max-w-[34rem]" role="img" aria-label={`Visited so far: ${Object.keys(s.seen).join(', ')}`}>
             {EDGES.map(([a, b]) => {
               const [x1, y1] = NODES[a]
               const [x2, y2] = NODES[b]

@@ -4,9 +4,9 @@ import { cn } from '@/lib/utils'
 import { Icon } from '@/components/icon/Icon'
 
 export function Player({ label, stepper, children }: { label: string; stepper: ReturnType<typeof useStepper>; children: ReactNode }) {
-  const { i, setI, pause, count } = stepper
+  const { i, setI, pause, count, ref } = stepper
   return (
-    <figure className="m-0 text-left" aria-label={label} {...pause}>
+    <figure ref={ref} className="m-0 text-left" aria-label={label} {...pause}>
       {children}
       <div className="mt-8 flex items-center gap-2">
         <button type="button" className="ed-icon-btn" onClick={() => setI((x) => (x - 1 + count) % count)} aria-label="Previous step">
