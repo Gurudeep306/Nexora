@@ -1832,7 +1832,7 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
 
       // Check achievements
       // Achievements are for solved problems: a full check, not the examples alone.
-      await checkAchievements(problem_id, fullPass ? "AC" : result.verdict === "AC" ? "EX" : result.verdict);
+      await checkAchievements(problem_id, fullPass ? "AC" : result.verdict === "AC" ? "EX" : result.verdict, { firstSolve });
       // "Invite to solve": mark this person in open invites and refresh the cards.
       if (accepted) await require("./solve-invites").afterSolve(realtime, me(), Number(problem_id), { full: fullPass });
       invalidateCache();
@@ -2710,7 +2710,7 @@ async function streaksFor(usernames) {
   return out;
 }
 
-async function checkAchievements(problemId, verdict, { backfill = false } = {}) {
+async function checkAchievements(problemId, verdict, { backfill = false, firstSolve = false } = {}) {
   if (verdict !== "AC") return;
   const u = me();
   if (!u) return;
@@ -2792,8 +2792,10 @@ async function checkAchievements(problemId, verdict, { backfill = false } = {}) 
   }
   if (uniqueTags.size) await award("tag_master", uniqueTags.size, 10);
 
-  // Today's daily challenge → per-user completion + bonus XP
-  const dailyChallenge = backfill ? null : await get(
+  // Today's daily challenge → per-user completion + bonus XP, only for the
+  // submission that solves the problem: re-solving a problem already solved
+  // (say, before it became today's challenge) never earns XP again.
+  const dailyChallenge = backfill || !firstSolve ? null : await get(
     `SELECT dc.* FROM daily_challenges dc
      LEFT JOIN user_daily_challenges udc ON udc.challenge_id = dc.id AND udc.username = ?
      WHERE dc.date=? AND dc.problem_rowid=? AND udc.challenge_id IS NULL`,

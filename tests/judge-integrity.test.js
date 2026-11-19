@@ -49,7 +49,7 @@ const DOUBLE = "const n=+require('fs').readFileSync(0,'utf8');console.log(n*2)";
 const stamp = Date.now().toString(36);
 const A = `al${stamp}`, B = `bo${stamp}`;
 let alice, bob;
-let bare, stored, sampled, partialP, ownOnly; // problem ids
+let bare, stored, sampled, partialP, ownOnly, dailyP; // problem ids
 
 test.before(async () => {
   const port = 25000 + Math.floor(Math.random() * 1000);
@@ -90,6 +90,11 @@ test.before(async () => {
       .run(partialP, JSON.stringify([{ input: '1\n', output: '2\n' }, { input: '2\n', output: '4\n' }, { input: '3\n', output: '6\n' }]));
     // No samples and no official tests: only the solver's own tests exist.
     ownOnly = add('9001E', 1500);
+    // Today's daily challenge: official tests and rating like `stored`.
+    dailyP = add('9001F', 1500);
+    db.prepare('INSERT OR REPLACE INTO cf_dataset_tests(id, tests, exact, fetched_at) VALUES(?,?,1,?)').run('9001/F', JSON.stringify([{ input: '21', output: '42' }]), Date.now());
+    db.prepare("INSERT INTO daily_challenges(date, problem_rowid, difficulty, bonus_xp) VALUES(?,?,'easy',50)")
+      .run(new Date().toISOString().slice(0, 10), dailyP);
   });
   alice = await signup(A);
   bob = await signup(B);
@@ -173,6 +178,27 @@ test('re-solving an accepted problem earns no more XP', async () => {
     db.prepare('SELECT SUM(problems_solved) s, SUM(xp_earned) x FROM daily_activity WHERE username=?').get(A));
   assert.equal(Number(day.s), 1, 'daily solved count counts the problem once');
   assert.equal(Number(day.x), 40, 'daily XP counts the 1500-rated problem once');
+});
+
+test("today's daily challenge adds its bonus once, on the solve that solves it", async () => {
+  const xpOf = (user, pid) => withDb((db) =>
+    Number(db.prepare('SELECT xp_earned x FROM progress WHERE username=? AND problem_rowid=?').get(user, pid)?.x ?? -1));
+  const solve = () => call('POST', '/api/judge', alice, { problem_id: dailyP, language: 'javascript', code: DOUBLE, testcases: [] });
+  assert.equal((await solve()).body.verdict, 'AC');
+  const base = 40; // a 1500-rated problem, as in the test above
+  assert.equal(xpOf(A, dailyP), base + 50, 'first solve: the points plus the 50 bonus');
+  assert.equal((await solve()).body.verdict, 'AC');
+  assert.equal(xpOf(A, dailyP), base + 50, 're-solving adds nothing');
+  const done = withDb((db) => db.prepare(`SELECT COUNT(*) n FROM user_daily_challenges u
+    JOIN daily_challenges d ON d.id = u.challenge_id WHERE u.username=? AND d.problem_rowid=?`).get(A, dailyP).n);
+  assert.equal(Number(done), 1);
+
+  // A problem solved before it became today's challenge: re-solving it earns nothing.
+  const before = xpOf(A, stored);
+  withDb((db) => db.prepare("INSERT OR IGNORE INTO daily_challenges(date, problem_rowid, difficulty, bonus_xp) VALUES(?,?,'medium',50)")
+    .run(new Date().toISOString().slice(0, 10), stored));
+  assert.equal((await call('POST', '/api/judge', alice, { problem_id: stored, language: 'javascript', code: DOUBLE })).body.verdict, 'AC');
+  assert.equal(xpOf(A, stored), before, 'no bonus for re-solving an already solved problem');
 });
 
 test('testcase count and input size are capped', async () => {
