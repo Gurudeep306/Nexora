@@ -2,7 +2,7 @@
 """
 Nexora GATE Transcriber & Ingestion Engine
 Extracts all remaining GATE past-year question papers (2021-2 through 2025 CSE & DA)
-from GATE_PYQ/ into src/gate/questions.json and data/gate/gate-cse-da-past-years.json.
+from the past-paper PDFs (the private repo nexora-gate-materials, GATE_PYQ/) into src/gate/questions.json and data/gate/gate-cse-da-past-years.json.
 """
 
 import os
@@ -12,6 +12,15 @@ import json
 import subprocess
 import tempfile
 import pypdf
+
+# The past-paper PDFs live in the private repo nexora-gate-materials (cloned
+# next to this one). GATE_PYQ_DIR overrides where to find them.
+def pyq_path(rel):
+    name = rel.split("/", 1)[1] if rel.startswith("GATE_PYQ/") else rel
+    for d in (os.environ.get("GATE_PYQ_DIR"), "GATE_PYQ", os.path.join("..", "nexora-gate-materials", "GATE_PYQ")):
+        if d and os.path.exists(os.path.join(d, name)):
+            return os.path.join(d, name)
+    sys.exit(f"Cannot find {name}: clone nexora-gate-materials next to this repo, or set GATE_PYQ_DIR.")
 
 CSE_RULES = [
     ("toc", "regular", ["regular language", "regular expression", "dfa", "nfa", "finite automaton", "pumping lemma", "myhill", "state diagram"]),
@@ -319,6 +328,7 @@ def main():
             print(f"[!] {pid} already in master data, skipping...")
             continue
             
+        pdf_path = pyq_path(pdf_path)
         print(f"\n[+] Processing {pid} from {pdf_path}...")
         if pid == "cse-2021-2":
             parsed_raw = parse_scanned_2021_2(pdf_path)

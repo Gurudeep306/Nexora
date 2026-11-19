@@ -5,6 +5,8 @@ export const meta = {
 }
 
 const MAIN = '/Users/gurudeep/Desktop/Projects/nexora'
+// The past-paper PDFs live in the private repo nexora-gate-materials, cloned next to this one.
+const GATE_PYQ = process.env.GATE_PYQ_DIR || `${MAIN}/../nexora-gate-materials/GATE_PYQ`
 const CONCURRENCY = 4
 
 const RESULT_SCHEMA = {
@@ -30,7 +32,7 @@ Setup (fresh git worktree; use /usr/bin/git):
 \`/usr/bin/git fetch -q origin && /usr/bin/git reset -q --hard origin/gate-bulk && /usr/bin/git sparse-checkout set --no-cone '/*' '!/GATE_PYQ/' && ln -s ${MAIN}/node_modules node_modules && ln -s ${MAIN}/client/node_modules client/node_modules\` (no npm ci).
 
 Read ONLY docs/gate/AUTHORING_QUICK.md (short). For a scene primitive you use, grep just its section from docs/gate/SOLUTION_AUTHORING.md. Don't read other solution files.
-Tools: \`node scripts/gate/question.mjs ${b.paper} <id> [--json]\`; PDF ${MAIN}/GATE_PYQ/${b.pdf}: start with \`pdftotext -layout\` (cheap); render pages with the Read tool (pages param) only for figures or unclear maths.
+Tools: \`node scripts/gate/question.mjs ${b.paper} <id> [--json]\`; PDF ${GATE_PYQ}/${b.pdf}: start with \`pdftotext -layout\` (cheap); render pages with the Read tool (pages param) only for figures or unclear maths.
 
 Per question:
 1. Match the record to the paper question (number, marks, content; records can be shifted). Fix text/options/type/marks/subject/topic/tags/figures vs the PDF (remove header/footer junk, use KaTeX, markdown tables, fenced code).

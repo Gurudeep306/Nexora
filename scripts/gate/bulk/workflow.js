@@ -5,6 +5,8 @@ export const meta = {
 }
 
 const MAIN = '/Users/gurudeep/Desktop/Projects/nexora'
+// The past-paper PDFs live in the private repo nexora-gate-materials, cloned next to this one.
+const GATE_PYQ = process.env.GATE_PYQ_DIR || `${MAIN}/../nexora-gate-materials/GATE_PYQ`
 const CONCURRENCY = 4
 
 const RESULT_SCHEMA = {
@@ -38,7 +40,7 @@ ${b.ids.join(', ')}
 - docs/gate/SOLUTION_AUTHORING.md — the v2 solution schema, every scene primitive, rules and checklist. Follow it literally.
 - Look at src/gate/solutions/cse-2023.json — a fully verified paper; it is the quality bar.
 - Helpers: \`node scripts/gate/question.mjs ${b.paper} <id>\` prints a question; \`node scripts/gate/validate-solutions.mjs ${b.paper}\` validates.
-- The original paper PDF: ${MAIN}/GATE_PYQ/${b.pdf}. Open it with your Read tool and the \`pages\` parameter (≤ 20 pages per call); it renders text AND diagrams. The paper notes in src/gate/questions.json ("papers") describe its layout/quirks. If the file turns out not to be this paper, say so in doubts and verify against https://gateoverflow.in question pages (WebFetch) instead.
+- The original paper PDF: ${GATE_PYQ}/${b.pdf}. Open it with your Read tool and the \`pages\` parameter (≤ 20 pages per call); it renders text AND diagrams. The paper notes in src/gate/questions.json ("papers") describe its layout/quirks. If the file turns out not to be this paper, say so in doubts and verify against https://gateoverflow.in question pages (WebFetch) instead.
 
 ## Lessons from earlier batches (read carefully)
 - PDF tools are installed: /opt/homebrew/bin/pdftoppm, pdftotext, pdfinfo (poppler). The Read tool can render PDF pages; \`pdftotext -layout <pdf> -\` gives a quick text dump for exact wording.
