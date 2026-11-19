@@ -305,6 +305,50 @@ export const PALETTES: Palette[] = [
     },
   },
   {
+    id: 'monsoon',
+    name: 'Monsoon',
+    category: 'signature',
+    blurb: 'Rain on slate: misty grey-green paper by day, a storm-blue night with peacock teal.',
+    light: {
+      bg: ['0.955 0.012 205', '0.985 0.005 205', '0.932 0.015 205', '0.905 0.02 205', '0.878 0.024 205'],
+      fg: ['0.24 0.03 230', '0.37 0.03 225', '0.48 0.03 220'],
+      border: '0.84 0.02 210',
+      accent: '0.47 0.1 200', accent2: '0.41 0.1 200', onAccent: '0.99 0 0',
+      success: '0.47 0.11 150', warning: '0.5 0.11 70', danger: '0.5 0.16 25', info: '0.47 0.12 250',
+      syntax: { keyword: '0.47 0.1 200', string: '0.46 0.11 150', number: '0.5 0.11 70', function: '0.24 0.03 230', type: '0.47 0.12 290', comment: '0.48 0.03 220' },
+    },
+    dark: {
+      bg: ['0.235 0.025 235', '0.27 0.028 235', '0.295 0.03 235', '0.325 0.032 235', '0.355 0.033 235'],
+      fg: ['0.95 0.012 210', '0.87 0.02 210', '0.76 0.025 210'],
+      border: '0.4 0.03 230',
+      accent: '0.8 0.11 190', accent2: '0.85 0.1 190', onAccent: '0.235 0.025 235',
+      success: '0.82 0.13 150', warning: '0.85 0.12 80', danger: '0.75 0.14 25', info: '0.8 0.09 245',
+      syntax: { keyword: '0.8 0.11 190', string: '0.82 0.13 150', number: '0.85 0.12 80', function: '0.95 0.012 210', type: '0.8 0.09 290', comment: '0.76 0.025 210' },
+    },
+  },
+  {
+    id: 'kintsugi',
+    name: 'Kintsugi',
+    category: 'signature',
+    blurb: 'Washi paper with bronze-gold ink by day; black lacquer mended with gold at night.',
+    light: {
+      bg: ['0.962 0.01 80', '0.988 0.005 85', '0.94 0.012 78', '0.913 0.017 75', '0.885 0.02 75'],
+      fg: ['0.2 0.01 60', '0.35 0.012 60', '0.47 0.014 60'],
+      border: '0.85 0.012 75',
+      accent: '0.48 0.1 75', accent2: '0.43 0.1 75', onAccent: '0.99 0 0',
+      success: '0.47 0.1 150', warning: '0.5 0.11 60', danger: '0.5 0.16 28', info: '0.47 0.1 250',
+      syntax: { keyword: '0.5 0.15 28', string: '0.46 0.1 150', number: '0.48 0.1 75', function: '0.2 0.01 60', type: '0.47 0.1 250', comment: '0.47 0.014 60' },
+    },
+    dark: {
+      bg: ['0.18 0.004 60', '0.215 0.006 60', '0.235 0.007 60', '0.265 0.009 60', '0.295 0.01 60'],
+      fg: ['0.94 0.012 85', '0.85 0.015 80', '0.73 0.018 78'],
+      border: '0.355 0.012 70',
+      accent: '0.82 0.12 85', accent2: '0.86 0.11 85', onAccent: '0.2 0.01 60',
+      success: '0.78 0.12 150', warning: '0.84 0.12 75', danger: '0.72 0.15 28', info: '0.78 0.08 245',
+      syntax: { keyword: '0.74 0.14 28', string: '0.78 0.12 150', number: '0.84 0.12 85', function: '0.94 0.012 85', type: '0.78 0.08 245', comment: '0.73 0.018 78' },
+    },
+  },
+  {
     id: 'midnight',
     name: 'Midnight',
     category: 'signature',
@@ -330,7 +374,7 @@ export const PALETTES: Palette[] = [
 
 /**
  * Accent colours people can put on any theme (Appearance → Make it yours).
- * Tuned so every one passes the accent rules in audit.ts on all ten themes,
+ * Tuned so every one passes the accent rules in audit.ts on all twelve themes,
  * in light and dark (tests/theme-contrast.test.js checks it).
  */
 export const ACCENTS: AccentOverride[] = [

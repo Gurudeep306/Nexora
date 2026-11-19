@@ -160,13 +160,13 @@ changed.
     on dark, black on light). Inside the app, primary buttons use the accent.
   - Back buttons use `BackButton` with no props. It goes to the page you came
     from in this tab, else one level up, and its label names the place.
-- **Ten themes (Appearance page, `/theme`).** A look is one of ten themes
+- **Twelve themes (Appearance page, `/theme`).** A look is one of twelve themes
   (`client/src/theme/styles.ts`): Field Journal (default), Sakura, Arcade,
-  Greenhouse, Observatory, Blueprint, Sketchbook, Block Print, Terminal and
-  Clear. Each brings its own palette (light and dark), type, shapes, icons and
+  Greenhouse, Observatory, Blueprint, Sketchbook, Block Print, Terminal,
+  Clear, Monsoon and Kintsugi. Each brings its own palette (light and dark), type, shapes, icons and
   drawn pattern. On top of any theme people can choose (Appearance → Make it
   yours, look v6): an accent colour (`ACCENTS`) and a text ink (`INKS`) in
-  `theme/palettes.ts`, each checked for contrast on all ten themes by
+  `theme/palettes.ts`, each checked for contrast on all twelve themes by
   `tests/theme-contrast.test.js`; interface, heading and reading faces
   (`theme/fonts.ts`); corners and drawings (`theme/personal.css`); text size,
   code font and solution handwriting; and the Dock (position, size, names,

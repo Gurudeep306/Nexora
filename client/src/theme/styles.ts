@@ -53,7 +53,7 @@ export interface DesignStyle {
 }
 
 /*
-  The ten NexoraGuru themes. Each is a whole design: its own palette (light
+  The twelve NexoraGuru themes. Each is a whole design: its own palette (light
   and dark), typefaces, corners, a drawn page pattern and an icon set. They
   all dress the same page kit, so every feature works in every theme; their
   differences live in theme/themes.css under [data-style='…'].
@@ -161,6 +161,26 @@ export const STYLES: DesignStyle[] = [
     kit: 'journal',
   },
   {
+    id: 'monsoon',
+    name: 'Monsoon',
+    tagline: 'Rain on slate',
+    about: 'Misty grey-green paper with rain, drops and ripples drawn in the margins and a characterful grotesque for headings. At night it is a storm-blue sky lit by peacock teal.',
+    forWho: 'Late-night studiers and rain lovers',
+    bundle: { theme: 'monsoon', font: 'figtree', codeFont: 'fira', radius: 'rounded', cardStyle: 'flat', pattern: 'rain', iconSet: 'phosphor', iconStyle: 'light', iconContainer: 'quiet', iconShape: 'circle' },
+    displayFont: 'bricolage',
+    kit: 'journal',
+  },
+  {
+    id: 'kintsugi',
+    name: 'Kintsugi',
+    tagline: 'Mended with gold',
+    about: 'Named for the art of mending pottery with gold: washi paper and a bookish serif by day, black lacquer with fine gold seams at night. Every mistake fixed makes the work stronger.',
+    forWho: 'Patient learners who like quiet luxury',
+    bundle: { theme: 'kintsugi', font: 'instrument', codeFont: 'victor', radius: 'rounded', cardStyle: 'flat', pattern: 'seams', iconSet: 'phosphor', iconStyle: 'thin', iconContainer: 'quiet', iconShape: 'squircle' },
+    displayFont: 'literata',
+    kit: 'journal',
+  },
+  {
     // Hive's old look (before 2026-11): never offered, never stored. Kept so old saved looks still read.
     id: 'studio',
     name: 'Studio',
@@ -192,6 +212,8 @@ export const PATTERNS = [
   { id: 'doodles', label: 'Doodles', hint: 'Pencil doodles on dot-grid paper.' },
   { id: 'blocks', label: 'Block print', hint: 'Buta and rosette motifs, printed by hand.' },
   { id: 'scanlines', label: 'Scan lines', hint: 'Faint scan lines, or green-bar paper by day.' },
+  { id: 'rain', label: 'Rain', hint: 'Slanting rain, drops and ripples.' },
+  { id: 'seams', label: 'Gold seams', hint: 'Fine mended cracks, like kintsugi pottery.' },
 ] as const
 
 /** Heading faces only styles use (loaded on demand; see fontLoaders.ts). */
@@ -203,6 +225,8 @@ export const DISPLAY_FACES: Record<string, string> = {
   rozha: "'Rozha One', ui-serif, Georgia, serif",
   kalam: "'Kalam', 'Comic Neue', ui-rounded, cursive",
   martian: "'Martian Mono Variable', ui-monospace, monospace",
+  bricolage: "'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif",
+  literata: "'Literata Variable', ui-serif, Georgia, serif",
 }
 
 export type PatternId = (typeof PATTERNS)[number]['id']

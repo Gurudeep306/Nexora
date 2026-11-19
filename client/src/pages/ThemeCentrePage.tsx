@@ -12,7 +12,7 @@ import { MakeItYours } from '@/components/look/MakeItYours'
 import '@/components/look/theme-centre.css'
 
 /**
- * Appearance: ten themes, each a whole design (paper, ink, type, drawings,
+ * Appearance: twelve themes, each a whole design (paper, ink, type, drawings,
  * icons and shapes), then three personal settings that sit on top of any
  * theme. Each card is a real specimen of its theme, so what you see is what
  * every page will look like.
@@ -72,7 +72,7 @@ export default function ThemeCentrePage() {
             Choose your theme
           </h1>
           <p className="ed-lead mt-2 max-w-2xl">
-            Ten themes, each with its own paper, ink, type, drawings and icons. Every page works in all of them, in light and dark. You&rsquo;re using {current.name}.
+            Twelve themes, each with its own paper, ink, type, drawings and icons. Every page works in all of them, in light and dark. You&rsquo;re using {current.name}.
           </p>
         </div>
         <div className="flex flex-wrap items-start gap-2.5">

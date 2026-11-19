@@ -37,6 +37,8 @@ export const DISPLAY_FONT_LOADERS: Record<string, Loader> = {
   rozha: () => import('@fontsource/rozha-one/400.css'),
   kalam: () => Promise.all([import('@fontsource/kalam/400.css'), import('@fontsource/kalam/700.css')]),
   martian: () => import('@fontsource-variable/martian-mono'),
+  bricolage: () => import('@fontsource-variable/bricolage-grotesque'),
+  literata: () => import('@fontsource-variable/literata'),
 }
 
 export const CODE_FONT_LOADERS: Record<string, Loader> = {
