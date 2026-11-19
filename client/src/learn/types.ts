@@ -1,5 +1,6 @@
 import type { Algorithm, Lang } from './engine/types'
 import type { Question } from './questions/types'
+import type { StageSpec } from '@/ai/stage/spec'
 
 export type CalloutKind = 'note' | 'tip' | 'warn' | 'insight' | 'interview' | 'pitfall'
 
@@ -12,6 +13,8 @@ export type Block =
   | { t: 'check'; ids: string[]; title?: string }
   | { t: 'practice'; ids: string[]; title?: string }
   | { t: 'steps'; title?: string; items: { title: string; md: string }[] }
+  /** A Nexora Stage scene (2D and 3D, client/src/ai/stage/spec.ts); loaded only when a page shows one. */
+  | { t: 'stage'; scene: StageSpec; caption?: string }
 
 export interface Page {
   id: string

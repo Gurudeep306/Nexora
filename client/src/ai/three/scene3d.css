@@ -174,3 +174,23 @@
 .ai3d-cam button[aria-pressed='false'] {
   color: var(--color-text-muted);
 }
+/* A word in a Stage caption that points at part of the scene. */
+.stage-ref {
+  display: inline;
+  padding: 0;
+  font: inherit;
+  color: var(--color-text-primary);
+  background: none;
+  border: 0;
+  border-bottom: 1px dashed var(--color-text-muted);
+  cursor: help;
+}
+.stage-ref:hover,
+.stage-ref:focus-visible {
+  border-bottom-color: var(--color-accent-brand);
+  outline: none;
+}
+.ai3d-label.ai3d-label-sm {
+  font-size: 10px;
+  padding: 0 3px;
+}

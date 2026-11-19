@@ -3,7 +3,7 @@
  * plain gradient descent. Every weight, activation and gradient a scene shows
  * comes from this file (seeded, so it is the same on every visit).
  */
-import { rng } from './linalg'
+import { rng } from './linalg.ts'
 
 export const XOR: { x: [number, number]; y: number }[] = [
   { x: [0, 0], y: 0 },

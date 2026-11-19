@@ -13,11 +13,12 @@ import { Scene3D, type SceneStep } from './Scene3D'
 import { Arrow, Axes, CellGrid, Contours, Label, PathLine, Points3D, SurfaceMesh, GridWarp } from './prims'
 import { toScene, type V3 } from './coords'
 import { mix, type Palette3D } from './theme3d'
-import { eigSym, lerpMat, orthonormalRows, pca, type Mat } from '../engine/linalg'
+import { eigSym, lerpMat, orthonormalRows, pca, type Mat as Matrix } from '../engine/linalg'
 import { LR, OPTIMIZERS, run, SURFACES } from '../engine/optim'
 import { XOR, lerpNet, pass, predict, train } from '../engine/mlp'
 import { cell, conv2d, KERNELS, SEVEN } from '../engine/conv'
 import { IRIS, IRIS_SPECIES } from '../data/iris'
+import { Mat } from './studio'
 
 /** A number for display; rounds a tiny negative to 0 instead of showing "−0.000". */
 const fmt = (v: number, d = 3) => (Math.abs(v) >= 1000 ? v.toExponential(2) : (Math.abs(v) < 0.5 * 10 ** -d ? 0 : v).toFixed(d))
@@ -34,7 +35,7 @@ function Bead({ at, color, r = 0.09 }: { at: V3; color: string; r?: number }) {
   return (
     <mesh position={at}>
       <sphereGeometry args={[r, 16, 16]} />
-      <meshStandardMaterial color={color} roughness={0.35} />
+      <Mat color={color} roughness={0.35} />
     </mesh>
   )
 }
@@ -200,7 +201,7 @@ export function LinearMap() {
             <GridWarp A={[[1, 0, 0], [0, 1, 0], [0, 0, 1]]} n={2} size={1.5} color={p.hair} opacity={0.45} />
             <GridWarp A={M} n={2} size={1.5} color={p.ink2} opacity={0.55} />
             <mesh geometry={geo}>
-              <meshStandardMaterial color={surfaceColor(p)} wireframe transparent opacity={0.45} side={DoubleSide} />
+              <Mat color={surfaceColor(p)} wireframe transparent opacity={0.45} side={DoubleSide} />
             </mesh>
             {eig.vectors.map((v, i) => {
               const mv = M.map((r) => r[0] * v[0] + r[1] * v[1] + r[2] * v[2])
@@ -343,7 +344,7 @@ export function ForwardBackward() {
                     <group key={`${li}-${ni}`}>
                       <mesh position={at} onPointerMove={(e) => tip(e, hoverText)} onPointerOut={() => tip(null)}>
                         <sphereGeometry args={[0.2 + (visible ? Math.abs(vals[li][ni]) * 0.12 : 0), 28, 28]} />
-                        <meshStandardMaterial color={g != null ? p.info : visible ? p.ink : p.strong} roughness={0.5} transparent={o < 1} opacity={o} />
+                        <Mat color={g != null ? p.info : visible ? p.ink : p.strong} roughness={0.5} transparent={o < 1} opacity={o} />
                       </mesh>
                       <Label at={[at[0], at[1] + 0.58, at[2]]} muted={!visible} opacity={Math.max(0.35, o)}>
                         {li === 0 ? `x${ni + 1} = ${vals[0][ni]}` : visible ? `${li === 1 ? 'a' : 'ŷ'} = ${fmt(vals[li][ni], 2)}` : '·'}
@@ -355,7 +356,7 @@ export function ForwardBackward() {
               )}
               <mesh position={LOSS_AT} onPointerMove={(e) => tip(e, `loss L = ${fmt(P.loss)}`)} onPointerOut={() => tip(null)}>
                 <boxGeometry args={[0.34, 0.34, 0.34]} />
-                <meshStandardMaterial color={t >= 3 ? p.error : p.strong} roughness={0.6} transparent={op('loss') < 1} opacity={op('loss')} />
+                <Mat color={t >= 3 ? p.error : p.strong} roughness={0.6} transparent={op('loss') < 1} opacity={op('loss')} />
               </mesh>
               <Label at={[LOSS_AT[0], LOSS_AT[1] + 0.55, LOSS_AT[2]]} muted={t < 3} opacity={Math.max(0.35, op('loss'))}>
                 {t >= 3 ? `L = ${fmt(P.loss, 3)}` : 'loss'}
@@ -473,7 +474,7 @@ export function ConvSlide() {
 
 const IRIS_X = IRIS.map((d) => [d[0], d[1], d[2], d[3]])
 const IRIS_PCA = pca(IRIS_X, 3)
-const RAW_AXES: Mat = [
+const RAW_AXES: Matrix = [
   [1, 0, 0, 0],
   [0, 1, 0, 0],
   [0, 0, 1, 0],

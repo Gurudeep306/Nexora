@@ -11,6 +11,7 @@ import type { ThreeEvent } from '@react-three/fiber'
 import { cn } from '@/lib/utils'
 
 import { toScene, type V3 } from './coords'
+import { Mat } from './studio'
 export type { V3 }
 
 /**
@@ -87,7 +88,7 @@ export function SurfaceMesh({ f, range, n = 64, scale = 1, color, line, opacity 
           void e
         }}
       >
-        <meshStandardMaterial color={ramp ? '#ffffff' : color} vertexColors={!!ramp} side={DoubleSide} roughness={0.85} metalness={0} transparent={opacity < 1} opacity={opacity} />
+        <Mat color={ramp ? '#ffffff' : color} vertexColors={!!ramp} side={DoubleSide} roughness={0.85} metalness={0} transparent={opacity < 1} opacity={opacity} />
       </mesh>
       {grid.map((pts, i) => (
         <Line key={i} points={pts} color={line} lineWidth={0.8} transparent opacity={0.55} />
@@ -148,7 +149,7 @@ export function PathLine({ points, color, upTo, width = 2.5, ball = 0.09, opacit
       {shown.length > 1 && <Line points={shown} color={color} lineWidth={width} transparent={opacity < 1} opacity={opacity} />}
       <mesh position={head}>
         <sphereGeometry args={[ball, 20, 20]} />
-        <meshStandardMaterial color={color} roughness={0.4} transparent={opacity < 1} opacity={opacity} />
+        <Mat color={color} roughness={0.4} transparent={opacity < 1} opacity={opacity} />
       </mesh>
     </group>
   )
@@ -169,11 +170,11 @@ export function Arrow({ from, to, color, radius = 0.025 }: { from: V3; to: V3; c
     <group>
       <mesh position={shaftMid} quaternion={q}>
         <cylinderGeometry args={[radius, radius, len - head, 12]} />
-        <meshStandardMaterial color={color} roughness={0.5} />
+        <Mat color={color} roughness={0.5} />
       </mesh>
       <mesh position={headPos} quaternion={q}>
         <coneGeometry args={[radius * 3, head, 16]} />
-        <meshStandardMaterial color={color} roughness={0.5} />
+        <Mat color={color} roughness={0.5} />
       </mesh>
     </group>
   )
@@ -231,7 +232,7 @@ export function Points3D({ points, colors, r = 0.06, onTip, opacity = 1 }: { poi
       onPointerOut={onTip ? () => onTip(null, -1) : undefined}
     >
       <sphereGeometry args={[r, 14, 14]} />
-      <meshStandardMaterial roughness={0.55} transparent={opacity < 1} opacity={opacity} />
+      <Mat roughness={0.55} transparent={opacity < 1} opacity={opacity} />
     </instancedMesh>
   )
 }
@@ -294,7 +295,7 @@ export function CellGrid({ grid, at = [0, 0, 0], cell = 0.3, height = 0.25, low,
       onPointerOut={onTip ? () => onTip(null, -1, -1) : undefined}
     >
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial roughness={0.7} transparent={opacity < 1} opacity={opacity} />
+      <Mat roughness={0.7} transparent={opacity < 1} opacity={opacity} />
     </instancedMesh>
   )
 }
