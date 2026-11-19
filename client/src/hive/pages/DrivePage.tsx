@@ -688,14 +688,14 @@ export default function DrivePage() {
       ) : empty && folder === '/' ? (
         <DriveEmpty scope={scopeName} onUpload={() => fileInput.current?.click()} onFolder={() => setMkdirOpen(true)} onImport={repoReady ? () => setImportOpen(true) : undefined} />
       ) : empty ? (
-        <div className="hive-card flex flex-col items-center gap-2 border-dashed px-6 py-14 text-center">
+        <div className="flex flex-col items-center gap-2 rounded-[var(--hv-r-card)] border border-dashed border-[var(--hv-border)] px-6 py-14 text-center">
           <span className="hive-tile size-11">
             <FolderOpen className="size-5" />
           </span>
           <div className="mt-1 text-[14px] font-medium">This folder is empty</div>
           <div className="max-w-sm text-[12.5px] text-text-muted">Drop files here, or upload them with the button above.</div>
           <div className="mt-2 flex gap-2">
-            <Button size="sm" onClick={() => fileInput.current?.click()}>
+            <Button size="sm" variant="secondary" onClick={() => fileInput.current?.click()}>
               <Upload /> Upload files
             </Button>
             <Button size="sm" variant="ghost" onClick={() => go({ folder: parentOf(folder) })}>
@@ -704,7 +704,7 @@ export default function DrivePage() {
           </div>
         </div>
       ) : !shown.length ? (
-        <div className="hive-card flex flex-col items-center gap-2 px-6 py-14 text-center">
+        <div className="flex flex-col items-center gap-2 px-6 py-14 text-center">
           <Search className="size-5 text-text-muted" />
           <div className="text-[14px] font-medium">Nothing matches “{q}”</div>
           <div className="text-[12.5px] text-text-muted">Try part of the name or folder.</div>
@@ -952,8 +952,8 @@ function RenameInput({ item, onDone, onCancel, className }: { item: DriveItem; o
 
 function ListView({ items, allSelected, someSelected, onToggleAll, ...p }: ItemProps & { items: DriveItem[]; allSelected: boolean; someSelected: boolean; onToggleAll: () => void }) {
   return (
-    <div className="hive-card overflow-hidden">
-      <div className="flex items-center gap-2 border-b hive-line px-2 py-1 text-[11.5px] font-medium text-text-muted">
+    <div className="border-y border-[var(--hv-border)]">
+      <div className="flex items-center gap-2 border-b border-[var(--hv-border)] px-2 py-1 text-[11.5px] font-medium text-text-muted">
         <Check3 on={allSelected} some={someSelected && !allSelected} onClick={onToggleAll} label={allSelected ? 'Clear selection' : 'Select all'} />
         <span className="flex-1 pl-1">Name</span>
         <span className="hidden w-20 text-right sm:block">Size</span>
@@ -1126,7 +1126,7 @@ function Skeletons({ view }: { view: View }) {
       </div>
     )
   return (
-    <div className="hive-card hive-divide overflow-hidden">
+    <div className="hive-divide border-y border-[var(--hv-border)]">
       {Array.from({ length: 7 }, (_, i) => (
         <div key={i} className="flex items-center gap-3 px-4 py-3">
           <div className="hive-shimmer size-9 rounded-lg bg-text-primary/[0.05]" />
@@ -1147,7 +1147,7 @@ function DriveEmpty({ scope, onUpload, onFolder, onImport }: { scope: string; on
     { item: { kind: 'file', name: 'data.csv', mime: 'text/csv' }, r: 8, x: 64, y: 8 },
   ] as const
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.26, ease: EASE }} className="hive-card relative overflow-hidden border-dashed px-6 py-14 text-center">
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.26, ease: EASE }} className="relative overflow-hidden rounded-[var(--hv-r-card)] border border-dashed border-[var(--hv-border)] px-6 py-14 text-center">
       {/* Three file types in a straight row: what the Drive holds, without the toy tilt. */}
       <div className="relative mx-auto mb-6 flex w-fit items-center gap-2" aria-hidden="true">
         {tiles.map((t) => (
@@ -1155,9 +1155,9 @@ function DriveEmpty({ scope, onUpload, onFolder, onImport }: { scope: string; on
         ))}
       </div>
       <h2 className="relative text-[17px] font-semibold tracking-[-0.01em]">{scope === 'Shared' ? 'Your team’s Drive is empty' : `No files in ${scope} yet`}</h2>
-      <p className="relative mx-auto mt-2 max-w-md text-[13.5px] leading-relaxed text-text-muted">Keep PDFs, designs, docs and data here. Agents and chats can read them; send them to GitHub when ready.</p>
+      <p className="relative mx-auto mb-0 mt-2 max-w-md text-[13.5px] leading-relaxed text-text-muted">Keep PDFs, designs, docs and data here. Agents and chats can read them; send them to GitHub when ready.</p>
       <div className="relative mt-6 flex flex-wrap justify-center gap-2">
-        <Button onClick={onUpload}>
+        <Button variant="secondary" onClick={onUpload}>
           <Upload /> Upload files
         </Button>
         <Button variant="secondary" onClick={onFolder}>
