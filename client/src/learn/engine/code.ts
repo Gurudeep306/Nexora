@@ -61,12 +61,26 @@ export interface Tok {
   k?: 'kw' | 'str' | 'num' | 'com' | 'fn'
 }
 
+/** Where a comment starts on this line, skipping comment marks inside quotes ("C#" is not a comment); −1 if none. */
+function commentStart(line: string, mark: string): number {
+  let quote = ''
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i]
+    if (quote) {
+      if (ch === '\\') i++
+      else if (ch === quote) quote = ''
+    } else if (ch === '"' || ch === "'") quote = ch
+    else if (line.startsWith(mark, i)) return i
+  }
+  return -1
+}
+
 export function tokenize(line: string, lang: Lang): Tok[] {
   const kws = new Set(KW[lang])
   const out: Tok[] = []
   const comment = lang === 'python' ? '#' : lang === 'pseudo' ? '//' : '//'
   const re = /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|(\b\d+(?:\.\d+)?\b)|([A-Za-z_]\w*)(?=\s*\()|([A-Za-z_]\w*)|(\s+)|(.)/g
-  const ci = line.indexOf(comment)
+  const ci = commentStart(line, comment)
   const code = ci >= 0 ? line.slice(0, ci) : line
   let m: RegExpExecArray | null
   while ((m = re.exec(code))) {

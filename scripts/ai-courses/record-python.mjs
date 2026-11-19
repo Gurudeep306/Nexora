@@ -79,8 +79,14 @@ fs.mkdirSync(figDir, { recursive: true })
 const rec = {}
 for (const b of blocks) {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nx-py-'))
-  const r = spawnSync(PY, ['-I', '-c', RUNNER, figDir, b.hash], { input: `${b.code}\u0000STDIN\u0000${b.stdin}`, cwd: tmp, encoding: 'utf8', timeout: 120000 })
+  // The same limit as the browser: a program still running after 10 seconds is stopped.
+  const r = spawnSync(PY, ['-I', '-c', RUNNER, figDir, b.hash], { input: `${b.code}\u0000STDIN\u0000${b.stdin}`, cwd: tmp, encoding: 'utf8', timeout: 10000 })
   fs.rmSync(tmp, { recursive: true, force: true })
+  if (r.error && r.error.code === 'ETIMEDOUT') {
+    rec[b.hash] = { out: 'Stopped after 10 seconds: the program was still running (an endless loop).', ok: false, figures: 0 }
+    console.log(`ERR ${b.where} ${b.hash} (stopped after 10 seconds)`)
+    continue
+  }
   if (r.status !== 0) throw new Error(`${b.where}: the runner failed\n${r.stderr}`)
   const res = JSON.parse(r.stdout.trim().split('\n').pop())
   rec[b.hash] = { out: res.out, ok: res.ok, figures: res.figures }

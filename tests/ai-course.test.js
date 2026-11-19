@@ -103,4 +103,9 @@ test('numbers in the foundations lessons are right', async () => {
   const F = await load(path.join(base, 'foundations/f-functions/scenes.ts'));
   assert.equal(F.fare(5), 125);
   assert.equal((185 - 50) / 15, 9, 'the inverse taxi question');
+  // The loop animation and the real Python run agree.
+  const C = await load(path.join(base, 'foundations/f-py-control/scenes.ts'));
+  const { years, balance } = C.doublingRun();
+  const { PY_RECORDINGS } = await load(path.join(base, 'python.gen.ts'));
+  assert.ok(Object.values(PY_RECORDINGS).some((r) => r.out.trim() === `${years} years: Rs ${balance}`), 'the while-loop scene matches Python');
 });
