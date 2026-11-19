@@ -51,9 +51,9 @@ The owner is the founder. These preferences come from many sessions. Follow them
 
 - **Never commit to `main`.** Work on a branch, open a pull request, wait for
   green CI, then squash-merge. **Merging to `main` deploys the live site**:
-  Render (`render.yaml`, service `nexora`) deploys `main` once CI passes. The
-  "Deploy API (Oracle)" workflow is unused; it skips itself because no Oracle
-  server is set up. Hive's always-on worker machines are separate (AWS).
+  once CI passes, the "Deploy site" workflow ships it to the server in India
+  (an Azure VM; the database is Turso in Mumbai). See `docs/deploy/SERVER.md`.
+  Render is suspended. Hive's always-on worker machines are separate (AWS).
 - No force-pushes. No rewriting someone else's history.
 - Never commit secrets (`.env`, keys, tokens). Never send the owner's or users'
   personal data (emails, names) to outside services.
