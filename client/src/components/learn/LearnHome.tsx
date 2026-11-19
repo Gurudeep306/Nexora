@@ -44,7 +44,7 @@ function Figure({ kind }: { kind: ReturnType<typeof figureFor> }) {
 }
 
 export function LearnHome() {
-  const { structure, clusters, error, notes } = useNexusWeb()
+  const { structure, clusters, error, notes, notesLessons } = useNexusWeb()
   const { items } = useProgress()
   const [q, setQ] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
@@ -145,7 +145,7 @@ export function LearnHome() {
             const p = progressOf(c)
             const nx = nextNode(c)
             const practice = practiceHref(c)
-            const lessons = c.nodes.reduce((n, x) => n + (x.ls?.length ?? 0), 0)
+            const lessons = (c.gate?.notes && notesLessons.get(c.gate.notes)) || c.nodes.reduce((n, x) => n + (x.ls?.length ?? 0), 0)
             const meta =
               c.engine === 'dsa'
                 ? `${dsaReady.length} chapters ready · ${dsaRead} pages read`

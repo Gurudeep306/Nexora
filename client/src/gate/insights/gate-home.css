@@ -17,10 +17,13 @@
       gap: 3rem;
     }
   }
+  /* Reads from the top, level with the plan beside it: centred, a short
+     greeting floated halfway down a tall plan and left a hole above it. */
   .gh-count {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+    padding-top: 1.5rem;
   }
   .gh-days {
     display: flex;

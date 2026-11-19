@@ -107,8 +107,8 @@ export function AiProblemResults({ data, bookmarkedIds, onToggleBookmark, busyBo
                   )}
                   <div className="mt-1 flex flex-wrap items-center gap-1.5">
                     {tags.map((t) => (
-                      <Badge key={t} variant="outline" className="max-w-40 truncate px-1.5 py-0 text-[10px]">
-                        {t}
+                      <Badge key={t} variant="outline" title={t} className="max-w-40 px-1.5 py-0 text-[10px]">
+                        <span className="min-w-0 truncate">{t}</span>
                       </Badge>
                     ))}
                   </div>

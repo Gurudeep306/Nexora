@@ -146,9 +146,7 @@ function SubjectHome({ data }: { data: SubjectTree }) {
                         </span>
                       </span>
                       <span className="min-w-0 flex-1 truncate">{ch.title}</span>
-                      <span className="nh-index-count">
-                        {chDone}/{ch.lessons.length}
-                      </span>
+                      <span className="nh-index-count">{ch.lessons.length ? `${chDone}/${ch.lessons.length}` : 'soon'}</span>
                     </a>
                   </li>
                 )
@@ -161,19 +159,26 @@ function SubjectHome({ data }: { data: SubjectTree }) {
               const chDone = ch.lessons.filter((l) => progressOf(progress, subject.id, l.id).completed).length
               const mins = ch.lessons.reduce((n, l) => n + l.est_minutes, 0)
               return (
-                <li key={ch.id} id={`ch-${ch.id}`} className="nh-chapter">
+                <li key={ch.id} id={`ch-${ch.id}`} className={cn('nh-chapter', !ch.lessons.length && 'is-soon')}>
                   <header className="nh-chapter-head">
-                    <ProgressRing done={chDone} total={ch.lessons.length} label={`Chapter ${ch.n}: ${chDone} of ${ch.lessons.length} lessons done`} />
+                    <ProgressRing done={chDone} total={ch.lessons.length} label={ch.lessons.length ? `Chapter ${ch.n}: ${chDone} of ${ch.lessons.length} lessons done` : `Chapter ${ch.n}: being written`} />
                     <span className="nh-chapter-roman ed-serif-numeral" aria-hidden="true">
                       {roman(ch.n)}
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="nh-chapter-meta m-0 text-[12.5px] text-text-muted">
-                        Chapter {ch.n} · {ch.lessons.length} lessons · {fmtMinutes(mins)}
-                        <span className="nh-chapter-done"> · {chDone} of {ch.lessons.length} done</span>
+                        {ch.lessons.length ? (
+                          <>
+                            Chapter {ch.n} · {ch.lessons.length} {ch.lessons.length === 1 ? 'lesson' : 'lessons'} · {fmtMinutes(mins)}
+                            <span className="nh-chapter-done"> · {chDone} of {ch.lessons.length} done</span>
+                          </>
+                        ) : (
+                          <>Chapter {ch.n} · being written</>
+                        )}
                       </p>
                       <h2 className="nh-chapter-title">{ch.title}</h2>
                       {ch.summary && <p className="nh-chapter-summary">{ch.summary}</p>}
+                      {!ch.lessons.length && <p className="nh-chapter-soon">These lessons are being written and will appear here as each one is checked.</p>}
                     </div>
                   </header>
                   <ol className="nh-lessons">
