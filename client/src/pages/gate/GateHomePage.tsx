@@ -454,13 +454,13 @@ function WeakTopics({ summary, loading }: { summary: GateSummary | null; loading
     <Panel
       title="Weak topics"
       icon="target"
-      subtitle="Lowest accuracy (3+ attempts)"
+      subtitle="Under 70% right, 3+ attempts"
       action={weak.length ? <PanelLink to={testLink({ focus: 'weak', count: 15, durationMin: 30 })}>Weak-topic test</PanelLink> : undefined}
     >
       {loading ? (
         <LoadingBlock rows={3} />
       ) : !weak.length ? (
-        <p className="text-[13.5px] text-text-secondary">Attempt a few questions per topic and your weakest areas will surface here, each with a one-tap drill.</p>
+        <p className="text-[13.5px] text-text-secondary">No weak spots yet. Topics where you get under 70% right (after 3 tries) show up here, each with a one-tap drill.</p>
       ) : (
         <ul className="gh-weak">
           {weak.map((t) => (

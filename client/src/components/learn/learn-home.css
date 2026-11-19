@@ -51,7 +51,8 @@
   }
   @media (min-width: 1280px) {
     .lh-cards {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      /* Two cards share the row instead of leaving an empty third slot. */
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
       gap: 1.25rem;
     }
   }

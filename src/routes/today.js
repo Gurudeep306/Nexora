@@ -105,17 +105,15 @@ function createTodayRouter({ all }) {
       const fromWeak = weak ? ready.filter((q) => q.subject === weak) : [];
       const q = pick(fromWeak.length ? fromWeak : ready, rand);
       if (q) {
-        // A readable one-line preview: maths kept as plain text, markup removed.
+        // The question's own text (cut short, images removed); the client turns
+        // its maths into readable symbols (client/src/gate/answers.ts snippet).
         const text = String(q.text || "")
-          .replace(/\$\$?([^$]*)\$\$?/g, "$1")
-          .replace(/\\[a-zA-Z]+\{([^}]*)\}/g, "$1")
-          .replace(/\\[a-zA-Z]+/g, "")
-          .replace(/[{}]/g, "")
-          .replace(/<[^>]+>/g, "")
           .replace(/!\[[^\]]*\]\([^)]*\)/g, "")
-          .replace(/[*_`#>]+/g, "")
           .replace(/\s+/g, " ")
           .trim();
+        let cut = text.slice(0, 600);
+        // Never stop inside a formula: an odd number of $ would garble the rest.
+        if ((cut.match(/\$/g) || []).length % 2) cut = cut.slice(0, cut.lastIndexOf("$"));
         const subj = (bank.subjects?.[q.exam || "CSE"] || bank.subjects?.CSE || {})[q.subject] || {};
         out.gate = {
           id: q.id,
@@ -126,7 +124,7 @@ function createTodayRouter({ all }) {
           topic: q.topic || null,
           marks: q.marks,
           type: q.type,
-          preview: text.length < 30 ? "" : text.length > 140 ? `${text.slice(0, 137)}…` : text,
+          preview: cut,
           weak: !!(weak && q.subject === weak),
         };
       }

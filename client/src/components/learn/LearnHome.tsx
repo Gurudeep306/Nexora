@@ -12,6 +12,7 @@ import { LessonPreview } from '@/components/landing/LessonPreview'
 import { SchedulerPreview } from '@/components/landing/SchedulerPreview'
 import { GraphPreview } from '@/components/landing/GraphPreview'
 import { figureFor, findContinue, lastStudied, nextNode } from '@/components/today/today-data'
+import { LiveFigure } from '@/components/today/LiveFigure'
 import type { WebCluster } from '@/components/nexus/types'
 
 /*
@@ -136,7 +137,7 @@ export function LearnHome() {
                 </div>
               )}
             </div>
-            <Figure kind={spread.figure} />
+            {cont ? <div className="lh-figure min-w-0"><LiveFigure item={cont} /></div> : <Figure kind={spread.figure} />}
           </div>
         )}
 

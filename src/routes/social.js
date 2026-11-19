@@ -1549,17 +1549,17 @@ function createSocialRouter(deps) {
       const xp = (totals?.xp || 0) + (user.xp_override || 0);
       const level = calcLevel(xp, solved);
 
-      // Topic mastery: tags across solved problems (top 8 → radar).
+      // Topic mastery: the site's own topics (one count per problem), from
+      // each platform's tags ("dp", "sortings" → Dynamic programming, Sorting).
+      const { topicsOfTag, topicLabel } = require("../topics");
       const tagCount = new Map();
       for (const r of solvedTags) {
         const tags = parseJson(r.tags, []) || [];
         const list = tags.length ? tags : r.category ? [r.category] : [];
-        for (const t of list) {
-          const k = String(t).toLowerCase().trim();
-          if (k) tagCount.set(k, (tagCount.get(k) || 0) + 1);
-        }
+        const ids = new Set(list.flatMap((t) => topicsOfTag(t)));
+        for (const id of ids) tagCount.set(id, (tagCount.get(id) || 0) + 1);
       }
-      const topics = [...tagCount.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([topic, n]) => ({ topic, solved: n }));
+      const topics = [...tagCount.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([id, n]) => ({ topic: topicLabel(id), solved: n }));
 
       // House contest rating: everyone starts at 1200; each contest with ≥2
       // players moves it by up to ±100 depending on where you finished.

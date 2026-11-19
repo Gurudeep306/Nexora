@@ -39,7 +39,7 @@ export type Figure = 'search' | 'schedule' | 'graph' | 'none'
 export function figureFor(subject: { id: string; name: string; domain?: string }): Figure {
   const s = `${subject.id} ${subject.name} ${subject.domain ?? ''}`.toLowerCase()
   if (/operating|\bos\b|process|schedul/.test(s)) return 'schedule'
-  if (/graph|network|discrete|topolog|route/.test(s)) return 'graph'
+  if (/graph|network|topolog|route/.test(s)) return 'graph'
   if (/algorithm|data struct|\bdsa\b|search|sort/.test(s)) return 'search'
   // No real lesson figure for this subject: show none rather than a wrong one.
   return 'none'

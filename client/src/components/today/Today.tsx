@@ -332,7 +332,8 @@ export function Ledger({ stats, items }: { stats: StatsResponse; items: Record<s
           </p>
           {lvl.level < LEVELS.length && (
             <p className="ed-mono ed-muted mt-3 mb-0 text-[13px]">
-              {xpLeft.toLocaleString('en-IN')} XP{solvesLeft ? ` and ${solvesLeft} solves` : ''} to {nextName}
+              {[xpLeft > 0 && `${xpLeft.toLocaleString('en-IN')} XP`, solvesLeft > 0 && `${solvesLeft.toLocaleString('en-IN')} ${solvesLeft === 1 ? 'solve' : 'solves'}`].filter(Boolean).join(' and ') || 'Nothing left'} to {nextName}
+              {xpLeft <= 0 && solvesLeft > 0 && <span> · XP done</span>}
             </p>
           )}
         </div>

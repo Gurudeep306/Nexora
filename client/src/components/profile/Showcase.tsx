@@ -1,4 +1,5 @@
 import { useRef, type ReactNode } from 'react'
+import { langName } from '@/lib/langNames'
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { Icon, type IconName } from '@/components/icon/Icon'
@@ -184,7 +185,7 @@ export function Languages({ langs }: { langs: NonNullable<Showcase['languages']>
         {langs.map((l, i) => (
           <li key={l.language} className="flex items-center gap-2">
             <span className="size-2.5 rounded-full" style={{ background: tones[i] }} />
-            <span className="flex-1 truncate text-text-secondary capitalize">{l.language}</span>
+            <span className="flex-1 truncate text-text-secondary">{langName(l.language)}</span>
             <span className="font-mono text-xs text-text-primary tabular-nums">{Math.round((l.submissions / total) * 100)}%</span>
           </li>
         ))}

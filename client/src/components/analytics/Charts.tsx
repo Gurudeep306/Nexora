@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
+import { langName } from '@/lib/langNames'
 import {
   Area,
   AreaChart,
@@ -101,28 +102,34 @@ function axisProps(c: ChartColors) {
 /* ── rating climb ── */
 
 export function RatingClimbChart({ data, c }: { data: { rating: number; date: string }[]; c: ChartColors }) {
-  const pts = data.map((d) => ({ ...d, day: d.date.slice(5, 10) }))
+  // The best rating solved so far, one point per day: a climb only goes up.
+  const pts = useMemo(() => {
+    const out: { rating: number; date: string; day: string }[] = []
+    let best = 0
+    for (const d of [...data].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0))) {
+      best = Math.max(best, d.rating)
+      const date = d.date.slice(0, 10)
+      if (out.length && out[out.length - 1].date === date) out[out.length - 1].rating = best
+      else out.push({ rating: best, date, day: date.slice(5) })
+    }
+    return out
+  }, [data])
   return (
-    <ChartFrame title="Rating Climb" sub="Highest solved rating over time" empty={pts.length === 0}>
+    <ChartFrame title="Rating Climb" sub="The highest rating you have solved, over time" empty={pts.length === 0}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={pts} margin={{ top: 8, right: 8, bottom: 0, left: -14 }}>
-          <defs>
-            <linearGradient id="climbFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={c.cyan} stopOpacity={0.45} />
-              <stop offset="100%" stopColor={c.cyan} stopOpacity={0.02} />
-            </linearGradient>
-          </defs>
           <CartesianGrid stroke={c.border} strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="day" {...axisProps(c)} minTickGap={40} />
           <YAxis {...axisProps(c)} domain={['dataMin - 100', 'dataMax + 100']} width={54} />
           <Tooltip {...tooltipStyle} />
           <Area
-            type="monotone"
+            type="stepAfter"
             dataKey="rating"
-            name="rating"
+            name="Best rating"
             stroke={c.cyan}
             strokeWidth={2}
-            fill="url(#climbFill)"
+            fill={c.cyan}
+            fillOpacity={0.1}
             dot={false}
             activeDot={{ r: 4, fill: c.cyan, stroke: c.background }}
             animationDuration={600}
@@ -353,7 +360,7 @@ export function LangUsageChart({
   return (
     <ChartFrame title="Language Arsenal" sub="Submissions vs accepted per language" empty={data.length === 0} height={230}>
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data.slice(0, 8)} layout="vertical" margin={{ top: 4, right: 12, bottom: 0, left: 8 }}>
+        <BarChart data={data.slice(0, 8).map((d) => ({ ...d, language: langName(d.language) }))} layout="vertical" margin={{ top: 4, right: 12, bottom: 0, left: 8 }}>
           <CartesianGrid stroke={c.border} strokeDasharray="3 3" horizontal={false} />
           <XAxis type="number" {...axisProps(c)} allowDecimals={false} />
           <YAxis type="category" dataKey="language" {...axisProps(c)} width={80} />
@@ -369,22 +376,20 @@ export function LangUsageChart({
 /* ── hour distribution ── */
 
 export function HourDistChart({ data, c }: { data: { hour: number; total: number; ac: number }[]; c: ChartColors }) {
-  const pts = data.map((d) => ({ ...d, label: `${String(d.hour).padStart(2, '0')}:00` }))
+  // Every hour of the day, so quiet hours read as zero instead of gaps.
+  const pts = Array.from({ length: 24 }, (_, hour) => {
+    const d = data.find((x) => x.hour === hour)
+    return { hour, total: d?.total ?? 0, ac: d?.ac ?? 0, label: `${String(hour).padStart(2, '0')}:00` }
+  })
   return (
     <ChartFrame title="Grind Hours" sub="When you submit (server local time)" empty={data.length === 0} height={230}>
       <ResponsiveContainer width="100%" height="100%">
         <AreaChart data={pts} margin={{ top: 8, right: 8, bottom: 0, left: -18 }}>
-          <defs>
-            <linearGradient id="hourFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor={c.bright} stopOpacity={0.4} />
-              <stop offset="100%" stopColor={c.bright} stopOpacity={0.02} />
-            </linearGradient>
-          </defs>
           <CartesianGrid stroke={c.border} strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="label" {...axisProps(c)} minTickGap={28} />
           <YAxis {...axisProps(c)} allowDecimals={false} width={40} />
           <Tooltip {...tooltipStyle} />
-          <Area type="monotone" dataKey="total" name="submissions" stroke={c.bright} strokeWidth={2} fill="url(#hourFill)" animationDuration={500} />
+          <Area type="monotone" dataKey="total" name="submissions" stroke={c.bright} strokeWidth={2} fill={c.bright} fillOpacity={0.1} animationDuration={500} />
           <Area type="monotone" dataKey="ac" name="accepted" stroke={c.success} strokeWidth={1.5} fill="transparent" animationDuration={500} />
         </AreaChart>
       </ResponsiveContainer>

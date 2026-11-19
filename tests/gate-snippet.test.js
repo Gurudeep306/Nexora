@@ -33,6 +33,8 @@ test('question previews keep the maths', async () => {
   assert.equal(snippet('Consider $4 \\times 4$ matrices with $n \\ge 1$.'), 'Consider 4 × 4 matrices with n ≥ 1.');
   const { snippet: insight } = await load('insights/format.ts');
   assert.equal(insight('For $n \\geq 1$, the maximum is $\\frac{n}{2}$.'), 'For n ≥ 1, the maximum is n/2.');
+  // Set braces inside maths survive (they used to be stripped with markup).
+  assert.equal(insight('Suppose $A=\\{a, b\\}$ and $\\Pi_1=\\{\\{a\\}, \\{b\\}\\}$.'), 'Suppose A={a, b} and Π₁={{a}, {b}}.');
 });
 
 // Listen (read aloud) says maths in words instead of spelling symbols.

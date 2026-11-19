@@ -56,7 +56,7 @@ export function Discover({
         </button>
       </div>
       <p className="ed-body-sm ed-ink-2 mt-4 mb-0">
-        {leadFor(seed)} <span className="ed-muted">New picks every {WINDOW_HOURS} hours.</span>
+        {leadFor(seed, picks.length)} <span className="ed-muted">New picks every {WINDOW_HOURS} hours.</span>
       </p>
       <ol className="today-path ed-rows mt-6 mb-0 list-none p-0" aria-live="polite">
         {picks.map((p, i) => (

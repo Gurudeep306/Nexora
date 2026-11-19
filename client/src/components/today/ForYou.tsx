@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { snippet } from '@/gate/answers'
 import { Link } from 'react-router-dom'
 import { Shuffle } from 'lucide-react'
 import { DSA_TOPICS } from '@/learn/content/dsa/syllabus'
@@ -94,7 +95,7 @@ export function ForYou({
         key: 'gate',
         kicker: g.weak ? 'Your weakest GATE subject' : 'A GATE past question',
         title: `GATE ${g.year} · ${g.subjectName ?? humanize(g.subject)}`,
-        line: g.preview || g.topicName || (g.topic ? humanize(g.topic) : 'A past question with a verified answer.'),
+        line: (g.preview && snippet(g.preview).length >= 30 ? snippet(g.preview) : '') || g.topicName || (g.topic ? humanize(g.topic) : 'A past question with a verified answer.'),
         meta: [`${g.marks} ${g.marks === 1 ? 'mark' : 'marks'}`, g.type].filter(Boolean).join(' · '),
         to: `/gate/practice?ids=${encodeURIComponent(g.id)}`,
       })

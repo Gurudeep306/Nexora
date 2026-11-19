@@ -618,8 +618,9 @@ function createGateMeRouter() {
         byType: [...byType.values()]
           .map((x) => ({ type: x.type, attempted: x.a.n, accuracy: pct(x.a.c, x.a.n), avgTimeMs: x.a.n ? Math.round(x.a.t / x.a.n) : 0 }))
           .sort((a, b) => b.attempted - a.attempted),
+        // Real weak spots only: under 70% right, and still in the syllabus.
         weakTopics: topicStats
-          .filter((t) => t.attempted >= 3)
+          .filter((t) => t.attempted >= 3 && t.accuracy < 70 && t.subject !== "legacy")
           .sort((a, b) => a.accuracy - b.accuracy || b.attempted - a.attempted)
           .slice(0, 10),
         recent: recent.map((r) => ({
