@@ -31,7 +31,8 @@ export default function CopilotPage() {
     <div className="flex h-full min-h-0 flex-col">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 pt-3 sm:px-6">
         <h1 className="sr-only">Copilot</h1>
-        <p className="m-0 min-w-0 flex-1 truncate text-[13px] text-[var(--hv-text-2)]">{HELP[mode]}</p>
+        {/* Plan a team explains itself under its own title; don't say it twice. */}
+        <p className="m-0 min-w-0 flex-1 truncate text-[13px] text-[var(--hv-text-2)]">{mode === 'do' ? HELP.do : ''}</p>
         <SegmentedControl
           className="ml-auto"
           size="sm"

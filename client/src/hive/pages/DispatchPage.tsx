@@ -216,16 +216,16 @@ export default function DispatchPage() {
 
       {/* History */}
       <section className="mt-10">
-        <h2 className="mb-3 text-[13px] font-medium text-text-secondary">Recent teams</h2>
+        <h2 className="mb-3 text-[13px] font-medium text-text-secondary">{list.length ? 'Recent teams' : 'How it works'}</h2>
         {!list.length ? (
-          <div className="hive-card grid gap-3 p-6 sm:grid-cols-3">
+          <div className="grid gap-5 border-y border-[var(--hv-border)] py-5 sm:grid-cols-3">
             {[
               ['1', 'Describe the work', 'In plain words — one feature, a refactor, a bug hunt, docs.'],
               ['2', 'Check the plan', 'Each part shows its kind of work, the model picked for it and the cost. Swap any model.'],
               ['3', 'Run the team', 'Parts run in parallel where they can; a reviewer checks the whole change at the end.'],
             ].map(([n, t, s]) => (
               <div key={n} className="flex gap-3">
-                <span className="grid size-7 shrink-0 place-items-center rounded-full bg-accent-brand/12 text-[12px] font-semibold text-accent-brand">{n}</span>
+                <span className="grid size-7 shrink-0 place-items-center rounded-full bg-[var(--hv-fill)] text-[12px] font-semibold text-[var(--hv-text-2)]">{n}</span>
                 <div>
                   <div className="text-[13.5px] font-semibold">{t}</div>
                   <div className="text-[12.5px] text-text-muted">{s}</div>
