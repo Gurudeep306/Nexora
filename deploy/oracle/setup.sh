@@ -247,8 +247,11 @@ else
   caddy validate --config /etc/caddy/Caddyfile.new --adapter caddyfile || true
   die "Caddyfile is invalid (kept the old one)"
 fi
+# `caddy validate` runs as root and can create the log file owned by root;
+# the caddy service user must own its log directory before (re)loading.
+chown -R caddy:caddy /var/log/caddy
 systemctl enable --now caddy >/dev/null
-systemctl reload caddy
+systemctl reload caddy || systemctl restart caddy
 ok "$(caddy version | cut -d' ' -f1) serving https://${API_DOMAIN}"
 
 # ── 10. Start the API with pm2 (and at every boot) ──────────────────────────
