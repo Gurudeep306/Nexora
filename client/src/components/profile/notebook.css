@@ -199,7 +199,6 @@
     white-space: nowrap;
     font-size: 14px;
     color: var(--color-text-secondary);
-    text-transform: capitalize;
   }
   .pf-topic-num {
     font-family: var(--font-mono);
@@ -400,4 +399,148 @@
   height: 54px;
   border-radius: 999px;
   background: var(--color-bg-app);
+}
+
+@layer components {
+  /* ── Two columns: the record on the left, a rail with rank, seals and
+     linked accounts on the right (sticky on wide screens). ── */
+  .pf-columns {
+    display: grid;
+    /* One column that may shrink: the year calendar scrolls inside its own box. */
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+  .pf-main,
+  .pf-rail {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    gap: 2.5rem;
+    min-width: 0;
+  }
+  @media (min-width: 1024px) {
+    .pf-columns {
+      grid-template-columns: minmax(0, 1fr) 19.5rem;
+      gap: 3rem;
+    }
+    .pf-rail {
+      position: sticky;
+      top: 7.5rem;
+      gap: 2.25rem;
+    }
+    .pf-main .pf-craft {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* ── Rank card ── */
+  .pf-rank {
+    display: grid;
+    gap: 1rem;
+    padding: 1.25rem;
+    border: 1px solid var(--ed-line, var(--color-border));
+    border-radius: 18px;
+    background: var(--ed-card, var(--color-bg-surface));
+  }
+  .pf-rank-head {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+  }
+  .pf-rank-kicker {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .pf-rank-name {
+    margin: 0.1rem 0 0;
+    font-family: var(--font-display, inherit);
+    font-size: 1.75rem;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    color: var(--color-text-primary);
+  }
+  .pf-rank-meter {
+    display: grid;
+    gap: 0.4rem;
+  }
+  .pf-rank-meter-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12.5px;
+    color: var(--color-text-secondary);
+  }
+  .pf-rank-meter-row > :last-child {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .pf-rank-done {
+    color: var(--color-state-success);
+  }
+  .pf-rank-track {
+    height: 6px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-text-primary) 9%, transparent);
+  }
+  .pf-rank-track > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-text-primary);
+  }
+  .pf-rank-line {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--color-text-secondary);
+  }
+  .pf-rank-line strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+  .pf-rank details {
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--ed-line, var(--color-border));
+  }
+}
+
+/* Outside the layer: the header's utility classes (flex) would otherwise win. */
+/* ── Header without a cover: portrait, then the person, then the actions,
+   on one line on wide screens instead of a tall stack. ── */
+@media (min-width: 768px) {
+  .pf-hero-body.is-plain {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    column-gap: 2rem;
+    align-items: center;
+    padding-top: 1.25rem;
+  }
+  .pf-hero-body.is-plain > .pf-hero-top {
+    display: contents;
+  }
+  .pf-hero-body.is-plain > .pf-hero-top > :first-child {
+    grid-column: 1;
+    grid-row: 1;
+    margin-top: 0;
+  }
+  .pf-hero-body.is-plain > .pf-hero-top > .pf-actions {
+    grid-column: 3;
+    grid-row: 1;
+    align-self: start;
+    padding-top: 0.25rem;
+  }
+  .pf-hero-body.is-plain > .pf-hero-info {
+    grid-column: 2;
+    grid-row: 1;
+    margin-top: 0;
+  }
+  .pf-hero-body.is-plain .pf-name {
+    font-size: 2.5rem;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
 }

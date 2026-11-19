@@ -10,8 +10,8 @@ import { api } from '@/lib/api'
 import { cn, formatDate } from '@/lib/utils'
 import { ActivityHeatmap } from '@/components/profile/ActivityHeatmap'
 import { ACCENTS, CoverArt, coverId } from '@/components/profile/covers'
-import { BadgeCard, LevelBar, Timeline } from '@/components/profile/Showcase'
-import { LevelRules } from '@/components/profile/LevelRules'
+import { BadgeCard, Timeline } from '@/components/profile/Showcase'
+import { RankCard } from '@/components/profile/RankCard'
 import { Bridge, Colophon, DifficultyMultiples, Folio, LanguageList, RankSeal, Seal, Shelf, TopicBars } from '@/components/profile/Notebook'
 import { calendarSentence, usePersonJsonLd } from '@/components/profile/notebook-data'
 import { PortraitMedal } from '@/components/profile/PortraitMedal'
@@ -92,7 +92,7 @@ export default function ProfilePage() {
   ]
 
   return (
-    <div className="mx-auto max-w-5xl space-y-5">
+    <div className="mx-auto max-w-6xl space-y-5">
       <ProfileHero data={data} stats={show?.stats} days={show?.heatmap} isSelf={isSelf} onChanged={load} />
 
       {blocked ? (
@@ -330,8 +330,8 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
           </div>
         </div>
       )}
-      <div className="pf-hero-body relative px-4 pb-5 sm:px-6">
-        <div className="flex flex-wrap items-end justify-between gap-3">
+      <div className={cn('pf-hero-body relative px-4 pb-5 sm:px-6', !hasCover && 'is-plain')}>
+        <div className="pf-hero-top flex flex-wrap items-end justify-between gap-3">
           {!hasCover && portrait}
           {!hasCover && (
             <div className="pf-actions flex flex-wrap items-center gap-2 pt-3">
@@ -383,7 +383,7 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
           )}
         </div>
 
-        <div className="mt-3">
+        <div className="pf-hero-info mt-3">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="pf-name font-display text-2xl font-semibold tracking-tight text-text-primary sm:text-[28px]">{name}</h1>
             <UserBadges username={p.username} role={p.role} verified={p.verified} variant="full" />
@@ -511,6 +511,8 @@ function PeopleModal({ username, list, onClose }: { username: string; list: null
   )
 }
 
+const TIMELINE_SHOWN = 8
+
 function Overview({ show, accent, isSelf, onAll }: { show: Showcase; accent?: string; isSelf: boolean; onAll: () => void }) {
   const s = show.stats
   const journal = isJournalKit(useTheme().shown.style)
@@ -523,6 +525,7 @@ function Overview({ show, accent, isSelf, onAll }: { show: Showcase; accent?: st
     return d
   })
   const sentence = calendarSentence(show.heatmap, s?.streak.best ?? 0)
+  const [allActivity, setAllActivity] = useState(false)
   return (
     <div className="space-y-8">
       {pinned.length > 0 && (
@@ -545,39 +548,48 @@ function Overview({ show, accent, isSelf, onAll }: { show: Showcase; accent?: st
           )}
         </section>
       )}
-      {s && (
-        <div className="space-y-4">
-          <Colophon s={s} days={show.heatmap} today={today} />
-          <Card className="pf-level p-4">
-            <LevelBar s={s} />
-            <LevelRules currentLevel={s.level.level} />
-          </Card>
-        </div>
-      )}
-      {show.heatmap && (
-        <Folio kicker="Practice calendar" title="A year of work, day by day">
-          <ActivityHeatmap days={show.heatmap} accent={journal ? undefined : accent} />
-          <p className="pf-calendar-line">{sentence ?? 'Every day you solve a problem or answer a GATE question fills a square.'}</p>
-        </Folio>
-      )}
-      <div className="pf-craft">
-        {s && (
-          <Folio kicker="Craft" title="Problems by difficulty">
-            <DifficultyMultiples d={s.difficulty} />
+      {s && <Colophon s={s} days={show.heatmap} today={today} />}
+      <div className="pf-columns">
+        <div className="pf-main">
+          {show.heatmap && (
+            <Folio kicker="Practice calendar" title="A year of work, day by day">
+              <ActivityHeatmap days={show.heatmap} accent={journal ? undefined : accent} />
+              <p className="pf-calendar-line">{sentence ?? 'Every day you solve a problem or answer a GATE question fills a square.'}</p>
+            </Folio>
+          )}
+          <div className="pf-craft">
+            {s && (
+              <Folio kicker="Craft" title="Problems by difficulty">
+                <DifficultyMultiples d={s.difficulty} />
+              </Folio>
+            )}
+            <Folio kicker="Craft" title="Languages">
+              <LanguageList langs={show.languages ?? []} />
+            </Folio>
+          </div>
+          <Folio kicker="Craft" title="Topics">
+            <TopicBars topics={show.topics ?? []} />
           </Folio>
-        )}
-        <Folio kicker="Craft" title="Topics">
-          <TopicBars topics={show.topics ?? []} />
-        </Folio>
-        <Folio kicker="Craft" title="Languages">
-          <LanguageList langs={show.languages ?? []} />
-        </Folio>
+          <Folio
+            kicker="Field notes"
+            title="Recent activity"
+            action={
+              (show.timeline?.length ?? 0) > TIMELINE_SHOWN ? (
+                <button type="button" className="ed-link pf-folio-link" onClick={() => setAllActivity((v) => !v)} aria-expanded={allActivity}>
+                  {allActivity ? 'Show fewer' : `Show all ${show.timeline!.length}`}
+                </button>
+              ) : undefined
+            }
+          >
+            <Timeline items={allActivity ? (show.timeline ?? []) : (show.timeline ?? []).slice(0, TIMELINE_SHOWN)} />
+          </Folio>
+        </div>
+        <aside className="pf-rail" aria-label="Rank, seals and linked accounts">
+          {s && <RankCard s={s} />}
+          <Shelf achievements={show.achievements ?? []} onAll={onAll} />
+          <Bridge linked={show.linked ?? []} isSelf={isSelf} />
+        </aside>
       </div>
-      <Shelf achievements={show.achievements ?? []} onAll={onAll} />
-      <Bridge linked={show.linked ?? []} isSelf={isSelf} />
-      <Folio kicker="Field notes" title="Recent activity">
-        <Timeline items={show.timeline ?? []} />
-      </Folio>
     </div>
   )
 }
