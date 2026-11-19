@@ -5,7 +5,7 @@
    "id": "foundations",
    "title": "Foundations",
    "nexus": "calc",
-   "blurb": "School maths and Python, up to exactly what the rest needs. Nobody is assumed to know anything.",
+   "blurb": "School maths, then Python from zero with NumPy, pandas, Matplotlib and first steps in PyTorch, up to exactly what the rest needs. Nobody is assumed to know anything.",
    "story": "You want a computer to tell a cat from a dog. Before it can, we need a language for numbers, change and data. This course builds that language one word at a time.",
    "runningExample": "A small table of real exam scores we plot, fit and question all through the course.",
    "reading": [
@@ -51,11 +51,11 @@
      ]
     },
     {
-     "title": "Python and NumPy",
+     "title": "Python from zero",
      "topics": [
       {
        "id": "f-python",
-       "title": "Python for maths",
+       "title": "Your first Python: values, variables and types",
        "needs": [
         "f-functions"
        ],
@@ -63,14 +63,190 @@
        "visual": "Run each line and see the variables change"
       },
       {
-       "id": "f-numpy",
-       "title": "NumPy arrays, shapes and broadcasting",
+       "id": "f-py-strings",
+       "title": "Text: strings, f-strings and printing",
        "needs": [
-        "f-python",
+        "f-python"
+       ],
+       "papers": [],
+       "visual": "A string as a row of characters with their indexes; a slice lifting out"
+      },
+      {
+       "id": "f-py-control",
+       "title": "Decisions and loops: if, for, while and range",
+       "needs": [
+        "f-python"
+       ],
+       "papers": [],
+       "visual": "The running line jumping back to the loop head while a counter ticks"
+      },
+      {
+       "id": "f-py-functions",
+       "title": "Writing functions: arguments, return values and scope",
+       "needs": [
+        "f-py-control",
+        "f-functions"
+       ],
+       "papers": [],
+       "visual": "A call opening a new box of variables, and closing it on return"
+      },
+      {
+       "id": "f-py-lists",
+       "title": "Lists and tuples: indexing, slicing, sorting and copying",
+       "needs": [
+        "f-py-control",
+        "f-py-strings"
+       ],
+       "papers": [],
+       "visual": "Two names pointing at one list; a change seen through both"
+      },
+      {
+       "id": "f-py-dicts",
+       "title": "Dictionaries and sets: looking things up by key",
+       "needs": [
+        "f-py-lists"
+       ],
+       "papers": [],
+       "visual": "A lookup jumping straight from a key to its value"
+      },
+      {
+       "id": "f-py-iteration",
+       "title": "Comprehensions, zip, enumerate and generators",
+       "needs": [
+        "f-py-dicts",
+        "f-py-functions"
+       ],
+       "papers": [],
+       "visual": "A comprehension unrolled into the loop it stands for"
+      },
+      {
+       "id": "f-py-errors-files",
+       "title": "Errors, exceptions and files",
+       "needs": [
+        "f-py-iteration"
+       ],
+       "papers": [],
+       "visual": "An exception climbing the call stack until a try catches it"
+      },
+      {
+       "id": "f-py-classes",
+       "title": "Classes and objects",
+       "needs": [
+        "f-py-functions",
+        "f-py-dicts"
+       ],
+       "papers": [],
+       "visual": "A class stamping out objects, each with its own data"
+      },
+      {
+       "id": "f-py-modules",
+       "title": "Modules, packages, pip, virtual environments and notebooks",
+       "needs": [
+        "f-py-classes",
+        "f-py-errors-files"
+       ],
+       "papers": [],
+       "visual": "import following the search path to the file it loads"
+      },
+      {
+       "id": "f-py-clean",
+       "title": "Clear code: type hints, docstrings, tests and debugging",
+       "needs": [
+        "f-py-modules"
+       ],
+       "papers": [],
+       "visual": "A failing test pointing at the line and the values that broke it"
+      }
+     ]
+    },
+    {
+     "title": "NumPy",
+     "topics": [
+      {
+       "id": "f-numpy",
+       "title": "NumPy arrays: creating them, dtypes and shapes",
+       "needs": [
+        "f-py-lists",
         "f-sums"
        ],
        "papers": [],
-       "visual": "Arrays as grids; broadcasting stretching a row over a matrix"
+       "visual": "Arrays as grids; the shape (2, 3, 4) as stacked slabs"
+      },
+      {
+       "id": "f-numpy-index",
+       "title": "Indexing, slicing and boolean masks",
+       "needs": [
+        "f-numpy"
+       ],
+       "papers": [],
+       "visual": "A slice lighting up its cells; a mask keeping only some"
+      },
+      {
+       "id": "f-numpy-ops",
+       "title": "Vectorised maths, broadcasting and reductions",
+       "needs": [
+        "f-numpy-index"
+       ],
+       "papers": [],
+       "visual": "Broadcasting stretching a row over a matrix; a sum collapsing an axis"
+      },
+      {
+       "id": "f-numpy-linalg",
+       "title": "Reshape, stack, matrix multiply and random numbers",
+       "needs": [
+        "f-numpy-ops"
+       ],
+       "papers": [],
+       "visual": "reshape refolding the same numbers; @ meeting a row and a column"
+      }
+     ]
+    },
+    {
+     "title": "Data and plots",
+     "topics": [
+      {
+       "id": "f-pandas",
+       "title": "pandas DataFrames: loading, selecting and filtering",
+       "needs": [
+        "f-numpy-index",
+        "f-py-errors-files"
+       ],
+       "papers": [],
+       "visual": "A CSV becoming a table with an index; a filter keeping some rows"
+      },
+      {
+       "id": "f-pandas-clean",
+       "title": "Cleaning, grouping and joining data",
+       "needs": [
+        "f-pandas",
+        "f-numpy-ops"
+       ],
+       "papers": [],
+       "visual": "groupby splitting rows into groups, applying, combining"
+      },
+      {
+       "id": "f-matplotlib",
+       "title": "Plots with Matplotlib: figures, axes, lines, scatter and histograms",
+       "needs": [
+        "f-numpy-ops"
+       ],
+       "papers": [],
+       "visual": "A figure built layer by layer: axes, data, labels"
+      }
+     ]
+    },
+    {
+     "title": "PyTorch first steps",
+     "topics": [
+      {
+       "id": "f-pytorch",
+       "title": "PyTorch tensors: arrays that can run on a GPU",
+       "needs": [
+        "f-numpy-linalg",
+        "f-py-classes"
+       ],
+       "papers": [],
+       "visual": "The same tensor maths on the CPU and on a GPU"
       }
      ]
     },
@@ -81,7 +257,8 @@
        "id": "f-data",
        "title": "Data: examples, features and labels",
        "needs": [
-        "f-numpy"
+        "f-pandas-clean",
+        "f-matplotlib"
        ],
        "papers": [],
        "visual": "A table becomes points on a plot"
@@ -727,6 +904,16 @@
        "gateDA": true
       },
       {
+       "id": "ml-sklearn",
+       "title": "scikit-learn: fit, predict and score",
+       "needs": [
+        "ml-what-is-ml",
+        "f-pandas-clean"
+       ],
+       "papers": [],
+       "visual": "One recipe, three models: fit on the train split, score on the test split"
+      },
+      {
        "id": "ml-loss-risk",
        "title": "Loss functions and empirical risk",
        "needs": [
@@ -1369,6 +1556,16 @@
        ],
        "papers": [],
        "visual": "Your own engine's tape replayed step by step"
+      },
+      {
+       "id": "dl-pytorch",
+       "title": "Training in PyTorch: autograd, nn.Module, optimisers and DataLoader",
+       "needs": [
+        "dl-autograd",
+        "f-pytorch"
+       ],
+       "papers": [],
+       "visual": "Your own engine and PyTorch side by side, line for line"
       },
       {
        "id": "dl-gradient-check",

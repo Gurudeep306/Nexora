@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { findTopic } from '../content/dsa/syllabus'
+import { findAnyTopic as findTopic } from '../content/courses'
 import { registerAlgorithms } from '../engine/registry'
 import type { Topic } from '../types'
 

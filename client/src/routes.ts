@@ -32,6 +32,7 @@ export const pageLoaders = {
   LearnPage: () => import('@/pages/LearnPage'),
   SubjectPage: () => import('@/pages/SubjectPage'),
   LearnTopicPage: () => import('@/learn/ui/TopicPage'),
+  AiCoursesPage: () => import('@/pages/AiCoursesPage'),
   LearnPracticePage: () => import('@/learn/ui/PracticePage'),
   GatePage: () => import('@/pages/GatePage'),
   GateCbtPage: () => import('@/pages/GateCbtPage'),
@@ -140,7 +141,7 @@ const DATA_BY_SEGMENT: Record<string, () => void> = {
 }
 
 /** A subject page (/learn/<id>[/<node>], /learn/dsa…): its tree, warmed. */
-const NOT_SUBJECTS = new Set(['system-design'])
+const NOT_SUBJECTS = new Set(['system-design', 'ai-courses'])
 export function prefetchSubjectRoute(to: string): void {
   const m = /^\/learn\/([a-z0-9][a-z0-9-]*)/.exec(to)
   if (!m || NOT_SUBJECTS.has(m[1])) return

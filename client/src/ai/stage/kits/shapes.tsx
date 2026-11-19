@@ -11,7 +11,7 @@ import { Contours, Quads } from '../../three/prims'
 import type { V3 } from '../../three/coords'
 import { mix } from '../../three/theme3d'
 import { Mat } from '../../three/studio'
-import type { StageElement } from '../spec'
+import type { StageElement, StageTone } from '../spec'
 import { at3, fmt, opOf, SERIES, toneColor, useFn, type ElCtx } from './shared'
 
 type El<T extends StageElement['type']> = { el: Extract<StageElement, { type: T }>; c: ElCtx }
@@ -90,7 +90,8 @@ export function RegionEl({ el, c }: El<'region'>) {
   const n = el.n ?? 160
   const [lo, hi] = el.range
   const k = el.classes ?? 2
-  const cols = useMemo(() => Array.from({ length: k }, (_, i) => new Color(mix(c.p.surface, toneColor(c.p, SERIES[i]), c.p.dark ? 0.34 : 0.17))), [k, c.p])
+  const tones = el.tones?.join(',') ?? ''
+  const cols = useMemo(() => Array.from({ length: k }, (_, i) => { const t = (tones ? tones.split(',')[i] : SERIES[i]) as StageTone; return new Color(t === 'hair' ? c.p.surface : mix(c.p.surface, toneColor(c.p, t), c.p.dark ? 0.34 : 0.2)) }), [k, c.p, tones])
   const tex = useMemo(() => {
     const cv = document.createElement('canvas')
     cv.width = n

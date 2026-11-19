@@ -4,7 +4,7 @@ Generated from `curriculum.json` by `node scripts/ai-courses/check-curriculum.mj
 
 Courses are in teaching order and every topic builds only on topics above it, so a student can start at the first line knowing nothing. The courses are also one web: each topic links to what it **builds on**, what **uses it** (in any course), and **related** ideas elsewhere, so a student with a doubt can jump straight to where that idea is taught. **GATE DA** marks topics in the GATE Data Science & AI syllabus.
 
-225 topics · 10 courses · 400 links (144 between courses) · 248 papers · 22 models in the timeline ([MODELS.md](MODELS.md))
+244 topics · 10 courses · 430 links (146 between courses) · 248 papers · 22 models in the timeline ([MODELS.md](MODELS.md))
 
 - [0. Foundations](#0-foundations)
 - [1. Math for AI](#1-math-for-ai)
@@ -19,7 +19,7 @@ Courses are in teaching order and every topic builds only on topics above it, so
 
 ## 0. Foundations
 
-School maths and Python, up to exactly what the rest needs. Nobody is assumed to know anything.
+School maths, then Python from zero with NumPy, pandas, Matplotlib and first steps in PyTorch, up to exactly what the rest needs. Nobody is assumed to know anything.
 
 **The story:** You want a computer to tell a cat from a dog. Before it can, we need a language for numbers, change and data. This course builds that language one word at a time.
 
@@ -46,20 +46,82 @@ Nexus subject: `calc`
   - Used in other courses by: Probability: events and axioms
   - See it: Σ unrolled term by term
 
-### 0.2 Python and NumPy
+### 0.2 Python from zero
 
-- **Python for maths** `f-python`
+- **Your first Python: values, variables and types** `f-python`
   - Builds on: Functions and their graphs
   - See it: Run each line and see the variables change
-- **NumPy arrays, shapes and broadcasting** `f-numpy`
-  - Builds on: Python for maths; Sums, products and their notation
-  - Used in other courses by: Vectors: arrows and lists; How a computer computes: bits, memory and instructions
-  - See it: Arrays as grids; broadcasting stretching a row over a matrix
+- **Text: strings, f-strings and printing** `f-py-strings`
+  - Builds on: Your first Python: values, variables and types
+  - See it: A string as a row of characters with their indexes; a slice lifting out
+- **Decisions and loops: if, for, while and range** `f-py-control`
+  - Builds on: Your first Python: values, variables and types
+  - See it: The running line jumping back to the loop head while a counter ticks
+- **Writing functions: arguments, return values and scope** `f-py-functions`
+  - Builds on: Decisions and loops: if, for, while and range; Functions and their graphs
+  - See it: A call opening a new box of variables, and closing it on return
+- **Lists and tuples: indexing, slicing, sorting and copying** `f-py-lists`
+  - Builds on: Decisions and loops: if, for, while and range; Text: strings, f-strings and printing
+  - See it: Two names pointing at one list; a change seen through both
+- **Dictionaries and sets: looking things up by key** `f-py-dicts`
+  - Builds on: Lists and tuples: indexing, slicing, sorting and copying
+  - See it: A lookup jumping straight from a key to its value
+- **Comprehensions, zip, enumerate and generators** `f-py-iteration`
+  - Builds on: Dictionaries and sets: looking things up by key; Writing functions: arguments, return values and scope
+  - See it: A comprehension unrolled into the loop it stands for
+- **Errors, exceptions and files** `f-py-errors-files`
+  - Builds on: Comprehensions, zip, enumerate and generators
+  - See it: An exception climbing the call stack until a try catches it
+- **Classes and objects** `f-py-classes`
+  - Builds on: Writing functions: arguments, return values and scope; Dictionaries and sets: looking things up by key
+  - See it: A class stamping out objects, each with its own data
+- **Modules, packages, pip, virtual environments and notebooks** `f-py-modules`
+  - Builds on: Classes and objects; Errors, exceptions and files
+  - See it: import following the search path to the file it loads
+- **Clear code: type hints, docstrings, tests and debugging** `f-py-clean`
+  - Builds on: Modules, packages, pip, virtual environments and notebooks
+  - See it: A failing test pointing at the line and the values that broke it
 
-### 0.3 First look at learning
+### 0.3 NumPy
+
+- **NumPy arrays: creating them, dtypes and shapes** `f-numpy`
+  - Builds on: Lists and tuples: indexing, slicing, sorting and copying; Sums, products and their notation
+  - Used in other courses by: Vectors: arrows and lists; How a computer computes: bits, memory and instructions
+  - See it: Arrays as grids; the shape (2, 3, 4) as stacked slabs
+- **Indexing, slicing and boolean masks** `f-numpy-index`
+  - Builds on: NumPy arrays: creating them, dtypes and shapes
+  - See it: A slice lighting up its cells; a mask keeping only some
+- **Vectorised maths, broadcasting and reductions** `f-numpy-ops`
+  - Builds on: Indexing, slicing and boolean masks
+  - See it: Broadcasting stretching a row over a matrix; a sum collapsing an axis
+- **Reshape, stack, matrix multiply and random numbers** `f-numpy-linalg`
+  - Builds on: Vectorised maths, broadcasting and reductions
+  - See it: reshape refolding the same numbers; @ meeting a row and a column
+
+### 0.4 Data and plots
+
+- **pandas DataFrames: loading, selecting and filtering** `f-pandas`
+  - Builds on: Indexing, slicing and boolean masks; Errors, exceptions and files
+  - See it: A CSV becoming a table with an index; a filter keeping some rows
+- **Cleaning, grouping and joining data** `f-pandas-clean`
+  - Builds on: pandas DataFrames: loading, selecting and filtering; Vectorised maths, broadcasting and reductions
+  - Used in other courses by: scikit-learn: fit, predict and score
+  - See it: groupby splitting rows into groups, applying, combining
+- **Plots with Matplotlib: figures, axes, lines, scatter and histograms** `f-matplotlib`
+  - Builds on: Vectorised maths, broadcasting and reductions
+  - See it: A figure built layer by layer: axes, data, labels
+
+### 0.5 PyTorch first steps
+
+- **PyTorch tensors: arrays that can run on a GPU** `f-pytorch`
+  - Builds on: Reshape, stack, matrix multiply and random numbers; Classes and objects
+  - Used in other courses by: Training in PyTorch: autograd, nn.Module, optimisers and DataLoader
+  - See it: The same tensor maths on the CPU and on a GPU
+
+### 0.6 First look at learning
 
 - **Data: examples, features and labels** `f-data`
-  - Builds on: NumPy arrays, shapes and broadcasting
+  - Builds on: Cleaning, grouping and joining data; Plots with Matplotlib: figures, axes, lines, scatter and histograms
   - See it: A table becomes points on a plot
 - **What does it mean to learn from data?** `f-what-is-learning`
   - Builds on: Data: examples, features and labels
@@ -81,7 +143,7 @@ Nexus subject: `prob`
 ### 1.1 Vectors and matrices
 
 - **Vectors: arrows and lists** `m-vectors` · GATE DA
-  - Builds on: NumPy arrays, shapes and broadcasting
+  - Builds on: NumPy arrays: creating them, dtypes and shapes
   - See it: Arrows add tip to tail in 2D and 3D
 - **Dot product, length, angle and projection** `m-dot` · GATE DA
   - Builds on: Vectors: arrows and lists
@@ -305,6 +367,9 @@ Nexus subject: `ml`
   - Builds on: What does it mean to learn from data?; Estimation and maximum likelihood
   - Used in other courses by: Agents, environments, rewards and returns
   - See it: Data split into train and test, and what each is for
+- **scikit-learn: fit, predict and score** `ml-sklearn`
+  - Builds on: Supervised and unsupervised learning; training and test data; Cleaning, grouping and joining data
+  - See it: One recipe, three models: fit on the train split, score on the test split
 - **Loss functions and empirical risk** `ml-loss-risk` · GATE DA
   - Builds on: Supervised and unsupervised learning; training and test data; Expectation and variance
   - See it: Each point's loss as a bar; the risk is their average
@@ -537,6 +602,9 @@ Nexus subject: `deep`
 - **Build an autograd engine** `dl-autograd`
   - Builds on: Backpropagation, derived in full
   - See it: Your own engine's tape replayed step by step
+- **Training in PyTorch: autograd, nn.Module, optimisers and DataLoader** `dl-pytorch`
+  - Builds on: Build an autograd engine; PyTorch tensors: arrays that can run on a GPU
+  - See it: Your own engine and PyTorch side by side, line for line
 - **Checking gradients numerically** `dl-gradient-check`
   - Builds on: Backpropagation, derived in full
   - See it: Finite differences next to backprop, digit by digit
@@ -1154,7 +1222,7 @@ Nexus subject: `mlops`
 ### 9.1 The machine
 
 - **How a computer computes: bits, memory and instructions** `sys-computer-basics`
-  - Builds on: Numbers, sets and intervals; NumPy arrays, shapes and broadcasting
+  - Builds on: Numbers, sets and intervals; NumPy arrays: creating them, dtypes and shapes
   - See it: A number travelling from memory to the processor and back
 - **Floating-point numbers: fp32, fp16, bf16, fp8** `sys-floats`
   - Builds on: How a computer computes: bits, memory and instructions; Exponents, logarithms and e

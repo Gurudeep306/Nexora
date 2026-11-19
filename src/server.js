@@ -347,7 +347,8 @@ app.use(
         imgSrc: ["'self'", "data:", "https:", "blob:"],
         // Problem statements may embed videos / audio from the source sites.
         mediaSrc: ["'self'", "https:", "blob:", "data:"],
-        connectSrc: ["'self'", "wss:", "ws:"],
+        // The AI course lessons run Python in the browser (Pyodide, from jsDelivr, pinned in client/src/learn/python/runtime.ts).
+        connectSrc: ["'self'", "wss:", "ws:", "https://cdn.jsdelivr.net"],
         workerSrc: ["'self'", "blob:"],
         frameSrc: ["'self'", "https://www.youtube.com", "https://www.youtube-nocookie.com", "https://player.vimeo.com"],
         objectSrc: ["'none'"],

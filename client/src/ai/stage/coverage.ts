@@ -11,7 +11,24 @@ f-functions: curve path label
 f-exp-log: curve line label
 f-sums: tokens bars label
 f-python: code table
+f-py-strings: tokens code
+f-py-control: code graph
+f-py-functions: code graph table
+f-py-lists: code tokens graph
+f-py-dicts: code table graph
+f-py-iteration: code tokens
+f-py-errors-files: code graph table
+f-py-classes: code graph
+f-py-modules: code graph
+f-py-clean: code table
 f-numpy: tiles tensor beads
+f-numpy-index: tiles code
+f-numpy-ops: tiles beads bars
+f-numpy-linalg: tiles tensor beads
+f-pandas: table code
+f-pandas-clean: table graph code
+f-matplotlib: chart curve points code
+f-pytorch: tensor membar code
 f-data: table points axes chart
 f-what-is-learning: points line bars chart
 m-vectors: arrow axes label
@@ -64,6 +81,7 @@ m-adaptive: surface path
 m-lr-schedules: chart
 m-variational: curve chart
 ml-what-is-ml: table points
+ml-sklearn: code table region points
 ml-loss-risk: points line bars
 ml-linreg-1d: points line shape
 ml-linreg-normal: arrow plane points
@@ -111,6 +129,7 @@ dl-losses: surface curve
 dl-computational-graph: graph
 dl-backprop: network graph
 dl-autograd: graph code tiles
+dl-pytorch: code graph chart
 dl-gradient-check: table code
 dl-training-loop: chart region
 dl-optimizers: surface path chart

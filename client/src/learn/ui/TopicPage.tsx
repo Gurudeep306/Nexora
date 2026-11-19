@@ -10,7 +10,8 @@ import { LessonBlock, ScrollyFigure } from './Blocks'
 import { useReaderPanels } from '@/components/reader/panels'
 import { Outline } from '@/components/reader/Outline'
 import { EndOfLesson } from '@/components/reader/EndOfLesson'
-import { DSA_TOPICS } from '../content/dsa/syllabus'
+import { chapterNumber, courseOfTopic, isAiTopic, topicBase } from '../content/courses'
+import { Stuck, WhatYouNeed, WhereNext } from './AiWeb'
 import type { Block } from '../types'
 import { useTopic } from './useTopic'
 import { useDomOutline, useScrollSpy } from '@/components/reader/outline'
@@ -41,7 +42,7 @@ export default function TopicPage() {
   useAgentPageContext(
     topic && page
       ? { learnTopic: `${topic.title} · ${page.title}`, title: page.title }
-      : { learnTopic: topicId ?? 'DSA course' },
+      : { learnTopic: topicId ?? 'Learn' },
   )
 
   // Reaching the end of a page marks it read.
@@ -60,7 +61,10 @@ export default function TopicPage() {
     window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
   }, [pageId])
 
-  const chapterNo = Math.max(1, DSA_TOPICS.findIndex((t) => t.id === topicId) + 1)
+  const chapterNo = chapterNumber(topicId ?? '')
+  const base = topicBase(topicId ?? '')
+  const course = courseOfTopic(topicId ?? '')
+  const ai = isAiTopic(topicId ?? '')
   const outline = useDomOutline(article, `${topic?.id ?? ''}/${page?.id ?? ''}`)
   const active = useScrollSpy(outline.map((h) => h.id))
 
@@ -98,7 +102,7 @@ export default function TopicPage() {
               {topic.pages.map((p, i) => (
                 <Link
                   key={p.id}
-                  to={`/learn/dsa/${topic.id}/${p.id}`}
+                  to={`${base}/${p.id}`}
                   className={cn('nr-mini-dot', i === pageIndex && 'is-current', isDone(items[pageKey(topic.id, p.id)]) && 'is-done')}
                   title={`${i + 1}. ${p.title}`}
                   aria-label={`${i + 1}. ${p.title}`}
@@ -106,14 +110,14 @@ export default function TopicPage() {
                 />
               ))}
             </span>
-            <Link to={`/learn/dsa/${topic.id}/practice`} className="nr-icon" title="Question bank" aria-label="Question bank">
+            <Link to={`${base}/practice`} className="nr-icon" title="Question bank" aria-label="Question bank">
               <ListChecks className="size-4" aria-hidden="true" />
             </Link>
           </div>
         ) : (
           <>
             <div className="nr-tree-head">
-              <Link to="/learn/dsa" className="nr-tree-subject">
+              <Link to={course.home} className="nr-tree-subject">
                 {topic.title}
               </Link>
               <button type="button" className="nr-icon" onClick={() => setMini(true)} aria-label="Fold the page list" title="Fold the page list  [">
@@ -134,7 +138,7 @@ export default function TopicPage() {
                 const on = i === pageIndex
                 return (
                   <li key={p.id}>
-                    <Link to={`/learn/dsa/${topic.id}/${p.id}`} aria-current={on ? 'page' : undefined} className={cn('notes-tree-link', on && 'is-current')}>
+                    <Link to={`${base}/${p.id}`} aria-current={on ? 'page' : undefined} className={cn('notes-tree-link', on && 'is-current')}>
                       {done ? (
                         <CheckCircle2 className="size-4 shrink-0 text-state-success" />
                       ) : (
@@ -146,7 +150,7 @@ export default function TopicPage() {
                 )
               })}
             </ol>
-            <Link to={`/learn/dsa/${topic.id}/practice`} className="notes-tree-link mt-3 border-t border-border pt-3">
+            <Link to={`${base}/practice`} className="notes-tree-link mt-3 border-t border-border pt-3">
               <ListChecks className="size-4 shrink-0" aria-hidden="true" />
               <span className="flex-1">Question bank</span>
               <span className="font-mono text-[11px] text-text-muted">{nonCode + code}</span>
@@ -161,7 +165,7 @@ export default function TopicPage() {
           <nav aria-label="Lesson path" className="notes-crumbs">
             <ol>
               <li>
-                <Link to="/learn/dsa">DSA course</Link>
+                <Link to={course.home}>{course.label}</Link>
               </li>
               <li>
                 <span aria-current="page">{topic.title}</span>
@@ -169,10 +173,12 @@ export default function TopicPage() {
             </ol>
           </nav>
           <span className="nr-bar-links">
-            <Link to="/learn/dsa?view=tree" className="nr-bar-link">
-              <Network className="size-3.5" aria-hidden="true" /> Skill tree
-            </Link>
-            <Link to={`/learn/dsa/${topic.id}/practice`} className="nr-bar-link">
+            {course.tree && (
+              <Link to={course.tree} className="nr-bar-link">
+                <Network className="size-3.5" aria-hidden="true" /> Skill tree
+              </Link>
+            )}
+            <Link to={`${base}/practice`} className="nr-bar-link">
               <ListChecks className="size-3.5" aria-hidden="true" /> Practice
             </Link>
           </span>
@@ -185,7 +191,7 @@ export default function TopicPage() {
           <ol className="m-0 list-none space-y-0.5 px-2.5 pb-3">
             {topic.pages.map((p, i) => (
               <li key={p.id}>
-                <Link to={`/learn/dsa/${topic.id}/${p.id}`} className={cn('notes-tree-link', i === pageIndex && 'is-current')}>
+                <Link to={`${base}/${p.id}`} className={cn('notes-tree-link', i === pageIndex && 'is-current')}>
                   <span className="font-mono text-[11px] text-text-muted">{i + 1}</span> {p.title}
                 </Link>
               </li>
@@ -221,9 +227,12 @@ export default function TopicPage() {
           </header>
 
           <div className="nx-read nx-lesson nr-prose space-y-6">
+            {ai && pageIndex === 0 && <WhatYouNeed topicId={topic.id} />}
             {groupFigures(page.blocks).map((g, i) =>
               g.kind === 'scrolly' ? <ScrollyFigure key={i} viz={g.viz} steps={g.steps} /> : <LessonBlock key={i} b={g.b} bank={bank} />,
             )}
+            {ai && !next && <WhereNext topicId={topic.id} />}
+            {ai && <Stuck topicId={topic.id} />}
           </div>
         </motion.article>
 
@@ -232,12 +241,12 @@ export default function TopicPage() {
         <EndOfLesson
           next={
             next
-              ? { to: `/learn/dsa/${topic.id}/${next.id}`, title: next.title, onGo: () => mark(pageKey(topic.id, page.id), 'read') }
-              : { to: `/learn/dsa/${topic.id}/practice`, title: `Question bank for ${topic.title}`, kicker: 'Finished the chapter' }
+              ? { to: `${base}/${next.id}`, title: next.title, onGo: () => mark(pageKey(topic.id, page.id), 'read') }
+              : { to: `${base}/practice`, title: `Question bank for ${topic.title}`, kicker: 'Finished the chapter' }
           }
-          prev={prev ? { to: `/learn/dsa/${topic.id}/${prev.id}`, title: prev.title } : null}
+          prev={prev ? { to: `${base}/${prev.id}`, title: prev.title } : null}
           dots={topic.pages.map((p, k) => ({
-            to: `/learn/dsa/${topic.id}/${p.id}`,
+            to: `${base}/${p.id}`,
             title: p.title,
             done: isDone(items[pageKey(topic.id, p.id)]),
             current: k === pageIndex,
@@ -269,7 +278,7 @@ export default function TopicPage() {
             {read} of {topic.pages.length} pages read
           </span>
         </div>
-        <Link to={`/learn/dsa/${topic.id}/practice`} className="nr-toc-link">
+        <Link to={`${base}/practice`} className="nr-toc-link">
           <ListChecks className="size-3.5" aria-hidden="true" /> Question bank ({nonCode + code})
         </Link>
         </>

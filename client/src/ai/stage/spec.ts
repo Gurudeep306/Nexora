@@ -100,6 +100,10 @@ export type StageElement =
       /** Tangent line at this x (and the secant to x + h when h is given). */
       tangent?: number
       h?: number
+      /** A point riding on the curve at this x (it glides along the curve between steps). */
+      dot?: number
+      /** Dashed lines from the dot down to the x axis and across to the y axis. */
+      guides?: boolean
       /** Stand up in a vertical plane in 3D (x right, y up). Default lies on the floor. */
       upright?: boolean
       width?: number
@@ -154,6 +158,8 @@ export type StageElement =
       f: string
       range: [number, number]
       classes?: number
+      /** A colour role per class (default: a fixed series); 'hair' is quiet paper. */
+      tones?: StageTone[]
       n?: number
       boundary?: boolean
     })
@@ -429,6 +435,7 @@ export function validateStage(spec: unknown): string[] {
         range()
         formula(at, e.f, ['x', 'y'])
         if (e.classes != null && !(Number.isInteger(e.classes) && e.classes >= 2 && e.classes <= 6)) errs.push(`${at}: classes must be 2 … 6`)
+        if (e.tones != null && (!Array.isArray(e.tones) || !e.tones.every((t) => STAGE_TONES.includes(t)) || e.tones.length < (e.classes ?? 2))) errs.push(`${at}: tones must name a colour role for every class`)
         break
       case 'graph': {
         const nodeIds = new Set<string>()

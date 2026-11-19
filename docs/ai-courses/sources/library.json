@@ -1,1045 +1,1144 @@
 {
- "about": "Everything we collect besides papers: books, courses, sites and code. node scripts/ai-courses/ingest.mjs fetches it all into docs/ai-courses/private/library (never committed). Licences as stated by each source; re-read before adapting anything.",
- "items": [
-  {
-   "id": "mml",
-   "kind": "book",
-   "title": "Mathematics for Machine Learning",
-   "fetch": {
-    "pdf": [
-     "https://mml-book.github.io/book/mml-book.pdf"
-    ]
-   },
-   "licence": "Free PDF for personal use",
-   "use": "Math spine",
-   "courses": [
-    "math-for-ai"
-   ],
-   "of": "mml"
-  },
-  {
-   "id": "boyd-cvx",
-   "kind": "book",
-   "title": "Convex Optimization",
-   "fetch": {
-    "pdf": [
-     "https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf"
-    ]
-   },
-   "licence": "Free PDF from the authors",
-   "use": "Convexity, duality",
-   "courses": [
-    "math-for-ai"
-   ],
-   "of": "boyd-cvx"
-  },
-  {
-   "id": "axler-ladr",
-   "kind": "book",
-   "title": "Linear Algebra Done Right (4th ed.)",
-   "fetch": {
-    "discover": {
-     "page": "https://linear.axler.net/",
-     "match": "LADR4e\\.pdf"
+  "about": "Everything we collect besides papers: books, courses, sites and code. node scripts/ai-courses/ingest.mjs fetches it all into docs/ai-courses/private/library (never committed). Licences as stated by each source; re-read before adapting anything.",
+  "items": [
+    {
+      "id": "mml",
+      "kind": "book",
+      "title": "Mathematics for Machine Learning",
+      "fetch": {
+        "pdf": [
+          "https://mml-book.github.io/book/mml-book.pdf"
+        ]
+      },
+      "licence": "Free PDF for personal use",
+      "use": "Math spine",
+      "courses": [
+        "math-for-ai"
+      ],
+      "of": "mml"
+    },
+    {
+      "id": "boyd-cvx",
+      "kind": "book",
+      "title": "Convex Optimization",
+      "fetch": {
+        "pdf": [
+          "https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf"
+        ]
+      },
+      "licence": "Free PDF from the authors",
+      "use": "Convexity, duality",
+      "courses": [
+        "math-for-ai"
+      ],
+      "of": "boyd-cvx"
+    },
+    {
+      "id": "axler-ladr",
+      "kind": "book",
+      "title": "Linear Algebra Done Right (4th ed.)",
+      "fetch": {
+        "discover": {
+          "page": "https://linear.axler.net/",
+          "match": "LADR4e\\.pdf"
+        }
+      },
+      "licence": "CC BY-NC (check)",
+      "use": "Linear algebra proofs",
+      "courses": [
+        "math-for-ai"
+      ],
+      "of": "axler-ladr"
+    },
+    {
+      "id": "kochenderfer-opt",
+      "kind": "book",
+      "title": "Algorithms for Optimization",
+      "fetch": {
+        "discover": {
+          "page": "https://algorithmsbook.com/optimization/",
+          "match": "\\.pdf"
+        }
+      },
+      "licence": "Free PDF from the authors",
+      "use": "Optimisation",
+      "courses": [
+        "math-for-ai"
+      ],
+      "of": "kochenderfer-opt",
+      "note": "Library copy is the 2nd edition."
+    },
+    {
+      "id": "mackay-itila",
+      "kind": "book",
+      "title": "Information Theory, Inference, and Learning Algorithms",
+      "fetch": {
+        "pdf": [
+          "https://www.inference.org.uk/itprnn/book.pdf"
+        ]
+      },
+      "licence": "Free to read on screen",
+      "use": "Information theory",
+      "courses": [
+        "math-for-ai"
+      ],
+      "of": "mackay-itila"
+    },
+    {
+      "id": "isl",
+      "kind": "book",
+      "title": "An Introduction to Statistical Learning",
+      "fetch": {
+        "discover": {
+          "page": "https://www.statlearning.com/",
+          "match": "\\.pdf"
+        }
+      },
+      "licence": "Free PDF from the authors",
+      "use": "First ML course",
+      "courses": [
+        "machine-learning"
+      ],
+      "of": "isl"
+    },
+    {
+      "id": "esl",
+      "kind": "book",
+      "title": "The Elements of Statistical Learning",
+      "fetch": {
+        "discover": {
+          "page": "https://hastie.su.domains/ElemStatLearn/",
+          "match": "\\.pdf"
+        }
+      },
+      "licence": "Free PDF from the authors",
+      "use": "Rigorous ML",
+      "courses": [
+        "machine-learning"
+      ],
+      "of": "esl"
+    },
+    {
+      "id": "prml",
+      "kind": "book",
+      "title": "Pattern Recognition and Machine Learning",
+      "fetch": {
+        "discover": {
+          "page": "https://www.microsoft.com/en-us/research/people/cmbishop/prml-book/",
+          "match": "Bishop-Pattern-Recognition.*\\.pdf"
+        }
+      },
+      "licence": "Free PDF from Microsoft Research",
+      "use": "Bayesian ML",
+      "courses": [
+        "machine-learning"
+      ],
+      "of": "prml"
+    },
+    {
+      "id": "pml1",
+      "kind": "book",
+      "title": "Probabilistic Machine Learning: An Introduction",
+      "fetch": {
+        "discover": {
+          "page": "https://probml.github.io/pml-book/book1.html",
+          "match": "\\.pdf"
+        }
+      },
+      "licence": "CC BY-NC-ND",
+      "use": "Modern ML",
+      "courses": [
+        "machine-learning",
+        "deep-learning"
+      ],
+      "of": "pml1"
+    },
+    {
+      "id": "pml2",
+      "kind": "book",
+      "title": "Probabilistic Machine Learning: Advanced Topics",
+      "fetch": {
+        "discover": {
+          "page": "https://probml.github.io/pml-book/book2.html",
+          "match": "\\.pdf"
+        }
+      },
+      "licence": "CC BY-NC-ND",
+      "use": "Advanced",
+      "courses": [
+        "generative-models",
+        "reinforcement-learning"
+      ],
+      "of": "pml2"
+    },
+    {
+      "id": "uml",
+      "kind": "book",
+      "title": "Understanding Machine Learning",
+      "fetch": {
+        "pdf": [
+          "https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/understanding-machine-learning-theory-algorithms.pdf"
+        ]
+      },
+      "licence": "Free PDF for personal use",
+      "use": "Learning theory",
+      "courses": [
+        "machine-learning"
+      ],
+      "of": "uml"
+    },
+    {
+      "id": "fml",
+      "kind": "book",
+      "title": "Foundations of Machine Learning",
+      "fetch": {
+        "discover": {
+          "page": "https://cs.nyu.edu/~mohri/mlbook/",
+          "match": "\\.pdf"
+        }
+      },
+      "licence": "Open access",
+      "use": "Learning theory",
+      "courses": [
+        "machine-learning"
+      ],
+      "of": "fml"
+    },
+    {
+      "id": "gpml",
+      "kind": "book",
+      "title": "Gaussian Processes for Machine Learning",
+      "fetch": {
+        "pdf": [
+          "https://gaussianprocess.org/gpml/chapters/RW.pdf"
+        ]
+      },
+      "licence": "Free PDF from the authors",
+      "use": "Gaussian processes",
+      "courses": [
+        "machine-learning"
+      ],
+      "of": "gpml"
+    },
+    {
+      "id": "dlbook",
+      "kind": "book",
+      "title": "Deep Learning (Goodfellow et al.)",
+      "fetch": {
+        "crawl": {
+          "start": "https://www.deeplearningbook.org/",
+          "allow": "https://www.deeplearningbook.org/contents/",
+          "max": 40
+        }
+      },
+      "licence": "Free to read online (HTML)",
+      "use": "The classic DL text",
+      "courses": [
+        "deep-learning"
+      ],
+      "of": "dlbook"
+    },
+    {
+      "id": "bishop-dl",
+      "kind": "book",
+      "title": "Deep Learning: Foundations and Concepts",
+      "fetch": {
+        "discover": {
+          "page": "https://www.bishopbook.com/",
+          "match": "\\.pdf"
+        }
+      },
+      "licence": "Free to read online",
+      "use": "Modern DL text",
+      "courses": [
+        "deep-learning"
+      ],
+      "of": "bishop-dl"
+    },
+    {
+      "id": "udl",
+      "kind": "book",
+      "title": "Understanding Deep Learning",
+      "fetch": {
+        "pdf": [
+          "https://github.com/udlbook/udlbook/releases/download/v5.0.2/UnderstandingDeepLearning_05_29_25_C.pdf"
+        ]
+      },
+      "licence": "CC BY-NC-ND",
+      "use": "Figures and notebooks",
+      "courses": [
+        "deep-learning",
+        "generative-models"
+      ],
+      "of": "udl"
+    },
+    {
+      "id": "d2l",
+      "kind": "book",
+      "title": "Dive into Deep Learning",
+      "fetch": {
+        "pdf": [
+          "https://d2l.ai/d2l-en.pdf"
+        ]
+      },
+      "licence": "CC BY-SA 4.0 (adapt with attribution)",
+      "use": "Runnable chapters",
+      "courses": [
+        "deep-learning",
+        "computer-vision",
+        "nlp"
+      ],
+      "of": "d2l"
+    },
+    {
+      "id": "nielsen",
+      "kind": "book",
+      "title": "Neural Networks and Deep Learning",
+      "fetch": {
+        "crawl": {
+          "start": "https://neuralnetworksanddeeplearning.com/",
+          "allow": "https://neuralnetworksanddeeplearning.com/",
+          "max": 12
+        }
+      },
+      "licence": "CC BY-NC 3.0",
+      "use": "Backprop explained",
+      "courses": [
+        "deep-learning"
+      ],
+      "of": "nielsen"
+    },
+    {
+      "id": "slp3",
+      "kind": "book",
+      "title": "Speech and Language Processing (3rd ed. draft)",
+      "fetch": {
+        "discover": {
+          "page": "https://web.stanford.edu/~jurafsky/slp3/",
+          "match": "\\.pdf"
+        }
+      },
+      "licence": "Free draft",
+      "use": "NLP",
+      "courses": [
+        "nlp",
+        "llms"
+      ],
+      "of": "slp3"
+    },
+    {
+      "id": "sutton-barto",
+      "kind": "book",
+      "title": "Reinforcement Learning: An Introduction",
+      "fetch": {
+        "pdf": [
+          "https://incompleteideas.net/book/RLbook2020.pdf"
+        ]
+      },
+      "licence": "Free PDF from the authors",
+      "use": "RL",
+      "courses": [
+        "reinforcement-learning"
+      ],
+      "of": "sutton-barto",
+      "note": "Library copy (from the owner's Drive) is the final 2nd edition (2018, 548 pages)."
+    },
+    {
+      "id": "szeliski",
+      "kind": "book",
+      "title": "Computer Vision: Algorithms and Applications",
+      "fetch": {
+        "discover": {
+          "page": "https://szeliski.org/Book/",
+          "match": "\\.pdf"
+        }
+      },
+      "licence": "Free PDF for personal use",
+      "use": "Vision",
+      "courses": [
+        "computer-vision"
+      ],
+      "of": "szeliski"
+    },
+    {
+      "id": "cs229",
+      "kind": "course",
+      "title": "Stanford CS229 notes",
+      "fetch": {
+        "pdf": [
+          "https://cs229.stanford.edu/main_notes.pdf"
+        ]
+      },
+      "licence": "Course notes (read and cite)",
+      "use": "ML derivations",
+      "courses": [
+        "machine-learning"
+      ],
+      "of": "cs229"
+    },
+    {
+      "id": "cs231n",
+      "kind": "course",
+      "title": "Stanford CS231n notes",
+      "fetch": {
+        "git": "https://github.com/cs231n/cs231n.github.io"
+      },
+      "licence": "MIT licence (repo)",
+      "use": "Backprop, CNNs",
+      "courses": [
+        "deep-learning",
+        "computer-vision"
+      ],
+      "of": "cs231n"
+    },
+    {
+      "id": "cs236",
+      "kind": "course",
+      "title": "Stanford CS236 notes",
+      "fetch": {
+        "git": "https://github.com/deepgenerativemodels/notes"
+      },
+      "licence": "Read and cite",
+      "use": "Generative models",
+      "courses": [
+        "generative-models"
+      ],
+      "of": "cs236"
+    },
+    {
+      "id": "cs285",
+      "kind": "course",
+      "title": "Berkeley CS285 slides",
+      "fetch": {
+        "discover": {
+          "page": "https://rail.eecs.berkeley.edu/deeprlcourse/",
+          "match": "\\.pdf",
+          "max": 40
+        }
+      },
+      "licence": "Read and cite",
+      "use": "Deep RL",
+      "courses": [
+        "reinforcement-learning"
+      ],
+      "of": "cs285"
+    },
+    {
+      "id": "silver-rl",
+      "kind": "course",
+      "title": "David Silver RL slides",
+      "fetch": {
+        "discover": {
+          "page": "https://www.davidsilver.uk/teaching/",
+          "match": "\\.pdf",
+          "max": 15
+        }
+      },
+      "licence": "Read and cite",
+      "use": "RL",
+      "courses": [
+        "reinforcement-learning"
+      ],
+      "of": "silver-rl"
+    },
+    {
+      "id": "mit-6s191",
+      "kind": "course",
+      "title": "MIT 6.S191 labs",
+      "fetch": {
+        "git": "https://github.com/aamini/introtodeeplearning"
+      },
+      "licence": "MIT licence",
+      "use": "DL labs",
+      "courses": [
+        "deep-learning"
+      ],
+      "of": "mit-6s191"
+    },
+    {
+      "id": "zero-to-hero",
+      "kind": "course",
+      "title": "Neural Networks: Zero to Hero",
+      "fetch": {
+        "git": "https://github.com/karpathy/nn-zero-to-hero"
+      },
+      "licence": "MIT licence",
+      "use": "From-scratch notebooks",
+      "courses": [
+        "deep-learning",
+        "llms"
+      ],
+      "of": "zero-to-hero"
+    },
+    {
+      "id": "fastai",
+      "kind": "course",
+      "title": "fast.ai book",
+      "fetch": {
+        "git": "https://github.com/fastai/fastbook"
+      },
+      "licence": "Code GPL-3; text: see repo",
+      "use": "Practical DL",
+      "courses": [
+        "deep-learning"
+      ],
+      "of": "fastai"
+    },
+    {
+      "id": "spinning-up",
+      "kind": "course",
+      "title": "OpenAI Spinning Up",
+      "fetch": {
+        "git": "https://github.com/openai/spinningup"
+      },
+      "licence": "MIT licence",
+      "use": "Policy gradients",
+      "courses": [
+        "reinforcement-learning"
+      ],
+      "of": "spinning-up"
+    },
+    {
+      "id": "hf-course",
+      "kind": "course",
+      "title": "Hugging Face LLM course",
+      "fetch": {
+        "git": "https://github.com/huggingface/course"
+      },
+      "licence": "Apache-2.0",
+      "use": "Transformers in practice",
+      "courses": [
+        "llms",
+        "nlp"
+      ],
+      "of": "hf-course"
+    },
+    {
+      "id": "distill",
+      "kind": "site",
+      "title": "Distill articles",
+      "fetch": {
+        "crawl": {
+          "start": "https://distill.pub/",
+          "allow": "https://distill.pub/20",
+          "max": 60
+        }
+      },
+      "licence": "CC BY 4.0 (adapt with attribution)",
+      "use": "Interactive explanations",
+      "courses": [
+        "deep-learning"
+      ],
+      "of": "distill"
+    },
+    {
+      "id": "scaling-book",
+      "kind": "course",
+      "title": "How to Scale Your Model",
+      "fetch": {
+        "git": "https://github.com/jax-ml/scaling-book"
+      },
+      "licence": "See repo",
+      "use": "Scaling arithmetic",
+      "courses": [
+        "ai-systems"
+      ],
+      "of": "scaling-book"
+    },
+    {
+      "id": "ultrascale",
+      "kind": "course",
+      "title": "The Ultra-Scale Playbook",
+      "fetch": {
+        "git": "https://huggingface.co/spaces/nanotron/ultrascale-playbook"
+      },
+      "licence": "See repo",
+      "use": "Parallel training",
+      "courses": [
+        "ai-systems"
+      ],
+      "of": "ultrascale"
+    },
+    {
+      "id": "cuda-guide",
+      "kind": "course",
+      "title": "CUDA Programming Guide",
+      "fetch": {
+        "crawl": {
+          "start": "https://docs.nvidia.com/cuda/cuda-programming-guide/",
+          "allow": "https://docs.nvidia.com/cuda/cuda-programming-guide/",
+          "max": 40
+        }
+      },
+      "licence": "NVIDIA documentation (read and cite)",
+      "use": "GPU model",
+      "courses": [
+        "ai-systems"
+      ],
+      "of": "cuda-guide"
+    },
+    {
+      "id": "gpu-mode",
+      "kind": "course",
+      "title": "GPU MODE lectures",
+      "fetch": {
+        "git": "https://github.com/gpu-mode/lectures"
+      },
+      "licence": "See repo",
+      "use": "GPU kernels",
+      "courses": [
+        "ai-systems"
+      ],
+      "of": "gpu-mode"
+    },
+    {
+      "id": "transformer-circuits",
+      "kind": "site",
+      "title": "Transformer Circuits Thread",
+      "fetch": {
+        "crawl": {
+          "start": "https://transformer-circuits.pub/",
+          "allow": "https://transformer-circuits.pub/20",
+          "max": 30
+        }
+      },
+      "licence": "See site",
+      "use": "Interpretability",
+      "courses": [
+        "ai-systems"
+      ],
+      "of": "transformer-circuits"
+    },
+    {
+      "id": "lilian-weng",
+      "kind": "site",
+      "title": "Lil'Log (Lilian Weng)",
+      "fetch": {
+        "crawl": {
+          "start": "https://lilianweng.github.io/",
+          "allow": "https://lilianweng.github.io/posts/",
+          "max": 60
+        }
+      },
+      "licence": "All rights reserved: read and cite only",
+      "use": "Deep surveys of attention, diffusion, RL, LLM topics",
+      "courses": [
+        "deep-learning",
+        "generative-models",
+        "llms",
+        "reinforcement-learning"
+      ]
+    },
+    {
+      "id": "colah",
+      "kind": "site",
+      "title": "colah's blog (Chris Olah)",
+      "fetch": {
+        "crawl": {
+          "start": "https://colah.github.io/",
+          "allow": "https://colah.github.io/posts/",
+          "max": 25
+        }
+      },
+      "licence": "Read and cite",
+      "use": "Visual explanations: backprop, LSTMs, manifolds",
+      "courses": [
+        "deep-learning"
+      ]
+    },
+    {
+      "id": "alammar",
+      "kind": "site",
+      "title": "Jay Alammar: the illustrated series",
+      "fetch": {
+        "crawl": {
+          "start": "https://jalammar.github.io/",
+          "allow": "https://jalammar.github.io/",
+          "max": 30
+        }
+      },
+      "licence": "Read and cite",
+      "use": "Illustrated transformer, BERT, GPT",
+      "courses": [
+        "nlp",
+        "llms"
+      ]
+    },
+    {
+      "id": "micrograd",
+      "kind": "repo",
+      "title": "karpathy/micrograd",
+      "fetch": {
+        "git": "https://github.com/karpathy/micrograd"
+      },
+      "licence": "MIT",
+      "use": "A tiny autograd engine: the model for our tensor engine",
+      "courses": [
+        "deep-learning"
+      ]
+    },
+    {
+      "id": "makemore",
+      "kind": "repo",
+      "title": "karpathy/makemore",
+      "fetch": {
+        "git": "https://github.com/karpathy/makemore"
+      },
+      "licence": "MIT",
+      "use": "Character-level models, bigram to transformer",
+      "courses": [
+        "deep-learning",
+        "nlp"
+      ]
+    },
+    {
+      "id": "minbpe",
+      "kind": "repo",
+      "title": "karpathy/minbpe",
+      "fetch": {
+        "git": "https://github.com/karpathy/minbpe"
+      },
+      "licence": "MIT",
+      "use": "BPE tokeniser from scratch",
+      "courses": [
+        "nlp"
+      ]
+    },
+    {
+      "id": "nanogpt",
+      "kind": "repo",
+      "title": "karpathy/nanoGPT",
+      "fetch": {
+        "git": "https://github.com/karpathy/nanoGPT"
+      },
+      "licence": "MIT",
+      "use": "Smallest clear GPT training code",
+      "courses": [
+        "llms",
+        "ai-systems"
+      ]
+    },
+    {
+      "id": "build-nanogpt",
+      "kind": "repo",
+      "title": "karpathy/build-nanogpt",
+      "fetch": {
+        "git": "https://github.com/karpathy/build-nanogpt"
+      },
+      "licence": "MIT",
+      "use": "GPT-2 rebuilt step by step, commit by commit (a code story)",
+      "courses": [
+        "llms",
+        "ai-systems"
+      ]
+    },
+    {
+      "id": "llm-c",
+      "kind": "repo",
+      "title": "karpathy/llm.c",
+      "fetch": {
+        "git": "https://github.com/karpathy/llm.c"
+      },
+      "licence": "MIT",
+      "use": "GPT-2 training in C and CUDA",
+      "courses": [
+        "ai-systems"
+      ]
+    },
+    {
+      "id": "llama2-c",
+      "kind": "repo",
+      "title": "karpathy/llama2.c",
+      "fetch": {
+        "git": "https://github.com/karpathy/llama2.c"
+      },
+      "licence": "MIT",
+      "use": "Llama inference in one C file",
+      "courses": [
+        "llms",
+        "ai-systems"
+      ]
+    },
+    {
+      "id": "picogpt",
+      "kind": "repo",
+      "title": "jaymody/picoGPT",
+      "fetch": {
+        "git": "https://github.com/jaymody/picoGPT"
+      },
+      "licence": "MIT",
+      "use": "GPT-2 forward pass in NumPy, tiny",
+      "courses": [
+        "llms"
+      ]
+    },
+    {
+      "id": "annotated-transformer",
+      "kind": "repo",
+      "title": "harvardnlp/annotated-transformer",
+      "fetch": {
+        "git": "https://github.com/harvardnlp/annotated-transformer"
+      },
+      "licence": "MIT",
+      "use": "The transformer paper with code line by line",
+      "courses": [
+        "deep-learning"
+      ]
+    },
+    {
+      "id": "labml-annotated",
+      "kind": "repo",
+      "title": "labmlai/annotated_deep_learning_paper_implementations",
+      "fetch": {
+        "git": "https://github.com/labmlai/annotated_deep_learning_paper_implementations"
+      },
+      "licence": "MIT",
+      "use": "Hundreds of papers implemented with side-by-side notes",
+      "courses": [
+        "deep-learning",
+        "generative-models",
+        "llms",
+        "reinforcement-learning"
+      ]
+    },
+    {
+      "id": "llms-from-scratch",
+      "kind": "repo",
+      "title": "rasbt/LLMs-from-scratch",
+      "fetch": {
+        "git": "https://github.com/rasbt/LLMs-from-scratch"
+      },
+      "licence": "Apache-2.0 (code)",
+      "use": "Build an LLM from scratch, chapter by chapter",
+      "courses": [
+        "llms"
+      ]
+    },
+    {
+      "id": "ml-book-rasbt",
+      "kind": "repo",
+      "title": "rasbt/machine-learning-book",
+      "fetch": {
+        "git": "https://github.com/rasbt/machine-learning-book"
+      },
+      "licence": "MIT (code)",
+      "use": "ML with PyTorch and scikit-learn, code",
+      "courses": [
+        "machine-learning"
+      ]
+    },
+    {
+      "id": "handson-ml3",
+      "kind": "repo",
+      "title": "ageron/handson-ml3",
+      "fetch": {
+        "git": "https://github.com/ageron/handson-ml3"
+      },
+      "licence": "Apache-2.0",
+      "use": "Hands-on ML notebooks",
+      "courses": [
+        "machine-learning",
+        "deep-learning"
+      ]
+    },
+    {
+      "id": "d2l-en",
+      "kind": "repo",
+      "title": "d2l-ai/d2l-en",
+      "fetch": {
+        "git": "https://github.com/d2l-ai/d2l-en"
+      },
+      "licence": "CC BY-SA (text), MIT-0 (code)",
+      "use": "Dive into Deep Learning source",
+      "courses": [
+        "deep-learning",
+        "computer-vision",
+        "nlp"
+      ]
+    },
+    {
+      "id": "udlbook-nb",
+      "kind": "repo",
+      "title": "udlbook/udlbook",
+      "fetch": {
+        "git": "https://github.com/udlbook/udlbook"
+      },
+      "licence": "See repo",
+      "use": "Understanding Deep Learning notebooks",
+      "courses": [
+        "deep-learning",
+        "generative-models"
+      ]
+    },
+    {
+      "id": "pyprobml",
+      "kind": "repo",
+      "title": "probml/pyprobml",
+      "fetch": {
+        "git": "https://github.com/probml/pyprobml"
+      },
+      "licence": "MIT",
+      "use": "Code for Murphy's books",
+      "courses": [
+        "machine-learning"
+      ]
+    },
+    {
+      "id": "ddpm-pytorch",
+      "kind": "repo",
+      "title": "lucidrains/denoising-diffusion-pytorch",
+      "fetch": {
+        "git": "https://github.com/lucidrains/denoising-diffusion-pytorch"
+      },
+      "licence": "MIT",
+      "use": "Clean DDPM implementation",
+      "courses": [
+        "generative-models"
+      ]
+    },
+    {
+      "id": "tiktoken",
+      "kind": "repo",
+      "title": "openai/tiktoken",
+      "fetch": {
+        "git": "https://github.com/openai/tiktoken"
+      },
+      "licence": "MIT",
+      "use": "A production BPE tokeniser",
+      "courses": [
+        "nlp",
+        "llms"
+      ]
+    },
+    {
+      "id": "gpu-puzzles",
+      "kind": "repo",
+      "title": "srush/GPU-Puzzles",
+      "fetch": {
+        "git": "https://github.com/srush/GPU-Puzzles"
+      },
+      "licence": "MIT",
+      "use": "Learn CUDA by puzzles",
+      "courses": [
+        "ai-systems"
+      ]
+    },
+    {
+      "id": "tensor-puzzles",
+      "kind": "repo",
+      "title": "srush/Tensor-Puzzles",
+      "fetch": {
+        "git": "https://github.com/srush/Tensor-Puzzles"
+      },
+      "licence": "MIT",
+      "use": "Learn broadcasting by puzzles",
+      "courses": [
+        "foundations",
+        "math-for-ai"
+      ]
+    },
+    {
+      "id": "pytorch-examples",
+      "kind": "repo",
+      "title": "pytorch/examples",
+      "fetch": {
+        "git": "https://github.com/pytorch/examples"
+      },
+      "licence": "BSD-3",
+      "use": "Reference training loops",
+      "courses": [
+        "deep-learning"
+      ]
+    },
+    {
+      "id": "tf-playground",
+      "kind": "repo",
+      "title": "tensorflow/playground",
+      "fetch": {
+        "git": "https://github.com/tensorflow/playground"
+      },
+      "licence": "Apache-2.0",
+      "use": "Visual reference: a net training live in the browser",
+      "courses": [
+        "deep-learning"
+      ]
+    },
+    {
+      "id": "transformer-explainer",
+      "kind": "repo",
+      "title": "poloclub/transformer-explainer",
+      "fetch": {
+        "git": "https://github.com/poloclub/transformer-explainer"
+      },
+      "licence": "MIT",
+      "use": "Visual reference: GPT-2 running in the browser, explained",
+      "courses": [
+        "llms"
+      ]
+    },
+    {
+      "id": "cnn-explainer",
+      "kind": "repo",
+      "title": "poloclub/cnn-explainer",
+      "fetch": {
+        "git": "https://github.com/poloclub/cnn-explainer"
+      },
+      "licence": "MIT",
+      "use": "Visual reference: a CNN explained interactively",
+      "courses": [
+        "deep-learning"
+      ]
+    },
+    {
+      "id": "diffusion-explainer",
+      "kind": "repo",
+      "title": "poloclub/diffusion-explainer",
+      "fetch": {
+        "git": "https://github.com/poloclub/diffusion-explainer"
+      },
+      "licence": "MIT",
+      "use": "Visual reference: Stable Diffusion explained",
+      "courses": [
+        "generative-models"
+      ]
+    },
+    {
+      "id": "llm-viz",
+      "kind": "repo",
+      "title": "bbycroft/llm-viz",
+      "fetch": {
+        "git": "https://github.com/bbycroft/llm-viz"
+      },
+      "licence": "See repo",
+      "use": "Visual reference: 3D GPT walk-through",
+      "courses": [
+        "ai-systems"
+      ]
+    },
+    {
+      "id": "manim",
+      "kind": "repo",
+      "title": "ManimCommunity/manim",
+      "fetch": {
+        "git": "https://github.com/ManimCommunity/manim"
+      },
+      "licence": "MIT",
+      "use": "Animation engine for math (reference for the derivation stepper)",
+      "courses": [
+        "math-for-ai"
+      ]
+    },
+    {
+      "id": "mathbox",
+      "kind": "repo",
+      "title": "unconed/mathbox",
+      "fetch": {
+        "git": "https://github.com/unconed/mathbox"
+      },
+      "licence": "MIT",
+      "use": "WebGL math visualisation (reference for 3D scenes)",
+      "courses": [
+        "math-for-ai"
+      ]
+    },
+    {
+      "id": "python-docs",
+      "kind": "site",
+      "title": "The Python 3.15 documentation (tutorial, language reference, standard library)",
+      "fetch": {
+        "zip": "https://docs.python.org/3.15/archives/python-3.15-docs-text.zip"
+      },
+      "licence": "PSF documentation licence: read and cite; examples may be adapted with attribution",
+      "use": "The official source for every Python topic: syntax, built-ins, standard library",
+      "courses": [
+        "foundations"
+      ]
+    },
+    {
+      "id": "numpy-docs",
+      "kind": "site",
+      "title": "NumPy 2.5 user guide and reference",
+      "fetch": {
+        "crawl": {
+          "start": "https://numpy.org/doc/stable/user/index.html",
+          "allow": "https://numpy.org/doc/stable/",
+          "max": 120
+        }
+      },
+      "licence": "BSD-3 (docs and code)",
+      "use": "Arrays, indexing, broadcasting, linear algebra, random",
+      "courses": [
+        "foundations"
+      ]
+    },
+    {
+      "id": "pandas-docs",
+      "kind": "site",
+      "title": "pandas 3.1 user guide",
+      "fetch": {
+        "crawl": {
+          "start": "https://pandas.pydata.org/docs/user_guide/index.html",
+          "allow": "https://pandas.pydata.org/docs/",
+          "max": 120
+        }
+      },
+      "licence": "BSD-3 (docs and code)",
+      "use": "DataFrames, I/O, selection, cleaning, grouping, joining",
+      "courses": [
+        "foundations"
+      ]
+    },
+    {
+      "id": "matplotlib-docs",
+      "kind": "site",
+      "title": "Matplotlib 3.11 user guide",
+      "fetch": {
+        "crawl": {
+          "start": "https://matplotlib.org/stable/users/index.html",
+          "allow": "https://matplotlib.org/stable/",
+          "max": 100
+        }
+      },
+      "licence": "Matplotlib licence (BSD-style)",
+      "use": "Figures, axes, plot types, styling",
+      "courses": [
+        "foundations"
+      ]
+    },
+    {
+      "id": "sklearn-docs",
+      "kind": "site",
+      "title": "scikit-learn 1.9 user guide",
+      "fetch": {
+        "crawl": {
+          "start": "https://scikit-learn.org/stable/user_guide.html",
+          "allow": "https://scikit-learn.org/stable/",
+          "max": 120
+        }
+      },
+      "licence": "BSD-3 (docs and code)",
+      "use": "Estimators, fit/predict, pipelines, model selection",
+      "courses": [
+        "machine-learning"
+      ]
+    },
+    {
+      "id": "pytorch-docs",
+      "kind": "site",
+      "title": "PyTorch 2.15 documentation and tutorials",
+      "fetch": {
+        "crawl": {
+          "start": "https://docs.pytorch.org/tutorials/beginner/basics/intro.html",
+          "allow": "https://docs.pytorch.org/",
+          "max": 120
+        }
+      },
+      "licence": "BSD-3 (docs and code)",
+      "use": "Tensors, autograd, nn.Module, data loading, training",
+      "courses": [
+        "foundations",
+        "deep-learning"
+      ]
     }
-   },
-   "licence": "CC BY-NC (check)",
-   "use": "Linear algebra proofs",
-   "courses": [
-    "math-for-ai"
-   ],
-   "of": "axler-ladr"
-  },
-  {
-   "id": "kochenderfer-opt",
-   "kind": "book",
-   "title": "Algorithms for Optimization",
-   "fetch": {
-    "discover": {
-     "page": "https://algorithmsbook.com/optimization/",
-     "match": "\\.pdf"
-    }
-   },
-   "licence": "Free PDF from the authors",
-   "use": "Optimisation",
-   "courses": [
-    "math-for-ai"
-   ],
-   "of": "kochenderfer-opt",
-   "note": "Library copy is the 2nd edition."
-  },
-  {
-   "id": "mackay-itila",
-   "kind": "book",
-   "title": "Information Theory, Inference, and Learning Algorithms",
-   "fetch": {
-    "pdf": [
-     "https://www.inference.org.uk/itprnn/book.pdf"
-    ]
-   },
-   "licence": "Free to read on screen",
-   "use": "Information theory",
-   "courses": [
-    "math-for-ai"
-   ],
-   "of": "mackay-itila"
-  },
-  {
-   "id": "isl",
-   "kind": "book",
-   "title": "An Introduction to Statistical Learning",
-   "fetch": {
-    "discover": {
-     "page": "https://www.statlearning.com/",
-     "match": "\\.pdf"
-    }
-   },
-   "licence": "Free PDF from the authors",
-   "use": "First ML course",
-   "courses": [
-    "machine-learning"
-   ],
-   "of": "isl"
-  },
-  {
-   "id": "esl",
-   "kind": "book",
-   "title": "The Elements of Statistical Learning",
-   "fetch": {
-    "discover": {
-     "page": "https://hastie.su.domains/ElemStatLearn/",
-     "match": "\\.pdf"
-    }
-   },
-   "licence": "Free PDF from the authors",
-   "use": "Rigorous ML",
-   "courses": [
-    "machine-learning"
-   ],
-   "of": "esl"
-  },
-  {
-   "id": "prml",
-   "kind": "book",
-   "title": "Pattern Recognition and Machine Learning",
-   "fetch": {
-    "discover": {
-     "page": "https://www.microsoft.com/en-us/research/people/cmbishop/prml-book/",
-     "match": "Bishop-Pattern-Recognition.*\\.pdf"
-    }
-   },
-   "licence": "Free PDF from Microsoft Research",
-   "use": "Bayesian ML",
-   "courses": [
-    "machine-learning"
-   ],
-   "of": "prml"
-  },
-  {
-   "id": "pml1",
-   "kind": "book",
-   "title": "Probabilistic Machine Learning: An Introduction",
-   "fetch": {
-    "discover": {
-     "page": "https://probml.github.io/pml-book/book1.html",
-     "match": "\\.pdf"
-    }
-   },
-   "licence": "CC BY-NC-ND",
-   "use": "Modern ML",
-   "courses": [
-    "machine-learning",
-    "deep-learning"
-   ],
-   "of": "pml1"
-  },
-  {
-   "id": "pml2",
-   "kind": "book",
-   "title": "Probabilistic Machine Learning: Advanced Topics",
-   "fetch": {
-    "discover": {
-     "page": "https://probml.github.io/pml-book/book2.html",
-     "match": "\\.pdf"
-    }
-   },
-   "licence": "CC BY-NC-ND",
-   "use": "Advanced",
-   "courses": [
-    "generative-models",
-    "reinforcement-learning"
-   ],
-   "of": "pml2"
-  },
-  {
-   "id": "uml",
-   "kind": "book",
-   "title": "Understanding Machine Learning",
-   "fetch": {
-    "pdf": [
-     "https://www.cs.huji.ac.il/~shais/UnderstandingMachineLearning/understanding-machine-learning-theory-algorithms.pdf"
-    ]
-   },
-   "licence": "Free PDF for personal use",
-   "use": "Learning theory",
-   "courses": [
-    "machine-learning"
-   ],
-   "of": "uml"
-  },
-  {
-   "id": "fml",
-   "kind": "book",
-   "title": "Foundations of Machine Learning",
-   "fetch": {
-    "discover": {
-     "page": "https://cs.nyu.edu/~mohri/mlbook/",
-     "match": "\\.pdf"
-    }
-   },
-   "licence": "Open access",
-   "use": "Learning theory",
-   "courses": [
-    "machine-learning"
-   ],
-   "of": "fml"
-  },
-  {
-   "id": "gpml",
-   "kind": "book",
-   "title": "Gaussian Processes for Machine Learning",
-   "fetch": {
-    "pdf": [
-     "https://gaussianprocess.org/gpml/chapters/RW.pdf"
-    ]
-   },
-   "licence": "Free PDF from the authors",
-   "use": "Gaussian processes",
-   "courses": [
-    "machine-learning"
-   ],
-   "of": "gpml"
-  },
-  {
-   "id": "dlbook",
-   "kind": "book",
-   "title": "Deep Learning (Goodfellow et al.)",
-   "fetch": {
-    "crawl": {
-     "start": "https://www.deeplearningbook.org/",
-     "allow": "https://www.deeplearningbook.org/contents/",
-     "max": 40
-    }
-   },
-   "licence": "Free to read online (HTML)",
-   "use": "The classic DL text",
-   "courses": [
-    "deep-learning"
-   ],
-   "of": "dlbook"
-  },
-  {
-   "id": "bishop-dl",
-   "kind": "book",
-   "title": "Deep Learning: Foundations and Concepts",
-   "fetch": {
-    "discover": {
-     "page": "https://www.bishopbook.com/",
-     "match": "\\.pdf"
-    }
-   },
-   "licence": "Free to read online",
-   "use": "Modern DL text",
-   "courses": [
-    "deep-learning"
-   ],
-   "of": "bishop-dl"
-  },
-  {
-   "id": "udl",
-   "kind": "book",
-   "title": "Understanding Deep Learning",
-   "fetch": {
-    "pdf": [
-     "https://github.com/udlbook/udlbook/releases/download/v5.0.2/UnderstandingDeepLearning_05_29_25_C.pdf"
-    ]
-   },
-   "licence": "CC BY-NC-ND",
-   "use": "Figures and notebooks",
-   "courses": [
-    "deep-learning",
-    "generative-models"
-   ],
-   "of": "udl"
-  },
-  {
-   "id": "d2l",
-   "kind": "book",
-   "title": "Dive into Deep Learning",
-   "fetch": {
-    "pdf": [
-     "https://d2l.ai/d2l-en.pdf"
-    ]
-   },
-   "licence": "CC BY-SA 4.0 (adapt with attribution)",
-   "use": "Runnable chapters",
-   "courses": [
-    "deep-learning",
-    "computer-vision",
-    "nlp"
-   ],
-   "of": "d2l"
-  },
-  {
-   "id": "nielsen",
-   "kind": "book",
-   "title": "Neural Networks and Deep Learning",
-   "fetch": {
-    "crawl": {
-     "start": "https://neuralnetworksanddeeplearning.com/",
-     "allow": "https://neuralnetworksanddeeplearning.com/",
-     "max": 12
-    }
-   },
-   "licence": "CC BY-NC 3.0",
-   "use": "Backprop explained",
-   "courses": [
-    "deep-learning"
-   ],
-   "of": "nielsen"
-  },
-  {
-   "id": "slp3",
-   "kind": "book",
-   "title": "Speech and Language Processing (3rd ed. draft)",
-   "fetch": {
-    "discover": {
-     "page": "https://web.stanford.edu/~jurafsky/slp3/",
-     "match": "\\.pdf"
-    }
-   },
-   "licence": "Free draft",
-   "use": "NLP",
-   "courses": [
-    "nlp",
-    "llms"
-   ],
-   "of": "slp3"
-  },
-  {
-   "id": "sutton-barto",
-   "kind": "book",
-   "title": "Reinforcement Learning: An Introduction",
-   "fetch": {
-    "pdf": [
-     "https://incompleteideas.net/book/RLbook2020.pdf"
-    ]
-   },
-   "licence": "Free PDF from the authors",
-   "use": "RL",
-   "courses": [
-    "reinforcement-learning"
-   ],
-   "of": "sutton-barto",
-   "note": "Library copy (from the owner's Drive) is the final 2nd edition (2018, 548 pages)."
-  },
-  {
-   "id": "szeliski",
-   "kind": "book",
-   "title": "Computer Vision: Algorithms and Applications",
-   "fetch": {
-    "discover": {
-     "page": "https://szeliski.org/Book/",
-     "match": "\\.pdf"
-    }
-   },
-   "licence": "Free PDF for personal use",
-   "use": "Vision",
-   "courses": [
-    "computer-vision"
-   ],
-   "of": "szeliski"
-  },
-  {
-   "id": "cs229",
-   "kind": "course",
-   "title": "Stanford CS229 notes",
-   "fetch": {
-    "pdf": [
-     "https://cs229.stanford.edu/main_notes.pdf"
-    ]
-   },
-   "licence": "Course notes (read and cite)",
-   "use": "ML derivations",
-   "courses": [
-    "machine-learning"
-   ],
-   "of": "cs229"
-  },
-  {
-   "id": "cs231n",
-   "kind": "course",
-   "title": "Stanford CS231n notes",
-   "fetch": {
-    "git": "https://github.com/cs231n/cs231n.github.io"
-   },
-   "licence": "MIT licence (repo)",
-   "use": "Backprop, CNNs",
-   "courses": [
-    "deep-learning",
-    "computer-vision"
-   ],
-   "of": "cs231n"
-  },
-  {
-   "id": "cs236",
-   "kind": "course",
-   "title": "Stanford CS236 notes",
-   "fetch": {
-    "git": "https://github.com/deepgenerativemodels/notes"
-   },
-   "licence": "Read and cite",
-   "use": "Generative models",
-   "courses": [
-    "generative-models"
-   ],
-   "of": "cs236"
-  },
-  {
-   "id": "cs285",
-   "kind": "course",
-   "title": "Berkeley CS285 slides",
-   "fetch": {
-    "discover": {
-     "page": "https://rail.eecs.berkeley.edu/deeprlcourse/",
-     "match": "\\.pdf",
-     "max": 40
-    }
-   },
-   "licence": "Read and cite",
-   "use": "Deep RL",
-   "courses": [
-    "reinforcement-learning"
-   ],
-   "of": "cs285"
-  },
-  {
-   "id": "silver-rl",
-   "kind": "course",
-   "title": "David Silver RL slides",
-   "fetch": {
-    "discover": {
-     "page": "https://www.davidsilver.uk/teaching/",
-     "match": "\\.pdf",
-     "max": 15
-    }
-   },
-   "licence": "Read and cite",
-   "use": "RL",
-   "courses": [
-    "reinforcement-learning"
-   ],
-   "of": "silver-rl"
-  },
-  {
-   "id": "mit-6s191",
-   "kind": "course",
-   "title": "MIT 6.S191 labs",
-   "fetch": {
-    "git": "https://github.com/aamini/introtodeeplearning"
-   },
-   "licence": "MIT licence",
-   "use": "DL labs",
-   "courses": [
-    "deep-learning"
-   ],
-   "of": "mit-6s191"
-  },
-  {
-   "id": "zero-to-hero",
-   "kind": "course",
-   "title": "Neural Networks: Zero to Hero",
-   "fetch": {
-    "git": "https://github.com/karpathy/nn-zero-to-hero"
-   },
-   "licence": "MIT licence",
-   "use": "From-scratch notebooks",
-   "courses": [
-    "deep-learning",
-    "llms"
-   ],
-   "of": "zero-to-hero"
-  },
-  {
-   "id": "fastai",
-   "kind": "course",
-   "title": "fast.ai book",
-   "fetch": {
-    "git": "https://github.com/fastai/fastbook"
-   },
-   "licence": "Code GPL-3; text: see repo",
-   "use": "Practical DL",
-   "courses": [
-    "deep-learning"
-   ],
-   "of": "fastai"
-  },
-  {
-   "id": "spinning-up",
-   "kind": "course",
-   "title": "OpenAI Spinning Up",
-   "fetch": {
-    "git": "https://github.com/openai/spinningup"
-   },
-   "licence": "MIT licence",
-   "use": "Policy gradients",
-   "courses": [
-    "reinforcement-learning"
-   ],
-   "of": "spinning-up"
-  },
-  {
-   "id": "hf-course",
-   "kind": "course",
-   "title": "Hugging Face LLM course",
-   "fetch": {
-    "git": "https://github.com/huggingface/course"
-   },
-   "licence": "Apache-2.0",
-   "use": "Transformers in practice",
-   "courses": [
-    "llms",
-    "nlp"
-   ],
-   "of": "hf-course"
-  },
-  {
-   "id": "distill",
-   "kind": "site",
-   "title": "Distill articles",
-   "fetch": {
-    "crawl": {
-     "start": "https://distill.pub/",
-     "allow": "https://distill.pub/20",
-     "max": 60
-    }
-   },
-   "licence": "CC BY 4.0 (adapt with attribution)",
-   "use": "Interactive explanations",
-   "courses": [
-    "deep-learning"
-   ],
-   "of": "distill"
-  },
-  {
-   "id": "scaling-book",
-   "kind": "course",
-   "title": "How to Scale Your Model",
-   "fetch": {
-    "git": "https://github.com/jax-ml/scaling-book"
-   },
-   "licence": "See repo",
-   "use": "Scaling arithmetic",
-   "courses": [
-    "ai-systems"
-   ],
-   "of": "scaling-book"
-  },
-  {
-   "id": "ultrascale",
-   "kind": "course",
-   "title": "The Ultra-Scale Playbook",
-   "fetch": {
-    "git": "https://huggingface.co/spaces/nanotron/ultrascale-playbook"
-   },
-   "licence": "See repo",
-   "use": "Parallel training",
-   "courses": [
-    "ai-systems"
-   ],
-   "of": "ultrascale"
-  },
-  {
-   "id": "cuda-guide",
-   "kind": "course",
-   "title": "CUDA Programming Guide",
-   "fetch": {
-    "crawl": {
-     "start": "https://docs.nvidia.com/cuda/cuda-programming-guide/",
-     "allow": "https://docs.nvidia.com/cuda/cuda-programming-guide/",
-     "max": 40
-    }
-   },
-   "licence": "NVIDIA documentation (read and cite)",
-   "use": "GPU model",
-   "courses": [
-    "ai-systems"
-   ],
-   "of": "cuda-guide"
-  },
-  {
-   "id": "gpu-mode",
-   "kind": "course",
-   "title": "GPU MODE lectures",
-   "fetch": {
-    "git": "https://github.com/gpu-mode/lectures"
-   },
-   "licence": "See repo",
-   "use": "GPU kernels",
-   "courses": [
-    "ai-systems"
-   ],
-   "of": "gpu-mode"
-  },
-  {
-   "id": "transformer-circuits",
-   "kind": "site",
-   "title": "Transformer Circuits Thread",
-   "fetch": {
-    "crawl": {
-     "start": "https://transformer-circuits.pub/",
-     "allow": "https://transformer-circuits.pub/20",
-     "max": 30
-    }
-   },
-   "licence": "See site",
-   "use": "Interpretability",
-   "courses": [
-    "ai-systems"
-   ],
-   "of": "transformer-circuits"
-  },
-  {
-   "id": "lilian-weng",
-   "kind": "site",
-   "title": "Lil'Log (Lilian Weng)",
-   "fetch": {
-    "crawl": {
-     "start": "https://lilianweng.github.io/",
-     "allow": "https://lilianweng.github.io/posts/",
-     "max": 60
-    }
-   },
-   "licence": "All rights reserved: read and cite only",
-   "use": "Deep surveys of attention, diffusion, RL, LLM topics",
-   "courses": [
-    "deep-learning",
-    "generative-models",
-    "llms",
-    "reinforcement-learning"
-   ]
-  },
-  {
-   "id": "colah",
-   "kind": "site",
-   "title": "colah's blog (Chris Olah)",
-   "fetch": {
-    "crawl": {
-     "start": "https://colah.github.io/",
-     "allow": "https://colah.github.io/posts/",
-     "max": 25
-    }
-   },
-   "licence": "Read and cite",
-   "use": "Visual explanations: backprop, LSTMs, manifolds",
-   "courses": [
-    "deep-learning"
-   ]
-  },
-  {
-   "id": "alammar",
-   "kind": "site",
-   "title": "Jay Alammar: the illustrated series",
-   "fetch": {
-    "crawl": {
-     "start": "https://jalammar.github.io/",
-     "allow": "https://jalammar.github.io/",
-     "max": 30
-    }
-   },
-   "licence": "Read and cite",
-   "use": "Illustrated transformer, BERT, GPT",
-   "courses": [
-    "nlp",
-    "llms"
-   ]
-  },
-  {
-   "id": "micrograd",
-   "kind": "repo",
-   "title": "karpathy/micrograd",
-   "fetch": {
-    "git": "https://github.com/karpathy/micrograd"
-   },
-   "licence": "MIT",
-   "use": "A tiny autograd engine: the model for our tensor engine",
-   "courses": [
-    "deep-learning"
-   ]
-  },
-  {
-   "id": "makemore",
-   "kind": "repo",
-   "title": "karpathy/makemore",
-   "fetch": {
-    "git": "https://github.com/karpathy/makemore"
-   },
-   "licence": "MIT",
-   "use": "Character-level models, bigram to transformer",
-   "courses": [
-    "deep-learning",
-    "nlp"
-   ]
-  },
-  {
-   "id": "minbpe",
-   "kind": "repo",
-   "title": "karpathy/minbpe",
-   "fetch": {
-    "git": "https://github.com/karpathy/minbpe"
-   },
-   "licence": "MIT",
-   "use": "BPE tokeniser from scratch",
-   "courses": [
-    "nlp"
-   ]
-  },
-  {
-   "id": "nanogpt",
-   "kind": "repo",
-   "title": "karpathy/nanoGPT",
-   "fetch": {
-    "git": "https://github.com/karpathy/nanoGPT"
-   },
-   "licence": "MIT",
-   "use": "Smallest clear GPT training code",
-   "courses": [
-    "llms",
-    "ai-systems"
-   ]
-  },
-  {
-   "id": "build-nanogpt",
-   "kind": "repo",
-   "title": "karpathy/build-nanogpt",
-   "fetch": {
-    "git": "https://github.com/karpathy/build-nanogpt"
-   },
-   "licence": "MIT",
-   "use": "GPT-2 rebuilt step by step, commit by commit (a code story)",
-   "courses": [
-    "llms",
-    "ai-systems"
-   ]
-  },
-  {
-   "id": "llm-c",
-   "kind": "repo",
-   "title": "karpathy/llm.c",
-   "fetch": {
-    "git": "https://github.com/karpathy/llm.c"
-   },
-   "licence": "MIT",
-   "use": "GPT-2 training in C and CUDA",
-   "courses": [
-    "ai-systems"
-   ]
-  },
-  {
-   "id": "llama2-c",
-   "kind": "repo",
-   "title": "karpathy/llama2.c",
-   "fetch": {
-    "git": "https://github.com/karpathy/llama2.c"
-   },
-   "licence": "MIT",
-   "use": "Llama inference in one C file",
-   "courses": [
-    "llms",
-    "ai-systems"
-   ]
-  },
-  {
-   "id": "picogpt",
-   "kind": "repo",
-   "title": "jaymody/picoGPT",
-   "fetch": {
-    "git": "https://github.com/jaymody/picoGPT"
-   },
-   "licence": "MIT",
-   "use": "GPT-2 forward pass in NumPy, tiny",
-   "courses": [
-    "llms"
-   ]
-  },
-  {
-   "id": "annotated-transformer",
-   "kind": "repo",
-   "title": "harvardnlp/annotated-transformer",
-   "fetch": {
-    "git": "https://github.com/harvardnlp/annotated-transformer"
-   },
-   "licence": "MIT",
-   "use": "The transformer paper with code line by line",
-   "courses": [
-    "deep-learning"
-   ]
-  },
-  {
-   "id": "labml-annotated",
-   "kind": "repo",
-   "title": "labmlai/annotated_deep_learning_paper_implementations",
-   "fetch": {
-    "git": "https://github.com/labmlai/annotated_deep_learning_paper_implementations"
-   },
-   "licence": "MIT",
-   "use": "Hundreds of papers implemented with side-by-side notes",
-   "courses": [
-    "deep-learning",
-    "generative-models",
-    "llms",
-    "reinforcement-learning"
-   ]
-  },
-  {
-   "id": "llms-from-scratch",
-   "kind": "repo",
-   "title": "rasbt/LLMs-from-scratch",
-   "fetch": {
-    "git": "https://github.com/rasbt/LLMs-from-scratch"
-   },
-   "licence": "Apache-2.0 (code)",
-   "use": "Build an LLM from scratch, chapter by chapter",
-   "courses": [
-    "llms"
-   ]
-  },
-  {
-   "id": "ml-book-rasbt",
-   "kind": "repo",
-   "title": "rasbt/machine-learning-book",
-   "fetch": {
-    "git": "https://github.com/rasbt/machine-learning-book"
-   },
-   "licence": "MIT (code)",
-   "use": "ML with PyTorch and scikit-learn, code",
-   "courses": [
-    "machine-learning"
-   ]
-  },
-  {
-   "id": "handson-ml3",
-   "kind": "repo",
-   "title": "ageron/handson-ml3",
-   "fetch": {
-    "git": "https://github.com/ageron/handson-ml3"
-   },
-   "licence": "Apache-2.0",
-   "use": "Hands-on ML notebooks",
-   "courses": [
-    "machine-learning",
-    "deep-learning"
-   ]
-  },
-  {
-   "id": "d2l-en",
-   "kind": "repo",
-   "title": "d2l-ai/d2l-en",
-   "fetch": {
-    "git": "https://github.com/d2l-ai/d2l-en"
-   },
-   "licence": "CC BY-SA (text), MIT-0 (code)",
-   "use": "Dive into Deep Learning source",
-   "courses": [
-    "deep-learning",
-    "computer-vision",
-    "nlp"
-   ]
-  },
-  {
-   "id": "udlbook-nb",
-   "kind": "repo",
-   "title": "udlbook/udlbook",
-   "fetch": {
-    "git": "https://github.com/udlbook/udlbook"
-   },
-   "licence": "See repo",
-   "use": "Understanding Deep Learning notebooks",
-   "courses": [
-    "deep-learning",
-    "generative-models"
-   ]
-  },
-  {
-   "id": "pyprobml",
-   "kind": "repo",
-   "title": "probml/pyprobml",
-   "fetch": {
-    "git": "https://github.com/probml/pyprobml"
-   },
-   "licence": "MIT",
-   "use": "Code for Murphy's books",
-   "courses": [
-    "machine-learning"
-   ]
-  },
-  {
-   "id": "ddpm-pytorch",
-   "kind": "repo",
-   "title": "lucidrains/denoising-diffusion-pytorch",
-   "fetch": {
-    "git": "https://github.com/lucidrains/denoising-diffusion-pytorch"
-   },
-   "licence": "MIT",
-   "use": "Clean DDPM implementation",
-   "courses": [
-    "generative-models"
-   ]
-  },
-  {
-   "id": "tiktoken",
-   "kind": "repo",
-   "title": "openai/tiktoken",
-   "fetch": {
-    "git": "https://github.com/openai/tiktoken"
-   },
-   "licence": "MIT",
-   "use": "A production BPE tokeniser",
-   "courses": [
-    "nlp",
-    "llms"
-   ]
-  },
-  {
-   "id": "gpu-puzzles",
-   "kind": "repo",
-   "title": "srush/GPU-Puzzles",
-   "fetch": {
-    "git": "https://github.com/srush/GPU-Puzzles"
-   },
-   "licence": "MIT",
-   "use": "Learn CUDA by puzzles",
-   "courses": [
-    "ai-systems"
-   ]
-  },
-  {
-   "id": "tensor-puzzles",
-   "kind": "repo",
-   "title": "srush/Tensor-Puzzles",
-   "fetch": {
-    "git": "https://github.com/srush/Tensor-Puzzles"
-   },
-   "licence": "MIT",
-   "use": "Learn broadcasting by puzzles",
-   "courses": [
-    "foundations",
-    "math-for-ai"
-   ]
-  },
-  {
-   "id": "pytorch-examples",
-   "kind": "repo",
-   "title": "pytorch/examples",
-   "fetch": {
-    "git": "https://github.com/pytorch/examples"
-   },
-   "licence": "BSD-3",
-   "use": "Reference training loops",
-   "courses": [
-    "deep-learning"
-   ]
-  },
-  {
-   "id": "tf-playground",
-   "kind": "repo",
-   "title": "tensorflow/playground",
-   "fetch": {
-    "git": "https://github.com/tensorflow/playground"
-   },
-   "licence": "Apache-2.0",
-   "use": "Visual reference: a net training live in the browser",
-   "courses": [
-    "deep-learning"
-   ]
-  },
-  {
-   "id": "transformer-explainer",
-   "kind": "repo",
-   "title": "poloclub/transformer-explainer",
-   "fetch": {
-    "git": "https://github.com/poloclub/transformer-explainer"
-   },
-   "licence": "MIT",
-   "use": "Visual reference: GPT-2 running in the browser, explained",
-   "courses": [
-    "llms"
-   ]
-  },
-  {
-   "id": "cnn-explainer",
-   "kind": "repo",
-   "title": "poloclub/cnn-explainer",
-   "fetch": {
-    "git": "https://github.com/poloclub/cnn-explainer"
-   },
-   "licence": "MIT",
-   "use": "Visual reference: a CNN explained interactively",
-   "courses": [
-    "deep-learning"
-   ]
-  },
-  {
-   "id": "diffusion-explainer",
-   "kind": "repo",
-   "title": "poloclub/diffusion-explainer",
-   "fetch": {
-    "git": "https://github.com/poloclub/diffusion-explainer"
-   },
-   "licence": "MIT",
-   "use": "Visual reference: Stable Diffusion explained",
-   "courses": [
-    "generative-models"
-   ]
-  },
-  {
-   "id": "llm-viz",
-   "kind": "repo",
-   "title": "bbycroft/llm-viz",
-   "fetch": {
-    "git": "https://github.com/bbycroft/llm-viz"
-   },
-   "licence": "See repo",
-   "use": "Visual reference: 3D GPT walk-through",
-   "courses": [
-    "ai-systems"
-   ]
-  },
-  {
-   "id": "manim",
-   "kind": "repo",
-   "title": "ManimCommunity/manim",
-   "fetch": {
-    "git": "https://github.com/ManimCommunity/manim"
-   },
-   "licence": "MIT",
-   "use": "Animation engine for math (reference for the derivation stepper)",
-   "courses": [
-    "math-for-ai"
-   ]
-  },
-  {
-   "id": "mathbox",
-   "kind": "repo",
-   "title": "unconed/mathbox",
-   "fetch": {
-    "git": "https://github.com/unconed/mathbox"
-   },
-   "licence": "MIT",
-   "use": "WebGL math visualisation (reference for 3D scenes)",
-   "courses": [
-    "math-for-ai"
-   ]
-  }
- ]
+  ]
 }

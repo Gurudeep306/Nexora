@@ -5,11 +5,14 @@
 */
 import { Html } from '@react-three/drei'
 import type { StageElement } from '../spec'
-import { at3, fmt, opOf, type ElCtx } from './shared'
+import { at3, fmt, type ElCtx } from './shared'
 import { useLabelHost } from '../../three/portal'
 
+/** Page text dims only partway when out of focus, so it stays readable (contrast); it still fades fully when hidden. */
+const readable = (el: { id: string; opacity?: number; hidden?: boolean }, c: ElCtx) => (el.opacity ?? 1) * Math.max(0.85, c.dim(el.id))
+
 export function CodeEl({ el, c }: { el: Extract<StageElement, { type: 'code' }>; c: ElCtx }) {
-  const o = opOf(el, c)
+  const o = readable(el, c)
   const host = useLabelHost()
   const active = el.active == null ? -1 : Math.round(el.active)
   return (
@@ -41,7 +44,7 @@ export function CodeEl({ el, c }: { el: Extract<StageElement, { type: 'code' }>;
 }
 
 export function TableEl({ el, c }: { el: Extract<StageElement, { type: 'table' }>; c: ElCtx }) {
-  const o = opOf(el, c)
+  const o = readable(el, c)
   const host = useLabelHost()
   const hl = new Set((el.highlight ?? []).map(([i, j]) => `${i},${j}`))
   return (
