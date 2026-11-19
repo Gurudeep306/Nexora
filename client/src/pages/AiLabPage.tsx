@@ -7,14 +7,16 @@ import { ConvSlide, ForwardBackward, Gaussian2D, IrisPca, Legend, LinearMap, Opt
 const IRIS_LEGEND: [string, 'ink' | 'info' | 'accent'][] = IRIS_SPECIES.map((s, i) => [s, (['ink', 'info', 'accent'] as const)[i]])
 import { OPTIMIZERS } from '@/ai/engine/optim'
 import { Stage } from '@/ai/stage/Stage'
-import { attentionScene, networkScene, scoreScene, tensorScene } from '@/ai/stage/demos'
+import { attentionScene, attentionTraceScene, mlpTraceScene, networkScene, scoreScene, tensorScene } from '@/ai/stage/demos'
+import { KITS } from '@/ai/stage/registry'
 
 function Tex({ src }: { src: string }) {
   // Wide formulas scroll sideways on phones, so the block can take focus for keyboard scrolling.
   return <span className="block overflow-x-auto py-1 text-text-primary" tabIndex={0} role="group" aria-label="Formula" dangerouslySetInnerHTML={{ __html: katex.renderToString(src, { displayMode: true, throwOnError: false, strict: false }) }} />
 }
 
-const STAGES = [attentionScene, networkScene, scoreScene, tensorScene]
+const STAGES = [networkScene, attentionScene, scoreScene, tensorScene]
+const GENERATED = [mlpTraceScene, attentionTraceScene]
 
 const SECTIONS = [
   {
@@ -87,7 +89,45 @@ export default function AiLabPage() {
       <BackButton />
       <PageHeader eyebrow="AI courses · engine preview" title="3D lab" subtitle="Every scene is computed live in your browser. Drag to turn, scroll or pinch to zoom, and step through it." />
       <nav aria-label="Scenes on this page" className="flex flex-wrap gap-x-4 gap-y-1 text-[13px]">
-        {SECTIONS.map((s) => (
+        <section aria-labelledby="gen-h" className="space-y-3 border-t border-border pt-6">
+        <p className="m-0 text-[11px] font-semibold tracking-wider text-text-muted uppercase">Generated from the computation</p>
+        <h2 id="gen-h" className="m-0 text-xl font-semibold text-text-primary">
+          Write the model once; the scene builds itself
+        </h2>
+        <p className="m-0 max-w-3xl text-[15px] leading-relaxed text-text-secondary">
+          These two scenes were not drawn by hand. The network and the attention head were run on the engine’s tape, which records every operation with its real numbers, and the scene was built from that record: every matrix, every step, every bead, every formula, and the whole backward pass. Any model the tape can run becomes a scene the same way.
+        </p>
+      </section>
+      {GENERATED.map((make) => {
+        const spec = make()
+        return (
+          <section key={spec.title} aria-label={spec.title} className="space-y-2">
+            <h3 className="m-0 text-[17px] font-semibold text-text-primary">{spec.title.replace(/^Generated: /, '')}</h3>
+            <Stage spec={spec} />
+          </section>
+        )
+      })}
+      <section aria-labelledby="kits-h" className="space-y-3 border-t border-border pt-6">
+        <p className="m-0 text-[11px] font-semibold tracking-wider text-text-muted uppercase">The library</p>
+        <h2 id="kits-h" className="m-0 text-xl font-semibold text-text-primary">
+          What every course can use
+        </h2>
+        <p className="m-0 max-w-3xl text-[15px] leading-relaxed text-text-secondary">
+          A scene is data: elements from these kits, and steps that change them. The guide for course authors is docs/ai-courses/STAGE.md.
+        </p>
+        <dl className="m-0 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+          {KITS.map((k) => (
+            <div key={k.name} className="border-t border-border pt-2">
+              <dt className="text-[14px] font-semibold text-text-primary">{k.name}</dt>
+              <dd className="m-0 text-[13px] text-text-secondary">
+                {k.blurb}
+                <span className="mt-1 block font-mono text-[12px] text-text-muted">{k.types.join(' · ')}</span>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+      {SECTIONS.map((s) => (
           <a key={s.id} href={`#${s.id}`} className="text-text-secondary underline-offset-[3px] hover:text-text-primary hover:underline">
             {s.title}
           </a>

@@ -45,9 +45,10 @@
 .ai3d-note {
   display: flex;
   flex-wrap: wrap;
+  align-content: flex-start;
   align-items: baseline;
   gap: 0.25rem 0.75rem;
-  min-height: 1.5rem;
+  min-height: 2.9rem;
   font-size: 14px;
   color: var(--color-text-primary);
 }
@@ -193,4 +194,8 @@
 .ai3d-label.ai3d-label-sm {
   font-size: 10px;
   padding: 0 3px;
+}
+/* Holds the formula's height while steps change, so the page doesn't jump. */
+.ai3d-texbox {
+  min-width: 0;
 }

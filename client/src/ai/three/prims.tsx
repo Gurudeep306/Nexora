@@ -4,10 +4,10 @@
  * surface z = f(x, y) stands up like a landscape. Colours come from the
  * theme (Palette3D); nothing here has a raw colour of its own.
  */
-import { useLayoutEffect, useMemo, useRef, type ReactNode } from 'react'
-import { BufferAttribute, Color, DoubleSide, InstancedMesh, Object3D, PlaneGeometry, Quaternion, Vector3 } from 'three'
+import { useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react'
+import { BufferAttribute, CanvasTexture, Color, DoubleSide, Mesh, PerspectiveCamera, SRGBColorSpace, InstancedMesh, Object3D, PlaneGeometry, Quaternion, Vector3 } from 'three'
 import { Html, Line } from '@react-three/drei'
-import type { ThreeEvent } from '@react-three/fiber'
+import { useFrame, type ThreeEvent } from '@react-three/fiber'
 import { cn } from '@/lib/utils'
 
 import { toScene, type V3 } from './coords'
@@ -183,7 +183,7 @@ export function Arrow({ from, to, color, radius = 0.025 }: { from: V3; to: V3; c
 /** A text label pinned to a point in the scene, in the page's own fonts. */
 export function Label({ at, children, muted, className, opacity = 1 }: { at: V3; children: ReactNode; muted?: boolean; className?: string; opacity?: number }) {
   return (
-    <Html position={at} center zIndexRange={[10, 0]} className={cn('ai3d-label', muted && 'is-muted', className)} style={opacity < 1 ? { opacity } : undefined}>
+    <Html position={at} center zIndexRange={[10, 0]} className={cn('ai3d-label', muted && 'is-muted', className)} style={opacity < 1 ? { opacity, visibility: opacity < 0.03 ? 'hidden' : undefined } : undefined}>
       {children}
     </Html>
   )
@@ -297,6 +297,70 @@ export function CellGrid({ grid, at = [0, 0, 0], cell = 0.3, height = 0.25, low,
       <boxGeometry args={[1, 1, 1]} />
       <Mat roughness={0.7} transparent={opacity < 1} opacity={opacity} />
     </instancedMesh>
+  )
+}
+
+/**
+ * Every number of a grid drawn onto one image, laid flat just above the tiles
+ * (one object instead of one page label per cell, so big grids stay smooth).
+ * `at` is the grid's centre in scene coordinates, as for CellGrid; row i runs
+ * along +z, column j along +x. Each number has a thin paper-coloured
+ * outline so it reads on light and dark tiles alike.
+ */
+export function NumberPlane({ values, at, cell, ink, paper, opacity = 1, format, small, minPx = 30 }: { values: number[][]; at: V3; cell: number; ink: string; paper: string; opacity?: number; format: (v: number) => string; small?: boolean; minPx?: number }) {
+  const rows = values.length
+  const cols = values[0]?.length ?? 0
+  // Redraw only when the printed text changes, not on every new array.
+  const text = values.map((r) => r.map(format).join('\t')).join('\n')
+  const tex = useMemo(() => {
+    const cells = text.split('\n').map((r) => r.split('\t'))
+    const px = 128
+    const cv = document.createElement('canvas')
+    cv.width = Math.max(1, cols * px)
+    cv.height = Math.max(1, rows * px)
+    const g = cv.getContext('2d')
+    if (g) {
+      const fam = getComputedStyle(document.body).fontFamily || 'sans-serif'
+      const size = small ? 34 : 40
+      g.font = `500 ${size}px ${fam}`
+      g.textAlign = 'center'
+      g.textBaseline = 'middle'
+      for (let i = 0; i < rows; i++)
+        for (let j = 0; j < cols; j++) {
+          const s = cells[i]?.[j] ?? ''
+          const cx = (j + 0.5) * px
+          const cy = (i + 0.5) * px
+          // A paper-coloured outline round each digit keeps it readable on any tile.
+          g.lineJoin = 'round'
+          g.lineWidth = 9
+          g.strokeStyle = paper
+          g.strokeText(s, cx, cy + 1, px - 10)
+          g.fillStyle = ink
+          g.fillText(s, cx, cy + 1, px - 10)
+        }
+    }
+    const t = new CanvasTexture(cv)
+    t.colorSpace = SRGBColorSpace
+    t.anisotropy = 4
+    return t
+  }, [text, rows, cols, ink, paper, small])
+  useEffect(() => () => tex.dispose(), [tex])
+  // Shown only when a cell is big enough on screen to read; zooming in brings the numbers.
+  const ref = useRef<Mesh>(null)
+  const p = useMemo(() => new Vector3(), [])
+  useFrame(({ camera, size }) => {
+    const m = ref.current
+    const cam = camera as PerspectiveCamera
+    if (!m || !cam.isPerspectiveCamera) return
+    const d = p.set(at[0], at[1], at[2]).distanceTo(cam.position)
+    m.visible = (cell / (2 * d * Math.tan((cam.fov * Math.PI) / 360))) * size.height >= minPx
+  })
+  if (!rows || !cols || opacity <= 0.01) return null
+  return (
+    <mesh ref={ref} position={at} rotation={[-Math.PI / 2, 0, 0]} renderOrder={2} raycast={() => null}>
+      <planeGeometry args={[cols * cell, rows * cell]} />
+      <meshBasicMaterial map={tex} transparent opacity={opacity} depthWrite={false} toneMapped={false} />
+    </mesh>
   )
 }
 

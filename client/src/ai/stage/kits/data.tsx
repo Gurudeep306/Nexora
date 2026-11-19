@@ -6,7 +6,7 @@
 */
 import { useLayoutEffect, useRef } from 'react'
 import { Color, InstancedMesh, Object3D } from 'three'
-import { CellGrid, Label } from '../../three/prims'
+import { CellGrid, Label, NumberPlane } from '../../three/prims'
 import type { V3 } from '../../three/coords'
 import { mix } from '../../three/theme3d'
 import { Mat } from '../../three/studio'
@@ -24,7 +24,6 @@ export function GridEl({ el, c }: { el: Extract<StageElement, { type: 'tiles' | 
       const h = (el.height ?? (isBars ? 1.6 : 0.3)) * Math.max(0.04, c.lift)
       const R = el.values.length
       const Cn = el.values[0].length
-      const max = Math.max(1e-9, ...el.values.flat().map(Math.abs))
       const hl = new Set((el.type === 'tiles' ? el.highlight : undefined)?.map(([i, j]) => `${i},${j}`))
       const showNums = (el.numbers ?? R * Cn <= 64) && R * Cn <= 144
       const origin = at3(base, c.lift)
@@ -42,14 +41,9 @@ export function GridEl({ el, c }: { el: Extract<StageElement, { type: 'tiles' | 
             opacity={o}
             onTip={(e, i, j) => c.tip(e, e ? (el.type === 'tiles' ? el.tips?.[i]?.[j] : undefined) ?? `${el.tip ? `${el.tip} ` : ''}[${i}, ${j}] = ${fmt(el.values[i][j])}` : undefined)}
           />
-          {showNums &&
-            el.values.flatMap((row, i) =>
-              row.map((v, j) => (
-                <Label key={`${i}-${j}`} at={[origin[0] + (j - (Cn - 1) / 2) * cell, origin[1] + 0.02 + (Math.abs(v) / max) * h + 0.03, origin[2] + (i - (R - 1) / 2) * cell]} muted opacity={o}>
-                  {fmt(v)}
-                </Label>
-              )),
-            )}
+          {showNums && c.lift < 0.6 && (
+            <NumberPlane values={el.values} at={[origin[0], origin[1] + 0.02 + h + 0.012, origin[2]]} cell={cell} ink={c.p.ink} paper={c.p.surface} opacity={o * (1 - c.lift / 0.6)} format={fmt} />
+          )}
         </group>
       )
     

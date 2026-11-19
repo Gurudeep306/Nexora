@@ -121,6 +121,10 @@ function setDragMode(c: Controls, flat: boolean) {
   c.touches.one = flat ? 128 : 64 // TOUCH_TRUCK : TOUCH_ROTATE
 }
 /** Change the lens (field of view) and how far the camera sees. */
+function setZoomLimits(c: Controls, min: number, max: number) {
+  c.minDistance = min
+  c.maxDistance = max
+}
 function setLens(cam: PerspectiveCamera, fov: number, far: number) {
   cam.fov = fov
   cam.far = far
@@ -136,6 +140,8 @@ interface Pose {
 export interface RigApi {
   /** Back to the scene's own framing (in 3D, or its flat view in 2D). */
   reset: (smooth: boolean) => void
+  /** Glide to a step's view. In 2D the same view is seen from straight above (it pans and zooms). */
+  goTo: (camera: V3, target: V3, smooth: boolean) => void
 }
 
 /**
@@ -151,6 +157,7 @@ function Rig({ controls, camera3, target3, lift, onApi }: { controls: React.RefO
   const pose = useRef<Pose | null>(null)
   const home = useRef<Pose | null>(null)
   const liftRef = useRef(lift)
+  const back = useRef(1)
 
   const apply = useCallback(
     (l: number, smooth: boolean) => {
@@ -167,6 +174,8 @@ function Rig({ controls, camera3, target3, lift, onApi }: { controls: React.RefO
       if (az < -Math.PI) az += 2 * Math.PI
       setLens(cam, fov, Math.max(200, p0.dist * k * 4))
       setDragMode(c, l < 0.999)
+      // The flat view stands far back with a narrow lens, so the zoom limits scale with it.
+      setZoomLimits(c, k, Math.max(60, (home.current?.dist ?? p0.dist) * 2.5) * k)
       void c.moveTo(p0.target.x, p0.target.y, p0.target.z, smooth)
       void c.rotateTo(az * (1 - s), p0.pol + (0.0005 - p0.pol) * s, smooth)
       void c.dollyTo(p0.dist * k, smooth)
@@ -179,6 +188,7 @@ function Rig({ controls, camera3, target3, lift, onApi }: { controls: React.RefO
   useEffect(() => {
     if (home.current || !size.width || !size.height) return
     const k = Math.min(2.2, Math.max(1, 1.25 / (size.width / size.height)))
+    back.current = k
     const t = new Vector3(...target3)
     const off = new Vector3(...camera3).sub(t).multiplyScalar(k)
     const sph = new Spherical().setFromVector3(off)
@@ -214,6 +224,12 @@ function Rig({ controls, camera3, target3, lift, onApi }: { controls: React.RefO
       reset: (smooth) => {
         if (!home.current) return
         pose.current = { ...home.current, target: home.current.target.clone() }
+        apply(liftRef.current, smooth)
+      },
+      goTo: (cam, tgt, smooth) => {
+        const t = new Vector3(...tgt)
+        const sph = new Spherical().setFromVector3(new Vector3(...cam).sub(t).multiplyScalar(back.current))
+        pose.current = { az: sph.theta, pol: sph.phi, dist: sph.radius, target: t }
         apply(liftRef.current, smooth)
       },
     })
@@ -352,11 +368,10 @@ export function Scene3D({
   const liftNow = typeof lift === 'function' ? lift(time) : lift
   const in3D = liftNow >= 0.999
   useEffect(() => {
-    const c = controls.current
-    if (!c || !follow || viewIdx < 0 || !steps || !in3D) return
+    if (!rig.current || !follow || viewIdx < 0 || !steps) return
     const v = steps[viewIdx].view!
-    void c.setLookAt(v.camera[0], v.camera[1], v.camera[2], v.target[0], v.target[1], v.target[2], !reduced)
-  }, [viewIdx, follow, reduced, steps, in3D])
+    rig.current.goTo(v.camera, v.target, !reduced)
+  }, [viewIdx, follow, reduced, steps])
 
   // Taking the camera (dragging, pinching) stops the tour from moving it.
   useEffect(() => {
@@ -426,6 +441,8 @@ export function Scene3D({
     e.preventDefault()
   }
 
+  // How tall the scene's tallest formula is (rows of its biggest matrix or fraction stack).
+  const texRows = Math.max(0, ...(steps ?? []).map((s) => (s.tex ? Math.max(1.4, (s.tex.match(/\\\\/g)?.length ?? 0) + 1, /\\frac|\\sum/.test(s.tex) ? 1.7 : 1) : 0)))
   const atBreak = !playing && n > 1 && time > 0 && time < n - 1 && !!cur?.pause
 
   return (
@@ -468,7 +485,8 @@ export function Scene3D({
           {cur?.note && <span className="ai3d-text">{cur.note}</span>}
         </div>
       )}
-      {cur?.tex && <StepTex src={cur.tex} />}
+      {/* A steady space for the formula, sized for the scene's tallest one, so the page never jumps while it plays. */}
+      {texRows > 0 && <div className="ai3d-texbox" style={{ minHeight: `${1.2 + texRows * 1.55}rem` }}>{cur?.tex && <StepTex src={cur.tex} />}</div>}
       <div className="ai3d-bar">
         {n > 0 && (
           <span className="ai3d-group">
