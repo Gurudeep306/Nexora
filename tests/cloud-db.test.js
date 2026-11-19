@@ -29,6 +29,7 @@ const env = {
   JUDGE_MODE: "remote",
   DISABLE_PUPPETEER: "1",
   DISABLE_SCRAPER: "1",
+  STATEMENT_BACKFILL: "0",
   DB_PATH: path.join(tmp, "unused.db"),
 };
 

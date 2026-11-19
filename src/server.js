@@ -1027,75 +1027,9 @@ function imgCacheGet(url) {
 // Host/bucket allowlist and the raster-image/video/audio type allowlist (no SVG).
 const { isProxyableUrl, isProxyableMediaType } = require("./statement-media");
 
-/** Drop an unread response body so its socket is released (node-fetch stream or web stream). */
-function discardBody(upstream) {
-  const body = upstream && upstream.body;
-  if (!body) return;
-  try {
-    if (typeof body.destroy === "function") body.destroy();
-    else if (typeof body.cancel === "function") body.cancel().catch(() => {});
-  } catch {}
-}
-
-/** Read a fetch body into a Buffer, aborting as soon as it passes `max` bytes. */
-async function readBodyCapped(upstream, max) {
-  const declared = Number(upstream.headers.get("content-length"));
-  if (Number.isFinite(declared) && declared > max) {
-    discardBody(upstream);
-    throw new Error("media too large");
-  }
-  if (!upstream.body) return Buffer.alloc(0);
-  const parts = [];
-  let total = 0;
-  // node-fetch bodies are Node streams and web bodies are ReadableStreams;
-  // both are async-iterable, and returning early from the loop destroys/cancels them.
-  for await (const chunk of upstream.body) {
-    const b = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
-    total += b.length;
-    if (total > max) {
-      discardBody(upstream);
-      throw new Error("media too large");
-    }
-    parts.push(b);
-  }
-  return Buffer.concat(parts, total);
-}
-
-async function fetchProxiedMedia(startUrl) {
-  let target = startUrl;
-  let upstream = await fetch(target, {
-    headers: { "User-Agent": SCRAPE_UA, Accept: "image/avif,image/webp,image/*,video/*,audio/*,*/*;q=0.8" },
-    redirect: "manual",
-    signal: AbortSignal.timeout(15000),
-  });
-  // Follow at most three redirects, staying inside the allowlist.
-  for (let hops = 0; hops < 3 && [301, 302, 303, 307, 308].includes(upstream.status); hops++) {
-    const loc = upstream.headers.get("location");
-    if (!loc) break;
-    const next = new URL(loc, target);
-    if (!isProxyableUrl(next)) break;
-    discardBody(upstream);
-    target = next;
-    upstream = await fetch(target, {
-      headers: { "User-Agent": SCRAPE_UA, Accept: "image/*,video/*,audio/*,*/*;q=0.8" },
-      redirect: "manual",
-      signal: AbortSignal.timeout(15000),
-    });
-  }
-  const ctype = (upstream.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
-  if (!upstream.ok || !isProxyableMediaType(ctype)) {
-    discardBody(upstream);
-    throw new Error(`upstream ${upstream.status} ${ctype || "unknown type"}`);
-  }
-  const buf = await readBodyCapped(upstream, IMG_MAX_BYTES);
-  if (!buf.length) throw new Error("media empty");
-  return {
-    buf,
-    ctype,
-    etag: '"' + crypto.createHash("sha1").update(buf).digest("hex").slice(0, 24) + '"',
-    at: Date.now(),
-  };
-}
+// The media fetcher (allowlisted hosts and types, capped size) lives in
+// src/media-fetch.js, shared with the statement backfill job.
+const { discardBody, readBodyCapped, fetchProxiedMedia } = require("./media-fetch");
 
 /** Saved copy, else fetch and save. Throws when neither has it. */
 async function loadStatementMedia(url) {
@@ -1470,7 +1404,7 @@ app.get("/api/activity/:date", async (req, res) => {
 // Translation (with language detection + AI engine) and the coding coach.
 app.use(createAiAssistRouter({ get, all, run, aiLimiter }));
 app.use(require("./routes/coding").createCodingRouter({ get, me, aiLimiter, judgeLimiter }));
-app.use(require("./routes/sources").createSourcesRouter({ can, me, invalidateCatalog: () => require("./problem-catalog").invalidateCatalog() }));
+app.use(require("./routes/sources").createSourcesRouter({ can, me, invalidateCatalog: () => require("./problem-catalog").invalidateCatalog(), backfill: { start: () => startStatementBackfill(), pause: () => pauseStatementBackfill(), status: () => statementBackfillStatus() } }));
 // Topics of every problem: the list, each problem's topics, staff corrections, the backfill (src/topics.js).
 app.use(require("./routes/topics").createTopicsRouter({ can, me }));
 // Problem sets: your own, public ones by likes, famous series and company lists (src/routes/problem-sets.js).
@@ -6789,11 +6723,15 @@ io.on("connection", (socket) => {
     sentry.captureException(reason);
   });
 
-  // Background pre-scraper (cache statements ahead of time). Opt-in with
-  // BG_SCRAPE=1: statements are fetched on demand anyway, and free hosts
-  // restart often, so it must never cost anything by default.
-  if (BG_SCRAPE_ENABLED) {
-    _backgroundScrape();
+  // Statement backfill: every problem's statement, samples and figures are
+  // fetched ahead of time (src/sources/backfill.js), so opening a problem
+  // never waits on the judge. Two minutes after start, then every 6 hours
+  // (refused problems wait for their retry time). STATEMENT_BACKFILL=0 turns
+  // it off; an admin can pause it in Admin → Problem sources.
+  if (process.env.NODE_ENV !== "test" && process.env.STATEMENT_BACKFILL !== "0") {
+    const tick = () => startStatementBackfill({ auto: true }).catch((e) => console.warn("[backfill]", e.message));
+    setTimeout(tick, 2 * 60_000).unref?.();
+    setInterval(tick, 6 * 3600_000).unref?.();
   }
 
   // Problem sources an admin marked for daily syncing (checked hourly).
@@ -6804,71 +6742,30 @@ io.on("connection", (socket) => {
   }
 })();
 
-/* ========== Background Pre-Scraper ========== */
-// Off unless BG_SCRAPE=1 (and never in tests / with DISABLE_SCRAPER=1).
-// Strictly incremental: the ids that already have a statement are read once
-// (one indexed read per cached statement), pending problems come from the
-// in-memory catalog, and every attempted problem — cached or failed — is
-// remembered, so no batch ever re-scans `problems` or retries a dead page.
-const BG_SCRAPE_ENABLED =
-  process.env.BG_SCRAPE === "1" && process.env.NODE_ENV !== "test" && process.env.DISABLE_SCRAPER !== "1";
-let _bgSeen = null; // problem ids with a statement, or already tried by this process
-async function _backgroundScrape() {
-  const BG_BATCH = 30;
-  try {
-    if (!_bgSeen) {
-      _bgSeen = new Set((await all("SELECT problem_rowid FROM problem_statements")).map((r) => r.problem_rowid));
-    }
-    const catalog = await getCatalog();
-    // Same priority as before: non-CF (fast HTTP) first, easiest first.
-    const byRating = (a, b) => (a.rating ?? -1) - (b.rating ?? -1) || a.id - b.id;
-    const off = await require("./sources").disabledPlatforms();
-    const left = catalog.rows.filter((p) => !_bgSeen.has(p.id) && !off.has(p.platform));
-    const httpPending = left.filter((p) => p.platform !== "codeforces").sort(byRating).slice(0, BG_BATCH);
-    const cfPending = left
-      .filter((p) => p.platform === "codeforces")
-      .sort(byRating)
-      .slice(0, Math.max(5, BG_BATCH - httpPending.length));
-
-    const pending = [...httpPending, ...cfPending];
-    if (!pending.length) {
-      console.log("[bg-scrape] All problems already cached.");
-      return;
-    }
-    console.log(
-      `[bg-scrape] Pre-scraping ${pending.length} problems (${httpPending.length} HTTP + ${cfPending.length} CF)...`,
-    );
-
-    let ok = 0,
-      fail = 0;
-    for (const problem of pending) {
-      _bgSeen.add(problem.id);
-      try {
-        // Use fast HTTP for non-CF, Puppeteer for CF
-        let data;
-        data = await require("./sources").fetchStatement(problem).catch(() => null);
-        if (!data || (data.statement || "").trim().length <= 10) {
-          data = await scrapePage(problem);
-        }
-        if (data && (data.statement || "").trim().length > 10) {
-          await _saveStatement(problem.id, data);
-          ok++;
-        } else {
-          fail++;
-        }
-      } catch {
-        fail++;
-      }
-      // Polite delay: shorter for HTTP, longer for Puppeteer
-      await new Promise((r) =>
-        setTimeout(r, problem.platform === "codeforces" ? 2500 : 800),
-      );
-    }
-    console.log(`[bg-scrape] Done: ${ok} cached, ${fail} failed.`);
-
-    // Schedule next batch
-    setTimeout(_backgroundScrape, 30000);
-  } catch (e) {
-    console.error("[bg-scrape] Error:", e.message);
-  }
+/* ========== Statement backfill ========== */
+// One run at a time in this process; the admin page reads its progress.
+let _backfill = null;
+const BACKFILL_PAUSED = "statement_backfill_paused";
+async function backfillPaused() {
+  const r = await get("SELECT value FROM settings WHERE username='' AND key=?", [BACKFILL_PAUSED]).catch(() => null);
+  return r?.value === "1";
+}
+async function startStatementBackfill({ auto = false } = {}) {
+  if (_backfill && _backfill.status().running) return _backfill;
+  if (auto && (await backfillPaused())) return null;
+  if (!auto) await run("DELETE FROM settings WHERE username='' AND key=?", [BACKFILL_PAUSED]);
+  _backfill = require("./sources/backfill").start({
+    save: (id, data) => _saveStatement(id, data),
+    fetch: (p) => require("./sources").fetchStatement(p),
+    order: "desc",
+    log: (m) => console.log(m),
+  });
+  return _backfill;
+}
+async function pauseStatementBackfill() {
+  await run("INSERT OR REPLACE INTO settings(username, key, value) VALUES('', ?, '1')", [BACKFILL_PAUSED]);
+  _backfill?.stop();
+}
+async function statementBackfillStatus() {
+  return { paused: await backfillPaused(), run: _backfill ? _backfill.status() : null };
 }

@@ -1,6 +1,7 @@
 // UVa Online Judge: the uHunt API lists every problem (number, title, solve
 // counts). Statements live on onlinejudge.org as HTML (most problems) or PDF.
-const { getJson, getText, load, preText, blank } = require("./common");
+const { getJson, getText, http, httpError, load, preText, blank } = require("./common");
+const { parsePdfStatement } = require("./pdf-statement");
 
 const ORIGIN = "https://onlinejudge.org";
 const vol = (num) => Math.floor(Number(num) / 100);
@@ -60,8 +61,19 @@ async function statement(problem) {
   } catch {
     /* PDF only */
   }
-  const out = blank();
+  // Most UVa statements are PDFs: read the text, sections and samples out of it.
   const pdf = `${ORIGIN}/external/${vol(num)}/${num}.pdf`;
+  try {
+    const res = await http(pdf, { timeoutMs: 30000, retries: 1, accept: "application/pdf" });
+    if (!res.ok) throw await httpError(res, pdf);
+    const buf = Buffer.from(await res.arrayBuffer());
+    if (buf.length > 15 * 1024 * 1024 || buf.subarray(0, 4).toString() !== "%PDF") throw new Error("Not a PDF");
+    const parsed = await parsePdfStatement(buf, { pdfUrl: pdf });
+    if (parsed && parsed.statement.replace(/<[^>]+>/g, "").trim().length > 10) return parsed;
+  } catch (e) {
+    if (/\b(429|403|503)\b/.test(String(e.message))) throw e; // the judge is refusing: let the caller back off
+  }
+  const out = blank();
   out.statement = `<p>This problem's statement is a PDF.</p><p><a href="${pdf}" target="_blank" rel="noopener">Open the statement (PDF)</a></p>`;
   out.extra = { pdf };
   return out;
@@ -73,8 +85,9 @@ module.exports = {
   origin: ORIGIN,
   math: "dollar3",
   kind: "stdin",
-  // The statements are PDFs: no samples or limits to read from them.
-  publishes: { samples: false, limits: false },
+  // Most statements are PDFs: the text and samples are read out of them; the
+  // time and memory limits are not printed there.
+  publishes: { limits: false },
   description: "The UVa Online Judge archive via uHunt, rated by how many people solved each problem.",
   list,
   statement,
