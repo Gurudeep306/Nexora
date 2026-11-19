@@ -3,12 +3,14 @@ import { AlertTriangle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 /** One sentence on what this is for, one primary action, an optional "learn how". */
-export function Empty({ icon, title, children, action, learn, className }: { icon?: ReactNode; title: string; children?: ReactNode; action?: ReactNode; learn?: ReactNode; className?: string }) {
+/** `level`: 2 when the empty state is the page's main content (right under the page title), else 3. */
+export function Empty({ icon, title, children, action, learn, level = 3, className }: { icon?: ReactNode; title: string; children?: ReactNode; action?: ReactNode; learn?: ReactNode; level?: 2 | 3; className?: string }) {
+  const H = level === 2 ? 'h2' : 'h3'
   return (
     <div className={cn('mx-auto flex max-w-md flex-col items-center px-6 py-12 text-center', className)}>
       {icon && <div className="mb-3 grid size-10 place-items-center rounded-[var(--hv-r-card)] bg-[var(--hv-surface-1)] text-[var(--hv-text-2)] ring-1 ring-[var(--hv-border)] [&_svg]:size-5">{icon}</div>}
-      <h3 className="text-[14px] font-semibold text-[var(--hv-text-1)]">{title}</h3>
-      {children && <p className="mt-1 text-[13px] text-[var(--hv-text-2)]">{children}</p>}
+      <H className="m-0 font-[family-name:var(--hv-sans)] text-[14px] font-semibold text-[var(--hv-text-1)]">{title}</H>
+      {children && <p className="mb-0 mt-1 text-[13px] text-[var(--hv-text-2)]">{children}</p>}
       {(action || learn) && (
         <div className="mt-4 flex items-center gap-3">
           {action}
