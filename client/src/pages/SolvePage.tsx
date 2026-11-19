@@ -47,7 +47,6 @@ import type { ReplayEvent } from '@/components/submissions/replay'
 import {
   loadStoredCode,
   storeCode,
-  XP_BY_RATING,
   type JudgeResponse,
   type Language,
   type ProblemDetailResponse,
@@ -466,7 +465,6 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     setJudgeResult(null)
     setBanner(null)
     storeCode(storageId, language, code)
-    const alreadySolved = problem?.solve_status === 'solved'
     try {
       const res = await api.post<JudgeResponse>(
         '/api/judge',
@@ -490,7 +488,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       setJudgeResult(res)
       if (contestId && res.contest && !res.contest.counted) toast.info('Not counted in the contest', res.contest.reason)
       if (!custom) void saveReplay(code)
-      const xp = res.xp ? res.xp.gainedXp || null : res.verdict === 'AC' && !alreadySolved && !custom ? XP_BY_RATING(problem?.rating ?? 0) : null
+      // Only what the server awarded: never a guess.
+      const xp = res.xp ? res.xp.gainedXp || null : null
+      const part = res.xp?.partial
       // Only the examples (and your own tests) ran: say so, never "Accepted".
       const examplesOnly = res.verdict === 'AC' && !!res.coverage && !res.coverage.full
       setBanner({ verdict: res.verdict, xp, id: Date.now(), examplesOnly })
@@ -503,6 +503,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
           void refresh()
           problemApi.refetch()
         }
+      } else if (part && part.passed > 0) {
+        toast.error(`Verdict: ${res.verdict}`, `${part.passed} of ${part.total} tests passed${xp ? ` · +${xp} XP for that` : ''}. Pass them all for the full ${part.ofXp} XP.`)
+        void refresh()
       } else {
         toast.error(`Verdict: ${res.verdict}`, res.message ?? 'Check the testcase results below.')
       }
@@ -514,7 +517,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     } finally {
       setSubmitting(false)
     }
-  }, [running, submitting, code, id, language, testcases, problem, toast, refresh, problemApi, custom, learn, storageId, saveReplay, contestId])
+  }, [running, submitting, code, id, language, testcases, toast, refresh, problemApi, custom, learn, storageId, saveReplay, contestId])
 
   /* Drive the animated browser-tab favicon: fast pulse while judging. */
   useEffect(() => {

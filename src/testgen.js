@@ -166,11 +166,16 @@ async function checkOnSamples(program, samples) {
   const res = await runReference(program, samples.map((s) => s.input), { perInputS: 3 });
   let passed = 0;
   let firstFail = null;
+  let detail = null;
   res.forEach((r, i) => {
     if (r.ok && same(r.out, samples[i].output)) passed++;
-    else if (!firstFail) firstFail = r.ok ? "wrong answer on a sample" : r.err || "crashed";
+    else if (!firstFail) {
+      firstFail = r.ok ? "wrong answer on a sample" : r.err || "crashed";
+      // What a fixer needs to see: the input, what was expected, what came out.
+      detail = `Sample ${i + 1} input:\n${String(samples[i].input).slice(0, 800)}\nExpected output:\n${String(samples[i].output).slice(0, 400)}\n${r.ok ? `The program printed:\n${String(r.out).slice(0, 400)}` : `The program failed: ${String(r.err || "crashed").slice(0, 400)}`}`;
+    }
   });
-  return { ok: passed === samples.length, passed, total: samples.length, reason: firstFail };
+  return { ok: passed === samples.length, passed, total: samples.length, reason: firstFail, detail };
 }
 
 /** How many inputs of each size to ask for, given a requested count. */
@@ -191,7 +196,7 @@ function makePlan(count) {
  * problem: { title, statement (plain text), samples: [{input, output}], limits }
  * deps.plan(problem) → the AI plan (ai/modes testgen_plan), injectable for tests.
  */
-async function generateTests(problem, { count = 24, plan: planFn, onProgress = () => {} } = {}) {
+async function generateTests(problem, { count = 24, plan: planFn, repair = null, onProgress = () => {} } = {}) {
   const samples = (problem.samples || []).filter((s) => String(s.input || "").trim() || String(s.output || "").trim());
   onProgress("Reading the problem and writing a generator");
   const plan = await planFn(problem);
@@ -214,7 +219,25 @@ async function generateTests(problem, { count = 24, plan: planFn, onProgress = (
   if (!inputs.length) throw Object.assign(new Error("No valid inputs came out of the generator — try again"), { status: 502 });
 
   onProgress("Checking both reference solutions on the official samples");
-  const [bruteCheck, solCheck] = await Promise.all([checkOnSamples(plan.brute || "", samples), checkOnSamples(plan.solution || "", samples)]);
+  let [bruteCheck, solCheck] = await Promise.all([checkOnSamples(plan.brute || "", samples), checkOnSamples(plan.solution || "", samples)]);
+  // One repair try for a reference that fails a sample: the model sees what it printed.
+  if (repair && samples.length) {
+    const fix = async (which, check) => {
+      const program = await repair({ which, program: plan[which] || "", failure: check.detail || check.reason || "" }).catch(() => "");
+      if (!program || !program.trim() || program === plan[which]) return check;
+      const again = await checkOnSamples(program, samples);
+      if (again.ok || again.passed > check.passed) plan[which] = program;
+      return again.ok || again.passed > check.passed ? again : check;
+    };
+    const tries = [];
+    if (!bruteCheck.ok && (plan.brute || "").trim()) tries.push(["brute", bruteCheck]);
+    if (!solCheck.ok && (plan.solution || "").trim()) tries.push(["solution", solCheck]);
+    if (tries.length) {
+      onProgress("A reference got a sample wrong: asking the AI to fix it");
+      const fixed = await Promise.all(tries.map(([w, c]) => fix(w, c)));
+      tries.forEach(([w], k) => (w === "brute" ? (bruteCheck = fixed[k]) : (solCheck = fixed[k])));
+    }
+  }
   const useBrute = bruteCheck.ok && !!plan.brute.trim();
   const useSol = solCheck.ok && !!plan.solution.trim();
   if (!useBrute && !useSol) {

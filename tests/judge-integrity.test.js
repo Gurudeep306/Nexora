@@ -49,7 +49,7 @@ const DOUBLE = "const n=+require('fs').readFileSync(0,'utf8');console.log(n*2)";
 const stamp = Date.now().toString(36);
 const A = `al${stamp}`, B = `bo${stamp}`;
 let alice, bob;
-let bare, stored, sampled; // problem ids
+let bare, stored, sampled, partialP, ownOnly; // problem ids
 
 test.before(async () => {
   const port = 25000 + Math.floor(Math.random() * 1000);
@@ -84,6 +84,12 @@ test.before(async () => {
     sampled = add('9001C', 900);
     db.prepare("INSERT INTO problem_statements(problem_rowid, samples, scraped_at) VALUES(?,?,datetime('now'))")
       .run(sampled, JSON.stringify([{ input: '4\n', output: '8\n' }]));
+    // Three samples: points follow how many pass (owner's rule, 2026-11-19).
+    partialP = add('9001D', 1500);
+    db.prepare("INSERT INTO problem_statements(problem_rowid, samples, scraped_at) VALUES(?,?,datetime('now'))")
+      .run(partialP, JSON.stringify([{ input: '1\n', output: '2\n' }, { input: '2\n', output: '4\n' }, { input: '3\n', output: '6\n' }]));
+    // No samples and no official tests: only the solver's own tests exist.
+    ownOnly = add('9001E', 1500);
   });
   alice = await signup(A);
   bob = await signup(B);
@@ -252,4 +258,42 @@ test('problem list limits are clamped', async () => {
   assert.equal(r.status, 200);
   assert.equal(r.body.limit, 1);
   assert.ok(r.body.problems.length <= 1);
+});
+
+/* ── Points follow the tests passed (owner's rule, 2026-11-19) ── */
+// Doubles n only when n <= k, so it passes exactly k of the samples 1, 2, 3.
+const passK = (k) => `const n = Number(require('fs').readFileSync(0, 'utf8').trim()); console.log(n <= ${k} ? n * 2 : 0)`;
+const xpOf = async (who) => (await call('GET', '/api/stats', who)).body.totalXp;
+
+test('partial credit: the share of samples passed, the best try counts, the rest on Accepted', async () => {
+  const judge = (code) => call('POST', '/api/judge', bob, { problem_id: partialP, language: 'javascript', code, testcases: [] });
+  const start = await xpOf(bob);
+  const one = (await judge(passK(1))).body;
+  assert.equal(one.verdict, 'WA');
+  assert.equal(one.xp.gainedXp, 13, 'one of three samples: a third of 40, rounded');
+  assert.deepEqual({ passed: one.xp.partial.passed, total: one.xp.partial.total }, { passed: 1, total: 3 });
+  assert.equal(one.xp.firstSolve, false);
+  const two = (await judge(passK(2))).body;
+  assert.equal(two.xp.gainedXp, 14, 'two of three: up to 27, so 14 more');
+  const worse = (await judge(passK(1))).body;
+  assert.equal(worse.xp, undefined, 'a worse try earns nothing');
+  const all = (await judge(passK(3))).body;
+  assert.equal(all.verdict, 'AC');
+  assert.equal(all.xp.gainedXp, 13, 'Accepted brings the rest, up to 40');
+  // Only the examples exist here (no official tests): full points, but "passed the examples", not solved.
+  assert.equal(all.xp.examplesOnly, true);
+  assert.equal(all.xp.firstSolve, false);
+  assert.equal(await xpOf(bob), start + 40, 'never more than the problem is worth');
+  const again = (await judge(passK(3))).body;
+  assert.equal(again.xp.gainedXp, 0, 'solving again earns nothing');
+});
+
+test("passing only tests you wrote yourself earns no points", async () => {
+  await call('POST', '/api/testcases', bob, { problem_rowid: ownOnly, label: 'Mine', input: '5', expected_output: 'anything' });
+  const start = await xpOf(bob);
+  const r = (await call('POST', '/api/judge', bob, { problem_id: ownOnly, language: 'javascript', code: "console.log('anything')", testcases: [] })).body;
+  assert.equal(r.verdict, 'AC', JSON.stringify(r).slice(0, 300));
+  assert.equal(r.recorded, true, 'the submission is still recorded');
+  assert.equal(r.xp?.gainedXp ?? 0, 0);
+  assert.equal(await xpOf(bob), start, 'no XP from a test with your own answer');
 });

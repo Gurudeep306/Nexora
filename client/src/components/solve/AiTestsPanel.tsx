@@ -12,7 +12,8 @@ type Result = {
   format?: string
   notes?: string
   multipleAnswers?: boolean
-  stats: { generated: number; rejectedByValidator: number; validated: boolean; kept: number; verified: number; disagreements: number; unresolved: number; references: { brute: RefCheck; solution: RefCheck } }
+  // A set made earlier for this problem (shared, ready at once) carries only kept / verified.
+  stats: { generated?: number; rejectedByValidator?: number; validated?: boolean; kept: number; verified: number; disagreements?: number; unresolved?: number; references?: { brute: RefCheck; solution: RefCheck }; cached?: boolean; cachedAt?: number }
 }
 
 interface Props {
@@ -26,7 +27,7 @@ interface Props {
   onAddTests: (tests: { label: string; input: string; expected_output: string }[]) => Promise<number>
 }
 
-const STEPS = ['Reading the problem and writing a generator', 'Generating inputs', 'Checking both reference solutions on the official samples', 'Computing expected outputs']
+const STEPS = ['Reading the problem and writing a generator', 'Generating inputs', 'Checking both reference solutions on the official samples', 'A reference got a sample wrong: asking the AI to fix it', 'Computing expected outputs']
 const COUNTS = [12, 24, 40, 60]
 
 const preview = (s: string, n = 90) => {
@@ -47,7 +48,7 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
   const [check, setCheck] = useState<JudgeResponse | null>(null)
   const abortRef = useRef<AbortController | null>(null)
 
-  const generate = async () => {
+  const generate = async (fresh = false) => {
     abortRef.current?.abort()
     const ctrl = new AbortController()
     abortRef.current = ctrl
@@ -61,7 +62,7 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
         credentials: 'include',
         signal: ctrl.signal,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ problem_id: problemId || undefined, custom_problem_id: customProblemId || undefined, title, statement: statement.slice(0, 12000), samples: samples.slice(0, 10), count }),
+        body: JSON.stringify({ problem_id: problemId || undefined, custom_problem_id: customProblemId || undefined, title, statement: statement.slice(0, 12000), samples: samples.slice(0, 10), count, fresh: fresh || undefined }),
       })
       if (!res.ok || !res.body) {
         const j = (await res.json().catch(() => null)) as { error?: string } | null
@@ -144,8 +145,8 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
               Cancel
             </Button>
           ) : (
-            <Button size="sm" variant="primary" onClick={() => void generate()}>
-              <Sparkles aria-hidden="true" /> {result ? 'Generate again' : 'Generate tests'}
+            <Button size="sm" variant="primary" onClick={() => void generate(!!result)}>
+              <Sparkles aria-hidden="true" /> {result ? 'Make a new set' : 'Generate tests'}
             </Button>
           )}
         </div>
@@ -154,8 +155,8 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
       <div className="min-h-0 flex-1 overflow-y-auto">
         {step && (
           <ol className="space-y-2 px-4 py-4" aria-live="polite">
-            {STEPS.map((label, i) => {
-              const at = STEPS.indexOf(step)
+            {STEPS.filter((label) => label !== STEPS[3] || step === STEPS[3] || STEPS.indexOf(step) > 3).map((label, i, shown) => {
+              const at = shown.indexOf(step)
               const state = i < at ? 'done' : i === at ? 'now' : 'todo'
               return (
                 <li key={label} className={cn('flex items-center gap-2.5 text-[13px]', state === 'todo' ? 'text-foreground-faint' : 'text-foreground')}>
@@ -179,7 +180,7 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
           <div className="px-4 py-5 text-[13px] leading-relaxed text-foreground-dim">
             <p className="font-medium text-foreground">Tests you can trust</p>
             <p className="mt-1">
-              The AI writes an input generator and two independent solutions, a brute force and an efficient one. Both must reproduce the official examples. An expected output is kept only when the two agree; for very large inputs, the efficient solution's answer is used and labelled.
+              The AI writes an input generator and two independent solutions, a brute force and an efficient one. Each must reproduce the official examples (one that misses gets a single chance to be fixed). An expected output is kept when the two agree, or when only one could run that input and it passed every example; those are labelled. Tests made for a problem are kept, so the next person gets them at once.
             </p>
           </div>
         )}
@@ -187,15 +188,18 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
         {!step && result && s && (
           <>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 px-4 pt-3 pb-2 text-[12px] text-foreground-dim">
+              {s.cached && <span className="text-foreground">Made earlier for this problem, ready at once.</span>}
               <span className="inline-flex items-center gap-1.5">
                 <ShieldCheck className="size-3.5 text-state-success" /> {s.verified} verified by two solutions
               </span>
-              <span>{s.kept - s.verified} by the efficient solution</span>
-              {s.disagreements > 0 && <span className="text-state-warning">{s.disagreements} dropped: the solutions disagreed</span>}
-              {s.rejectedByValidator > 0 && <span>{s.rejectedByValidator} invalid inputs thrown out</span>}
-              <span className="text-foreground-faint">
-                Brute force {s.references.brute.ok ? `passed ${s.references.brute.passed}/${s.references.brute.total} examples` : 'not used'} · Efficient {s.references.solution.ok ? `passed ${s.references.solution.passed}/${s.references.solution.total}` : 'not used'}
-              </span>
+              <span>{s.kept - s.verified} by one solution that passed every example</span>
+              {!!s.disagreements && <span className="text-state-warning">{s.disagreements} dropped: the solutions disagreed</span>}
+              {!!s.rejectedByValidator && <span>{s.rejectedByValidator} invalid inputs thrown out</span>}
+              {s.references && (
+                <span className="text-foreground-faint">
+                  Brute force {s.references.brute.ok ? `passed ${s.references.brute.passed}/${s.references.brute.total} examples` : 'not used'} · Efficient {s.references.solution.ok ? `passed ${s.references.solution.passed}/${s.references.solution.total}` : 'not used'}
+                </span>
+              )}
             </div>
             {result.multipleAnswers && <p className="px-4 pb-2 text-[12px] text-state-warning">This problem accepts several correct answers, so an exact comparison may mark a correct answer wrong.</p>}
 
@@ -229,7 +233,7 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
                       <button type="button" onClick={() => setOpen(open === i ? null : i)} className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 text-left">
                         <span className="w-24 shrink-0 text-[12.5px] text-foreground">{t.label.replace(/^AI · /, '')}</span>
                         <span className="min-w-0 flex-1 truncate font-mono text-[12px] text-foreground-faint">{preview(t.input)}</span>
-                        <span className={cn('shrink-0 text-[11.5px]', t.confidence === 'verified' ? 'text-state-success' : 'text-foreground-faint')} title={t.confidence === 'verified' ? 'Both solutions gave this answer' : "The efficient solution's answer (it passed every example)"}>
+                        <span className={cn('shrink-0 text-[11.5px]', t.confidence === 'verified' ? 'text-state-success' : 'text-foreground-faint')} title={t.confidence === 'verified' ? 'Both solutions gave this answer' : "One solution's answer (it passed every example; the other couldn't run this input)"}>
                           {t.confidence === 'verified' ? 'Verified' : 'Reference'}
                         </span>
                         {r && (r.passed ? <Check className="size-4 shrink-0 text-state-success" aria-label="Passed" /> : <X className="size-4 shrink-0 text-state-error" aria-label={r.verdict} />)}
