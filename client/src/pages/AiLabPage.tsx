@@ -6,11 +6,15 @@ import { ConvSlide, ForwardBackward, Gaussian2D, IrisPca, Legend, LinearMap, Opt
 
 const IRIS_LEGEND: [string, 'ink' | 'info' | 'accent'][] = IRIS_SPECIES.map((s, i) => [s, (['ink', 'info', 'accent'] as const)[i]])
 import { OPTIMIZERS } from '@/ai/engine/optim'
+import { Stage } from '@/ai/stage/Stage'
+import { attentionScene, networkScene, scoreScene, tensorScene } from '@/ai/stage/demos'
 
 function Tex({ src }: { src: string }) {
   // Wide formulas scroll sideways on phones, so the block can take focus for keyboard scrolling.
   return <span className="block overflow-x-auto py-1 text-text-primary" tabIndex={0} role="group" aria-label="Formula" dangerouslySetInnerHTML={{ __html: katex.renderToString(src, { displayMode: true, throwOnError: false, strict: false }) }} />
 }
+
+const STAGES = [attentionScene, networkScene, scoreScene, tensorScene]
 
 const SECTIONS = [
   {
@@ -89,6 +93,24 @@ export default function AiLabPage() {
           </a>
         ))}
       </nav>
+      <section aria-labelledby="stage-h" className="space-y-3 border-t border-border pt-6">
+        <p className="m-0 text-[11px] font-semibold tracking-wider text-text-muted uppercase">Nexora Stage · one engine for 2D and 3D</p>
+        <h2 id="stage-h" className="m-0 text-xl font-semibold text-text-primary">
+          From the page into depth
+        </h2>
+        <p className="m-0 max-w-3xl text-[15px] leading-relaxed text-text-secondary">
+          Each scene starts as a flat diagram, the way it is drawn on paper, and rises into 3D when depth explains something: attention as heights, a network’s activations, a probability bell, the batch dimension of a tensor. Switch between 2D and 3D at any time. Point at an underlined word to light up what it names. Every scene is written as data, so every course can use them.
+        </p>
+      </section>
+      {STAGES.map((make) => {
+        const spec = make()
+        return (
+          <section key={spec.title} aria-label={spec.title} className="space-y-2">
+            <h3 className="m-0 text-[17px] font-semibold text-text-primary">{spec.title}</h3>
+            <Stage spec={spec} />
+          </section>
+        )
+      })}
       {SECTIONS.map((s) => (
         <section key={s.id} id={s.id} aria-labelledby={`${s.id}-h`} className="space-y-3 border-t border-border pt-6">
           <p className="m-0 text-[11px] font-semibold tracking-wider text-text-muted uppercase">{s.topic}</p>

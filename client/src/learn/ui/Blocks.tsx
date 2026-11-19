@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { lazy, Suspense, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Sidenote } from '@/components/reader/Sidenote'
 import { useScrollSync } from '@/components/reader/useScrollSync'
@@ -100,6 +100,8 @@ export function ScrollyFigure({ viz, steps }: { viz: Extract<Block, { t: 'viz' }
   )
 }
 const EMPTY_BANK = new Map<string, Question>()
+// The 2D/3D engine is large, so it loads only on pages that have a stage block.
+const Stage = lazy(() => import('@/ai/stage/Stage'))
 
 /** Renders one lesson block. */
 export function LessonBlock({ b, bank }: { b: Block; bank: Map<string, Question> }) {
@@ -108,6 +110,15 @@ export function LessonBlock({ b, bank }: { b: Block; bank: Map<string, Question>
       return <Markdown md={b.md} />
     case 'viz':
       return <Figure b={b} />
+    case 'stage':
+      return (
+        <figure className="m-0 space-y-2" data-wide>
+          <Suspense fallback={<div className="ai3d-view" aria-busy="true" aria-label={`Loading: ${b.scene.title}`} />}>
+            <Stage spec={b.scene} />
+          </Suspense>
+          {b.caption && <figcaption className="text-[13px] text-text-secondary">{b.caption}</figcaption>}
+        </figure>
+      )
     case 'code':
       return <CodeTabs code={b.code} title={b.title} note={b.note} />
     case 'callout': {
