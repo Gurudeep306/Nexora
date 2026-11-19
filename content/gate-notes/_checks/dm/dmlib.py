@@ -2,10 +2,13 @@
 
 - paths, the question bank, chapter practice files and lesson texts;
 - MCQ / MSQ / NAT key assertions for practice questions;
-- `check_lessons(chapter)`: the house structure (content/gate-notes/_style.md) for every lesson of a
-  chapter: #id and depth on every top-level block, >= 4 step examples per "Worked examples" section,
-  why on every step, the outline's PYQs embedded with tests, >= 8 practice questions embedded with a
-  mix of types and MCQ keys spread over A-D, a quick summary and a GATE radar;
+- `check_lessons(chapter, min_words, min_viz, min_animated, min_examples, min_practice, min_labs,
+  min_intuition)`: the house structure (content/gate-notes/_style.md) for every lesson of a chapter:
+  #id and depth on every top-level block, >= 4 step examples per "Worked examples" section, why on
+  every step, the outline's PYQs embedded with tests, practice questions embedded with a mix of types
+  and MCQ keys spread over A-D, a quick summary and a GATE radar. The per-chapter floors (dm.md §3:
+  words, viz scenes, animated scenes, worked examples, practice count, lab embeds, intuitions) are
+  parameters; defaults keep the Chapter 1 floor, chapters raise it when they start.
 - `check_pyqs(chapter)`: every embedded PYQ has a full teacher-style v2 solution;
 - `write_solutions(dict)`: write v2 solutions into src/gate/solutions/<paper>.json;
 - the Viz scene builders (spec, step, el, text, node, edge, ...) and `check_viz(specs)`: files equal
@@ -137,7 +140,7 @@ OPEN = re.compile(r"^(:{3,})([a-z]+)(\{.*\})?\s*$")
 CLOSE = re.compile(r"^(:{3,})\s*$")
 
 
-def check_lessons(ch, min_words=0):
+def check_lessons(ch, min_words=0, min_viz=1, min_animated=1, min_examples=0, min_practice=8, min_labs=0, min_intuition=3):
     folder = chapter_dir(ch)
     prac = practice(ch)
     plans = {i: p for i, _, p in outline_lessons() if i.startswith(f"dm-{ch:02d}-")}
@@ -205,6 +208,8 @@ def check_lessons(ch, min_words=0):
                 problems.append(f"{fname}: section '{sec}' has {len(es)} worked examples (needs >= 4)")
         if not any(s and s.startswith("Worked examples") for s in by_sec):
             problems.append(f"{fname}: no 'Worked examples' section")
+        if len(examples) < min_examples:
+            problems.append(f"{fname}: {len(examples)} worked examples (< {min_examples})")
         want = plans[plan_id]
         got = [p for p, _ in pyqs]
         if sorted(want) != sorted(got):
@@ -215,8 +220,8 @@ def check_lessons(ch, min_words=0):
         mine = [q for q in prac if q.startswith(f"nx-dm-{ch:02d}-{fname[:2]}-")]
         if sorted(mine) != sorted(prac_ids):
             problems.append(f"{fname}: practice embedded vs practice.json mismatch {sorted(set(mine) ^ set(prac_ids))}")
-        if len(mine) < 8:
-            problems.append(f"{fname}: only {len(mine)} practice questions (needs >= 8)")
+        if len(mine) < min_practice:
+            problems.append(f"{fname}: only {len(mine)} practice questions (needs >= {min_practice})")
         kinds = collections.Counter(prac[q]["type"] for q in mine)
         if not {"MCQ", "NAT"} <= set(kinds) and not {"MCQ", "MSQ"} <= set(kinds):
             problems.append(f"{fname}: practice needs a mix of types (has {dict(kinds)})")
@@ -229,13 +234,15 @@ def check_lessons(ch, min_words=0):
             problems.append(f"{fname}: needs a quick :::summary")
         if "{#radar" not in body:
             problems.append(f"{fname}: needs the GATE radar table (#radar)")
-        if not viz:
-            problems.append(f"{fname}: no diagrams")
-        if not any(v.endswith("*") for v in viz):
-            problems.append(f"{fname}: no animated diagram")
+        if len(viz) < min_viz:
+            problems.append(f"{fname}: only {len(viz)} viz scenes (needs >= {min_viz})")
+        if sum(v.endswith("*") for v in viz) < min_animated:
+            problems.append(f"{fname}: only {sum(v.endswith('*') for v in viz)} animated scenes (needs >= {min_animated})")
+        if len(labs) < min_labs:
+            problems.append(f"{fname}: only {len(labs)} lab embeds (needs >= {min_labs})")
         intuitions = body.count(":::intuition{")
-        if intuitions < 3:
-            problems.append(f"{fname}: only {intuitions} intuition blocks")
+        if intuitions < min_intuition:
+            problems.append(f"{fname}: only {intuitions} intuition blocks (needs >= {min_intuition})")
         words = len(re.findall(r"[A-Za-z][A-Za-z'’-]*", re.sub(r"\$[^$]*\$", " ", body)))
         if words < min_words:
             problems.append(f"{fname}: {words} words (< {min_words})")

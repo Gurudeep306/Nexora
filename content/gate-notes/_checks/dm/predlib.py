@@ -20,7 +20,7 @@ import re
 
 TOK = re.compile(r"""\s*(?:
     (?P<lp>[(\[{])|(?P<rp>[)\]}])|(?P<comma>,)|
-    (?P<forall>∀|\\forall|\bforall\b)|(?P<exists1>∃!|\\exists\s*!)|(?P<exists>∃|\\exists|\bexists\b)|
+    (?P<forall>∀|\\forall|\bforall\b)|(?P<exists1>∃!|\\exists\s*!|\bexists\s*!)|(?P<exists>∃|\\exists|\bexists\b)|
     (?P<iff>↔|⇔|<->|<=>|\\leftrightarrow|\\Leftrightarrow|\\iff|≡|\\equiv)|
     (?P<imp>→|⇒|->|=>|\\rightarrow|\\Rightarrow|\\implies|\\to(?![a-zA-Z]))|
     (?P<xor>⊕|\\oplus)|

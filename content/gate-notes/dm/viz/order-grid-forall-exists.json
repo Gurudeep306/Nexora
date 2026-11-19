@@ -1,0 +1,314 @@
+{
+ "version": 1,
+ "title": "The order of ∀ and ∃ on a grid",
+ "width": 640,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 330
+ },
+ "intro": "∀x∃y R(x,y) means every row has a mark; ∃y∀x R(x,y) means one full column. A full column implies every row, never the reverse.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "∀x∃y R(x,y) vs ∃y∀x R(x,y) on an x×y grid",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∀∃ vs ∃∀ grid",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "g1",
+   "type": "table",
+   "x": 60,
+   "y": 100,
+   "cellW": 44,
+   "cellH": 34,
+   "rows": [
+    [
+     "x\\y",
+     "m",
+     "n",
+     "p"
+    ],
+    [
+     "a",
+     "R",
+     "·",
+     "·"
+    ],
+    [
+     "b",
+     "·",
+     "R",
+     "·"
+    ],
+    [
+     "c",
+     "·",
+     "·",
+     "R"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 14,
+    "y": 92,
+    "cellW": 40,
+    "cellH": 30
+   }
+  },
+  {
+   "id": "g2",
+   "type": "table",
+   "x": 300,
+   "y": 100,
+   "cellW": 44,
+   "cellH": 34,
+   "rows": [
+    [
+     "x\\y",
+     "m",
+     "n",
+     "p"
+    ],
+    [
+     "a",
+     "R",
+     "·",
+     "·"
+    ],
+    [
+     "b",
+     "R",
+     "·",
+     "·"
+    ],
+    [
+     "c",
+     "R",
+     "·",
+     "·"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 200,
+    "y": 92,
+    "cellW": 40,
+    "cellH": 30
+   }
+  },
+  {
+   "id": "lab1",
+   "type": "text",
+   "x": 148,
+   "y": 250,
+   "text": "grid 1",
+   "size": 14,
+   "anchor": "middle",
+   "narrow": {
+    "x": 94,
+    "y": 224
+   }
+  },
+  {
+   "id": "lab2",
+   "type": "text",
+   "x": 388,
+   "y": 250,
+   "text": "grid 2",
+   "size": 14,
+   "anchor": "middle",
+   "narrow": {
+    "x": 280,
+    "y": 224
+   }
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 300,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 296,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Grid 1: marks R(a,m), R(b,n), R(c,p) — a diagonal. Read ∀x∃y R(x,y): for EACH row x, is there a mark? Yes in every row → true.",
+   "patches": [
+    {
+     "id": "g1",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Read ∃y∀x R(x,y): is there ONE column y that is full (marked in all rows)? Columns m, n, p each have only one mark → false.",
+   "patches": [
+    {
+     "id": "g1",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "verdict",
+     "set": {
+      "text": "grid 1: ∀x∃y = T,  ∃y∀x = F",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Grid 2: all marks in column m. Now ∃y∀x is true (y = m works for every x), and ∀x∃y is still true.",
+   "patches": [
+    {
+     "id": "g2",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So ∃y∀x ⇒ ∀x∃y always (one full column makes every row marked), but not conversely — grid 1 is the counter-model. Order matters.",
+   "patches": [
+    {
+     "id": "verdict",
+     "set": {
+      "text": "∃y∀x → ∀x∃y holds;  the converse fails (grid 1)",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "g1",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "g2",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,183 @@
+{
+ "version": 1,
+ "title": "Quantifier past a quantifier-free part",
+ "width": 640,
+ "height": 370,
+ "narrow": {
+  "width": 360,
+  "height": 366
+ },
+ "intro": "If x is not free in A, the quantifier slides past A: ∀x(P∨A) ≡ ∀xP ∨ A, ∃x(P∧A) ≡ ∃xP ∧ A, and the →-forms one-way.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Null quantification: ∀x(P∨A) ≡ ∀xP ∨ A",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∀x(P∨A) ≡ ∀xP∨A",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "l0",
+   "type": "box",
+   "x": 60,
+   "y": 100,
+   "w": 520,
+   "h": 44,
+   "size": 16,
+   "mono": true,
+   "hidden": false,
+   "narrow": {
+    "x": 16,
+    "y": 96,
+    "w": 328,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∀x (P(x) ∨ A)"
+  },
+  {
+   "id": "l1",
+   "type": "box",
+   "x": 60,
+   "y": 160,
+   "w": 520,
+   "h": 44,
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 16,
+    "y": 156,
+    "w": 328,
+    "h": 40,
+    "size": 13
+   },
+   "label": "≡ (∀x P(x)) ∨ A"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 60,
+   "y": 230,
+   "cellW": 100,
+   "cellH": 34,
+   "rows": [
+    [
+     "x",
+     "P(x)",
+     "P∨A"
+    ],
+    [
+     "a",
+     "T",
+     "T"
+    ],
+    [
+     "b",
+     "F",
+     "T"
+    ],
+    [
+     "c",
+     "F",
+     "T"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 14,
+    "y": 224,
+    "cellW": 62,
+    "cellH": 30
+   }
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 340,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 336,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A has no free x, so the quantifier cannot bind anything in A. World: P = {a}, A = T.",
+   "patches": [
+    {
+     "id": "l0",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pull the quantifier out: ∀x(P(x) ∨ A) ≡ (∀x P(x)) ∨ A — because A is the same value for every x.",
+   "patches": [
+    {
+     "id": "l1",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check on D = {a,b,c}: per element P∨A = T always; ∀x(P∨A) = F. And ∀xP = F (b fails), so (∀xP) ∨ A = F ∨ T = F. Equal — the law holds (verified on all domains ≤ 3 by machine).",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "verdict",
+     "set": {
+      "text": "∀x(P∨A) ≡ ∀xP ∨ A when x ∉ free(A)  ✓",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

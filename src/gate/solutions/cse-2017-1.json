@@ -542,28 +542,25 @@
       "verification": "Truth tables over $p, q$: the given statement, II and III are T, T, F, T (false only on FT); I and IV are T, F, T, T."
     },
     "cse-2017-1-cs-2": {
-      "approach": "Take each sentence and ask whether every model of $\\forall x\\,\\exists y\\,R(x,y)$ satisfies it; a small counter-model kills the non-implied ones.",
+      "approach": "Concept tested: **what $\\forall x\\exists y R(x,y)$ implies**. I and IV are the same statement (IV is I with the negation pushed in); II and III strengthen it and fail on small models.",
       "concepts": [
-        "Quantifier order",
-        "De Morgan for quantifiers",
-        "Counter-models"
+        "Entailment",
+        "Renaming bound variables",
+        "Negation laws"
       ],
+      "given": "$F: \\forall x(\\exists y R(x,y))$. Which of I–IV are implied by F? I: $\\exists y(\\exists x R(x,y))$; II: $\\exists y(\\forall x R(x,y))$; III: $\\forall y(\\exists x R(x,y))$; IV: $\\neg\\exists x(\\forall y \\neg R(x,y))$.",
       "steps": [
         {
-          "title": "I is implied",
-          "body": "The domain is non-empty, so pick any $x_0$. $F$ gives a $y_0$ with $R(x_0,y_0)$, hence $\\exists y\\,\\exists x\\,R(x,y)$."
-        },
-        {
-          "title": "IV is implied",
-          "body": "Push the negation inside: $$\\neg\\exists x\\,\\forall y\\,\\neg R(x,y) \\equiv \\forall x\\,\\neg\\forall y\\,\\neg R(x,y) \\equiv \\forall x\\,\\exists y\\,R(x,y) = F.$$"
+          "title": "I and IV are implied",
+          "body": "I just commutes the two existentials. IV: $\\neg\\exists x\\forall y\\neg R \\equiv \\forall x\\exists y R$ — identical to F."
         },
         {
           "title": "II and III are not implied",
-          "body": "Domain $\\{1,2\\}$, $R=\\{(1,1),(2,2)\\}$ (equality). $F$ holds (each $x$ relates to itself).\n\n- II needs one $y$ related to **every** $x$: $y=1$ fails for $x=2$, $y=2$ fails for $x=1$.\n\nFor III take domain $\\{1,2\\}$, $R=\\{(1,1),(2,1)\\}$: $F$ holds, but $y=2$ has no $x$ with $R(x,2)$, so III fails."
+          "body": "II demands one single y works for every x: refuted by $R=\\{(1,2),(2,1)\\}$... use $R=\\{(1,1),(2,1)\\}$ on $\\{1,2\\}$: F holds, II fails (no y is R-related from both). III swaps the roles of the variables ($\\forall y\\exists x R(x,y)$ is a different statement): $R=\\{(1,1),(2,1)\\}$ makes F true and III false (y=2 has no x). So implied: I and IV only — option B."
         }
       ],
       "answer": {
-        "value": "I and IV only",
+        "value": "I and IV only.",
         "choice": [
           "B"
         ],
@@ -573,29 +570,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "IV is implied, but I is also implied, so \"IV only\" is incomplete."
+          "reason": "IV only — but I is also implied (existentials commute)."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "I follows from non-emptiness; IV is logically identical to $F$."
+          "reason": "I (commute $\\exists\\exists$) and IV (same as F after pushing the negation) are implied; II and III are refuted on $\\{1,2\\}$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "II swaps $\\forall\\exists$ to $\\exists\\forall$, which is strictly stronger; the equality relation is a counter-model."
+          "reason": "II only — II is not implied."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Neither II nor III is implied (counter-models in step 3), and the true ones I, IV are missing."
+          "reason": "II and III — neither is implied."
         }
       ],
+      "shortcut": "IV is F in disguise ($\\neg\\exists\\forall\\neg = \\forall\\exists$); I is F with commuted existentials; II/III move a $\\forall$ inside and fail.",
       "pitfalls": [
-        "$\\forall x\\,\\exists y$ does not imply $\\exists y\\,\\forall x$ — the witness $y$ may depend on $x$.",
-        "III swaps the roles of the variables; it is a different statement, not a rewriting."
+        "Reading III as a mere renaming of F — renaming $\\forall x\\exists yR(x,y)$ gives $\\forall a\\exists bR(a,b)$, not $\\forall y\\exists xR(x,y)$ (arguments swap)."
       ],
-      "verification": "IV was reduced to $F$ by two quantifier De Morgan steps; I and the counter-models were checked element by element."
+      "verification": "The check tests $F \\to$ each statement on all interpretations up to size 3: I and IV valid, II and III refuted."
     },
     "cse-2017-1-cs-3": {
       "approach": "Notice $b = A\\mathbf{1}$, so the system is consistent; the non-trivial dependency $\\sum c_i a_i=0$ makes $A$ singular, so the solution is not unique.",

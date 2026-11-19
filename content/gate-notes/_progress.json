@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-23",
+  "updated": "2026-11-18",
   "steps": {
     "N0": "review",
     "N1": "review",
@@ -166,9 +166,9 @@
       "stages": {
         "digests": "done",
         "outline": "review",
-        "lessons": "ch1 written",
-        "viz": "ch1 done",
-        "questions": "ch1 done",
+        "lessons": "ch1 written, ch2 written (status review, awaiting independent review)",
+        "viz": "ch1 done, ch2 done (17 scenes, all animated)",
+        "questions": "ch1 done, ch2 done (35 ch2 PYQs embedded with v2 solutions)",
         "review": "ch1 reviewed",
         "wrapup": "pending",
         "graph_toolkit": "done (E3: graphlib + graphdraw + graph_toolkit, CI green)"
@@ -185,6 +185,18 @@
             "propositions-connectives": "published+reviewed",
             "equivalence-normal-forms": "published+reviewed",
             "inference-resolution": "published+reviewed"
+          }
+        },
+        {
+          "id": "02-predicate-logic",
+          "title": "Predicate logic",
+          "lessons": 2,
+          "pyqs": 35,
+          "status": "review",
+          "review": "pending: independent review requested in docs/handoff/review-dm-ch02.md (2026-11-18)",
+          "lessons_status": {
+            "predicates-quantifiers": "review",
+            "quantifier-laws-validity": "review"
           }
         }
       ]

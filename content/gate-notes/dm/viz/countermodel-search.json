@@ -1,0 +1,399 @@
+{
+ "version": 1,
+ "title": "Exhaustive counter-model search on a 2-element domain",
+ "width": 640,
+ "height": 440,
+ "narrow": {
+  "width": 360,
+  "height": 440
+ },
+ "intro": "Validity on small domains is decided by enumerating interpretations: here all 16 on {0,1} for ∀x(P∨Q) → ∀xP∨∀xQ, and the falsifying rows turn red.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Counter-model search on a 2-element domain",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Search, size 2",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 40,
+   "y": 90,
+   "cellW": 108,
+   "cellH": 19,
+   "rows": [
+    [
+     "P",
+     "Q",
+     "∀(P∨Q)",
+     "∀P∨∀Q",
+     "φ"
+    ],
+    [
+     "FF",
+     "FF",
+     "F",
+     "F",
+     "T"
+    ],
+    [
+     "FF",
+     "TF",
+     "F",
+     "F",
+     "T"
+    ],
+    [
+     "FF",
+     "FT",
+     "F",
+     "F",
+     "T"
+    ],
+    [
+     "FF",
+     "TT",
+     "T",
+     "T",
+     "T"
+    ],
+    [
+     "TF",
+     "FF",
+     "F",
+     "F",
+     "T"
+    ],
+    [
+     "TF",
+     "TF",
+     "F",
+     "F",
+     "T"
+    ],
+    [
+     "TF",
+     "FT",
+     "T",
+     "F",
+     "F"
+    ],
+    [
+     "TF",
+     "TT",
+     "T",
+     "T",
+     "T"
+    ],
+    [
+     "FT",
+     "FF",
+     "F",
+     "F",
+     "T"
+    ],
+    [
+     "FT",
+     "TF",
+     "T",
+     "F",
+     "F"
+    ],
+    [
+     "FT",
+     "FT",
+     "F",
+     "F",
+     "T"
+    ],
+    [
+     "FT",
+     "TT",
+     "T",
+     "T",
+     "T"
+    ],
+    [
+     "TT",
+     "FF",
+     "T",
+     "T",
+     "T"
+    ],
+    [
+     "TT",
+     "TF",
+     "T",
+     "T",
+     "T"
+    ],
+    [
+     "TT",
+     "FT",
+     "T",
+     "T",
+     "T"
+    ],
+    [
+     "TT",
+     "TT",
+     "T",
+     "T",
+     "T"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 8,
+    "y": 88,
+    "cellW": 66,
+    "cellH": 19
+   }
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 413,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "narrow": {
+    "x": 180,
+    "y": 423,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "φ = ∀x(P∨Q) → (∀xP ∨ ∀xQ). To refute its validity, enumerate all 16 interpretations of P, Q on {0, 1} and evaluate.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        4,
+        0
+       ],
+       [
+        5,
+        0
+       ],
+       [
+        6,
+        0
+       ],
+       [
+        7,
+        0
+       ],
+       [
+        8,
+        0
+       ],
+       [
+        9,
+        0
+       ],
+       [
+        10,
+        0
+       ],
+       [
+        11,
+        0
+       ],
+       [
+        12,
+        0
+       ],
+       [
+        13,
+        0
+       ],
+       [
+        14,
+        0
+       ],
+       [
+        15,
+        0
+       ],
+       [
+        16,
+        0
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Most rows have φ = T (the one-way law direction holds everywhere), but look for a row with φ = F.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        4
+       ],
+       [
+        3,
+        4
+       ],
+       [
+        4,
+        4
+       ],
+       [
+        5,
+        4
+       ],
+       [
+        6,
+        4
+       ],
+       [
+        7,
+        4
+       ],
+       [
+        8,
+        4
+       ],
+       [
+        9,
+        4
+       ],
+       [
+        10,
+        4
+       ],
+       [
+        11,
+        4
+       ],
+       [
+        12,
+        4
+       ],
+       [
+        13,
+        4
+       ],
+       [
+        14,
+        4
+       ],
+       [
+        15,
+        4
+       ],
+       [
+        16,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Found 2 falsifying row(s) (danger): e.g. P = T… the row P=TF, Q=FT makes LHS T and RHS F, so φ = F. One counter-model is enough: φ is NOT valid. (This is exactly the one-way law of the previous scene.)",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        7,
+        2
+       ],
+       [
+        7,
+        3
+       ],
+       [
+        7,
+        4
+       ],
+       [
+        10,
+        0
+       ],
+       [
+        10,
+        1
+       ],
+       [
+        10,
+        2
+       ],
+       [
+        10,
+        3
+       ],
+       [
+        10,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "verdict",
+     "set": {
+      "text": "2 counter-model(s) on size 2 → not valid",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

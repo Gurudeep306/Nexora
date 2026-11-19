@@ -411,23 +411,24 @@
       "verification": "A tetrahedron has 6 edges, and each edge together with $O$ gives one distinct internal triangle — 6 planes, matching the key."
     },
     "cse-2014-1-cs-1": {
-      "approach": "\"Not all that glitters is gold\" $= \\neg\\forall x\\,(glitters(x) \\Rightarrow gold(x))$. Push the negation inside to get \"something glitters and is not gold\".",
+      "approach": "Concept tested: **“Not all that glitters is gold”** = ¬∀x(glitters(x) → gold(x)) ≡ ∃x(glitters(x) ∧ ¬gold(x)).",
       "concepts": [
-        "First-order logic",
-        "Quantifier negation"
+        "Negated universal",
+        "Translation"
       ],
+      "given": "“Not all that glitters is gold”; glitters(x), gold(x).",
       "steps": [
         {
-          "title": "Translate",
-          "body": "\"All that glitters is gold\" is $\\forall x\\,(glitters(x) \\Rightarrow gold(x))$. The statement is its negation:\n$$\\neg\\forall x\\,(glitters(x) \\Rightarrow gold(x))$$"
+          "title": "Formalise",
+          "body": "“Not all A are B” = ∃x(A(x) ∧ ¬B(x)): some glittering thing is not gold. Equivalently ¬∀x(glitters(x) → gold(x))."
         },
         {
-          "title": "Simplify",
-          "body": "$$\\equiv \\exists x\\,\\neg(\\neg glitters(x) \\vee gold(x)) \\equiv \\exists x\\,(glitters(x) \\wedge \\neg gold(x))$$\nThis is option D."
+          "title": "Kill the others",
+          "body": "A says every glittering thing is NOT gold; B says gold things glitter; C is about non-glittering gold things. Only the ∃(glitters ∧ ¬gold) form matches."
         }
       ],
       "answer": {
-        "value": "$\\exists x:\\ glitters(x) \\wedge \\neg gold(x)$",
+        "value": "$∃x: glitters(x) ∧ ¬gold(x)$",
         "choice": [
           "D"
         ],
@@ -437,28 +438,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Says *nothing* that glitters is gold — too strong; the statement only says not everything that glitters is gold."
+          "reason": "∀x(glitters → ¬gold): NO glittering thing is gold — far stronger than “not all”."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Says all gold glitters — a different statement with no negation at all."
+          "reason": "∀x(gold → glitters): all gold glitters — the converse claim."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Says some gold does not glitter — the roles of the predicates are swapped."
+          "reason": "∃x(gold ∧ ¬glitters): some gold thing does not glitter — different statement."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: there exists something that glitters but is not gold."
+          "reason": "∃x(glitters ∧ ¬gold): something glitters but is not gold = “not all that glitters is gold”."
         }
       ],
+      "shortcut": "not all A are B ⇔ ∃(A ∧ ¬B) ⇔ ¬∀(A → B).",
       "pitfalls": [
-        "Choosing A — \"not all\" is $\\neg\\forall$, not $\\forall\\neg$."
+        "Choosing ∀(A → ¬B), which means NO A is B."
       ],
-      "verification": "In a world with one glittering gold coin and one glittering brass coin, the statement and D are true while A is false."
+      "verification": "Only D is equivalent to ∃x(glitters ∧ ¬gold) on all domains ≤ 3."
     },
     "cse-2014-1-cs-2": {
       "approach": "With break point $X \\sim U(0,1)$, the shorter piece is $\\min(X, 1-X)$, which is uniform on $[0, 1/2]$, so its mean is $1/4$.",

@@ -1,0 +1,281 @@
+{
+ "version": 1,
+ "title": "Translating an English sentence phrase by phrase",
+ "width": 640,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 330
+ },
+ "intro": "“Some A are B…” → ∃x(A(x) ∧ …); “…all the B” inside it → ∀y(B(y) → …). Existential takes ∧, universal takes →.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "“Some boys in the class are taller than all the girls”",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Translating phrase by phrase",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "p0",
+   "type": "box",
+   "x": 30,
+   "y": 90,
+   "w": 210,
+   "h": 40,
+   "size": 14,
+   "tone": "muted",
+   "narrow": {
+    "x": 10,
+    "y": 88,
+    "w": 150,
+    "h": 38,
+    "size": 12
+   },
+   "label": "“Some boys”"
+  },
+  {
+   "id": "p1",
+   "type": "box",
+   "x": 30,
+   "y": 142,
+   "w": 210,
+   "h": 40,
+   "size": 14,
+   "tone": "muted",
+   "narrow": {
+    "x": 10,
+    "y": 140,
+    "w": 150,
+    "h": 38,
+    "size": 12
+   },
+   "label": "“in the class”"
+  },
+  {
+   "id": "p2",
+   "type": "box",
+   "x": 30,
+   "y": 194,
+   "w": 210,
+   "h": 40,
+   "size": 14,
+   "tone": "muted",
+   "narrow": {
+    "x": 10,
+    "y": 192,
+    "w": 150,
+    "h": 38,
+    "size": 12
+   },
+   "label": "“are taller than”"
+  },
+  {
+   "id": "p3",
+   "type": "box",
+   "x": 30,
+   "y": 246,
+   "w": 210,
+   "h": 40,
+   "size": 14,
+   "tone": "muted",
+   "narrow": {
+    "x": 10,
+    "y": 244,
+    "w": 150,
+    "h": 38,
+    "size": 12
+   },
+   "label": "“all the girls”"
+  },
+  {
+   "id": "f0",
+   "type": "box",
+   "x": 280,
+   "y": 90,
+   "w": 330,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 176,
+    "y": 88,
+    "w": 176,
+    "h": 38,
+    "size": 12
+   },
+   "label": "∃x"
+  },
+  {
+   "id": "f1",
+   "type": "box",
+   "x": 280,
+   "y": 142,
+   "w": 330,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 176,
+    "y": 140,
+    "w": 176,
+    "h": 38,
+    "size": 12
+   },
+   "label": "boy(x)"
+  },
+  {
+   "id": "f2",
+   "type": "box",
+   "x": 280,
+   "y": 194,
+   "w": 330,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 176,
+    "y": 192,
+    "w": 176,
+    "h": 38,
+    "size": 12
+   },
+   "label": "∧"
+  },
+  {
+   "id": "f3",
+   "type": "box",
+   "x": 280,
+   "y": 246,
+   "w": 330,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 176,
+    "y": 244,
+    "w": 176,
+    "h": 38,
+    "size": 12
+   },
+   "label": "∀y(girl→taller)"
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 460,
+   "y": 310,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 306,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "“Some boys …” — a claim about existence of a boy: ∃x boy(x) ∧ … . The existential takes ∧.",
+   "patches": [
+    {
+     "id": "p0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "f0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "f1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "“… in the class” just restricts the domain to classmates — no extra quantifier; the domain is the class.",
+   "patches": [
+    {
+     "id": "p1",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "“… are taller than …” — the relation taller(x, y) attaches to that boy: ∧ taller(x, y).",
+   "patches": [
+    {
+     "id": "p2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "f2",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "“… all the girls” — for every girl y: girl(y) → taller(x, y). The universal over girls takes →. Full: ∃x (boy(x) ∧ ∀y (girl(y) → taller(x,y))).",
+   "patches": [
+    {
+     "id": "p3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "f3",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Checked on a world with one boy, one girl and nobody taller: the correct formula is FALSE, the wrong pairing ∃x(boy(x) → …) is TRUE (vacuously at the girl). So ∧ with ∃ and → with ∀ is the right pairing.",
+   "patches": [
+    {
+     "id": "verdict",
+     "set": {
+      "text": "∃x(boy(x) ∧ ∀y(girl(y)→taller(x,y)))",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

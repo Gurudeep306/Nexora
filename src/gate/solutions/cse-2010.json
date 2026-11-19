@@ -2208,18 +2208,20 @@
       "verification": "$\\det\\begin{bmatrix}2-\\lambda&3\\\\-4&10-\\lambda\\end{bmatrix} = \\lambda^2 - 12\\lambda + 32 = (\\lambda-4)(\\lambda-8)$ ✓"
     },
     "cse-2010-cs-30": {
-      "approach": "Push the negation outward: the formula is the negation of \"someone can fool everyone at all times\".",
+      "approach": "Concept tested: **reading ∀x∃y∃t ¬F(x,y,t)**. It says: for every person x there is a person y and a time t at which x cannot fool y — “no one can fool everyone all the time”. Equivalent form: ¬∃x∀y∀t F(x,y,t).",
       "concepts": [
-        "Quantifier negation"
+        "Reading nested quantifiers",
+        "Negation equivalence"
       ],
+      "given": "F(x,y,t): person x can fool person y at time t. Formula: ∀x∃y∃t(¬F(x,y,t)).",
       "steps": [
         {
-          "title": "Rewrite",
-          "body": "$\\forall x\\,\\exists y\\,\\exists t\\,\\lnot F(x,y,t) \\equiv \\lnot\\,\\exists x\\,\\forall y\\,\\forall t\\,F(x,y,t)$."
+          "title": "Read it",
+          "body": "∀x∃y∃t ¬F: everyone x has some (y, t) they cannot fool. So no one fools everyone at all times."
         },
         {
-          "title": "Read it",
-          "body": "$\\exists x\\,\\forall y\\,\\forall t\\,F$ = \"someone can fool everyone all the time\". Its negation: **no one can fool everyone all the time**."
+          "title": "Equivalent negation form",
+          "body": "¬∀x∃y∃t¬F ≡ ∃x∀y∀t F — wait, that is the negation of the formula; the formula itself ≡ ¬∃x∀y∀t F(x,y,t): there is no x that fools everyone always. Option B."
         }
       ],
       "answer": {
@@ -2233,25 +2235,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "That is $\\forall x\\exists y\\exists t\\,F$ — the negation sign is missing."
+          "reason": "“Everyone can fool some person at some time” = ∀x∃y∃t F — the unnegated version."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Exact reading of ¬∃x∀y∀t F."
+          "reason": "∀x∃y∃t¬F ≡ ¬∃x∀y∀tF: no x fools everyone at every time."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "\"cannot fool some person all the time\" reads as $\\forall x\\exists y\\forall t\\,\\lnot F$ — the time quantifier is wrong."
+          "reason": "“Everyone cannot fool some person all the time” is ambiguous and not the formula's meaning."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "That is $\\lnot\\exists x\\exists y\\exists t\\,F$, i.e. nobody ever fools anyone — far stronger."
+          "reason": "“No one can fool some person at some time” = ¬∃x∃y∃t F — much stronger (fooling anyone ever is impossible)."
         }
       ],
-      "verification": "For each x the formula only needs one victim y and one instant t where x fails — exactly what \"x cannot fool everyone all the time\" means."
+      "shortcut": "Push the negation: ∀x∃y∃t¬F ⇔ ¬∃x∀y∀tF — read the negated form in English.",
+      "pitfalls": [
+        "Confusing ¬F with F: the formula is about NOT fooling."
+      ],
+      "verification": "equiv(∀x∃y∃t¬F, ¬∃x∀y∀tF) holds on all domains ≤ 2 (ternary F)."
     },
     "cse-2010-cs-31": {
       "approach": "Concept tested: **reading stacked NOR gates**. A NOR of two NORs is the AND of their ORs; then absorption shows that $P$ drops out. (The paper's figure has first-level NORs on (P, Q), (Q, R), (P, R) and (Q, R).)",

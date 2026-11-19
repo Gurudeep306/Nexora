@@ -1,0 +1,162 @@
+{
+ "version": 1,
+ "title": "∃! unpacked into exists + at most one",
+ "width": 640,
+ "height": 320,
+ "narrow": {
+  "width": 360,
+  "height": 310
+ },
+ "intro": "“Exactly one” is two conditions: at least one (∃x P(x)) and at most one (∀x∀y(P(x)∧P(y) → x=y)). ∃!x P(x) is their conjunction.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "∃!x P(x): “exactly one” = exists AND at most one",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∃! unpacked",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "c1",
+   "type": "box",
+   "x": 40,
+   "y": 100,
+   "w": 560,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 12,
+    "y": 96,
+    "w": 336,
+    "h": 40,
+    "size": 13
+   },
+   "label": "part 1 — exists:  ∃x P(x)"
+  },
+  {
+   "id": "c2",
+   "type": "box",
+   "x": 40,
+   "y": 160,
+   "w": 560,
+   "h": 44,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 12,
+    "y": 148,
+    "w": 336,
+    "h": 40,
+    "size": 12
+   },
+   "label": "part 2 — at most one:  ∀x∀y (P(x)∧P(y) → x=y)"
+  },
+  {
+   "id": "c3",
+   "type": "box",
+   "x": 40,
+   "y": 220,
+   "w": 560,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 12,
+    "y": 200,
+    "w": 336,
+    "h": 40,
+    "size": 13
+   },
+   "label": "∃!x P(x) = part 1 ∧ part 2"
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 300,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 292,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "World: D = {a,b,c}, P = {a,b} — two elements satisfy P.",
+   "patches": [
+    {
+     "id": "c1",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Part 1, existence: ∃x P(x) = T (witness a).",
+   "patches": [
+    {
+     "id": "c1",
+     "set": {
+      "label": "part 1 — exists:  ∃x P(x) = T",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Part 2, at most one: check the pair (a, b): P(a) ∧ P(b) is T but a = b is F, so the implication fails.",
+   "patches": [
+    {
+     "id": "c2",
+     "set": {
+      "label": "part 2 — at most one = F (pair a, b)",
+      "tone": "danger",
+      "fill": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∃!x P(x) = T ∧ F = F: there is not exactly one P — there are two.",
+   "patches": [
+    {
+     "id": "c3",
+     "set": {
+      "label": "∃!x P(x) = T ∧ F = F",
+      "tone": "danger",
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "verdict",
+     "set": {
+      "text": "∃!x P(x) ≡ ∃x(P(x)∧∀y(P(y)→y=x)); here F",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

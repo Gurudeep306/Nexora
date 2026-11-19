@@ -1298,28 +1298,25 @@
       "verification": "Equivalent to `child::*[name() != \"TOC\"]`."
     },
     "it-2007-cs-21": {
-      "approach": "Prove A directly; refute B, C, D with tiny counter-models.",
+      "approach": "Concept tested: **spotting the single valid formula** among four — only A is the $\\forall$-over-$\\to$ law; B, C, D are the classic not-laws.",
       "concepts": [
-        "First-order validity",
-        "Quantifier distribution",
-        "Counter-models"
+        "Validity",
+        "One-way laws",
+        "Order of $\\forall\\exists$"
       ],
+      "given": "Which one of A–D is valid? A: $\\forall x(P\\Rightarrow Q)\\Rightarrow((\\forall xP)\\Rightarrow(\\forall xQ))$; B: $\\exists x(P\\lor Q)\\Rightarrow((\\exists xP)\\Rightarrow(\\exists xQ))$; C: $\\exists x(P\\land Q)\\equiv((\\exists xP)\\land(\\exists xQ))$; D: $\\forall x\\exists yP(x,y)\\Rightarrow\\exists y\\forall xP(x,y)$.",
       "steps": [
         {
           "title": "A is valid",
-          "body": "Assume $\\forall x(P(x)\\Rightarrow Q(x))$ and $\\forall xP(x)$. For any $a$: $P(a)$ and $P(a)\\Rightarrow Q(a)$ give $Q(a)$. Hence $\\forall xQ(x)$."
+          "body": "The distribution law — proven in one line: assume $\\forall x(P\\Rightarrow Q)$ and $\\forall xP$; for any x, $P(x)$ and $P(x)\\Rightarrow Q(x)$ give $Q(x)$."
         },
         {
-          "title": "B and C fail",
-          "body": "**B:** domain $\\{1\\}$, $P=\\{1\\}$, $Q=\\varnothing$: $\\exists x(P(x)\\vee Q(x))$ true, $\\exists xP(x)$ true, $\\exists xQ(x)$ false, so the formula is false.\n\n**C:** domain $\\{1,2\\}$, $P=\\{1\\}$, $Q=\\{2\\}$: $\\exists x(P(x)\\wedge Q(x))$ false but $\\exists xP(x)\\wedge\\exists xQ(x)$ true, so the equivalence is false."
-        },
-        {
-          "title": "D fails",
-          "body": "Domain $\\mathbb N$, $P(x,y): y>x$. Every x has a larger y, but no y exceeds every x. LHS true, RHS false."
+          "title": "B, C, D fail",
+          "body": "B: $P=\\{1\\}, Q=\\varnothing$ on $\\{1\\}$ — LHS true, RHS $T\\Rightarrow F = F$. C is not an equivalence: same split refutes $\\leftarrow$. D is the famous order law in the wrong direction: the diagonal $R=\\{(1,1),(2,2)\\}$ on $\\{1,2\\}$ makes $\\forall x\\exists y$ true but $\\exists y\\forall x$ false."
         }
       ],
       "answer": {
-        "value": "∀x(P(x)⇒Q(x)) ⇒ ((∀xP(x)) ⇒ (∀xQ(x)))",
+        "value": "$\\forall x(P(x)\\Rightarrow Q(x))\\Rightarrow((\\forall xP(x))\\Rightarrow(\\forall xQ(x)))$",
         "choice": [
           "A"
         ],
@@ -1329,25 +1326,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Valid — universal instantiation and modus ponens."
+          "reason": "The $\\forall$-over-$\\to$ distribution law."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Fails when P is non-empty and Q is empty."
+          "reason": "$\\exists x(P\\lor Q)$ true does not give $(\\exists xP)\\Rightarrow(\\exists xQ)$ — counter-model $P=\\{1\\}, Q=\\varnothing$ on $\\{1\\}$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Only the ⇒ direction holds; P = {1}, Q = {2} breaks ⇐."
+          "reason": "$\\exists x(P\\land Q)$ is stronger than $(\\exists xP)\\land(\\exists xQ)$ — the $\\equiv$ fails on the 2-element split."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Swapping ∀∃ to ∃∀ is invalid (y > x on ℕ)."
+          "reason": "$\\forall x\\exists y \\not\\Rightarrow \\exists y\\forall x$ — diagonal relation refutes it."
         }
       ],
-      "verification": "A is the standard law ∀x(P→Q) ⊨ ∀xP → ∀xQ."
+      "shortcut": "Memorise the two order laws: $\\exists y\\forall x \\Rightarrow \\forall x\\exists y$ holds, the converse (D) does not.",
+      "pitfalls": [
+        "Reading C as an equivalence because both sides 'use existence'."
+      ],
+      "verification": "Full search up to size 3 on all four options: only A is valid."
     },
     "it-2007-cs-22": {
       "approach": "Use the composite trapezoidal error bound $|E|\\le\\frac{(b-a)h^2}{12}\\max|f''|$ and require it to be at most $0.5\\times10^{-7}$.",

@@ -3165,27 +3165,25 @@
       "verification": "104 = 01101000 and 64 = 01000000 have the leading bit 0 (inside /17) and the low 3 bits 000 (aligned to /21)."
     },
     "cse-2020-cs-39": {
-      "approach": "Rewrite each implication as a disjunction and move the quantifier past W (which has no free x). The only formula that does not survive this is the ∀ with an implication.",
+      "approach": "Concept tested: **null quantification with →**. When x is not free in W: $\\forall x(p\\to W) \\equiv (\\exists xp) \\to W$ and $\\exists x(p\\to W) \\equiv (\\forall xp) \\to W$ — but $\\forall x(p\\to W) \\not\\equiv (\\forall xp) \\to W$, which is option C.",
       "concepts": [
-        "Quantifier laws",
-        "Prenex normal form"
+        "Null quantification",
+        "The → one-way laws",
+        "Validity"
       ],
+      "given": "W has no free occurrence of x. Which option is NOT logically valid?",
       "steps": [
         {
-          "title": "Pull W out",
-          "body": "Because $x$ is not free in $W$:\n- $\\forall x(p(x)\\vee W) \\equiv \\forall x\\,p(x)\\vee W$ — (A) valid.\n- $\\exists x(p(x)\\wedge W) \\equiv \\exists x\\,p(x)\\wedge W$ — (B) valid."
+          "title": "A, B, D are the null-quantification laws",
+          "body": "A: $\\forall x(p\\lor W) \\equiv \\forall xp \\lor W$ ✓. B: $\\exists x(p\\land W) \\equiv \\exists xp \\land W$ ✓. D: $\\exists x(p\\to W) \\equiv (\\forall xp) \\to W$ ✓ (both sides say $\\neg\\forall xp \\lor W$)."
         },
         {
-          "title": "Implications",
-          "body": "$\\forall x(p(x)\\rightarrow W) \\equiv \\forall x(\\neg p(x)\\vee W) \\equiv (\\forall x\\,\\neg p(x))\\vee W \\equiv \\neg\\exists x\\,p(x)\\vee W \\equiv \\exists x\\,p(x)\\rightarrow W$.\n\nSo the correct right side of (C) is $\\exists x\\,p(x)\\rightarrow W$, not $\\forall x\\,p(x)\\rightarrow W$.\n\n$\\exists x(p(x)\\rightarrow W) \\equiv \\exists x\\,\\neg p(x)\\vee W \\equiv \\neg\\forall x\\,p(x)\\vee W \\equiv \\forall x\\,p(x)\\rightarrow W$ — (D) valid."
-        },
-        {
-          "title": "Counterexample for (C)",
-          "body": "Domain $\\{1,2\\}$, $p(1)=\\text{T}$, $p(2)=\\text{F}$, $W=\\text{F}$.\n- Left: $p(1)\\rightarrow \\text{F}$ is false, so $\\forall x(p(x)\\rightarrow W)$ is **false**.\n- Right: $\\forall x\\,p(x)$ is false, so $\\forall x\\,p(x)\\rightarrow W$ is **true**."
+          "title": "C is not valid",
+          "body": "$\\forall x(p\\to W) \\equiv (\\exists xp)\\to W$, not $(\\forall xp)\\to W$. Counter-model: $\\{1,2\\}$, $p=\\{1\\}$, W=false: LHS $\\forall x(p\\to F) = \\neg p(1)\\land\\neg p(2) = F$; RHS $(\\forall xp)\\to W = F \\to F = T$. LHS ≠ RHS."
         }
       ],
       "answer": {
-        "value": "C",
+        "value": "$\\forall x(p(x) \\rightarrow W) \\equiv \\forall x p(x) \\rightarrow W$",
         "choice": [
           "C"
         ],
@@ -3195,29 +3193,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Valid: ∀ distributes over ∨ with a constant (x-free) disjunct."
+          "reason": "Valid null-quantification law for $\\lor$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Valid: ∃ distributes over ∧ with an x-free conjunct."
+          "reason": "Valid null-quantification law for $\\land$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Not valid: ∀x(p(x)→W) ≡ ∃x p(x) → W; the counterexample separates the two sides."
+          "reason": "NOT valid: the correct form is $\\forall x(p\\to W) \\equiv (\\exists x p)\\to W$; counter-model $p=\\{1\\}, W=F$ on $\\{1,2\\}$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Valid: ∃x(¬p(x) ∨ W) ≡ ¬∀x p(x) ∨ W ≡ ∀x p(x) → W."
+          "reason": "Valid: $\\exists x(p\\to W) \\equiv (\\forall xp)\\to W$."
         }
       ],
-      "shortcut": "A quantifier flips (∀↔∃) when it is pulled out of the antecedent of an implication.",
+      "shortcut": "For $\\to$ the quantifier flips when it slides out: $\\forall x(p\\to W) \\equiv (\\exists xp)\\to W$ and $\\exists x(p\\to W) \\equiv (\\forall xp)\\to W$. Any option pairing $\\forall$ with $\\forall$ across $\\to$ is the wrong one.",
       "pitfalls": [
-        "Pulling a quantifier out of the left side of → changes it, because the antecedent is negated."
+        "Assuming quantifiers slide out of $\\to$ unchanged — only $\\land$/\\lor keep the same quantifier both ways."
       ],
-      "verification": "The counterexample makes the two sides of (C) differ; (A), (B), (D) follow by standard equivalences."
+      "verification": "Full search up to size 3 with W as a 0-ary predicate: A, B, D valid; C refuted."
     },
     "cse-2020-cs-40": {
       "approach": "Sum w' along any path: the f-terms telescope, leaving only f(start) − f(end). Every path between the same two vertices shifts by the same constant, so shortest paths are preserved for any f.",

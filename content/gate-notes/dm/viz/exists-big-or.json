@@ -1,0 +1,280 @@
+{
+ "version": 1,
+ "title": "∃ as a big OR with a first witness",
+ "width": 640,
+ "height": 320,
+ "narrow": {
+  "width": 360,
+  "height": 312
+ },
+ "intro": "On a finite domain, ∃x P(x) is the disjunction P(a) ∨ P(b) ∨ P(c) ∨ P(d): true as soon as one element satisfies P.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "∃x P(x) is a big OR that stops at the first witness",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∃x P(x) = big OR",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "e0",
+   "type": "box",
+   "x": 40,
+   "y": 100,
+   "w": 120,
+   "h": 44,
+   "size": 16,
+   "narrow": {
+    "x": 12,
+    "y": 96,
+    "w": 76,
+    "h": 40,
+    "size": 14
+   },
+   "label": "a"
+  },
+  {
+   "id": "v0",
+   "type": "text",
+   "x": 100,
+   "y": 166,
+   "text": "?",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 50,
+    "y": 158,
+    "size": 12
+   }
+  },
+  {
+   "id": "e1",
+   "type": "box",
+   "x": 185,
+   "y": 100,
+   "w": 120,
+   "h": 44,
+   "size": 16,
+   "narrow": {
+    "x": 98,
+    "y": 96,
+    "w": 76,
+    "h": 40,
+    "size": 14
+   },
+   "label": "b"
+  },
+  {
+   "id": "v1",
+   "type": "text",
+   "x": 245,
+   "y": 166,
+   "text": "?",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 136,
+    "y": 158,
+    "size": 12
+   }
+  },
+  {
+   "id": "e2",
+   "type": "box",
+   "x": 330,
+   "y": 100,
+   "w": 120,
+   "h": 44,
+   "size": 16,
+   "narrow": {
+    "x": 184,
+    "y": 96,
+    "w": 76,
+    "h": 40,
+    "size": 14
+   },
+   "label": "c"
+  },
+  {
+   "id": "v2",
+   "type": "text",
+   "x": 390,
+   "y": 166,
+   "text": "?",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 222,
+    "y": 158,
+    "size": 12
+   }
+  },
+  {
+   "id": "e3",
+   "type": "box",
+   "x": 475,
+   "y": 100,
+   "w": 120,
+   "h": 44,
+   "size": 16,
+   "narrow": {
+    "x": 270,
+    "y": 96,
+    "w": 76,
+    "h": 40,
+    "size": 14
+   },
+   "label": "d"
+  },
+  {
+   "id": "v3",
+   "type": "text",
+   "x": 535,
+   "y": 166,
+   "text": "?",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 308,
+    "y": 158,
+    "size": 12
+   }
+  },
+  {
+   "id": "acc",
+   "type": "box",
+   "x": 40,
+   "y": 220,
+   "w": 360,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 12,
+    "y": 210,
+    "w": 336,
+    "h": 40,
+    "size": 14
+   },
+   "label": "OR so far: F"
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 300,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 292,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Element a: P(a) = F. The running OR becomes F.",
+   "patches": [
+    {
+     "id": "v0",
+     "set": {
+      "text": "F",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "e0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "acc",
+     "set": {
+      "label": "OR so far: F",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Element b: P(b) = T. The running OR becomes T. First witness found — the OR can only stay T now.",
+   "patches": [
+    {
+     "id": "v1",
+     "set": {
+      "text": "T",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "e1",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "acc",
+     "set": {
+      "label": "OR so far: T",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Element c: P(c) = F, but the OR is already T — we stop. b is the witness.",
+   "patches": [
+    {
+     "id": "v2",
+     "set": {
+      "text": "F",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∃x P(x) = F ∨ T ∨ … = T. One witness (b) is enough; the rest do not matter.",
+   "patches": [
+    {
+     "id": "verdict",
+     "set": {
+      "text": "∃x P(x) = T — witness: b",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "acc",
+     "set": {
+      "label": "OR: T",
+      "fill": "success",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

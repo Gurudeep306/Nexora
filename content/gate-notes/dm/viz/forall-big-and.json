@@ -1,0 +1,480 @@
+{
+ "version": 1,
+ "title": "∀ as a big AND over the domain",
+ "width": 640,
+ "height": 320,
+ "narrow": {
+  "width": 360,
+  "height": 312
+ },
+ "intro": "On a finite domain, ∀x P(x) is the conjunction P(a) ∧ P(b) ∧ P(c) ∧ P(d): it is false exactly when one element fails P.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "∀x P(x) is a big AND over the domain D = {a, b, c, d}",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∀x P(x) = big AND",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 440,
+   "y": 100,
+   "cellW": 90,
+   "cellH": 34,
+   "rows": [
+    [
+     "x",
+     "P(x)"
+    ],
+    [
+     "",
+     ""
+    ],
+    [
+     "",
+     ""
+    ],
+    [
+     "",
+     ""
+    ],
+    [
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 250,
+    "y": 100,
+    "cellW": 48,
+    "cellH": 34
+   }
+  },
+  {
+   "id": "e0",
+   "type": "box",
+   "x": 40,
+   "y": 100,
+   "w": 120,
+   "h": 44,
+   "size": 16,
+   "narrow": {
+    "x": 12,
+    "y": 96,
+    "w": 76,
+    "h": 40,
+    "size": 14
+   },
+   "label": "a"
+  },
+  {
+   "id": "v0",
+   "type": "text",
+   "x": 100,
+   "y": 166,
+   "text": "?",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 50,
+    "y": 154,
+    "size": 12
+   }
+  },
+  {
+   "id": "e1",
+   "type": "box",
+   "x": 185,
+   "y": 100,
+   "w": 120,
+   "h": 44,
+   "size": 16,
+   "narrow": {
+    "x": 98,
+    "y": 96,
+    "w": 76,
+    "h": 40,
+    "size": 14
+   },
+   "label": "b"
+  },
+  {
+   "id": "v1",
+   "type": "text",
+   "x": 245,
+   "y": 166,
+   "text": "?",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 136,
+    "y": 154,
+    "size": 12
+   }
+  },
+  {
+   "id": "e2",
+   "type": "box",
+   "x": 330,
+   "y": 100,
+   "w": 120,
+   "h": 44,
+   "size": 16,
+   "narrow": {
+    "x": 184,
+    "y": 96,
+    "w": 76,
+    "h": 40,
+    "size": 14
+   },
+   "label": "c"
+  },
+  {
+   "id": "v2",
+   "type": "text",
+   "x": 390,
+   "y": 166,
+   "text": "?",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 222,
+    "y": 154,
+    "size": 12
+   }
+  },
+  {
+   "id": "e3",
+   "type": "box",
+   "x": 475,
+   "y": 100,
+   "w": 120,
+   "h": 44,
+   "size": 16,
+   "narrow": {
+    "x": 270,
+    "y": 96,
+    "w": 76,
+    "h": 40,
+    "size": 14
+   },
+   "label": "d"
+  },
+  {
+   "id": "v3",
+   "type": "text",
+   "x": 535,
+   "y": 166,
+   "text": "?",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 308,
+    "y": 154,
+    "size": 12
+   }
+  },
+  {
+   "id": "acc",
+   "type": "box",
+   "x": 40,
+   "y": 220,
+   "w": 360,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 12,
+    "y": 210,
+    "w": 336,
+    "h": 40,
+    "size": 14
+   },
+   "label": "AND so far: T"
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 300,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 292,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Element a: P(a) = T. The running AND becomes T.",
+   "patches": [
+    {
+     "id": "v0",
+     "set": {
+      "text": "T",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "e0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "P(x)"
+       ],
+       [
+        "a",
+        "T"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "acc",
+     "set": {
+      "label": "AND so far: T",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Element b: P(b) = T. The running AND becomes T.",
+   "patches": [
+    {
+     "id": "v1",
+     "set": {
+      "text": "T",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "e1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "P(x)"
+       ],
+       [
+        "a",
+        "T"
+       ],
+       [
+        "b",
+        "T"
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "acc",
+     "set": {
+      "label": "AND so far: T",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Element c: P(c) = F. The running AND becomes F. This is the counterexample: P(c) is false.",
+   "patches": [
+    {
+     "id": "v2",
+     "set": {
+      "text": "F",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "e2",
+     "set": {
+      "tone": "danger",
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "P(x)"
+       ],
+       [
+        "a",
+        "T"
+       ],
+       [
+        "b",
+        "T"
+       ],
+       [
+        "c",
+        "F"
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "acc",
+     "set": {
+      "label": "AND so far: F",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Element d: P(d) = T. The running AND becomes F.",
+   "patches": [
+    {
+     "id": "v3",
+     "set": {
+      "text": "T",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "e3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "P(x)"
+       ],
+       [
+        "a",
+        "T"
+       ],
+       [
+        "b",
+        "T"
+       ],
+       [
+        "c",
+        "F"
+       ],
+       [
+        "d",
+        "T"
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "acc",
+     "set": {
+      "label": "AND so far: F",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "All four elements checked: T ∧ T ∧ F ∧ T = F. So ∀x P(x) is false, and c is a counterexample.",
+   "patches": [
+    {
+     "id": "verdict",
+     "set": {
+      "text": "∀x P(x) = F — counterexample: c",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "acc",
+     "set": {
+      "label": "AND: F",
+      "fill": "danger",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

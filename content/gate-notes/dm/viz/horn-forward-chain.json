@@ -1,0 +1,202 @@
+{
+ "version": 1,
+ "title": "Horn clause forward chaining",
+ "width": 640,
+ "height": 360,
+ "narrow": {
+  "width": 360,
+  "height": 352
+ },
+ "intro": "A Horn clause A(x) ← B(x,y), C(y) reads ∀x∀y((B∧C) → A); with facts B(d,c), C(c) the body matches at (d,c) and A(d) is derived.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Horn forward chaining: A(x) ← B(x,y), C(y)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Forward chaining",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "rule",
+   "type": "box",
+   "x": 60,
+   "y": 100,
+   "w": 520,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 12,
+    "y": 96,
+    "w": 336,
+    "h": 40,
+    "size": 13
+   },
+   "label": "rule:  ∀x∀y ((B(x,y) ∧ C(y)) → A(x))"
+  },
+  {
+   "id": "neg",
+   "type": "box",
+   "x": 60,
+   "y": 156,
+   "w": 520,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 12,
+    "y": 148,
+    "w": 336,
+    "h": 40,
+    "size": 13
+   },
+   "label": "fact:  ∀x ¬B(x,x)   (no self-loops)"
+  },
+  {
+   "id": "f1",
+   "type": "box",
+   "x": 60,
+   "y": 212,
+   "w": 250,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 12,
+    "y": 200,
+    "w": 160,
+    "h": 40,
+    "size": 13
+   },
+   "label": "fact:  B(d, c)"
+  },
+  {
+   "id": "f2",
+   "type": "box",
+   "x": 330,
+   "y": 212,
+   "w": 250,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 188,
+    "y": 200,
+    "w": 160,
+    "h": 40,
+    "size": 13
+   },
+   "label": "fact:  C(c)"
+  },
+  {
+   "id": "der",
+   "type": "box",
+   "x": 60,
+   "y": 268,
+   "w": 520,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 12,
+    "y": 252,
+    "w": 336,
+    "h": 40,
+    "size": 13
+   },
+   "label": "derive:  A(d)"
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 340,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 332,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The logic program as a first-order sentence: ∀x∀y((B(x,y) ∧ C(y)) → A(x)) plus the negative fact ∀x¬B(x,x).",
+   "patches": [
+    {
+     "id": "rule",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "neg",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Ground facts: B(d, c) and C(c) are true.",
+   "patches": [
+    {
+     "id": "f1",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "f2",
+     "set": {
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Match the rule's body at x = d, y = c: B(d,c) ∧ C(c) is true → the head fires: A(d).",
+   "patches": [
+    {
+     "id": "der",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Forward chaining repeats until nothing new fires. Here one step derives A(d); the negative fact rules out B(d,d). Verified semantically: in every model of the program + facts on {c,d}, A(d) holds.",
+   "patches": [
+    {
+     "id": "verdict",
+     "set": {
+      "text": "A(d) derived in one step",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

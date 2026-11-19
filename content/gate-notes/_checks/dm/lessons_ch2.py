@@ -9,7 +9,8 @@ import dmlib  # noqa: E402
 if dmlib.chapter_dir(2) is None:
     print("lessons_ch2: chapter not started")
     sys.exit(0)
-report, problems = dmlib.check_lessons(2, min_words=3500)
+# Floor raised for Chapter 2 per dm.md §3 (raising a bar is allowed; lowering never is).
+report, problems = dmlib.check_lessons(2, min_words=7000, min_viz=8, min_animated=7, min_examples=25, min_practice=10, min_labs=1)
 print("\n".join(report))
 assert not problems, "\n" + "\n".join(problems)
 print("lessons_ch2: structure OK")

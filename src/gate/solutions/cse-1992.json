@@ -1118,27 +1118,24 @@
       "verification": "$a^nb^nc^n$ fails the pumping lemma for CFLs, confirming the intersection counterexample."
     },
     "cse-1992-a-2-xv": {
-      "approach": "Check each implication: try to prove it in general, otherwise build a two-element counter-model.",
+      "approach": "Concept tested: **which quantifier distributions are valid**. Only the $\\forall$ over $\\vee$ in the safe direction is valid: $(\\forall x P) \\lor (\\forall x Q) \\to \\forall x (P \\lor Q)$.",
       "concepts": [
-        "Quantifier distribution",
-        "Validity"
+        "Validity",
+        "One-way quantifier laws"
       ],
+      "given": "Which of A–D are valid? A: $(\\forall x)P(x) \\lor (\\forall x)Q(x) \\to (\\forall x)(P(x) \\lor Q(x))$; B: $(\\exists x)P(x) \\land (\\exists x)Q(x) \\to (\\exists x)(P(x) \\land Q(x))$; C: $(\\forall x)(P(x) \\lor Q(x)) \\to (\\forall x)P(x) \\lor (\\forall x)Q(x)$; D: $(\\exists x)(P(x) \\lor Q(x)) \\to \\neg(\\forall x)P(x) \\lor (\\exists x)Q(x)$.",
       "steps": [
         {
-          "title": "(a) is valid",
-          "body": "If $\\forall x\\,P(x)$ holds, then every $x$ satisfies $P(x) \\lor Q(x)$; likewise if $\\forall x\\,Q(x)$ holds. Either way $\\forall x\\,\\{P(x) \\lor Q(x)\\}$."
+          "title": "A is valid",
+          "body": "If every x satisfies P (or every x satisfies Q), then every x satisfies $P \\lor Q$. One-line proof; verified on all interpretations up to size 3."
         },
         {
-          "title": "Counter-models for (b), (c)",
-          "body": "Domain $\\{1, 2\\}$, $P = \\{1\\}$, $Q = \\{2\\}$.\n\n- (b): $\\exists P$ and $\\exists Q$ are true, but no element has both, so $\\exists(P \\land Q)$ is false.\n- (c): every element is in $P$ or $Q$, so $\\forall(P \\lor Q)$ is true, but neither $\\forall P$ nor $\\forall Q$ holds."
-        },
-        {
-          "title": "Counter-model for (d)",
-          "body": "$P$ true everywhere, $Q$ false everywhere: $\\exists x\\{P \\lor Q\\}$ is true, $\\sim\\forall x P(x)$ is false and $\\exists x Q(x)$ is false, so the implication fails."
+          "title": "B, C, D fail on U = {1, 2}",
+          "body": "Take $P = \\{1\\}$, $Q = \\{2\\}$. B: LHS true, RHS false (no single x has both). C: LHS true, RHS false. D: LHS true; RHS is $\\neg\\forall xP \\lor \\exists xQ = F \\lor T$... use $Q=\\varnothing$ instead: then D's RHS is $F \\lor F = F$ while LHS is true. All three refuted on a 2-element domain."
         }
       ],
       "answer": {
-        "value": "Only (a)",
+        "value": "Only A is valid.",
         "choice": [
           "A"
         ],
@@ -1148,25 +1145,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "$\\forall$ distributes over $\\lor$ in this direction."
+          "reason": "$(\\forall xP)\\lor(\\forall xQ) \\Rightarrow \\forall x(P\\lor Q)$: valid — one of the two universal sides already covers every element."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$\\exists$ does not distribute over $\\land$: $P = \\{1\\},\\, Q = \\{2\\}$."
+          "reason": "$\\exists xP \\land \\exists xQ$ may use different witnesses; $\\exists x(P\\land Q)$ needs one shared witness. Counter-model: $P=\\{1\\}, Q=\\{2\\}$ on $\\{1,2\\}$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Converse of (a) fails with the same model."
+          "reason": "The converse of A. Counter-model: $P=\\{1\\}, Q=\\{2\\}$ on $\\{1,2\\}$: LHS true, RHS false."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$P \\equiv$ true, $Q \\equiv$ false makes the antecedent true and the consequent false."
+          "reason": "$\\exists x(P\\lor Q) \\to \\neg\\forall xP \\lor \\exists xQ$: take $P=\\{1\\}, Q=\\varnothing$ on $\\{1\\}$: LHS true, RHS $F\\lor F = F$."
         }
       ],
-      "verification": "Each invalid option has an explicit finite counter-model; (a) has a direct proof."
+      "shortcut": "Write the valid direction first: $(\\forall P)\\lor(\\forall Q) \\to \\forall(P\\lor Q)$; the converse needs a shared element, which a 2-element split refutes.",
+      "pitfalls": [
+        "Thinking $\\exists$ distributes over $\\land$ — it does not (B).",
+        "Reading D's $\\sim(\\forall x)P(x)$ as $\\exists x\\neg P(x)$ — it is exactly that, and D still fails."
+      ],
+      "verification": "The check evaluates all four statements on every interpretation of P, Q up to domain size 3 (full search, and seeded sampling beyond): only A is valid."
     },
     "cse-1992-a-2-xvi": {
       "approach": "Concept tested: **testing tautologies by falsification**. An implication is false only as T → F; for each option, try to make the conclusion false and the hypothesis true. One clean row refutes an option.",

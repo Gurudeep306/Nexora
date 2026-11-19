@@ -1,0 +1,260 @@
+{
+ "version": 1,
+ "title": "Why the 1991 formula has only infinite models",
+ "width": 640,
+ "height": 300,
+ "narrow": {
+  "width": 360,
+  "height": 296
+ },
+ "intro": "Serial + transitive + irreflexive + antisymmetric forces an infinite chain of distinct elements: no finite model exists, but (ℕ, <) satisfies it.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "A formula with only infinite models: the R-chain",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Infinite models",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "n0",
+   "type": "node",
+   "cx": 60,
+   "cy": 140,
+   "r": 22,
+   "size": 15,
+   "narrow": {
+    "cx": 20,
+    "cy": 130,
+    "r": 16,
+    "size": 12
+   },
+   "label": "a0"
+  },
+  {
+   "id": "n1",
+   "type": "node",
+   "cx": 180,
+   "cy": 140,
+   "r": 22,
+   "size": 15,
+   "narrow": {
+    "cx": 92,
+    "cy": 130,
+    "r": 16,
+    "size": 12
+   },
+   "label": "a1"
+  },
+  {
+   "id": "e1",
+   "type": "arrow",
+   "from": "n0",
+   "to": "n1"
+  },
+  {
+   "id": "n2",
+   "type": "node",
+   "cx": 300,
+   "cy": 140,
+   "r": 22,
+   "size": 15,
+   "narrow": {
+    "cx": 164,
+    "cy": 130,
+    "r": 16,
+    "size": 12
+   },
+   "label": "a2"
+  },
+  {
+   "id": "e2",
+   "type": "arrow",
+   "from": "n1",
+   "to": "n2"
+  },
+  {
+   "id": "n3",
+   "type": "node",
+   "cx": 420,
+   "cy": 140,
+   "r": 22,
+   "size": 15,
+   "narrow": {
+    "cx": 236,
+    "cy": 130,
+    "r": 16,
+    "size": 12
+   },
+   "label": "a3"
+  },
+  {
+   "id": "e3",
+   "type": "arrow",
+   "from": "n2",
+   "to": "n3"
+  },
+  {
+   "id": "n4",
+   "type": "node",
+   "cx": 540,
+   "cy": 140,
+   "r": 22,
+   "size": 15,
+   "narrow": {
+    "cx": 308,
+    "cy": 130,
+    "r": 16,
+    "size": 12
+   },
+   "label": "a4"
+  },
+  {
+   "id": "e4",
+   "type": "arrow",
+   "from": "n3",
+   "to": "n4"
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 320,
+   "y": 220,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 216,
+    "size": 13
+   }
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 270,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 264,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The formula says: R is serial (∀x∃y R(x,y)), antisymmetric, transitive, irreflexive. Pick any a₀; seriality gives a₁ with R(a₀, a₁).",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "e1",
+     "set": {
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Seriality again gives a₂ with R(a₁, a₂); transitivity then gives R(a₀, a₂). Continuing, an infinite chain a₀ → a₁ → a₂ → … .",
+   "patches": [
+    {
+     "id": "n2",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "e2",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "chain grows: a₀ → a₁ → a₂ → …",
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "All aᵢ must be DISTINCT: if aᵢ = aⱼ (i < j), transitivity along the chain gives R(aᵢ, aᵢ), violating irreflexivity; antisymmetry forbids cycles too.",
+   "patches": [
+    {
+     "id": "n3",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "e3",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "n4",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "e4",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "all aᵢ pairwise distinct",
+      "tone": "warning"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So any model is infinite: the formula has NO finite model (verified by machine for all domains of size 1–4, and by sampling at 5–6), but it is satisfiable — e.g. (ℕ, <).",
+   "patches": [
+    {
+     "id": "verdict",
+     "set": {
+      "text": "no finite model; satisfiable on (ℕ, <)",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}
