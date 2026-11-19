@@ -911,6 +911,17 @@ function createHiveRouter() {
       res.json({ ok: true });
     }),
   );
+  router.delete(
+    "/api/hive/plugins/builtin/:id",
+    h(async (req, res) => {
+      const scope = scopeOf(req.query.scope);
+      if (scope === "*" && !isAdmin(req)) throw new BadInput("Only admins can change workspace-wide defaults", 403);
+      const had = await plugins.resetBuiltin(scope, req.params.id);
+      await audit(req, "hive.plugin.reset", req.params.id, { scope });
+      hub.emit("plugins", { by: req.hiveUser });
+      res.json({ ok: true, reset: had });
+    }),
+  );
   router.post(
     "/api/hive/plugins/custom",
     h(async (req, res) => {

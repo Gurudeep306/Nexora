@@ -198,6 +198,18 @@ async function setBuiltin(scope, id, { enabled, config }, by) {
   }
 }
 
+/**
+ * Drop a scope's own setting for a built-in plugin, so it follows the level
+ * above again (a project follows the workspace; the workspace follows the
+ * built-in default). Returns whether there was anything to drop.
+ */
+async function resetBuiltin(scope, id) {
+  if (!BUILTIN.has(id)) throw Object.assign(new Error("Unknown plugin"), { status: 404 });
+  const row = await get("SELECT id FROM hive_plugins WHERE kind='builtin' AND name=? AND scope=?", [id, scope]);
+  if (row) await run("DELETE FROM hive_plugins WHERE id=?", [row.id]);
+  return !!row;
+}
+
 /* ── helpers used by the runner ─────────────────────────────────────── */
 
 /** Compact repository map: directories with file counts, plus key files. */
@@ -263,4 +275,4 @@ function modelTier(model) {
   return 1;
 }
 
-module.exports = { BUILTINS, BUILTIN, resolvePlugins, setBuiltin, repoMap, readWebPage, privateIp, modelTier };
+module.exports = { BUILTINS, BUILTIN, resolvePlugins, setBuiltin, resetBuiltin, repoMap, readWebPage, privateIp, modelTier };
