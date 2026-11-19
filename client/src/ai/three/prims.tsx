@@ -5,13 +5,14 @@
  * theme (Palette3D); nothing here has a raw colour of its own.
  */
 import { useEffect, useLayoutEffect, useMemo, useRef, type ReactNode } from 'react'
-import { BufferAttribute, CanvasTexture, Color, DoubleSide, Mesh, PerspectiveCamera, SRGBColorSpace, InstancedMesh, Object3D, PlaneGeometry, Quaternion, Vector3 } from 'three'
+import { BufferAttribute, BufferGeometry, CanvasTexture, Color, DoubleSide, Mesh, PerspectiveCamera, SRGBColorSpace, InstancedMesh, Object3D, PlaneGeometry, Quaternion, Vector3 } from 'three'
 import { Html, Line } from '@react-three/drei'
 import { useFrame, type ThreeEvent } from '@react-three/fiber'
 import { cn } from '@/lib/utils'
 
 import { toScene, type V3 } from './coords'
 import { Mat } from './studio'
+import { useLabelHost } from './portal'
 export type { V3 }
 
 /**
@@ -98,7 +99,7 @@ export function SurfaceMesh({ f, range, n = 64, scale = 1, color, line, opacity 
 }
 
 /** Level curves f(x, y) = c, by marching squares, drawn flat at height `at` (a contour map under the surface). */
-export function Contours({ f, range, levels, at = 0, color, n = 90 }: { f: (x: number, y: number) => number; range: [number, number]; levels: number[]; at?: number; color: string; n?: number }) {
+export function Contours({ f, range, levels, at = 0, color, n = 90, width = 1, opacity = 0.7 }: { f: (x: number, y: number) => number; range: [number, number]; levels: number[]; at?: number; color: string; n?: number; width?: number; opacity?: number }) {
   const segs = useMemo(() => {
     const [lo, hi] = range
     const h = (hi - lo) / n
@@ -134,7 +135,7 @@ export function Contours({ f, range, levels, at = 0, color, n = 90 }: { f: (x: n
   }, [f, range, levels, at, n])
   const flat = useMemo(() => segs.flat(), [segs])
   if (!flat.length) return null
-  return <Line points={flat} segments color={color} lineWidth={1} transparent opacity={0.7} />
+  return <Line points={flat} segments color={color} lineWidth={width} transparent opacity={opacity} />
 }
 
 /** A path through scene points, drawn up to `upTo` (a fractional index), with a ball at its head. */
@@ -182,8 +183,9 @@ export function Arrow({ from, to, color, radius = 0.025 }: { from: V3; to: V3; c
 
 /** A text label pinned to a point in the scene, in the page's own fonts. */
 export function Label({ at, children, muted, className, opacity = 1 }: { at: V3; children: ReactNode; muted?: boolean; className?: string; opacity?: number }) {
+  const host = useLabelHost()
   return (
-    <Html position={at} center zIndexRange={[10, 0]} className={cn('ai3d-label', muted && 'is-muted', className)} style={opacity < 1 ? { opacity, visibility: opacity < 0.03 ? 'hidden' : undefined } : undefined}>
+    <Html portal={host} position={at} center zIndexRange={[10, 0]} className={cn('ai3d-label', muted && 'is-muted', className)} style={opacity < 1 ? { opacity, visibility: opacity < 0.03 ? 'hidden' : undefined } : undefined}>
       {children}
     </Html>
   )
@@ -360,6 +362,98 @@ export function NumberPlane({ values, at, cell, ink, paper, opacity = 1, format,
     <mesh ref={ref} position={at} rotation={[-Math.PI / 2, 0, 0]} renderOrder={2} raycast={() => null}>
       <planeGeometry args={[cols * cell, rows * cell]} />
       <meshBasicMaterial map={tex} transparent opacity={opacity} depthWrite={false} toneMapped={false} />
+    </mesh>
+  )
+}
+
+const textCache = new Map<string, { tex: CanvasTexture; aspect: number; uses: number }>()
+/**
+ * Text printed flat in the scene (on the floor, or upright), drawn once onto a
+ * small image. `tilt` stands it up (0 flat, 1 upright). Cheap enough for hundreds of labels (tokens, graph nodes, code),
+ * where page labels would stutter. `size` is the letter height in scene units.
+ */
+export function FlatText({ text, at, size = 0.2, color, opacity = 1, weight = 500, align = 'center', mono, tilt = 0, rotate = 0 }: { text: string; at: V3; size?: number; color: string; opacity?: number; weight?: number; align?: 'left' | 'center' | 'right'; mono?: boolean; tilt?: number; rotate?: number }) {
+  const key = `${text}|${color}|${weight}|${mono ? 1 : 0}`
+  const entry = useMemo(() => {
+    const hit = textCache.get(key)
+    if (hit) {
+      hit.uses++
+      return hit
+    }
+    const px = 64
+    const cv = document.createElement('canvas')
+    const g = cv.getContext('2d')
+    const fam = mono ? getComputedStyle(document.body).getPropertyValue('--font-mono') || 'ui-monospace, monospace' : getComputedStyle(document.body).fontFamily || 'sans-serif'
+    const font = `${weight} ${px}px ${fam}`
+    let w = px
+    if (g) {
+      g.font = font
+      w = Math.ceil(g.measureText(text).width) + 8
+    }
+    cv.width = Math.max(8, w)
+    cv.height = Math.round(px * 1.35)
+    const g2 = cv.getContext('2d')
+    if (g2) {
+      g2.font = font
+      g2.fillStyle = color
+      g2.textBaseline = 'middle'
+      g2.fillText(text, 4, cv.height / 2 + 2)
+    }
+    const tex = new CanvasTexture(cv)
+    tex.colorSpace = SRGBColorSpace
+    tex.anisotropy = 4
+    const made = { tex, aspect: cv.width / cv.height, uses: 1 }
+    textCache.set(key, made)
+    return made
+  }, [key, text, color, weight, mono])
+  useEffect(
+    () => () => {
+      entry.uses--
+      if (entry.uses <= 0) {
+        textCache.delete(key)
+        entry.tex.dispose()
+      }
+    },
+    [entry, key],
+  )
+  if (!text || opacity <= 0.01) return null
+  const h = size * 1.35
+  const w = h * entry.aspect
+  const dx = align === 'left' ? w / 2 : align === 'right' ? -w / 2 : 0
+  return (
+    <group position={at} rotation={[0, (rotate * Math.PI) / 180, 0]}>
+      <mesh position={[dx, 0, 0]} rotation={[(-Math.PI / 2) * (1 - tilt), 0, 0]} renderOrder={3} raycast={() => null}>
+        <planeGeometry args={[w, h]} />
+        <meshBasicMaterial map={entry.tex} transparent opacity={opacity} depthWrite={false} toneMapped={false} side={DoubleSide} />
+      </mesh>
+    </group>
+  )
+}
+
+/** Many flat four-cornered patches (scene points, in order round the edge) in one mesh, each with its colour. */
+export function Quads({ quads, colors, opacity = 1, onTip }: { quads: V3[][]; colors: string[]; opacity?: number; onTip?: (e: ThreeEvent<PointerEvent> | null, index: number) => void }) {
+  const geo = useMemo(() => {
+    const g = new BufferGeometry()
+    const pos = new Float32Array(quads.length * 18)
+    const col = new Float32Array(quads.length * 18)
+    const c = new Color()
+    quads.forEach((q, i) => {
+      c.set(colors[i] ?? colors[0] ?? '#888')
+      ;[0, 1, 2, 0, 2, 3].forEach((k, j) => {
+        pos.set(q[k], i * 18 + j * 3)
+        col.set([c.r, c.g, c.b], i * 18 + j * 3)
+      })
+    })
+    g.setAttribute('position', new BufferAttribute(pos, 3))
+    g.setAttribute('color', new BufferAttribute(col, 3))
+    g.computeVertexNormals()
+    return g
+  }, [quads, colors])
+  useEffect(() => () => geo.dispose(), [geo])
+  if (!quads.length) return null
+  return (
+    <mesh geometry={geo} onPointerMove={onTip ? (e) => e.faceIndex != null && onTip(e, Math.floor(e.faceIndex / 2)) : undefined} onPointerOut={onTip ? () => onTip(null, -1) : undefined}>
+      <meshStandardMaterial vertexColors side={DoubleSide} roughness={0.85} transparent={opacity < 1} opacity={opacity} depthWrite={opacity >= 0.99} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
     </mesh>
   )
 }

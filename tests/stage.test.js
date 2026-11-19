@@ -164,3 +164,56 @@ test('the generator turns tape records into valid scenes', async () => {
   const mlp = D.mlpTraceScene();
   assert.ok(mlp.steps.some((st) => /∂L\/∂W1/.test(st.label)), 'the backward pass reaches the first weights');
 });
+
+test('every kit demo is a valid scene, and its numbers are right', async () => {
+  const K = await load('kitDemos.ts');
+  for (const { kit, make } of K.KIT_DEMOS) {
+    const s = make();
+    assert.deepEqual(S.validateStage(s), [], `${kit}: ${s.title}`);
+    const frames = S.buildFrames(s);
+    assert.equal(frames.length, s.steps.length);
+    for (let t = 0; t <= s.steps.length - 1; t += 0.37) assert.ok(S.frameAt(frames, t).elements.size > 0);
+  }
+  // The pipeline bubble matches the textbook formula (p − 1) / (m + p − 1).
+  for (const [p, m] of [[4, 4], [4, 8], [2, 6]]) assert.ok(Math.abs(K.pipelineSchedule(p, m).idle - (p - 1) / (m + p - 1)) < 1e-12, `p=${p} m=${m}`);
+  // Value iteration converged: the last sweep equals the one before, and the goal's neighbour holds the full reward.
+  const g = K.gridScene();
+  const sweeps = g.steps.flatMap((st) => (st.set ?? []).filter((q) => q.set.values).map((q) => q.set.values));
+  const last = sweeps[sweeps.length - 1];
+  assert.equal(last[0][3], 1, 'one step from +1 is worth 1');
+  assert.ok(Math.abs(last[0][2] - 0.9) < 1e-9, 'two steps from +1 is worth γ');
+  // The memory bar: 16 bytes per parameter for 7B parameters.
+  assert.match(K.memoryScene().description, /112 GB/);
+  // Bad new elements are named.
+  const bad = (el) => S.validateStage({ version: 1, title: 't', description: 'a scene with one element in it', elements: [el], steps: [{ label: 's' }] });
+  assert.ok(bad({ id: 'c', type: 'curve', range: [0, 1] }).some((e) => /give f/.test(e)));
+  assert.ok(bad({ id: 'g', type: 'graph', nodes: [{ id: 'a', at: [0, 0] }], edges: [{ from: 'a', to: 'b' }] }).some((e) => /missing node/.test(e)));
+  assert.ok(bad({ id: 'w', type: 'gridworld', rows: 2, cols: 2, walls: [[5, 5]] }).some((e) => /inside the grid/.test(e)));
+  assert.ok(bad({ id: 'i', type: 'image', pixels: [[2]] }).some((e) => /pixels/.test(e)));
+  assert.ok(bad({ id: 'h', type: 'chart', kind: 'line', series: [[1, 0]], logY: true }).some((e) => /positive/.test(e)));
+});
+
+test('graph layouts and histograms', async () => {
+  const L = await load('layout.ts');
+  const tree = L.layoutGraph({ layout: 'tree', spread: 1, nodes: ['r', 'a', 'b', 'c'].map((id) => ({ id })), edges: [{ from: 'r', to: 'a' }, { from: 'r', to: 'b' }, { from: 'a', to: 'c' }] });
+  assert.ok(tree.get('r')[1] > tree.get('a')[1], 'the root is above its children');
+  assert.ok(tree.get('a')[1] > tree.get('c')[1]);
+  assert.ok(Math.abs(tree.get('r')[0] - (tree.get('a')[0] + tree.get('b')[0]) / 2) < 1e-9, 'a parent sits over the middle of its children');
+  const lay = L.layoutGraph({ layout: 'layered', nodes: ['x', 'y', 'q', 'f'].map((id) => ({ id })), edges: [{ from: 'x', to: 'q' }, { from: 'y', to: 'q' }, { from: 'q', to: 'f' }] });
+  assert.ok(lay.get('x')[0] < lay.get('q')[0] && lay.get('q')[0] < lay.get('f')[0], 'layers run left to right');
+  const ring = L.layoutGraph({ layout: 'ring', nodes: Array.from({ length: 8 }, (_, i) => ({ id: `g${i}` })), edges: [] });
+  const r = [...ring.values()].map(([x, y]) => Math.hypot(x, y));
+  assert.ok(r.every((v) => Math.abs(v - r[0]) < 1e-9), 'all GPUs on one circle');
+  assert.deepEqual(L.histogram([0, 0.1, 0.5, 0.99, 1, 2], 2, 0, 1), [2, 3]);
+});
+
+test('coverage: every curriculum topic can be drawn with the library', async () => {
+  const { COVERAGE } = await load('coverage.ts');
+  const cur = require(path.join(__dirname, '..', 'docs', 'ai-courses', 'curriculum.json'));
+  const ids = cur.courses.flatMap((c) => c.chapters.flatMap((ch) => ch.topics.map((t) => t.id)));
+  const missing = ids.filter((id) => !COVERAGE[id]);
+  assert.deepEqual(missing, [], 'topics with no way to be drawn');
+  const extra = Object.keys(COVERAGE).filter((id) => !ids.includes(id));
+  assert.deepEqual(extra, [], 'coverage names topics that are not in the curriculum');
+  for (const [id, types] of Object.entries(COVERAGE)) for (const t of types) assert.ok(S.STAGE_TYPES.includes(t), `${id}: "${t}" is not an element type`);
+});

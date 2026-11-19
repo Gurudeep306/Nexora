@@ -74,6 +74,20 @@ shows them instead of a broken scene.
 | Data | `tiles` (a matrix or image), `bars` (values as heights), `tensor` (depth × rows × columns) | Matrices, attention weights, images and feature maps, tensor shapes, histograms |
 | Flow | `beads` (from → to along an arc, by `progress`) | Signals, products flying into a sum, samples moving |
 | Neural networks | `network` | A network that computes: jars that fill with each activation, weight ribbons (thickness = size, colour = sign), beads sized by each contribution w·a, the activation curve squashing z into a, the weight matrices beside each layer, and the backward pass (`forward` 0 → L−1 and `backward` 0 → L glide between steps) |
+| Plots | `curve` (y = f(x) or x(t), y(t); `upTo`, `fill`, `riemann`, `tangent` + `h` for a secant), `chart` (`line` with log axes, `bars`, `hist` counted from real `samples`) | Functions, derivatives, integrals, Taylor series, loss curves, scaling laws, distributions, histograms. Charts stand up in 3D |
+| Shapes | `shape` (circle, ellipse, rect, polygon, box, sphere), `plane` (point + normal), `region` (a classifier's decision from its formula, with a smooth boundary) | Norm balls, Venn diagrams, IoU, planes meeting, column spaces, decision boundaries (logistic, SVM, k-NN, trees) |
+| Graphs | `graph` (`layout`: given, tree, layered, ring; weighted, directed edges; beads with `flow`, `reverse` for the backward pass; `lit`) | Computation graphs, backprop, decision and search trees, MDPs, HMM trellises, GNN message passing, GPU rings |
+| Vision | `image` (grey or RGB pixels; `split` channels into layers, `relief`, `patch` grid, `window`), `boxes` | Images, convolution, ViT patches, receptive fields, detection boxes |
+| Language | `tokens` (chips with `probs` bars, `highlight`, `masked`, `upTo` for generation, `vertical`) | Tokenisation, BPE, n-grams, masked and causal language models, decoding, bits of a float |
+| Reinforcement learning | `gridworld` (`walls`, `rewards`, `values` as heat and height, `policy` arrows, `agent`, `trail`) | MDPs, Bellman updates, value iteration, TD, Q-learning, policies |
+| Systems | `membar` (memory against a capacity, split across `devices` with `sharded` parts), `timeline` (lanes × blocks, a `now` cursor) | GPU memory budgets, ZeRO/FSDP, pipeline bubbles, streams, schedules, checkpointing |
+| Code and tables | `code` (lines, the `active` one, `vars` made so far), `table` (cells can be marked) | Code run line by line, small data tables, Q-tables |
+
+Every element glides between steps: numbers, lists and objects (graph nodes, boxes, segments) blend; integers such as `riemann` or `devices` round as they go.
+
+**Every topic is covered.** `client/src/ai/stage/coverage.ts` lists, for each of the 225 topics in `curriculum.json`, the elements that draw its visual. A test fails if a topic is missing or names an element the library does not have. On `/ai-lab`, "Every kit at work" shows one computed scene per kit (`stage/kitDemos.ts`): secant to tangent and Riemann sums, dice averages and the central limit theorem, logistic regression learning its boundary, values forward and gradients back through a graph, a convolution, IoU, next-word probabilities from counts, value iteration on a grid world, the memory to train a 7B model and ZeRO-3, the pipeline bubble, and code run line by line. Copy them when building a lesson.
+
+**Many scenes on one page.** Browsers allow about 16 live 3D views at a time, so a scene only holds its 3D view while it is near the screen (within about a screen's height) and frees it when far away. A lesson can have as many scenes as it needs.
 
 The registry (`stage/registry.ts`) maps every element type to its drawer,
 and TypeScript refuses to build if a type has none.

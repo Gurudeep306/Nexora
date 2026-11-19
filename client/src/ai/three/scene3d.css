@@ -199,3 +199,80 @@
 .ai3d-texbox {
   min-width: 0;
 }
+/* Stage text kit: a code panel and a small table, pinned in the scene. */
+.ai3d-code,
+.ai3d-table {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--color-text-primary);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
+.ai3d-code pre {
+  margin: 0;
+  padding: 6px 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+.ai3d-code pre > div {
+  padding: 0 10px 0 6px;
+  border-left: 2px solid transparent;
+}
+.ai3d-code pre > div.is-active {
+  border-left-color: var(--color-accent-brand);
+  background: color-mix(in oklab, var(--color-text-primary) 7%, transparent);
+}
+.ai3d-code-n {
+  display: inline-block;
+  width: 1.6em;
+  margin-right: 6px;
+  text-align: right;
+  color: var(--color-text-muted);
+}
+.ai3d-code-vars {
+  margin: 0;
+  padding: 6px 10px;
+  border-top: 1px solid var(--color-border);
+  display: grid;
+  gap: 2px;
+  font-variant-numeric: tabular-nums;
+}
+.ai3d-code-vars > div {
+  display: flex;
+  gap: 8px;
+}
+.ai3d-code-vars dt {
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+.ai3d-code-vars dd {
+  margin: 0;
+}
+.ai3d-table {
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.ai3d-table th,
+.ai3d-table td {
+  padding: 2px 8px;
+  border-bottom: 1px solid var(--color-border);
+  text-align: right;
+}
+.ai3d-table th {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+.ai3d-table td.is-hl {
+  font-weight: 700;
+  text-decoration: underline 2px var(--color-accent-brand);
+  text-underline-offset: 3px;
+}
+@media (max-width: 480px) {
+  .ai3d-code,
+  .ai3d-table {
+    font-size: 10.5px;
+  }
+}

@@ -4,6 +4,7 @@ import { PerspectiveCamera, Spherical, Vector3 } from 'three'
 import { CameraControls } from '@react-three/drei'
 import katex from 'katex'
 import 'katex/dist/katex.min.css'
+import { LabelHost } from './portal'
 import { ChevronLeft, ChevronRight, Maximize2, Minimize2, Minus, Pause, Play, Plus, RotateCcw, Video } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -297,8 +298,9 @@ export function Scene3D({
     let last = performance.now()
     let held = 0
     const tick = (now: number) => {
-      const dt = now - last
-      last = now
+      // The first frame's timestamp can be a hair before the clock started: never run backwards.
+      const dt = Math.max(0, now - last)
+      last = Math.max(last, now)
       setTime((t0) => {
         const k = Math.floor(t0 + 1e-9)
         const dur = steps?.[k]?.ms ?? stepMs
@@ -310,7 +312,7 @@ export function Scene3D({
           if (nx >= n - 1 || steps?.[nx]?.pause) setPlaying(false)
           return nx
         }
-        let nx = Math.min(n - 1, t0 + (dt * speed) / dur)
+        let nx = Math.max(0, Math.min(n - 1, t0 + (dt * speed) / dur))
         // Crossing into a step with a reading break: stop exactly on it.
         const kn = Math.floor(nx + 1e-9)
         if (kn > k && steps?.[kn]?.pause) {
@@ -343,6 +345,41 @@ export function Scene3D({
     io.observe(el)
     return () => io.disconnect()
   }, [n, reduced])
+
+  // Only scenes near the screen hold a live 3D view. Browsers allow about 16 at a
+  // time, so a long page (or lesson) with many scenes frees the far ones.
+  const [near, setNear] = useState(false)
+  // Leaving: the scene empties first (its page labels detach cleanly), then the view is freed.
+  const [live, setLive] = useState(false)
+  const labelHost = useRef<HTMLDivElement | null>(null)
+  // A stable callback: an inline one would detach and re-attach on every frame, and the
+  // labels would briefly lose their host and rebuild themselves.
+  const attachView = useCallback(
+    (el: HTMLDivElement | null) => {
+      hover.attach(el)
+      labelHost.current = el
+    },
+    [hover],
+  )
+  useEffect(() => {
+    const el = root.current
+    if (!el) return
+    let t = 0
+    const io = new IntersectionObserver(
+      ([e]) => {
+        window.clearTimeout(t)
+        setNear(e.isIntersecting)
+        if (e.isIntersecting) setLive(true)
+        else t = window.setTimeout(() => setLive(false), 250)
+      },
+      { rootMargin: '900px 0px' },
+    )
+    io.observe(el)
+    return () => {
+      window.clearTimeout(t)
+      io.disconnect()
+    }
+  }, [])
 
   // A new setting (start point, input, learning rate): play again from the start.
   const firstKey = useRef(resetKey)
@@ -380,7 +417,7 @@ export function Scene3D({
     const take = () => setFollow(false)
     c.addEventListener('controlstart', take)
     return () => c.removeEventListener('controlstart', take)
-  }, [hasViews, webgl])
+  }, [hasViews, webgl, live])
 
   useEffect(() => {
     const on = () => setFull(document.fullscreenElement === root.current)
@@ -448,7 +485,7 @@ export function Scene3D({
   return (
     <figure ref={root} className={cn('ai3d', className)}>
       <div
-        ref={(el) => hover.attach(el)}
+        ref={attachView}
         className="ai3d-view"
         tabIndex={0}
         role="group"
@@ -458,14 +495,16 @@ export function Scene3D({
         onKeyDown={onKey}
         onPointerLeave={() => hover.hide()}
       >
-        {webgl ? (
+        {webgl && !live ? null : webgl ? (
+          <LabelHost.Provider value={labelHost}>
           <Canvas frameloop="demand" dpr={[1, narrow ? 1.5 : 2]} camera={{ position: camera, fov: FOV_3D, near: 0.1, far: 400 }} gl={{ antialias: true, alpha: true }}>
             <Lights p={p} />
             <CameraControls ref={controls} makeDefault smoothTime={reduced ? 0 : 0.45} draggingSmoothTime={reduced ? 0 : 0.12} minDistance={1} maxDistance={60} />
             <Rig controls={controls} camera3={camera} target3={target} lift={liftNow} onApi={setRig} />
             <Studio p={p} lift={liftNow} quality={narrow ? 'low' : 'high'} />
-            {children({ step, t: time, frac, p, reduced, dim, tip })}
+            {near && children({ step, t: time, frac, p, reduced, dim, tip })}
           </Canvas>
+          </LabelHost.Provider>
         ) : (
           <div className="ai3d-fallback">{fallback ?? <p>{description}</p>}</div>
         )}
@@ -509,7 +548,7 @@ export function Scene3D({
               onChange={(e) => {
                 started.current = true
                 setPlaying(false)
-                setTime(Number(e.target.value))
+                setTime(Math.max(0, Math.min(n - 1, Number(e.target.value) || 0)))
               }}
               aria-label="Scrub through the steps"
               aria-valuetext={`Step ${step + 1} of ${n}`}
