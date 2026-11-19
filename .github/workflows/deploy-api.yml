@@ -121,7 +121,8 @@ jobs:
           rm -f "/tmp/nexora-dist-$SHA.tgz"
 
           healthy() {
-            for _ in $(seq 1 45); do
+            # The server needs about a minute to start (database sync, set-up).
+            for _ in $(seq 1 90); do
               if curl -fsS http://127.0.0.1:3000/api/health | grep -q "\"commit\":\"${1:0:7}\""; then return 0; fi
               sleep 2
             done

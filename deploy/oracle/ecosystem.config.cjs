@@ -10,6 +10,18 @@ const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..", "..");
 
+// The commit this checkout is on, reported by /api/health. The deploy
+// workflow waits for it to change; reading it here (not only from the
+// caller's environment) keeps it right on every start, reload and reboot.
+function gitCommit() {
+  if (process.env.GIT_COMMIT) return process.env.GIT_COMMIT;
+  try {
+    return require("child_process").execFileSync("git", ["rev-parse", "HEAD"], { cwd: ROOT, encoding: "utf8" }).trim();
+  } catch {
+    return "";
+  }
+}
+
 module.exports = {
   apps: [
     {
@@ -20,6 +32,7 @@ module.exports = {
       instances: 1,
       env: {
         NODE_ENV: "production",
+        GIT_COMMIT: gitCommit(),
       },
       // The A1 VM has plenty of RAM; restart if something leaks badly.
       max_memory_restart: "1500M",
