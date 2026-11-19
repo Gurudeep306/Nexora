@@ -34,3 +34,21 @@ test('question previews keep the maths', async () => {
   const { snippet: insight } = await load('insights/format.ts');
   assert.equal(insight('For $n \\geq 1$, the maximum is $\\frac{n}{2}$.'), 'For n ≥ 1, the maximum is n/2.');
 });
+
+// Listen (read aloud) says maths in words instead of spelling symbols.
+test('maths is read aloud as words', async () => {
+  const { texToSpeech, symbolsToSpeech } = await import(pathToFileURL(path.join(__dirname, '..', 'client', 'src', 'components', 'reader', 'speech.ts')).href);
+  const cases = [
+    ['p \\to q', 'p implies q'],
+    ['p \\leftrightarrow q', 'p if and only if q'],
+    ['\\neg(p \\land q) \\equiv \\neg p \\lor \\neg q', 'not p and q is equivalent to not p or not q'],
+    ['x \\in S', 'x in S'],
+    ['n^2', 'n squared'],
+    ['2^{n}', '2 to the power n'],
+    ['a_{i}', 'a sub i'],
+    ['\\frac{n}{2}', 'n over 2'],
+    ['n \\ge 1', 'n is at least 1'],
+  ];
+  for (const [tex, want] of cases) assert.equal(texToSpeech(tex), want, tex);
+  assert.equal(symbolsToSpeech('Biconditional (↔) and XOR (⊕)'), 'Biconditional ( if and only if ) and XOR ( x-or )'.replace(/\s+/g, ' '));
+});

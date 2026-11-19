@@ -36,6 +36,7 @@ import { questionLink } from '@/gate/shell/links'
 import { useScrollSpy, type OutlineItem } from '@/components/reader/outline'
 import { Outline } from '@/components/reader/Outline'
 import { EndOfLesson } from '@/components/reader/EndOfLesson'
+import { ReadAloud } from '@/components/reader/ReadAloud'
 
 const BLOCK_LABEL: Record<string, string> = {
   intuition: 'Intuition',
@@ -328,6 +329,7 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
                   >
                     <Icon name="bookmark" className="size-4" aria-hidden="true" />
                   </button>
+                  <ReadAloud target={article} />
                   {completeBtn()}
                 </span>
               </div>

@@ -16,6 +16,7 @@ import { useLesson } from '@/gate/notes/api'
 import { flushScroll, progressOf, reportScroll, setCompleted, useNotesProgress } from '@/gate/notes/progress'
 import { useNotesPrefs } from '@/gate/notes/prefs'
 import type { LessonPayload } from '@/gate/notes/types'
+import { ReadAloud } from '@/components/reader/ReadAloud'
 import { MasteryRing, CrossChips } from './NodePanel'
 import { ExamInsight, Flashcards, MasteryMeter, NodeNotes, TestOut, TimeChip, UnlockPath, type NodeInsight } from './NodeExtras'
 import { confidence, fmtMinutes, unlockPath } from './insights'
@@ -249,9 +250,12 @@ function NotesLessonEmbed({ subject, lessonId, onStops, onRead, onUnavailable }:
     <NotesRoot color={data.subject.color}>
       <article ref={article} className="notes-paper nx-lesson-paper" aria-label={data.lesson.title}>
         <div className="notes-prose">
-          <p className="notes-meta">
-            Chapter {data.chapter.n} · {data.chapter.title} · {fmtMinutes(data.lesson.est_minutes || 0)}
-          </p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="notes-meta">
+              Chapter {data.chapter.n} · {data.chapter.title} · {fmtMinutes(data.lesson.est_minutes || 0)}
+            </p>
+            <ReadAloud target={article} />
+          </div>
           <NotesContextProvider value={ctx}>
             <Nodes nodes={data.lesson.body} />
           </NotesContextProvider>
