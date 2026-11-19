@@ -26,8 +26,45 @@ const samplesOf = (v) => {
   }
 };
 
-function createCodingRouter({ get, me, aiLimiter, judgeLimiter }) {
+/** A problem that accepts any of several answers: a plain diff can't judge it. */
+const manyAnswers = (statement) => /\b(print|output) any\b|any of them|if there are (several|multiple)|any (valid|correct) answer|multiple (solutions|answers)/i.test(String(statement || ""));
+
+/**
+ * The test plan in short steps (works on small self-hosted models): the
+ * generator with edge cases, a brute force and an efficient solution, asked
+ * for at the same time. A step that fails is simply left out.
+ */
+async function splitPlan(p, ask) {
+  const input = { title: p.title, statement: p.statement, samples: p.samples, limits: p.limits };
+  const [cases, brute, sol] = await Promise.allSettled([ask("testgen_cases", input), ask("testgen_brute", input), ask("testgen_solution", input)]);
+  // Nothing configured / the model is down: report that, not "no generator".
+  if (cases.status === "rejected" && brute.status === "rejected") throw cases.reason;
+  const c = cases.status === "fulfilled" ? cases.value : { generator: "", validator: "", edgeCases: [] };
+  return {
+    format: "",
+    multipleAnswers: manyAnswers(p.statement),
+    generator: c.generator,
+    validator: c.validator,
+    edgeCases: c.edgeCases,
+    brute: brute.status === "fulfilled" ? brute.value.program : "",
+    solution: sol.status === "fulfilled" ? sol.value.program : "",
+    notes: "",
+  };
+}
+
+function createCodingRouter({ get, run = null, me, aiLimiter, judgeLimiter }) {
   const router = express.Router();
+
+  /* Verified AI tests are kept per problem: the next person gets them at once. */
+  let cacheReady = null;
+  const cacheInit = () =>
+    (cacheReady ||= run
+      ? run("CREATE TABLE IF NOT EXISTS ai_test_sets (problem_key TEXT PRIMARY KEY, tests TEXT NOT NULL, stats TEXT, created_by TEXT, created_at INTEGER NOT NULL)").catch((e) => {
+          cacheReady = null;
+          throw e;
+        })
+      : Promise.resolve());
+  const keyOf = (b) => (b.problem_id ? `p:${Number(b.problem_id)}` : b.custom_problem_id ? `c:${Number(b.custom_problem_id)}` : null);
 
   /** Problem context from the database (platform or Workshop problem), else from the request. */
   async function problemContext(b) {
@@ -68,11 +105,30 @@ function createCodingRouter({ get, me, aiLimiter, judgeLimiter }) {
       const send = (o) => res.write(`${JSON.stringify(o)}\n`);
       const ctrl = new AbortController();
       res.on("close", () => ctrl.abort());
+      const key = keyOf(req.body || {});
+      // Someone already generated tests for this problem: hand them over at once.
+      if (key && run && !req.body?.fresh) {
+        await cacheInit();
+        const hit = await get("SELECT tests, stats, created_at FROM ai_test_sets WHERE problem_key=?", [key]).catch(() => null);
+        if (hit) {
+          const tests = JSON.parse(hit.tests || "[]");
+          send({ type: "done", ok: true, tests, stats: { ...JSON.parse(hit.stats || "{}"), cached: true, cachedAt: hit.created_at }, multipleAnswers: manyAnswers(ctx.statement) });
+          return res.end();
+        }
+      }
+      const ask = (mode, input) => runTask(mode, input, { user, signal: ctrl.signal });
       const result = await generateTests(ctx, {
         count: Math.max(4, Math.min(60, Number(req.body?.count) || 24)),
-        plan: (p) => runTask("testgen_plan", { title: p.title, statement: p.statement, samples: p.samples }, { user, signal: ctrl.signal }),
+        plan: (p) => splitPlan(p, ask),
+        repair: async ({ program, failure }) => (await ask("testgen_fix", { title: ctx.title, statement: ctx.statement, samples: ctx.samples, program, failure })).program,
         onProgress: (step) => send({ type: "progress", step }),
       });
+      // Keep a set worth sharing (a few tests at least), for everyone after.
+      if (key && run && result.tests.length >= 4) {
+        await cacheInit();
+        const stats = { kept: result.stats.kept, verified: result.stats.verified };
+        await run("INSERT OR REPLACE INTO ai_test_sets(problem_key, tests, stats, created_by, created_at) VALUES(?,?,?,?,?)", [key, JSON.stringify(result.tests), JSON.stringify(stats), me() || null, Date.now()]).catch(() => {});
+      }
       send({ type: "done", ok: true, ...result });
       res.end();
     } catch (e) {
@@ -115,4 +171,4 @@ function createCodingRouter({ get, me, aiLimiter, judgeLimiter }) {
   return router;
 }
 
-module.exports = { createCodingRouter };
+module.exports = { createCodingRouter, splitPlan, manyAnswers };

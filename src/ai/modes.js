@@ -58,6 +58,27 @@ function stripFences(text) {
 const replyLang = (uiLang) => (uiLang && uiLang.code !== "en" ? ` Write all human-readable strings in ${uiLang.name}.` : "");
 const problemBlock = (i, max = 5000) => P.data("problem", `Title: ${str(i.title, 200)}\n---\n${str(i.statement, max)}`);
 
+/** Every fenced block of one kind (```python, ```input …), in order. */
+function fencedBlocks(text, kinds) {
+  const out = [];
+  const re = /```([\w+#-]*)[^\n]*\n([\s\S]*?)```/g;
+  let m;
+  while ((m = re.exec(String(text || "")))) {
+    const tag = (m[1] || "").toLowerCase();
+    if (!kinds || kinds.includes(tag)) out.push(m[2].replace(/\s+$/, ""));
+  }
+  return out;
+}
+/** The program in a reply: the first ```python block, else the whole reply when it has no fence. */
+function programIn(text) {
+  const blocks = fencedBlocks(text, ["python", "py", "python3", ""]);
+  if (blocks.length) return blocks.sort((x, y) => y.length - x.length)[0].slice(0, 20000);
+  return /```/.test(String(text || "")) ? "" : String(text || "").trim().slice(0, 20000);
+}
+const samplesBlock = (i, n = 3) =>
+  i.samples?.length ? P.data("official-samples", i.samples.slice(0, n).map((s, k) => `Sample ${k + 1} input:\n${str(s.input, 1200)}\nSample ${k + 1} output:\n${str(s.output, 600)}`).join("\n\n"), 5000) : "";
+const IO_RULES = "Read ALL of standard input (sys.stdin.read() or input()), print exactly the required output format, standard library only.";
+
 const MODES = {
   /* ── Solve page ── */
   complete: {
@@ -308,6 +329,68 @@ Reply with JSON only:
         notes: str(j.notes, 600),
       };
     },
+  },
+  /* Test generation in short steps, in plain code blocks: what small,
+     self-hosted models do reliably (one big JSON reply with code inside is
+     not). The three steps run at the same time; see routes/coding.js. */
+  testgen_cases: {
+    model: "main",
+    maxTokens: 1600,
+    temperature: 0.2,
+    timeoutMs: 120000,
+    build: (i) => [
+      { role: "system", content: "You are a careful competitive-programming problem setter. You write test inputs that obey every constraint of the problem exactly." },
+      {
+        role: "user",
+        content: `${problemBlock(i, 6000)}
+${samplesBlock(i)}
+
+1. In one \`\`\`python block, define gen(rng, size): it returns ONE complete stdin input (a string ending with "\\n"). rng is a random.Random; size is "tiny", "small", "medium" or "large". tiny/small: every dimension ≤ 8 and values ≤ 20 where possible; medium about 1000; large at most 20000 elements and under 150 KB. If there are T test cases, keep T ≤ 3 for medium and large. Every guarantee in the statement (distinct, sorted, connected, an answer exists…) must hold. You may also define valid(s) returning True when s is a correct input.
+2. Then 4 to 8 boundary inputs (smallest sizes, all equal values, extremes), each one complete input in its own \`\`\`input block.`,
+      },
+    ],
+    post: (raw) => {
+      const code = programIn(raw);
+      const edgeCases = fencedBlocks(raw, ["input", "text", "txt", "stdin", "plaintext"]).filter((x) => x.trim() && x.length < 20000).slice(0, 12).map((x) => `${x}\n`);
+      need(code || edgeCases.length ? true : null, "The AI's generator was unreadable — try again");
+      return { generator: code, validator: /\bdef\s+valid\s*\(/.test(code) ? code : "", edgeCases };
+    },
+  },
+  testgen_brute: {
+    model: "main",
+    maxTokens: 1200,
+    temperature: 0.1,
+    timeoutMs: 120000,
+    build: (i) => [
+      { role: "system", content: "You write the most obviously correct solution to a problem: exhaustive search or direct simulation. Speed does not matter; correctness does." },
+      { role: "user", content: `${problemBlock(i, 6000)}\n${samplesBlock(i)}\n\nWrite a brute-force Python 3 program for this problem. ${IO_RULES} It must reproduce every sample output exactly. Reply with one \`\`\`python block.` },
+    ],
+    post: (raw) => ({ program: need(programIn(raw) || null, "The AI's reference solution was unreadable — try again") }),
+  },
+  testgen_solution: {
+    model: "main",
+    maxTokens: 1400,
+    temperature: 0.1,
+    timeoutMs: 120000,
+    build: (i) => [
+      { role: "system", content: "You are a strong competitive programmer. You solve problems the intended, efficient way." },
+      { role: "user", content: `${problemBlock(i, 6000)}\n${samplesBlock(i)}\n${i.limits ? `Limits: ${str(i.limits, 80)}\n` : ""}\nWrite an efficient Python 3 solution that fits the limits. ${IO_RULES} Reply with one \`\`\`python block.` },
+    ],
+    post: (raw) => ({ program: programIn(raw) }),
+  },
+  testgen_fix: {
+    model: "main",
+    maxTokens: 1200,
+    temperature: 0.1,
+    timeoutMs: 120000,
+    build: (i) => [
+      { role: "system", content: "You fix programs. You read the failure carefully and change only what is wrong." },
+      {
+        role: "user",
+        content: `${problemBlock(i, 5000)}\n${samplesBlock(i)}\n\nThis Python program should solve the problem but fails a sample:\n${P.data("program", str(i.program, 12000))}\n${P.data("failure", str(i.failure, 2000))}\n\nFix it. ${IO_RULES} Reply with the whole corrected program in one \`\`\`python block.`,
+      },
+    ],
+    post: (raw) => ({ program: programIn(raw) }),
   },
 
   /* ── Code analysis: everything about the student's code ── */

@@ -26,6 +26,8 @@ const PRESETS = [
   { kind: "deepseek", name: "DeepSeek", baseUrl: "https://api.deepseek.com/v1", keyUrl: "https://platform.deepseek.com/api_keys", free: false },
   { kind: "openai", name: "OpenAI", baseUrl: "https://api.openai.com/v1", keyUrl: "https://platform.openai.com/api-keys", free: false },
   { kind: "anthropic", name: "Anthropic (Claude)", baseUrl: "https://api.anthropic.com/v1", keyUrl: "https://console.anthropic.com/settings/keys", free: false },
+  // NexoraGuru's own model on a free server (deploy/coder-model): paste the URL and password its setup printed.
+  { kind: "selfhosted", name: "Your own model (free server)", baseUrl: "", keyUrl: "https://github.com/Gurudeep306/Nexora/blob/main/deploy/coder-model/README.md", free: true },
   { kind: "custom", name: "Custom (OpenAI-compatible)", baseUrl: "", keyUrl: "", free: false },
 ];
 const PRESET_BY_KIND = new Map(PRESETS.map((p) => [p.kind, p]));
@@ -33,7 +35,7 @@ const PRESET_BY_KIND = new Map(PRESETS.map((p) => [p.kind, p]));
 /** The site's AI features, each mapped from the task modes in modes.js. */
 const FEATURES = [
   { id: "tutor", name: "AI tutor chat", hint: "The assistant on every page, and one-shot explanations.", modes: ["chat", "tutor", "animate"] },
-  { id: "coach", name: "Code coach, AI tests and analysis", hint: "Coach hints, AI-written tests, complexity and bug analysis.", modes: ["coach_insight", "coach_tests", "coach_explain", "coach_ask", "testgen_plan", "code_analysis"] },
+  { id: "coach", name: "Code coach, AI tests and analysis", hint: "Coach hints, AI-written tests, complexity and bug analysis.", modes: ["coach_insight", "coach_tests", "coach_explain", "coach_ask", "testgen_plan", "testgen_cases", "testgen_brute", "testgen_solution", "testgen_fix", "code_analysis"] },
   { id: "editor", name: "Editor help", hint: "Ghost completions and quick fixes in the code editor.", modes: ["complete", "fix"] },
   { id: "translate", name: "Translate", hint: "Problem statements in other languages.", modes: ["translate", "detect_lang"] },
   { id: "finder", name: "Problem finder", hint: "Natural-language problem search.", modes: ["find_problems_intent", "find_problems_rank"] },

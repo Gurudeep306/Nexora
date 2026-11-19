@@ -182,21 +182,13 @@ export interface XpReport {
   firstSolve: boolean
   /** Only the examples ran: XP counts, but the problem shows "Passed the examples", not solved. */
   examplesOnly?: boolean
+  /** Points follow the tests passed: of the problem's samples and official tests (never your own), how many passed. */
+  partial?: { passed: number; total: number; share: number; ofXp: number } | null
   before: LevelState
   after: LevelState
   solved: number
 }
 
-export const XP_BY_RATING = (rating: number): number => {
-  if (rating >= 2200) return 150
-  if (rating >= 2000) return 100
-  if (rating >= 1800) return 80
-  if (rating >= 1600) return 60
-  if (rating >= 1400) return 40
-  if (rating >= 1200) return 25
-  if (rating >= 1000) return 15
-  return 10
-}
 
 export function codeStorageKey(problemId: string | number, language: string): string {
   return `nexora:code:${problemId}:${language}`

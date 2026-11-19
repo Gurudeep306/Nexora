@@ -117,3 +117,52 @@ test("no trustworthy reference: a clear error, no tests", { skip: !hasPython }, 
 test("a broken generator is reported, not hidden", { skip: !hasPython }, async () => {
   await assert.rejects(generateTests(problem, { count: 6, plan: plan({ generator: "def gen(rng, size) return 1", edgeCases: [] }) }), /generator didn't run/);
 });
+
+/* ── Short steps for small self-hosted models (routes/coding.js splitPlan) ── */
+const { splitPlan, manyAnswers } = require("../src/routes/coding");
+const { MODES } = require("../src/ai/modes");
+const fence = (lang, code) => "```" + lang + "\n" + code.trim() + "\n```";
+
+test("short steps: the replies a small model gives become a plan, a wrong brute force is repaired", { skip: !hasPython }, async () => {
+  const asked = [];
+  // What a small model replies, in plain code blocks (parsed by the real modes).
+  const replies = {
+    testgen_cases: `Here is the generator.\n${fence("python", generator + validator)}\nEdge cases:\n${fence("input", "2\n20 20")}\n${fence("input", "2\n-20 -20")}`,
+    testgen_brute: fence("python", wrong), // wrong on a sample at first
+    testgen_solution: "I think the answer is to sort.", // no code block and not code: left out
+    testgen_fix: `Fixed:\n${fence("python", brute)}`,
+  };
+  const ask = async (mode, input) => {
+    asked.push(mode);
+    if (mode === "testgen_fix") assert.match(input.failure, /Expected output:\n7/, "the fixer sees what was expected");
+    return MODES[mode].post(replies[mode], input);
+  };
+  const plan = await splitPlan(problem, ask);
+  assert.deepEqual(asked.sort(), ["testgen_brute", "testgen_cases", "testgen_solution"]);
+  assert.match(plan.generator, /def gen/);
+  assert.match(plan.validator, /def valid/);
+  assert.deepEqual(plan.edgeCases, ["2\n20 20\n", "2\n-20 -20\n"]);
+  assert.equal(plan.solution.length > 0, true, "plain prose is kept as a program and then fails the samples");
+
+  const r = await generateTests(problem, {
+    count: 8,
+    plan: async () => plan,
+    repair: async ({ which, program, failure }) => (await ask("testgen_fix", { program, failure, which })).program,
+  });
+  assert.ok(asked.includes("testgen_fix"), "the failing reference was sent back to be fixed");
+  assert.equal(r.stats.references.brute.ok, true, "the repaired brute force passes the samples");
+  assert.ok(r.tests.length >= 4, `kept ${r.tests.length}`);
+  for (const t of r.tests) {
+    const [n, ...rest] = t.input.trim().split(/\s+/).map(Number);
+    const a = rest.slice(0, n).sort((x, y) => x - y);
+    assert.equal(t.expected.trim(), String(a[n - 1] + a[n - 2]), `expected output is right for ${JSON.stringify(t.input)}`);
+  }
+  assert.ok(r.tests.some((t) => t.size === "edge"), "the hand-written edge cases are in");
+});
+
+test("a reply with no code at all fails the step instead of passing junk on", () => {
+  assert.throws(() => MODES.testgen_brute.post("```python\n```"), /unreadable/);
+  assert.equal(MODES.testgen_solution.post("```python\nprint(1)\n```").program, "print(1)");
+  assert.ok(manyAnswers("If there are several answers, print any of them."));
+  assert.ok(!manyAnswers("Print the maximum sum."));
+});

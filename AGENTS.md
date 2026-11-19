@@ -87,7 +87,7 @@ The owner is the founder. These preferences come from many sessions. Follow them
 | `content/gate-notes/`, `GATE_PYQ/`, `public/gate-fig/` | GATE notes, past papers and figures |
 | `scripts/learn/` | Problem and solution build/verify pipeline |
 | `bridge/` | Hive bridge (runs Claude Code / Codex / Vibe on a worker machine) |
-| `deploy/` | Deploy configs; `deploy/model-farm/` serves open models on a GPU |
+| `deploy/` | Deploy configs; `deploy/model-farm/` serves open models on a GPU; `deploy/coder-model/` runs NexoraGuru's own small coding model on a free Oracle server (the Solve page's AI tests) |
 | `docs/` | `docs/hive/GUIDE.md`, `docs/gate/*`, `docs/ui/*`, `docs/ops/*` |
 | `tests/` | Server tests (`node --test`) |
 
