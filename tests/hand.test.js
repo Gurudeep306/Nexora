@@ -101,7 +101,7 @@ test('handwritten solutions', async (t) => {
     assert.equal((await call('POST', `/api/hand/device/${token}`, null, { images: [] })).status, 400);
     assert.equal((await call('POST', `/api/hand/device/${token}`, null, { images: ['data:image/png;base64,aGVsbG8='] })).status, 400);
     assert.equal((await call('POST', `/api/hand/device/${token}`, null, { images: ['data:text/html;base64,aGVsbG8='] })).status, 400);
-    assert.equal((await call('POST', `/api/hand/device/${token}`, null, { images: Array(9).fill(PNG) })).status, 400);
+    assert.equal((await call('POST', `/api/hand/device/${token}`, null, { images: Array(13).fill(PNG) })).status, 400);
 
     const sent = await call('POST', `/api/hand/device/${token}`, null, { images: [PNG, PNG] });
     assert.equal(sent.status, 200);

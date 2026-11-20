@@ -21,8 +21,9 @@ const { hasAnyAdminPerm } = require("../authz/permissions");
 const { persistUpload } = require("../upload-store");
 const { loadGateBank } = require("./gate");
 
-const LINK_TTL_MS = 30 * 60 * 1000;
-const MAX_IMAGES = 8;
+// Long enough to solve a whole paper on the tablet in one sitting.
+const LINK_TTL_MS = 12 * 60 * 60 * 1000;
+const MAX_IMAGES = 12;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const MAX_SOLUTIONS_PER_TARGET = 30;
 const NOTE_MAX = 500;

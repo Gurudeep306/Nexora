@@ -5,7 +5,7 @@
   position: fixed;
   inset: 0;
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  grid-template-rows: auto 1fr auto;
   background: color-mix(in oklab, var(--color-text-primary) 7%, var(--color-bg-app));
   color: var(--color-text-primary);
   font-family: var(--font-body);
@@ -270,86 +270,74 @@
   color: var(--color-state-error);
 }
 
-/* ── The question, folded open above the page ── */
-.hw-q {
-  max-height: 38vh;
-  overflow-y: auto;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-bg-surface);
-  touch-action: pan-y;
-  -webkit-user-select: text;
-  user-select: text;
-}
-.hw-q-head {
-  position: sticky;
-  top: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 16px;
-  background: var(--color-bg-surface);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--color-text-muted);
-}
-.hw-q-body {
-  max-width: 900px;
-  padding: 4px 16px 16px;
-  font-size: 16px;
-  line-height: 1.6;
-}
-.hw-q-fig {
-  max-width: 100%;
-  max-height: 260px;
-  margin: 8px 0;
-  border-radius: 8px;
-  background: #fff;
-}
-.hw-q-opts {
-  display: grid;
-  gap: 6px;
-  margin: 10px 0 0;
-  padding: 0;
-  list-style: none;
-}
-.hw-q-opts li {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-}
-.hw-q-l {
-  flex: none;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-}
-
-/* ── The page ── */
-.hw-stage {
-  display: grid;
-  place-items: center;
+/* ── The notebook: pages one under another, moved and zoomed by hand ── */
+.hw-port {
+  position: relative;
   min-height: 0;
   overflow: hidden;
-  padding: 8px;
-}
-.hw-sheet {
-  position: relative;
-  border-radius: 4px;
-  outline: 1px solid color-mix(in oklab, var(--color-text-primary) 18%, transparent);
-}
-.hw-sheet canvas {
-  position: absolute;
-  inset: 0;
-  border-radius: 4px;
-}
-.hw-ink {
   touch-action: none;
+  background: color-mix(in oklab, var(--color-text-primary) 7%, var(--color-bg-app));
+}
+.hw-port.is-ink {
   cursor: crosshair;
 }
-.hw-ink.is-eraser {
+.hw-port.is-eraser {
   cursor: cell;
+}
+.hw-port.is-hand {
+  cursor: grab;
+}
+.hw-port.is-hand:active {
+  cursor: grabbing;
+}
+.hw-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+}
+.hw-addpage {
+  position: absolute;
+  translate: -50% 0;
+  height: 44px;
+  padding: 0 20px;
+  border: 1px dashed var(--color-border-strong);
+  border-radius: 999px;
+  background: var(--color-bg-app);
+  color: var(--color-text-primary);
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.hw-addpage:hover {
+  border-style: solid;
+}
+.hw-zoom {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+}
+.hw-zoom button {
+  min-width: 36px;
+  height: 32px;
+  padding: 0 8px;
+  color: var(--color-text-primary);
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+.hw-zoom .hw-zoom-pct {
+  min-width: 60px;
+  border-inline: 1px solid var(--color-border);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.hw-wide {
+  width: 100%;
+  margin-top: 6px;
 }
 
 .hw-foot {
@@ -359,24 +347,6 @@
   padding: 6px 14px max(8px, env(safe-area-inset-bottom));
   font-size: 12.5px;
   color: var(--color-text-secondary);
-}
-.hw-pager {
-  display: flex;
-  gap: 4px;
-  margin-left: auto;
-}
-.hw-pager button {
-  width: 36px;
-  height: 30px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
-  font-size: 18px;
-  line-height: 1;
-  color: var(--color-text-primary);
-  cursor: pointer;
-}
-.hw-pager button:disabled {
-  opacity: 0.3;
 }
 
 /* ── Messages (loading, expired, sent) ── */
@@ -520,7 +490,7 @@
   background: var(--color-bg-app);
 }
 
-:is(.hw-tool, .hw-swatch, .hw-size, .hw-chip, .hw-btn, .hw-opt, .hw-thumb, .hw-pager button, .hw-shot-bar button):focus-visible {
+:is(.hw-tool, .hw-swatch, .hw-size, .hw-chip, .hw-btn, .hw-opt, .hw-thumb, .hw-addpage, .hw-zoom button, .hw-shot-bar button):focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
