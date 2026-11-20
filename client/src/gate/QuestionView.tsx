@@ -1,7 +1,7 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Link } from 'react-router-dom'
-import { AlertTriangle, ExternalLink, Link2, Trophy } from 'lucide-react'
+import { AlertTriangle, ExternalLink, Link2, PenLine, Trophy } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { AddToContest } from '@/components/contests/hosted/Pickers'
 import { cn } from '@/lib/utils'
@@ -109,6 +109,7 @@ export function QuestionView({
 }) {
   const review = initialPick !== undefined
   const [showSolution, setShowSolution] = useState(initialShowSolution)
+  const [handSignal, setHandSignal] = useState(0)
   const [userPick, setUserPick] = useState<Pick>(initialPick)
   const [hasChecked, setHasChecked] = useState(review)
   const [selfGrade, setSelfGrade] = useState<boolean | null>(null)
@@ -463,6 +464,13 @@ export function QuestionView({
                 {showSolution ? 'Hide solution' : 'Show solution'}
               </TextAction>
             )}
+            {insights && mode !== 'test' && (
+              <TextAction onClick={() => setHandSignal((n) => n + 1)} title="Write your solution on a tablet, or photograph your paper">
+                <span className="inline-flex items-center gap-1.5">
+                  <PenLine className="size-3.5" aria-hidden="true" /> Write by hand
+                </span>
+              </TextAction>
+            )}
             {q.sourceUrl && (
               <a href={q.sourceUrl} target="_blank" rel="noreferrer" className="qc-text-action inline-flex items-center gap-1">
                 Source <ExternalLink className="size-3" aria-hidden="true" />
@@ -513,7 +521,7 @@ export function QuestionView({
 
       {insights && mode !== 'test' && (
         <Suspense fallback={null}>
-          <HandSolutions kind="gate" target={q.id} revealed={answered} />
+          <HandSolutions kind="gate" target={q.id} revealed={answered} openSignal={handSignal} />
         </Suspense>
       )}
 

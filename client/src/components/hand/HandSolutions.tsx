@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Avatar, Modal, useToast } from '@/components/ui'
 import { Icon } from '@/components/icon/Icon'
 import { cn } from '@/lib/utils'
@@ -22,7 +23,7 @@ import './hand-panel.css'
 
 const SOURCE: Record<HandSolution['source'], string> = { pad: 'Tablet', photo: 'Phone photo', upload: 'Upload' }
 
-export function HandSolutions({ kind, target, revealed }: { kind: HandKind; target: string; revealed: boolean }) {
+export function HandSolutions({ kind, target, revealed, openSignal = 0 }: { kind: HandKind; target: string; revealed: boolean; openSignal?: number }) {
   const toast = useToast()
   const [mine, setMine] = useState<HandSolution[]>([])
   const [community, setCommunity] = useState<HandSolution[]>([])
@@ -44,6 +45,10 @@ export function HandSolutions({ kind, target, revealed }: { kind: HandKind; targ
   useEffect(() => {
     void load()
   }, [load])
+  // The small "Write by hand" button on the question card opens the same choices.
+  useEffect(() => {
+    if (openSignal > 0) setAdding(true)
+  }, [openSignal])
 
   const patchMine = (s: HandSolution) => {
     setMine((cur) => cur.map((x) => (x.id === s.id ? { ...x, ...s } : x)))
@@ -328,7 +333,8 @@ function LinkStep({ step, onBack, onSent }: { step: NonNullable<Step>; onBack: (
     }
   }, [step.token, onSent])
 
-  const mins = Math.max(0, Math.ceil((step.expiresAt - now) / 60000))
+  const until = new Date(step.expiresAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+  const sameDay = new Date(step.expiresAt).toDateString() === new Date(now).toDateString()
   const device = step.mode === 'pad' ? 'tablet' : 'phone'
   const status =
     state === 'expired'
@@ -362,7 +368,7 @@ function LinkStep({ step, onBack, onSent }: { step: NonNullable<Step>; onBack: (
       <p className={cn('hs-status', state === 'opened' && 'is-live', state === 'expired' && 'is-bad')} role="status" aria-live="polite">
         <span className="hs-dot" aria-hidden="true" />
         {status}
-        {state !== 'expired' && <span className="hs-mins">Link works for {mins} more min</span>}
+        {state !== 'expired' && <span className="hs-mins">Link works until {until}{sameDay ? '' : ' tomorrow'}</span>}
       </p>
       {step.mode === 'pad' && preview && state === 'opened' && (
         <figure className="hs-live">
@@ -406,7 +412,10 @@ function WayArt({ kind }: { kind: 'pad' | 'photo' | 'upload' }) {
   )
 }
 
-/* ── Viewing one solution ────────────────────────────────────────────────── */
+/* ── Viewing one solution: full screen ─────────────────────────────────── */
+
+type Pan = { s: number; x: number; y: number }
+const FIT: Pan = { s: 1, x: 0, y: 0 }
 
 function Viewer({
   s,
@@ -425,88 +434,210 @@ function Viewer({
 }) {
   const [page, setPage] = useState(0)
   const [note, setNote] = useState(s.note)
+  const [pan, setPan] = useState<Pan>(FIT)
+  // On a phone the page gets the whole screen; the details open from the ⓘ button.
+  const [panel, setPanel] = useState(() => typeof window === 'undefined' || window.innerWidth > 760)
+  const stage = useRef<HTMLDivElement>(null)
+  const closeBtn = useRef<HTMLButtonElement>(null)
+  const pointers = useRef(new Map<number, { x: number; y: number }>())
+  const start = useRef<{ pan: Pan; dist: number; mid: { x: number; y: number }; at: number; x: number } | null>(null)
+  const lastTap = useRef(0)
   const who = s.author ? s.author.displayName || s.author.username : null
-  const src = s.images[Math.min(page, s.images.length - 1)]
+  const n = s.images.length
+  const src = s.images[Math.min(page, n - 1)]
+
+  const go = useCallback(
+    (i: number) => {
+      setPage(Math.max(0, Math.min(n - 1, i)))
+      setPan(FIT)
+    },
+    [n],
+  )
 
   useEffect(() => {
+    closeBtn.current?.focus()
+    const prevOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
     const key = (e: KeyboardEvent) => {
       if ((e.target as HTMLElement)?.tagName === 'TEXTAREA') return
-      if (e.key === 'ArrowRight') setPage((p) => Math.min(s.images.length - 1, p + 1))
-      if (e.key === 'ArrowLeft') setPage((p) => Math.max(0, p - 1))
+      if (e.key === 'Escape') onClose()
+      else if (e.key === 'ArrowRight') go(page + 1)
+      else if (e.key === 'ArrowLeft') go(page - 1)
+      else if (e.key === '+' || e.key === '=') setPan((p) => ({ ...p, s: Math.min(5, p.s * 1.25) }))
+      else if (e.key === '-') setPan((p) => (p.s / 1.25 <= 1 ? FIT : { ...p, s: p.s / 1.25 }))
+      else if (e.key === '0') setPan(FIT)
     }
     window.addEventListener('keydown', key)
-    return () => window.removeEventListener('keydown', key)
-  }, [s.images.length])
+    return () => {
+      document.body.style.overflow = prevOverflow
+      window.removeEventListener('keydown', key)
+    }
+  }, [go, page, onClose])
 
-  return (
-    <Modal open onClose={onClose} size="xl" title={who ? `${who}'s working` : 'Your working'} description={`${SOURCE[s.source]} · ${timeAgo(s.createdAt)}${s.images.length > 1 ? ` · page ${page + 1} of ${s.images.length}` : ''}`}>
-      <div className="hs-view">
-        <div className="hs-view-img" tabIndex={0} aria-label="The page, full size. Scroll to see all of it.">
-          <img src={src} alt={`Page ${page + 1} of ${s.images.length}`} />
-          {s.images.length > 1 && (
+  // Wheel zooms around the pointer (the page under it stays put).
+  useEffect(() => {
+    const el = stage.current
+    if (!el) return
+    const wheel = (e: WheelEvent) => {
+      e.preventDefault()
+      const r = el.getBoundingClientRect()
+      const mx = e.clientX - r.left - r.width / 2
+      const my = e.clientY - r.top - r.height / 2
+      setPan((p) => {
+        if (!(e.ctrlKey || e.metaKey) && p.s > 1) return { ...p, x: p.x - e.deltaX, y: p.y - e.deltaY }
+        const s = Math.min(5, Math.max(1, p.s * Math.exp(-e.deltaY * 0.01)))
+        if (s === 1) return FIT
+        const k = s / p.s
+        return { s, x: mx - (mx - p.x) * k, y: my - (my - p.y) * k }
+      })
+    }
+    el.addEventListener('wheel', wheel, { passive: false })
+    return () => el.removeEventListener('wheel', wheel)
+  }, [])
+
+  const begin = () => {
+    const pts = [...pointers.current.values()]
+    const r = stage.current!.getBoundingClientRect()
+    const mid = { x: pts.reduce((a, p) => a + p.x, 0) / pts.length - r.left - r.width / 2, y: pts.reduce((a, p) => a + p.y, 0) / pts.length - r.top - r.height / 2 }
+    const dist = pts.length > 1 ? Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y) : 0
+    start.current = { pan, dist, mid, at: Date.now(), x: pts[0].x }
+  }
+  const down = (e: React.PointerEvent) => {
+    if ((e.target as HTMLElement).closest('button')) return
+    e.currentTarget.setPointerCapture(e.pointerId)
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+    begin()
+  }
+  const move = (e: React.PointerEvent) => {
+    if (!pointers.current.has(e.pointerId) || !start.current) return
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
+    const st = start.current
+    const pts = [...pointers.current.values()]
+    const r = stage.current!.getBoundingClientRect()
+    const mid = { x: pts.reduce((a, p) => a + p.x, 0) / pts.length - r.left - r.width / 2, y: pts.reduce((a, p) => a + p.y, 0) / pts.length - r.top - r.height / 2 }
+    if (pts.length > 1 && st.dist) {
+      const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y)
+      const sc = Math.min(5, Math.max(1, (st.pan.s * dist) / st.dist))
+      const k = sc / st.pan.s
+      setPan({ s: sc, x: mid.x - (st.mid.x - st.pan.x) * k, y: mid.y - (st.mid.y - st.pan.y) * k })
+    } else if (st.pan.s > 1) {
+      setPan({ ...st.pan, x: st.pan.x + (mid.x - st.mid.x), y: st.pan.y + (mid.y - st.mid.y) })
+    }
+  }
+  const up = (e: React.PointerEvent) => {
+    const st = start.current
+    pointers.current.delete(e.pointerId)
+    if (pointers.current.size) return begin()
+    start.current = null
+    if (!st) return
+    const dx = e.clientX - st.x
+    // A swipe turns the page when not zoomed in; a double tap zooms.
+    if (st.pan.s === 1 && Math.abs(dx) > 60 && Date.now() - st.at < 600) return go(page + (dx < 0 ? 1 : -1))
+    if (Math.abs(dx) < 6 && Date.now() - st.at < 250) {
+      if (Date.now() - lastTap.current < 320) {
+        const r = stage.current!.getBoundingClientRect()
+        const mx = e.clientX - r.left - r.width / 2
+        const my = e.clientY - r.top - r.height / 2
+        setPan((p) => (p.s > 1 ? FIT : { s: 2.5, x: -mx * 1.5, y: -my * 1.5 }))
+        lastTap.current = 0
+      } else lastTap.current = Date.now()
+    }
+  }
+
+  return createPortal(
+    <div className="hs-full" role="dialog" aria-modal="true" aria-label={who ? `${who}'s handwritten working` : 'Your handwritten working'}>
+      <header className="hs-full-bar">
+        <div className="min-w-0">
+          <p className="hs-full-t">{who ? `${who}'s working` : 'Your working'}</p>
+          <p className="hs-full-s">
+            {SOURCE[s.source]} · {timeAgo(s.createdAt)}
+            {n > 1 ? ` · page ${page + 1} of ${n}` : ''}
+          </p>
+        </div>
+        <span className="hs-full-zoom" role="group" aria-label="Zoom">
+          <button type="button" onClick={() => setPan((p) => (p.s / 1.25 <= 1 ? FIT : { ...p, s: p.s / 1.25 }))} aria-label="Zoom out">
+            −
+          </button>
+          <button type="button" onClick={() => setPan(FIT)} aria-label={`Zoom ${Math.round(pan.s * 100)}%. Fit to screen`}>
+            {Math.round(pan.s * 100)}%
+          </button>
+          <button type="button" onClick={() => setPan((p) => ({ ...p, s: Math.min(5, p.s * 1.25) }))} aria-label="Zoom in">
+            +
+          </button>
+        </span>
+        <a className="hs-full-btn" href={src} download={`solution-page-${page + 1}`} aria-label="Download this page" title="Download this page">
+          <Icon name="download" className="size-4" aria-hidden="true" />
+        </a>
+        <button type="button" className={cn('hs-full-btn', panel && 'is-on')} onClick={() => setPanel((v) => !v)} aria-pressed={panel} aria-label="Details" title="Details">
+          <Icon name="info" className="size-4" aria-hidden="true" />
+        </button>
+        <button ref={closeBtn} type="button" className="hs-full-btn" onClick={onClose} aria-label="Close" title="Close (Esc)">
+          <Icon name="x" className="size-5" aria-hidden="true" />
+        </button>
+      </header>
+
+      <div className="hs-full-main">
+        <div ref={stage} className={cn('hs-full-stage', pan.s > 1 && 'is-zoomed')} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
+          <img src={src} alt={`Page ${page + 1} of ${n}`} draggable={false} style={{ transform: `translate(${pan.x}px, ${pan.y}px) scale(${pan.s})` }} />
+          {n > 1 && (
             <>
-              <button type="button" className="hs-nav is-prev" onClick={() => setPage((p) => Math.max(0, p - 1))} disabled={page === 0} aria-label="Previous page">
+              <button type="button" className="hs-full-nav is-prev" onClick={() => go(page - 1)} disabled={page === 0} aria-label="Previous page">
                 ‹
               </button>
-              <button type="button" className="hs-nav is-next" onClick={() => setPage((p) => Math.min(s.images.length - 1, p + 1))} disabled={page === s.images.length - 1} aria-label="Next page">
+              <button type="button" className="hs-full-nav is-next" onClick={() => go(page + 1)} disabled={page === n - 1} aria-label="Next page">
                 ›
               </button>
             </>
           )}
         </div>
-        {s.images.length > 1 && (
-          <div className="hs-strip" role="tablist" aria-label="Pages">
-            {s.images.map((im, i) => (
-              <button key={im} type="button" role="tab" aria-selected={i === page} className={cn('hs-strip-item', i === page && 'is-on')} onClick={() => setPage(i)} aria-label={`Page ${i + 1}`}>
-                <img src={im} alt="" />
-              </button>
-            ))}
-          </div>
-        )}
-        <div className="hs-view-bar">
-          {s.mine ? (
-            <>
-              <div className="hs-seg" role="radiogroup" aria-label="Who can see it">
-                <button type="button" role="radio" aria-checked={s.visibility === 'private'} className={cn(s.visibility === 'private' && 'is-on')} onClick={() => s.visibility !== 'private' && onVisibility('private')}>
-                  <Icon name="lock" className="size-3.5" aria-hidden="true" /> Only me
+
+        {panel && (
+          <aside className="hs-full-side" aria-label="Details">
+            {s.mine ? (
+              <>
+                <p className="hs-k">Who can see it</p>
+                <div className="hs-seg" role="radiogroup" aria-label="Who can see it">
+                  <button type="button" role="radio" aria-checked={s.visibility === 'private'} className={cn(s.visibility === 'private' && 'is-on')} onClick={() => s.visibility !== 'private' && onVisibility('private')}>
+                    <Icon name="lock" className="size-3.5" aria-hidden="true" /> Only me
+                  </button>
+                  <button type="button" role="radio" aria-checked={s.visibility === 'public'} className={cn(s.visibility === 'public' && 'is-on')} onClick={() => s.visibility !== 'public' && onVisibility('public')}>
+                    <Icon name="globe" className="size-3.5" aria-hidden="true" /> Everyone
+                  </button>
+                </div>
+                <p className="hs-fine">{s.visibility === 'public' ? `Shared. ${s.votes} found it helpful. Others see it after they answer.` : 'Only you can see it.'}</p>
+                <label className="hs-caption">
+                  <span className="hs-k">Caption</span>
+                  <textarea value={note} maxLength={500} rows={4} placeholder="The trick you used, or what to watch out for…" onChange={(e) => setNote(e.target.value)} onBlur={() => note !== s.note && void onCaption(note)} />
+                </label>
+                <button type="button" className="hs-tool is-danger" onClick={onDelete}>
+                  <Icon name="delete" className="size-4" aria-hidden="true" /> Delete this solution
                 </button>
-                <button type="button" role="radio" aria-checked={s.visibility === 'public'} className={cn(s.visibility === 'public' && 'is-on')} onClick={() => s.visibility !== 'public' && onVisibility('public')}>
-                  <Icon name="globe" className="size-3.5" aria-hidden="true" /> Everyone
+              </>
+            ) : (
+              <>
+                {s.note && <p className="hs-note hs-note-big">{s.note}</p>}
+                <button type="button" className={cn('hs-vote hs-vote-big', s.voted && 'is-on')} onClick={onVote} aria-pressed={s.voted}>
+                  <Icon name="heart" className="size-4" aria-hidden="true" /> {s.voted ? 'Helpful · thanks' : 'Helpful'} · {s.votes}
                 </button>
-              </div>
-              {s.visibility === 'public' && <span className="hs-fine">{s.votes} found it helpful</span>}
-            </>
-          ) : (
-            <button type="button" className={cn('hs-vote hs-vote-big', s.voted && 'is-on')} onClick={onVote} aria-pressed={s.voted}>
-              <Icon name="heart" className="size-4" aria-hidden="true" /> {s.voted ? 'Helpful · thanks' : 'Helpful'} · {s.votes}
-            </button>
-          )}
-          <span className="flex-1" />
-          <a className="hs-tool" href={src} download={`solution-page-${page + 1}`} aria-label="Download this page">
-            <Icon name="download" className="size-4" aria-hidden="true" /> Download
-          </a>
-          {s.mine && (
-            <button type="button" className="hs-tool is-danger" onClick={onDelete}>
-              <Icon name="delete" className="size-4" aria-hidden="true" /> Delete
-            </button>
-          )}
-        </div>
-        {s.mine ? (
-          <label className="hs-caption">
-            <span>Caption (shown with it when shared)</span>
-            <textarea
-              value={note}
-              maxLength={500}
-              rows={2}
-              placeholder="The trick you used, or what to watch out for…"
-              onChange={(e) => setNote(e.target.value)}
-              onBlur={() => note !== s.note && void onCaption(note)}
-            />
-          </label>
-        ) : (
-          s.note && <p className="hs-note hs-note-big">{s.note}</p>
+              </>
+            )}
+            {n > 1 && (
+              <>
+                <p className="hs-k">Pages</p>
+                <div className="hs-strip" role="tablist" aria-label="Pages">
+                  {s.images.map((im, i) => (
+                    <button key={im} type="button" role="tab" aria-selected={i === page} className={cn('hs-strip-item', i === page && 'is-on')} onClick={() => go(i)} aria-label={`Page ${i + 1}`}>
+                      <img src={im} alt="" />
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+            <p className="hs-fine hs-full-help">Pinch, scroll or double-tap to zoom. Drag to move. Swipe or use ← → for pages.</p>
+          </aside>
         )}
       </div>
-    </Modal>
+    </div>,
+    document.body,
   )
 }

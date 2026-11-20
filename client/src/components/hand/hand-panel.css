@@ -564,3 +564,221 @@
     transition: none;
   }
 }
+
+/* ── Full-screen viewer ──
+   A dark room for the page in both themes (like any photo viewer), so the
+   paper reads as paper; the details sit in a side panel. */
+.hs-full {
+  --hf-bg: #121212;
+  --hf-ink: #f2f0ea;
+  --hf-muted: #b5b2aa;
+  --hf-line: rgb(255 255 255 / 0.14);
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  background: var(--hf-bg);
+  color: var(--hf-ink);
+  font-family: var(--font-body);
+  animation: hs-full-in 180ms ease both;
+}
+@keyframes hs-full-in {
+  from {
+    opacity: 0;
+  }
+}
+.hs-full-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: max(10px, env(safe-area-inset-top)) 12px 10px 18px;
+  border-bottom: 1px solid var(--hf-line);
+}
+.hs-full-bar > :first-child {
+  flex: 1;
+}
+.hs-full-t {
+  margin: 0;
+  font-family: var(--font-display, inherit);
+  font-size: 17px;
+}
+.hs-full-s {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--hf-muted);
+}
+.hs-full-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  color: var(--hf-ink);
+  cursor: pointer;
+}
+.hs-full-btn:hover,
+.hs-full-btn.is-on {
+  background: rgb(255 255 255 / 0.1);
+}
+.hs-full-zoom {
+  display: inline-flex;
+  border: 1px solid var(--hf-line);
+  border-radius: 999px;
+}
+.hs-full-zoom button {
+  min-width: 36px;
+  height: 34px;
+  padding: 0 8px;
+  color: var(--hf-ink);
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.hs-full-zoom button:nth-child(2) {
+  min-width: 58px;
+  border-inline: 1px solid var(--hf-line);
+  font-size: 13px;
+}
+.hs-full-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 0;
+}
+.hs-full-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  padding: 16px;
+  touch-action: none;
+  cursor: zoom-in;
+}
+.hs-full-stage.is-zoomed {
+  cursor: grab;
+}
+.hs-full-stage img {
+  /* The whole page fits the screen at 100%; zoom goes past it. */
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 4px;
+  background: #fff;
+  transform-origin: center;
+  transition: transform 120ms ease-out;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.hs-full-nav {
+  position: absolute;
+  top: 50%;
+  width: 48px;
+  height: 64px;
+  translate: 0 -50%;
+  border-radius: 14px;
+  background: rgb(0 0 0 / 0.55);
+  color: #fff;
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+}
+.hs-full-nav.is-prev {
+  left: 16px;
+}
+.hs-full-nav.is-next {
+  right: 16px;
+}
+.hs-full-nav:disabled {
+  opacity: 0.2;
+  cursor: default;
+}
+.hs-full-side {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  width: 300px;
+  padding: 18px;
+  overflow-y: auto;
+  border-left: 1px solid var(--hf-line);
+}
+.hs-full-side .hs-k,
+.hs-full-side .hs-fine,
+.hs-full-side .hs-caption {
+  margin: 0;
+  color: var(--hf-muted);
+}
+.hs-full-side .hs-k {
+  margin-top: 8px;
+}
+.hs-full-side .hs-seg {
+  border-color: var(--hf-line);
+}
+.hs-full-side .hs-seg button {
+  color: var(--hf-muted);
+}
+.hs-full-side .hs-seg button.is-on {
+  background: var(--hf-ink);
+  color: var(--hf-bg);
+}
+.hs-full-side .hs-caption textarea {
+  border-color: var(--hf-line);
+  background: rgb(255 255 255 / 0.06);
+  color: var(--hf-ink);
+}
+.hs-full-side .hs-tool {
+  justify-self: start;
+  color: var(--hf-muted);
+}
+.hs-full-side .hs-note {
+  color: var(--hf-ink);
+}
+.hs-full-side .hs-vote {
+  justify-self: start;
+  border-color: var(--hf-line);
+  color: var(--hf-ink);
+}
+.hs-full-side .hs-strip {
+  flex-wrap: wrap;
+}
+.hs-full-side .hs-strip-item {
+  border-color: var(--hf-line);
+}
+.hs-full-side .hs-strip-item.is-on {
+  border-color: var(--hf-ink);
+}
+.hs-full-help {
+  margin-top: 6px !important;
+  font-size: 12px;
+}
+:is(.hs-full-btn, .hs-full-zoom button, .hs-full-nav):focus-visible {
+  outline: 2px solid var(--hf-ink);
+  outline-offset: 2px;
+}
+@media (max-width: 760px) {
+  .hs-full-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+  .hs-full-side {
+    width: auto;
+    max-height: 42vh;
+    border-left: 0;
+    border-top: 1px solid var(--hf-line);
+  }
+  .hs-full-zoom {
+    display: none;
+  }
+  .hs-full-stage {
+    padding: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hs-full,
+  .hs-full-stage img {
+    animation: none;
+    transition: none;
+  }
+}
