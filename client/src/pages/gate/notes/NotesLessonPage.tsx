@@ -37,6 +37,8 @@ import { useScrollSpy, type OutlineItem } from '@/components/reader/outline'
 import { Outline } from '@/components/reader/Outline'
 import { EndOfLesson } from '@/components/reader/EndOfLesson'
 import { ReadAloud } from '@/components/reader/ReadAloud'
+import { LessonHighlights } from '@/components/reader/LessonHighlights'
+import { useAuth } from '@/context/AuthContext'
 
 const BLOCK_LABEL: Record<string, string> = {
   intuition: 'Intuition',
@@ -160,6 +162,7 @@ export default function NotesLessonPage() {
 function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSummary[] | null }) {
   const { lesson, subject, chapter, prev, next } = data
   const progressMap = useNotesProgress(subject.id)
+  const { user } = useAuth()
   const panels = useReaderPanels()
   const p = progressOf(progressMap, subject.id, lesson.id)
   // The subject's home on Learn, and the skill this lesson teaches (from the
@@ -329,6 +332,7 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
                   >
                     <Icon name="bookmark" className="size-4" aria-hidden="true" />
                   </button>
+                  <LessonHighlights target={article} subject={subject.id} lesson={lesson.id} enabled={!!user} />
                   <ReadAloud target={article} />
                   {completeBtn()}
                 </span>

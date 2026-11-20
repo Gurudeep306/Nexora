@@ -9,6 +9,7 @@
     JSON, hides a subject the Site map makes staff-only, never exposes `sources`, and keeps
     per-user progress private to its owner.
 */
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn, spawnSync } = require('node:child_process');
@@ -281,7 +282,7 @@ async function signup(name) {
 }
 
 test('API', async (t) => {
-  const port = 28000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: ROOT,
@@ -391,6 +392,47 @@ test('API', async (t) => {
       { completed: true, scrollPct: 42, bookmarked: true, updatedAt: 0 },
     );
     assert.deepEqual((await call('GET', '/api/gate/me/notes-progress', ben)).body.progress, {});
+  });
+
+  await t.test('highlights: need auth, validate input, stay per user, edit and delete', async () => {
+    const base = '/api/gate/me/highlights';
+    assert.equal((await call('GET', base)).status, 401);
+    assert.equal((await call('POST', `${base}/dl/place-value`, null, { quote: 'x' })).status, 401);
+    assert.equal((await call('POST', `${base}/dl/nope`, ana, { quote: 'x' })).status, 404);
+    assert.equal((await call('POST', `${base}/dl/place-value`, ana, {})).status, 400);
+    assert.equal((await call('POST', `${base}/dl/place-value`, ana, { quote: '  ' })).status, 400);
+    assert.equal((await call('POST', `${base}/dl/place-value`, ana, { quote: 'radix', color: 'purple' })).status, 400);
+    assert.equal((await call('POST', `${base}/dl/place-value`, ana, { quote: 'radix', note: 5 })).status, 400);
+
+    const made = await call('POST', `${base}/dl/place-value`, ana, { quote: 'radix', prefix: 'the ', suffix: ' of', block: 'expansion', color: 'green', note: 'base' });
+    assert.equal(made.status, 200);
+    const h = made.body.highlight;
+    assert.match(h.id, /^hl_/);
+    assert.equal(h.subject, 'dl');
+    assert.equal(h.color, 'green');
+    assert.equal(h.note, 'base');
+    // Long fields are cut to size, not rejected.
+    const long = await call('POST', `${base}/dl/place-value`, ana, { quote: 'q'.repeat(5000), prefix: 'p'.repeat(200) });
+    assert.equal(long.body.highlight.quote.length, 1000);
+    assert.equal(long.body.highlight.prefix.length, 64);
+
+    const mine = await call('GET', `${base}?subject=dl&lesson=place-value`, ana);
+    assert.equal(mine.body.highlights.length, 2);
+    assert.deepEqual((await call('GET', base, ben)).body.highlights, [], "another member sees none of them");
+
+    // Only the owner can change or remove one.
+    assert.equal((await call('PATCH', `${base}/${h.id}`, ben, { note: 'mine now' })).status, 404);
+    assert.equal((await call('DELETE', `${base}/${h.id}`, ben)).status, 404);
+    assert.equal((await call('PATCH', `${base}/${h.id}`, ana, {})).status, 400);
+    assert.equal((await call('PATCH', `${base}/${h.id}`, ana, { color: 'nope' })).status, 400);
+    const edited = await call('PATCH', `${base}/${h.id}`, ana, { color: 'pink', note: 'base of a number' });
+    assert.equal(edited.status, 200);
+    assert.equal(edited.body.highlight.color, 'pink');
+    assert.equal(edited.body.highlight.note, 'base of a number');
+
+    assert.equal((await call('DELETE', `${base}/${h.id}`, ana)).status, 200);
+    assert.equal((await call('DELETE', `${base}/${h.id}`, ana)).status, 404);
+    assert.equal((await call('GET', base, ana)).body.highlights.length, 1);
   });
 });
 

@@ -1615,6 +1615,23 @@ async function initGateTables() {
       updated_at INTEGER NOT NULL,
       PRIMARY KEY (username, subject, lesson)
     )`],
+    // GATE Notes reader: the student's highlights and margin notes. A
+    // highlight is found again by its quote plus a little text on each side.
+    [`CREATE TABLE IF NOT EXISTS gate_notes_highlights (
+      id TEXT PRIMARY KEY,
+      username TEXT NOT NULL,
+      subject TEXT NOT NULL,
+      lesson TEXT NOT NULL,
+      block TEXT NOT NULL DEFAULT '',
+      quote TEXT NOT NULL,
+      prefix TEXT NOT NULL DEFAULT '',
+      suffix TEXT NOT NULL DEFAULT '',
+      color TEXT NOT NULL DEFAULT 'yellow',
+      note TEXT NOT NULL DEFAULT '',
+      created_at INTEGER NOT NULL,
+      updated_at INTEGER NOT NULL
+    )`],
+    [`CREATE INDEX IF NOT EXISTS idx_gate_notes_highlights_user ON gate_notes_highlights(username, subject, lesson)`],
   ]);
 }
 

@@ -201,6 +201,10 @@ from a range, since test files run in parallel and a clash fails the run.
   to `--nr-wide`). Reading pages use the whole window (`isReaderRoute`), with
   no GATE frame and no Dock. GATE notes and DSA lessons both use it, and a
   skill with written notes opens them here (the skill card is `?card=1`).
+  Members can highlight and annotate notes lessons (`components/reader/LessonHighlights.tsx`,
+  table `gate_notes_highlights`): painted with the CSS Custom Highlight API, so
+  the lesson's markup is never touched, and found again by quote plus context
+  (`components/reader/anchor.ts`). They are listed in GATE → Notebook → Highlights.
 - **Search** uses one field style, the "ledger line" (`styles/search.css`,
   `SearchInput`, `SearchCombobox`; `variant="bar"` is the top bar's pill): a
   hairline, an italic serif hint, an ink line drawn on focus. Keep text around
