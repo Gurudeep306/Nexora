@@ -1206,6 +1206,21 @@ function createAdminRouter(deps) {
   /* ═════════════ Live: how rooms connect, keys, limits ═════════════ */
 
   const liveCfg = require("../live/config");
+  /** Rooms open right now, for the Rooms tab. */
+  const liveRoomsNow = async () => {
+    const list = [...require("../live/state").rooms.values()];
+    if (!list.length) return [];
+    const rows = await all(`SELECT id, code, title, host, mode, is_call, created_at FROM live_rooms WHERE code IN (${list.map(() => "?").join(",")})`, list.map((r) => r.code)).catch(() => []);
+    const byCode = new Map(rows.map((r) => [r.code, r]));
+    return list
+      .filter((r) => byCode.has(r.code))
+      .map((r) => {
+        const row = byCode.get(r.code);
+        const ppl = new Set([...r.peers.values()].map((p) => p.username));
+        return { code: r.code, title: row.title, host: row.host, mode: row.mode, call: !!row.is_call, transport: r.transport, devices: r.peers.size, people: ppl.size, startedAt: r.startedAt };
+      })
+      .sort((a, b) => b.devices - a.devices);
+  };
   const liveView = async () => {
     const c = await liveCfg.loadConfig();
     const used = await liveCfg.usage();
@@ -1219,11 +1234,22 @@ function createAdminRouter(deps) {
       livekit: c.livekit ? { url: c.livekit.url, key: c.livekit.key, last4: c.livekit.last4 || "", test: c.livekit.test || null } : envLk ? { url: process.env.LIVEKIT_URL, key: "", last4: "", test: null, fromEnv: true } : null,
       maxPeople: c.maxPeople,
       monthlyGb: c.monthlyGb,
+      livekitMinutes: c.livekitMinutes,
+      simulcast: c.simulcast,
+      lkOver: !!now.lkOver,
+      minutes: await liveCfg.minutes(),
+      minutesHistory: await liveCfg.minutesHistory(),
+      // What each way of connecting allows (published plans; see the links in Admin).
+      limits: {
+        cloudflare: { freeGb: 1000, pricePerGb: 0.05, note: "Free 1,000 GB a month (shared by Cloudflare's SFU and TURN), then $0.05 per GB." },
+        livekit: { freeMinutes: 5000, concurrent: 100, note: "LiveKit Cloud's free Build plan: about 5,000 connection minutes a month and 100 people at once; when reached, new joins fail until next month." },
+        direct: { devices: require("../live/media").MESH_MAX, note: "Browsers connect to each other: up to 5 devices a room, no cost." },
+      },
       recording: c.recording,
       calls: c.calls,
       tablets: c.tablets,
       usage: { month: new Date().toISOString().slice(0, 7), bytes: used, history: await liveCfg.history() },
-      live: [...require("../live/state").rooms.values()].map((r) => ({ transport: r.transport, devices: r.peers.size })),
+      live: await liveRoomsNow(),
     };
   };
 
@@ -1240,10 +1266,10 @@ function createAdminRouter(deps) {
         if (!liveCfg.PROVIDERS.has(b.provider)) bad("Unknown way to connect");
         next.provider = b.provider;
       }
-      for (const k of ["maxPeople", "monthlyGb"]) if (b[k] !== undefined) next[k] = Number(b[k]);
-      for (const k of ["recording", "calls", "tablets"]) if (b[k] !== undefined) next[k] = !!b[k];
+      for (const k of ["maxPeople", "monthlyGb", "livekitMinutes"]) if (b[k] !== undefined) next[k] = Number(b[k]);
+      for (const k of ["recording", "calls", "tablets", "simulcast"]) if (b[k] !== undefined) next[k] = !!b[k];
       await liveCfg.saveConfig(next, req.access.username);
-      await audit(req, "live.settings", { targetType: "live", target: "settings", after: { provider: next.provider, maxPeople: next.maxPeople, monthlyGb: next.monthlyGb, recording: next.recording, calls: next.calls, tablets: next.tablets } });
+      await audit(req, "live.settings", { targetType: "live", target: "settings", after: { provider: next.provider, maxPeople: next.maxPeople, monthlyGb: next.monthlyGb, livekitMinutes: next.livekitMinutes, recording: next.recording, calls: next.calls, tablets: next.tablets } });
       res.json({ ok: true, ...(await liveView()) });
     }),
   );
@@ -1300,6 +1326,47 @@ function createAdminRouter(deps) {
       await liveCfg.saveConfig({ ...c, [req.params.which]: null }, req.access.username);
       await audit(req, `live.${req.params.which}.remove`, { targetType: "live", target: req.params.which });
       res.json({ ok: true, ...(await liveView()) });
+    }),
+  );
+
+  // End a room for everyone (Rooms tab).
+  router.post(
+    "/api/admin/live/rooms/:code/end",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const room = await require("../live/store").roomByCode(req.params.code);
+      if (!room) bad("No such room");
+      const sig = require("../live/signal").current;
+      if (sig) await sig.endRoom(room, "The NexoraGuru team ended this room.");
+      await audit(req, "live.room.end", { targetType: "live", target: room.code });
+      res.json({ ok: true, ...(await liveView()) });
+    }),
+  );
+
+  // A private room for the one-click connection test, forced to one way of
+  // connecting. The owner's browser joins it twice and checks media arrives.
+  router.post(
+    "/api/admin/live/selftest",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const which = req.body?.which;
+      const kind = which === "cloudflare" ? "cf" : which === "livekit" ? "sfu" : which === "direct" ? "mesh" : null;
+      if (!kind) bad("Choose cloudflare, livekit or direct");
+      const c = await liveCfg.loadConfig();
+      if (kind === "cf" && !liveCfg.cloudflare(c)) bad("Cloudflare is not set up yet.");
+      if (kind === "sfu" && !liveCfg.livekit(c)) bad("LiveKit is not set up yet.");
+      const store = require("../live/store");
+      await store.ensureTables();
+      const code = store.newCode();
+      const id = require("crypto").randomBytes(12).toString("base64url");
+      await run(
+        `INSERT INTO live_rooms(id, code, title, host, mode, visibility, is_call, created_at) VALUES(?,?,?,?,?,?,?,?)`,
+        [id, code, `Connection test (${which})`, req.access.username, "video", "invite", 0, Date.now()],
+      );
+      const st = require("../live/state").roomState(code, id, kind);
+      // The test can try one camera size only, to see whether two sizes are the problem.
+      if (req.body?.simulcast === false) st.simulcast = false;
+      res.json({ ok: true, code });
     }),
   );
 

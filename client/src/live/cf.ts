@@ -41,7 +41,11 @@ export class CfTransport implements Transport {
   private lastAt = 0
   private closed = false
 
-  constructor(socket: Socket, ice: RTCIceServer[], on: TransportEvents) {
+  /** Send each camera in two sizes (Admin → Live → Rules). */
+  private simulcast: boolean
+
+  constructor(socket: Socket, ice: RTCIceServer[], on: TransportEvents, simulcast = true) {
+    this.simulcast = simulcast
     this.socket = socket
     this.ice = ice
     this.on = on
@@ -120,7 +124,7 @@ export class CfTransport implements Transport {
         // Two sizes of each camera; screens one sharp copy.
         sendEncodings: !video
           ? undefined
-          : src === 'cam' || src === 'camera'
+          : this.simulcast && (src === 'cam' || src === 'camera')
             ? [
                 { rid: 'h', maxBitrate: 1_000_000, maxFramerate: 24 },
                 { rid: 'l', maxBitrate: 160_000, scaleResolutionDownBy: 4, maxFramerate: 15 },
@@ -201,7 +205,7 @@ export class CfTransport implements Transport {
       const list = pubs.filter((p) => w?.sessionId === sessionId && w.pubs.includes(p) && !this.remote.has(`${peerId}/${p}`))
       if (!list.length) return
       const r = await this.call('cf:pull', {
-        tracks: list.map((p) => ({ sessionId, trackName: p, rid: sourceOf(p) === 'cam' || sourceOf(p) === 'camera' ? 'h' : undefined })),
+        tracks: list.map((p) => ({ sessionId, trackName: p, rid: this.simulcast && (sourceOf(p) === 'cam' || sourceOf(p) === 'camera') ? 'h' : undefined })),
       })
       if (r.errorCode) {
         // A track that was not ready yet: try again, waiting a little longer each time.
@@ -220,7 +224,7 @@ export class CfTransport implements Transport {
         if (!t.mid || t.errorCode || !t.trackName) continue
         const tr = this.pc.getTransceivers().find((x) => x.mid === t.mid)
         if (!tr) continue
-        const cam = sourceOf(t.trackName) === 'cam' || sourceOf(t.trackName) === 'camera'
+        const cam = this.simulcast && (sourceOf(t.trackName) === 'cam' || sourceOf(t.trackName) === 'camera')
         const rem: Remote = { peerId, pubId: t.trackName, sessionId, mid: t.mid, track: tr.receiver.track, rid: cam ? 'h' : null }
         this.remote.set(`${peerId}/${t.trackName}`, rem)
         this.on.track(peerId, t.trackName, tr.receiver.track)
@@ -232,7 +236,8 @@ export class CfTransport implements Transport {
   private tune(key: string) {
     const r = this.remote.get(key)
     if (!r || !r.rid) return
-    const els = [...(this.sizes.get(key) ?? [])]
+    // Only tiles on the page count; a hidden or detached one never changes the size.
+    const els = [...(this.sizes.get(key) ?? [])].filter((e) => e.isConnected && e.clientWidth > 0)
     const widest = Math.max(0, ...els.map((e) => e.clientWidth))
     const rid: 'h' | 'l' = widest > 360 ? 'h' : 'l'
     if (rid === r.rid || !els.length) return

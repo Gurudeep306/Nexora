@@ -5,7 +5,8 @@
     screen+camera  the screen with your face in a round bubble, drawn on a
                    canvas (a worker keeps the frames coming when you switch
                    to another app, where page timers would slow down);
-    board          the whiteboard canvas, with the mic.
+    board          the whiteboard canvas, with the mic (and, if asked, your
+                   face in the same round bubble: used on a tablet).
   MediaRecorder writes WebM (Chrome, Edge, Firefox) or MP4 (Safari). WebM
   from MediaRecorder has no length in its header, so it is added at the end
   (fix-webm-duration), or seeking would not work.
@@ -67,7 +68,30 @@ function mix(tracks: MediaStreamTrack[]): { track: MediaStreamTrack | null; clos
   return { track: dest.stream.getAudioTracks()[0], close: () => void ac.close() }
 }
 
-export async function startCapture(source: Source, { mic, board }: { mic: boolean; board?: MediaStreamTrack | null }): Promise<Capture> {
+/** Your camera in a round bubble, bottom right, mirrored as people expect. */
+function drawBubble(ctx: CanvasRenderingContext2D, cv: HTMLVideoElement, W: number, H: number, d: number) {
+  if (!cv.videoWidth) return
+  const m = Math.round(d * 0.16)
+  const x = W - d - m
+  const y = H - d - m
+  const s = Math.min(cv.videoWidth, cv.videoHeight)
+  ctx.save()
+  ctx.beginPath()
+  ctx.arc(x + d / 2, y + d / 2, d / 2, 0, Math.PI * 2)
+  ctx.closePath()
+  ctx.clip()
+  ctx.translate(x + d, y)
+  ctx.scale(-1, 1)
+  ctx.drawImage(cv, (cv.videoWidth - s) / 2, (cv.videoHeight - s) / 2, s, s, 0, 0, d, d)
+  ctx.restore()
+  ctx.lineWidth = Math.max(3, d / 50)
+  ctx.strokeStyle = '#faf9f5'
+  ctx.beginPath()
+  ctx.arc(x + d / 2, y + d / 2, d / 2, 0, Math.PI * 2)
+  ctx.stroke()
+}
+
+export async function startCapture(source: Source, { mic, board, face = false }: { mic: boolean; board?: MediaStreamTrack | null; face?: boolean }): Promise<Capture> {
   const stops: (() => void)[] = []
   const micStream = mic
     ? await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).catch(() => {
@@ -93,8 +117,26 @@ export async function startCapture(source: Source, { mic, board }: { mic: boolea
 
   if (source === 'board') {
     if (!board) throw new Error('The whiteboard is not ready.')
-    const stream = new MediaStream([board, ...micTracks])
-    return { preview: new MediaStream([board]), stream, stop: () => stops.forEach((f) => f()) }
+    if (!face) {
+      const stream = new MediaStream([board, ...micTracks])
+      return { preview: new MediaStream([board]), stream, stop: () => stops.forEach((f) => f()) }
+    }
+    const cam = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 480 }, height: { ideal: 480 }, frameRate: { ideal: 24 } } }).catch((e) => fail(e, 'camera'))
+    stops.push(() => cam.getTracks().forEach((t) => t.stop()))
+    const bv = video(new MediaStream([board]))
+    const cv = video(cam)
+    const canvas = document.createElement('canvas')
+    canvas.width = 1600
+    canvas.height = 900
+    const ctx = canvas.getContext('2d')!
+    const draw = () => {
+      if (bv.videoWidth) ctx.drawImage(bv, 0, 0, canvas.width, canvas.height)
+      drawBubble(ctx, cv, canvas.width, canvas.height, 220)
+    }
+    stops.push(workerTicker(42, draw))
+    const out = canvas.captureStream(24)
+    const stream = new MediaStream([...out.getVideoTracks(), ...micTracks])
+    return { preview: out, stream, stop: () => (stops.forEach((f) => f()), out.getTracks().forEach((t) => t.stop())) }
   }
 
   const screen = await navigator.mediaDevices
@@ -128,27 +170,7 @@ export async function startCapture(source: Source, { mic, board }: { mic: boolea
       const h = sv.videoHeight * k
       ctx.drawImage(sv, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h)
     }
-    if (cv.videoWidth) {
-      const d = 300
-      const x = canvas.width - d - 48
-      const y = canvas.height - d - 48
-      const s = Math.min(cv.videoWidth, cv.videoHeight)
-      ctx.save()
-      ctx.beginPath()
-      ctx.arc(x + d / 2, y + d / 2, d / 2, 0, Math.PI * 2)
-      ctx.closePath()
-      ctx.clip()
-      // Mirrored, as people expect to see themselves.
-      ctx.translate(x + d, y)
-      ctx.scale(-1, 1)
-      ctx.drawImage(cv, (cv.videoWidth - s) / 2, (cv.videoHeight - s) / 2, s, s, 0, 0, d, d)
-      ctx.restore()
-      ctx.lineWidth = 6
-      ctx.strokeStyle = '#faf9f5'
-      ctx.beginPath()
-      ctx.arc(x + d / 2, y + d / 2, d / 2, 0, Math.PI * 2)
-      ctx.stroke()
-    }
+    drawBubble(ctx, cv, canvas.width, canvas.height, 300)
   }
   stops.push(workerTicker(33, draw))
   const out = canvas.captureStream(30)

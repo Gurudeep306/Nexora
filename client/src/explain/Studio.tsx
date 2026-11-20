@@ -1,6 +1,8 @@
 /*
   The recording studio, full screen:
-    1. Choose: camera, screen, screen with your face, or a whiteboard; mic on/off.
+    1. Choose: camera, screen, screen with your face, a whiteboard (your face
+       can sit in a corner), a video file, or your iPad by QR (TabletLink);
+       mic on/off.
     2. Record: a 3-2-1 count, then pause/resume, "Mark a chapter" (K), stop.
        Up to 20 minutes.
     3. Review: watch it, trim the start and end, name the chapters, give it a
@@ -9,26 +11,33 @@
 */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Bookmark, Camera, Circle, Monitor, MonitorPlay, Pause, PenLine, Play, Square, Trash2, X } from 'lucide-react'
+import { Bookmark, Camera, Circle, FileVideo, Monitor, MonitorPlay, Pause, PenLine, Play, Square, Tablet, Trash2, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Board, type BoardHandle } from '@/live/ui/Board'
 import '@/live/live.css'
 import { fmtTime, uploadVideo, type Chapter, type ExplainKind, type ExplainVideo, type Source } from './api'
 import { canRecordScreen, grabPoster, MAX_MS, pickMime, Recording, startCapture, type Capture } from './recorder'
+import { TabletLink } from './TabletLink'
+import { readVideoFile } from './file'
 
 type Step = 'choose' | 'count' | 'rec' | 'review' | 'upload'
 
-const SOURCES: { id: Source; title: string; text: string; icon: typeof Camera; screen?: boolean }[] = [
+type Choice = Source | 'tablet'
+
+const SOURCES: { id: Choice; title: string; text: string; icon: typeof Camera; screen?: boolean }[] = [
   { id: 'screen+camera', title: 'Screen and you', text: 'Your screen, with your face in a corner. Best for walking through a solution.', icon: MonitorPlay, screen: true },
   { id: 'screen', title: 'Screen only', text: 'A screen, a window or a tab, with your voice.', icon: Monitor, screen: true },
   { id: 'board', title: 'Whiteboard', text: 'Write it out with a stylus or the mouse while you talk.', icon: PenLine },
   { id: 'camera', title: 'Camera', text: 'Just you, or point it at your notebook.', icon: Camera },
+  { id: 'tablet', title: 'On my iPad', text: 'Scan a code and explain on your iPad or tablet: Pencil, voice and face.', icon: Tablet },
+  { id: 'upload', title: 'Upload a video', text: 'One you already made, such as a screen recording.', icon: FileVideo },
 ]
 
 export function Studio({ kind, target, about, onClose, onDone }: { kind: ExplainKind; target: string; about: string; onClose: () => void; onDone: (v: ExplainVideo) => void }) {
   const [step, setStep] = useState<Step>('choose')
-  const [source, setSource] = useState<Source>(() => (canRecordScreen() ? 'screen+camera' : 'board'))
+  const [source, setSource] = useState<Choice>(() => (canRecordScreen() ? 'screen+camera' : 'board'))
   const [mic, setMic] = useState(true)
+  const [face, setFace] = useState(false)
   const [count, setCount] = useState(3)
   const [elapsed, setElapsed] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -111,7 +120,8 @@ export function Studio({ kind, target, about, onClose, onDone }: { kind: Explain
     setError(null)
     try {
       const boardTrack = source === 'board' ? board.current?.track() ?? null : null
-      capture.current = await startCapture(source, { mic, board: boardTrack })
+      if (source === 'tablet' || source === 'upload') return
+      capture.current = await startCapture(source, { mic, board: boardTrack, face })
     } catch (e) {
       const msg = (e as Error).message
       if (msg) setError(msg)
@@ -124,10 +134,25 @@ export function Studio({ kind, target, about, onClose, onDone }: { kind: Explain
       setCount(n)
       await new Promise((r) => setTimeout(r, 800))
     }
-    rec.current = new Recording(capture.current.stream, source)
+    rec.current = new Recording(capture.current.stream, source as Source)
     rec.current.start()
     setChapters([])
     setStep('rec')
+  }
+
+  const pickFile = async (file: File | undefined) => {
+    if (!file) return
+    setError(null)
+    try {
+      const r = await readVideoFile(file)
+      setResult(r)
+      setTrim([0, r.durationMs])
+      setChapters([])
+      if (!title) setTitle(file.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').slice(0, 120))
+      setStep('review')
+    } catch (e) {
+      setError((e as Error).message)
+    }
   }
 
   const discard = () => {
@@ -154,7 +179,8 @@ export function Studio({ kind, target, about, onClose, onDone }: { kind: Explain
           target,
           title,
           note,
-          source,
+          source: source as Source,
+          about,
           durationMs: result.durationMs,
           trimStartMs: trim[0],
           trimEndMs: trim[1] >= result.durationMs - 200 ? null : trim[1],
@@ -220,6 +246,25 @@ export function Studio({ kind, target, about, onClose, onDone }: { kind: Explain
               })}
             </div>
             {source === 'board' && <Board ref={board} className="ex-board" />}
+            {source === 'tablet' ? (
+              <TabletLink kind={kind} target={target} about={about} onDone={onDone} />
+            ) : source === 'upload' ? (
+              <div className="ex-choose-foot">
+                <label className="ex-file">
+                  <input type="file" accept="video/mp4,video/webm,video/quicktime,video/*" className="sr-only" onChange={(e) => void pickFile(e.target.files?.[0])} />
+                  <FileVideo className="size-5" aria-hidden="true" />
+                  <span>
+                    <strong>Choose a video</strong>
+                    <span className="lv-hint">MP4, MOV or WebM, up to 20 minutes and 300 MB. You can trim it next.</span>
+                  </span>
+                </label>
+                {error && (
+                  <p className="lv-status is-bad" role="alert">
+                    {error}
+                  </p>
+                )}
+              </div>
+            ) : (
             <div className="ex-choose-foot">
               <label className="lv-check">
                 <input type="checkbox" checked={mic} onChange={(e) => setMic(e.target.checked)} />
@@ -233,15 +278,27 @@ export function Studio({ kind, target, about, onClose, onDone }: { kind: Explain
                   {error}
                 </p>
               )}
+              {source === 'board' && (
+                <label className="lv-check">
+                  <input type="checkbox" checked={face} onChange={(e) => setFace(e.target.checked)} />
+                  <span>
+                    <strong>Show my face in a corner</strong>
+                    <span className="lv-hint">Uses the camera; people follow a face more easily.</span>
+                  </span>
+                </label>
+              )}
               <button type="button" className="lv-join is-inline" onClick={() => void begin()}>
                 Start recording
               </button>
             </div>
+            )}
+            {source !== 'tablet' && source !== 'upload' && (
             <ul className="ex-tips" aria-label="Tips">
               <li>Say the question in one line first, then the idea, then the steps.</li>
               <li>Press K while recording to start a new chapter.</li>
               <li>You can trim the start and end before you upload.</li>
             </ul>
+            )}
           </div>
         ) : step === 'count' || step === 'rec' ? (
           <div className="ex-recording">

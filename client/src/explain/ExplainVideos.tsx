@@ -59,7 +59,7 @@ export function ExplainVideos({ kind, target, about, revealed = true }: { kind: 
           <p className="ex-sub">Explained by members, in their own words. The most helpful come first.</p>
         </div>
         <button type="button" className="ex-record" onClick={() => setRecording(true)}>
-          <Video className="size-4" aria-hidden="true" /> Record one
+          <Video className="size-4" aria-hidden="true" /> Add an explanation
         </button>
       </header>
 
@@ -70,7 +70,7 @@ export function ExplainVideos({ kind, target, about, revealed = true }: { kind: 
           </span>
           <span>
             <strong>Be the first to explain this.</strong>
-            <span>Record your screen, a whiteboard or yourself. Two minutes of clear thinking helps everyone after you.</span>
+            <span>Record your screen, a whiteboard or yourself, upload a video, or explain on your iPad by QR. Two minutes of clear thinking helps everyone after you.</span>
           </span>
         </button>
       )}

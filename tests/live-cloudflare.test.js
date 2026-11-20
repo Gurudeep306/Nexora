@@ -230,6 +230,32 @@ test('live rooms through Cloudflare, and Admin → Live', async (t) => {
     await call('PUT', '/api/admin/live', owner, { monthlyGb: 900 });
   });
 
+  await t.test('Admin shows limits and minutes, ends rooms, and opens forced test rooms', async () => {
+    const v = await call('GET', '/api/admin/live', owner);
+    assert.equal(v.body.limits.cloudflare.freeGb, 1000);
+    assert.equal(v.body.limits.livekit.freeMinutes, 5000);
+    assert.equal(v.body.limits.direct.devices, 5);
+    assert.equal(v.body.livekitMinutes, 4500);
+    assert.equal(v.body.simulcast, true);
+    assert.ok(v.body.live.some((r) => r.code === code && r.transport === 'cf' && r.devices === 2));
+    // A test room, forced to one way of connecting, with one camera size.
+    const st = await call('POST', '/api/admin/live/selftest', owner, { which: 'cloudflare', simulcast: false });
+    assert.equal(st.status, 200);
+    const s1 = await connect(owner);
+    const j = await emit(s1, 'join', { code: st.body.code });
+    assert.equal(j.transport.kind, 'cf');
+    assert.equal(j.transport.simulcast, false);
+    assert.equal((await call('POST', '/api/admin/live/selftest', owner, { which: 'nope' })).status, 400);
+    const ended = next(s1, 'ended');
+    const e = await call('POST', `/api/admin/live/rooms/${st.body.code}/end`, owner);
+    assert.equal(e.status, 200);
+    await ended;
+    assert.equal((await call('PUT', '/api/admin/live', owner, { simulcast: false, livekitMinutes: 3000 })).body.livekitMinutes, 3000);
+    const cfg = await emit(await connect(ana), 'join', { code: (await call('POST', '/api/live/rooms', ana, { title: 'One size' })).body.room.code });
+    assert.equal(cfg.transport.simulcast, false);
+    await call('PUT', '/api/admin/live', owner, { simulcast: true });
+  });
+
   await t.test('the owner chooses the way rooms connect and switches parts off', async () => {
     assert.equal((await call('PUT', '/api/admin/live', owner, { provider: 'direct' })).body.active, 'mesh');
     assert.equal((await call('PUT', '/api/admin/live', owner, { provider: 'nonsense' })).status, 400);

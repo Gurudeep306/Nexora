@@ -155,6 +155,73 @@ test('video explanations', async (t) => {
     assert.ok(mine.body.used >= 20_000);
   });
 
+  await t.test('a part of a lesson (a subtopic) and a DSA lesson take videos; counts are per part', async () => {
+    const L = 'dl/place-value';
+    const upload = async (cookie, extra) => {
+      const r = await start(cookie, extra);
+      assert.equal(r.status, 200, JSON.stringify(r.body));
+      await call('PUT', `/api/explain/videos/${r.body.id}/data?at=0`, cookie, webm(20_000));
+      const f = await call('POST', `/api/explain/videos/${r.body.id}/finish`, cookie, {});
+      assert.equal(f.status, 200);
+      return f.body.video;
+    };
+    assert.equal((await start(ana, { kind: 'lesson', target: `${L}#no-such-heading` })).status, 404);
+    assert.equal((await start(ana, { kind: 'lesson', target: `${L}#bad id!` })).status, 404);
+    assert.equal((await start(ana, { kind: 'gate', target: `${Q}#where-this-fits` })).status, 404);
+    await upload(ana, { kind: 'lesson', target: `${L}#where-this-fits` });
+    await upload(ben, { kind: 'lesson', target: `${L}#where-this-fits`, visibility: 'private' });
+    await upload(ben, { kind: 'lesson', target: L });
+    let c = await call('GET', `/api/explain/counts?kind=lesson&target=${encodeURIComponent(L)}`, cal);
+    assert.deepEqual(c.body.counts, { '': 1, 'where-this-fits': 1 });
+    c = await call('GET', `/api/explain/counts?kind=lesson&target=${encodeURIComponent(L)}`, ben);
+    assert.deepEqual(c.body.counts, { '': 1, 'where-this-fits': 2 });
+    assert.equal((await call('GET', `/api/explain/counts?kind=lesson&target=${encodeURIComponent(`${L}#x`)}`, ben)).status, 404);
+    const list = await call('GET', `/api/explain/videos?kind=lesson&target=${encodeURIComponent(`${L}#where-this-fits`)}`, cal);
+    assert.equal(list.body.videos.length, 1);
+
+    assert.equal((await start(ana, { kind: 'learn', target: 'Arrays/Intro' })).status, 404);
+    const d = await upload(ana, { kind: 'learn', target: 'arrays/prefix-sums#s-why-it-works', about: 'Arrays · Prefix sums · Why it works' });
+    const one = await call('GET', `/api/explain/videos/${d.id}`, cal);
+    assert.deepEqual(one.body.video.about, { title: 'Arrays · Prefix sums · Why it works', link: '/learn/dsa/arrays/prefix-sums#s-why-it-works' });
+  });
+
+  await t.test('a tablet link records for its owner without signing in, and only for its lesson', async () => {
+    const L = 'dl/place-value#where-this-fits';
+    assert.equal((await call('POST', '/api/explain/links', null, { kind: 'lesson', target: L })).status, 401);
+    assert.equal((await call('POST', '/api/explain/links', dee, { kind: 'lesson', target: 'dl/nope' })).status, 404);
+    const link = await call('POST', '/api/explain/links', dee, { kind: 'lesson', target: L });
+    assert.equal(link.status, 200);
+    assert.match(link.body.path, /^\/explain\/pad\/[A-Za-z0-9_-]{20,64}$/);
+    const tok = link.body.token;
+    assert.equal((await call('GET', `/api/explain/links/${tok}`, ana)).status, 404); // someone else's link
+    let st = await call('GET', `/api/explain/links/${tok}`, dee);
+    assert.equal(st.body.opened, false);
+
+    const info = await call('GET', `/api/explain/device/${tok}`, null);
+    assert.equal(info.status, 200);
+    assert.match(info.body.about, /Where this fits$/);
+    assert.equal((await call('GET', '/api/explain/device/not-a-real-token-at-all-xx', null)).status, 404);
+
+    // The tablet cannot change what it explains.
+    const r = await call('POST', `/api/explain/device/${tok}/videos`, null, { kind: 'gate', target: Q, title: 'On my iPad', mime: 'video/quicktime', size: 12_000, durationMs: 9000, source: 'board' });
+    assert.equal(r.status, 200);
+    const mov = Buffer.alloc(12_000, 3);
+    mov.write('ftypqt  ', 4, 'ascii');
+    assert.equal((await call('PUT', `/api/explain/device/${tok}/videos/${id}/data?at=0`, null, mov)).status, 404); // not this link's video
+    assert.equal((await call('PUT', `/api/explain/device/${tok}/videos/${r.body.id}/data?at=0`, null, mov)).status, 200);
+    st = await call('GET', `/api/explain/links/${tok}`, dee);
+    assert.equal(st.body.opened, true);
+    assert.equal(st.body.video, null);
+    const f = await call('POST', `/api/explain/device/${tok}/videos/${r.body.id}/finish`, null, {});
+    assert.equal(f.status, 200);
+    st = await call('GET', `/api/explain/links/${tok}`, dee);
+    assert.equal(st.body.video.id, r.body.id);
+    assert.equal(st.body.video.kind, 'lesson');
+    assert.equal(st.body.video.target, L);
+    assert.ok(st.body.video.mine);
+    assert.match(st.body.video.src, /\.mp4$/);
+  });
+
   await t.test('the author deletes it and the file goes', async () => {
     assert.equal((await call('DELETE', `/api/explain/videos/${id}`, ben)).status, 403);
     assert.equal((await call('DELETE', `/api/explain/videos/${id}`, ana)).status, 200);

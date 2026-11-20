@@ -47,7 +47,8 @@
     "socket.io": "^4.8.4",
     "tree-sitter-wasms": "0.1.13",
     "unpdf": "1.9.1",
-    "web-tree-sitter": "0.25.10"
+    "web-tree-sitter": "0.25.10",
+    "yjs": "13.6.27"
   },
   "engines": {
     "node": ">=22.13.0 <25"

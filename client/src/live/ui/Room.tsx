@@ -3,9 +3,11 @@
   tablet, settings) and the control bar. Keyboard: M mic, V camera, H hand,
   C chat, P people (when not typing).
 */
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import {
   Circle,
+  Code2,
+  Wrench,
   Hand,
   LayoutGrid,
   Link2,
@@ -36,12 +38,16 @@ import type { LiveSession, LiveState } from '../session'
 import { canShareScreen } from '../devices'
 import { Stage, type Layout } from './Stage'
 import { ChatPanel, PeoplePanel, SettingsPanel, TabletPanel } from './Panels'
+import { PollCard, QuestionPanel, TimerPill, ToolsPanel } from './Tools'
 import { Board, type BoardHandle } from './Board'
 import { LogoMark } from '@/components/brand/Logo'
 import { listDevices } from '../devices'
 import { ChevronUp } from 'lucide-react'
 
-type Panel = 'chat' | 'people' | 'tablet' | 'settings' | null
+// The shared code pad brings Monaco: loaded only when someone opens it.
+const CodePad = lazy(() => import('./CodePad'))
+
+type Panel = 'chat' | 'people' | 'question' | 'tools' | 'tablet' | 'settings' | null
 
 /** Every remote mic, playing (hidden). */
 function AudioSinks({ session, s }: { session: LiveSession; s: LiveState }) {
@@ -169,6 +175,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
   const [pinned, setPinned] = useState<string | null>(null)
   const [leaving, setLeaving] = useState(false)
   const [board, setBoard] = useState<'open' | 'hidden' | null>(null)
+  const [codeOn, setCodeOn] = useState(false)
   const boardRef = useRef<BoardHandle>(null)
   const toast = useToast()
   const recorder = useRecorder(session, s)
@@ -184,7 +191,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement
-      if (e.metaKey || e.ctrlKey || e.altKey || t.closest('input, textarea, select, [contenteditable="true"]')) return
+      if (e.metaKey || e.ctrlKey || e.altKey || t.closest('input, textarea, select, [contenteditable], .monaco-editor, .lv-board-canvas')) return
       const k = e.key.toLowerCase()
       if (k === 'm') session.setMic(!s.mic)
       else if (k === 'v' && !voice) void session.setCam(!s.cam)
@@ -225,7 +232,8 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
             <LogoMark size={26} />
           </Link>
           <div className="min-w-0">
-            <h1 className="lv-title">
+            {/* One line: the site's headings balance-wrap, which a room's top bar has no room for. */}
+            <h1 className="lv-title" style={{ textWrap: 'nowrap' }}>
               {s.room?.title}
               {s.room?.locked && <Lock className="ml-1.5 inline size-3.5 align-[-1px] text-text-muted" aria-label="Locked" />}
             </h1>
@@ -244,6 +252,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
           </div>
         </div>
         <div className="lv-top-meta">
+          <TimerPill session={session} s={s} />
           {Object.keys(s.recording).length > 0 && (
             <span className="lv-rec" role="status">
               <Circle className="size-2.5 fill-current" aria-hidden="true" /> Recording
@@ -254,7 +263,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
               {s.room.about.title}
             </Link>
           )}
-          <button type="button" className="lv-chip-btn lv-code-chip" onClick={copyLink} title="Copy the room link">
+          <button type="button" className="lv-chip-btn lv-code-chip" onClick={copyLink} title="Copy the room link" aria-label={`Copy the room link (${session.code})`}>
             <Link2 className="size-3.5" aria-hidden="true" /> <span className="max-sm:hidden">{session.code}</span>
             <span className="sm:hidden">Link</span>
           </button>
@@ -278,8 +287,10 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
       )}
 
       <main className="lv-body">
-        <div className="lv-stage-wrap">
-          <Stage session={session} s={s} layout={layout} pinned={pinned} onPin={setPinned} />
+        <div className={cn('lv-stage-wrap', s.poll && 'has-poll')}>
+          <div className="lv-stage-box">
+            <Stage session={session} s={s} layout={layout} pinned={pinned} onPin={setPinned} />
+          </div>
           {board && (
             <div className={cn('lv-board-sheet', board === 'hidden' && 'is-hidden')} aria-hidden={board === 'hidden'}>
               <div className="lv-board-head">
@@ -296,6 +307,20 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
               <Board ref={boardRef} />
             </div>
           )}
+          {codeOn && (
+            <div className="lv-board-sheet lv-code-sheet">
+              <div className="lv-board-head">
+                <p className="m-0 text-[13px] text-text-secondary">Shared code pad: everyone in the room can type.</p>
+                <button type="button" className="lv-chip-btn" onClick={() => setCodeOn(false)}>
+                  Close for me
+                </button>
+              </div>
+              <Suspense fallback={<p className="lv-hint">Opening the editor…</p>}>
+                <CodePad session={session} lang={s.codeLang} />
+              </Suspense>
+            </div>
+          )}
+          <PollCard session={session} s={s} />
           <div className="lv-reactions" aria-hidden="true">
             {s.reactions.map((r) => (
               <span key={r.key} className="lv-reaction" style={{ ['--x' as string]: `${(r.key * 37) % 60}%` }}>
@@ -321,7 +346,9 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
                   [
                     ['chat', 'Chat', s.unread],
                     ['people', 'People', host ? s.waiting.length : 0],
-                    ['tablet', 'Tablet', 0],
+                    ...(s.room?.about ? ([['question', 'Question', 0]] as const) : []),
+                    ['tools', 'Tools', s.codeNew ? 1 : 0],
+                    ...(panel === 'tablet' ? ([['tablet', 'Tablet', 0]] as const) : []),
                     ['settings', 'Settings', 0],
                   ] as const
                 ).map(([id, label, n]) => (
@@ -338,13 +365,23 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
             {panel === 'chat' && <ChatPanel session={session} s={s} />}
             {panel === 'people' && <PeoplePanel session={session} s={s} />}
             {panel === 'tablet' && <TabletPanel session={session} s={s} />}
+            {panel === 'question' && s.room?.about && <QuestionPanel id={s.room.about.target} />}
+            {panel === 'tools' && (
+              <ToolsPanel
+                session={session}
+                s={s}
+                onCode={() => setCodeOn(true)}
+                onBoard={() => (boardOn ? setBoard('open') : void startBoard())}
+                onTablet={() => setPanel('tablet')}
+              />
+            )}
             {panel === 'settings' && <SettingsPanel session={session} s={s} />}
           </aside>
         )}
       </main>
 
       <section className="lv-controls" aria-label="Room controls">
-        <div className="lv-ctrl-left max-md:hidden">
+        <div className="lv-ctrl-left max-lg:hidden">
           <span className="lv-people-n">
             <Users className="size-4" aria-hidden="true" /> {people}
           </span>
@@ -385,6 +422,9 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
               </MenuItem>
               <MenuItem icon={<Tablet />} onSelect={() => setPanel('tablet')}>
                 From a tablet (QR)
+              </MenuItem>
+              <MenuItem icon={<Code2 />} onSelect={() => setCodeOn(true)}>
+                Shared code pad
               </MenuItem>
               {s.screens.filter((x) => x.kind === 'screen').length > 0 && <MenuSeparator />}
               {s.screens
@@ -449,6 +489,12 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
                 <MenuItem icon={<Tablet />} onSelect={() => setPanel('tablet')}>
                   Teach from a tablet
                 </MenuItem>
+                <MenuItem icon={<Code2 />} onSelect={() => setCodeOn(true)}>
+                  Shared code pad
+                </MenuItem>
+                <MenuItem icon={<Wrench />} onSelect={() => setPanel('tools')}>
+                  Polls and timer
+                </MenuItem>
                 <MenuLabel>React</MenuLabel>
                 <div className="flex flex-wrap gap-1 px-2 pb-1">
                   {REACTIONS.map((e) => (
@@ -500,7 +546,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
             <span className="lv-ctrl-label">Leave</span>
           </button>
         </div>
-        <div className="lv-ctrl-right max-md:hidden">
+        <div className="lv-ctrl-right max-lg:hidden">
           {s.transport === 'mesh' && <span className="lv-hint">Small room</span>}
         </div>
       </section>

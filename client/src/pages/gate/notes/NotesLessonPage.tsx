@@ -19,6 +19,7 @@ import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 // Members' video explanations of this lesson (client/src/explain).
 const ExplainVideos = lazy(() => import('@/explain/ExplainVideos').then((m) => ({ default: m.ExplainVideos })))
+const SectionExplain = lazy(() => import('@/explain/SectionExplain').then((m) => ({ default: m.SectionExplain })))
 import { Icon } from '@/components/icon/Icon'
 import { EmptyState, LoadingBlock } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -139,6 +140,8 @@ export default function NotesLessonPage() {
 
   if (r.error && !data)
     return (
+      // The reader uses the whole window (no page padding), so the shell gets its own.
+      <div className="px-4 md:px-6 lg:px-8">
       <GateShell title="Notes">
         <EmptyState
           icon={<Icon name="book" className="size-6" />}
@@ -151,12 +154,15 @@ export default function NotesLessonPage() {
           }
         />
       </GateShell>
+      </div>
     )
   if (!data)
     return (
+      <div className="px-4 md:px-6 lg:px-8">
       <GateShell title="Loading lesson…">
         <LoadingBlock rows={8} />
       </GateShell>
+      </div>
     )
   return <Reader data={data} chapters={tree.data?.chapters ?? null} />
 }
@@ -364,6 +370,17 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
                 </NotesContextProvider>
               </div>
             </article>
+            {user && (
+              <Suspense fallback={null}>
+                <SectionExplain
+                  root={article}
+                  kind="lesson"
+                  base={`${subject.id}/${lesson.id}`}
+                  about={`${subject.title} · ${lesson.title}`}
+                  sections={lesson.outline.filter((h) => h.level === 2).map((h) => ({ dom: domId(h.id), key: h.id, text: h.text }))}
+                />
+              </Suspense>
+            )}
 
             {pyqCount > 0 && (
               <section className="nr-pyqs" aria-label="Past questions from this lesson">

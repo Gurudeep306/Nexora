@@ -25,7 +25,7 @@ export function MyVideos() {
         <Skeleton className="h-48 w-full rounded-lg" />
       ) : !list.length ? (
         <EmptyHint icon="play" title="No videos yet">
-          Under any practice question or notes lesson, choose “Record one” to explain it with your screen, a whiteboard or your camera.
+          Under any practice question, lesson or part of a lesson, choose “Add an explanation”: your screen, a whiteboard, your camera, a video file or your iPad.
         </EmptyHint>
       ) : (
         <ul className="ex-grid">

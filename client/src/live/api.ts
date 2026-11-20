@@ -70,7 +70,7 @@ export interface Knock {
   at: number
 }
 
-export type TransportInfo = { kind: 'sfu'; url: string; token: string } | { kind: 'mesh' | 'cf'; iceServers: RTCIceServer[] }
+export type TransportInfo = { kind: 'sfu'; url: string; token: string } | { kind: 'mesh' | 'cf'; iceServers: RTCIceServer[]; simulcast?: boolean }
 
 export interface JoinOk {
   ok: true
@@ -80,7 +80,16 @@ export interface JoinOk {
   transport: TransportInfo
   messages: ChatMsg[]
   waiting: Knock[]
+  poll: Poll | null
+  myVote: number | null
+  timer: RoomTimer | null
+  /** The shared code pad: a Yjs update (base64) and its language. */
+  code: { state: string; lang: CodeLang }
 }
+
+export type Poll = { id: string; question: string; options: string[]; counts: number[]; voters: number; open: boolean; by: string }
+export type RoomTimer = { endsAt: number; minutes: number; label: string; by: string }
+export type CodeLang = 'cpp' | 'java' | 'python' | 'javascript' | 'c' | 'plaintext'
 export type JoinReply = JoinOk | { ok: false; waiting?: boolean; error?: string; room?: LiveRoom }
 
 const enc = encodeURIComponent

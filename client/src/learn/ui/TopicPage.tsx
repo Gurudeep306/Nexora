@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { motion, useScroll, useSpring } from 'motion/react'
 import { CheckCircle2, ChevronDown, ListChecks, Network, PanelLeftClose, PanelLeftOpen, PanelRightOpen } from 'lucide-react'
@@ -15,6 +15,10 @@ import { Stuck, WhatYouNeed, WhereNext } from './AiWeb'
 import type { Block } from '../types'
 import { useTopic } from './useTopic'
 import { useDomOutline, useScrollSpy } from '@/components/reader/outline'
+import { useAuth } from '@/context/AuthContext'
+
+const ExplainVideos = lazy(() => import('@/explain/ExplainVideos').then((m) => ({ default: m.ExplainVideos })))
+const SectionExplain = lazy(() => import('@/explain/SectionExplain').then((m) => ({ default: m.SectionExplain })))
 
 /**
  * A topic, read page by page: a sidebar of pages (with what you have read),
@@ -23,6 +27,7 @@ import { useDomOutline, useScrollSpy } from '@/components/reader/outline'
  */
 export default function TopicPage() {
   const { topic: topicId, page: pageId } = useParams()
+  const { user } = useAuth()
   const { entry, topic, error } = useTopic(topicId)
   const { items } = useProgress()
   const end = useRef<HTMLDivElement>(null)
@@ -235,6 +240,19 @@ export default function TopicPage() {
             {ai && <Stuck topicId={topic.id} />}
           </div>
         </motion.article>
+
+        {user && (
+          <Suspense fallback={null}>
+            <SectionExplain
+              root={article}
+              kind="learn"
+              base={`${topic.id}/${page.id}`}
+              about={`${topic.title} · ${page.title}`}
+              sections={outline.filter((h) => h.level === 2).map((h) => ({ dom: h.id, key: h.id, text: h.text }))}
+            />
+            <ExplainVideos kind="learn" target={`${topic.id}/${page.id}`} about={`${topic.title} · ${page.title}`} />
+          </Suspense>
+        )}
 
         <div ref={end} className="h-px" />
 

@@ -51,12 +51,15 @@ const isApi = (p) => /^\/api(\/|$)/i.test(canon(p));
 const isHandDevice = (p) => /^\/api\/hand\/device\/[A-Za-z0-9_-]{20,64}(\/preview)?$/.test(canon(p));
 // A tablet added to a Live room by QR: its token is the key (src/routes/live-rooms.js).
 const isLiveDevice = (p) => /^\/api\/live\/device\/[A-Za-z0-9_-]{20,64}$/.test(canon(p));
-const isPublicApi = (p) => isHandDevice(p) || isLiveDevice(p) || PUBLIC_API.has(canon(p).toLowerCase()) || (/^\/api\/hive-bridge\/(hello|poll|result|script|approve|setup\.sh)$/i.test(canon(p)) || /^\/api\/hive-mcp$/i.test(canon(p)));
+// A tablet recording an explanation by QR: its token is the key (src/routes/explain.js).
+const isExplainDevice = (p) => /^\/api\/explain\/device\/[A-Za-z0-9_-]{20,64}(\/videos(\/[A-Za-z0-9_-]{16,32}\/(data|finish))?)?$/.test(canon(p));
+const isPublicApi = (p) => isHandDevice(p) || isLiveDevice(p) || isExplainDevice(p) || PUBLIC_API.has(canon(p).toLowerCase()) || (/^\/api\/hive-bridge\/(hello|poll|result|script|approve|setup\.sh)$/i.test(canon(p)) || /^\/api\/hive-mcp$/i.test(canon(p)));
 function isPublicPath(p) {
   if (isApi(p)) return isPublicApi(p);
   if (p === "/auth" || p.startsWith("/auth/")) return true; // sign-in page + OAuth
   if (/^\/(pad|snap)\/[A-Za-z0-9_-]{20,64}\/?$/.test(p)) return true; // handwriting device pages
   if (/^\/live\/d\/[A-Za-z0-9_-]{20,64}\/?$/.test(p)) return true; // a tablet joining a Live room
+  if (/^\/explain\/pad\/[A-Za-z0-9_-]{20,64}\/?$/.test(p)) return true; // a tablet recording an explanation
   if (p.startsWith("/uploads/")) return false;
   // Static assets (scripts, styles, fonts, images, manifest) — not pages.
   return /\.(js|mjs|css|map|woff2?|ttf|otf|eot|svg|png|jpe?g|gif|webp|avif|ico|webmanifest|json|txt|wasm)$/i.test(p);

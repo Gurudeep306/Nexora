@@ -10,6 +10,9 @@
 //   maxPeople   devices per room through a video server (2–200)
 //   monthlyGb   stop using Cloudflare this month after this many GB (estimated
 //               from what devices report); new rooms go to LiveKit, else direct
+//   livekitMinutes  stop using LiveKit this month after this many device-minutes
+//               (LiveKit Cloud's free plan counts minutes)
+//   simulcast   Cloudflare: send each camera in two sizes (saves data)
 //   recording, calls, tablets  switches for those parts of Live
 //
 // LIVEKIT_* environment variables still work when nothing is set here.
@@ -28,7 +31,7 @@ onWrite(/site_settings/i, () => {
   cache = null;
 });
 
-const DEFAULTS = { provider: "auto", cloudflare: null, livekit: null, maxPeople: 50, monthlyGb: 900, recording: true, calls: true, tablets: true };
+const DEFAULTS = { provider: "auto", cloudflare: null, livekit: null, maxPeople: 50, monthlyGb: 900, livekitMinutes: 4500, simulcast: true, recording: true, calls: true, tablets: true };
 
 function normalize(raw) {
   const c = raw && typeof raw === "object" ? raw : {};
@@ -39,6 +42,8 @@ function normalize(raw) {
     livekit: c.livekit && typeof c.livekit === "object" ? c.livekit : null,
     maxPeople: num(c.maxPeople, 2, 200, DEFAULTS.maxPeople),
     monthlyGb: num(c.monthlyGb, 0, 100000, DEFAULTS.monthlyGb),
+    livekitMinutes: num(c.livekitMinutes, 0, 10_000_000, DEFAULTS.livekitMinutes),
+    simulcast: c.simulcast !== false,
     recording: c.recording !== false,
     calls: c.calls !== false,
     tablets: c.tablets !== false,
@@ -130,6 +135,49 @@ async function usage() {
   usageCache = { month: m, bytes: Number(row[0]?.bytes || 0) + pending, at: Date.now() };
   return usageCache.bytes;
 }
+/* ── minutes: each device's time in a room, per way of connecting, per month ── */
+let pendingMin = { cf: 0, sfu: 0, mesh: 0 };
+let minCache = { month: "", at: 0, minutes: { cf: 0, sfu: 0, mesh: 0 } };
+let minTable = null;
+function ensureMinutes() {
+  if (!minTable) minTable = run("CREATE TABLE IF NOT EXISTS live_minutes (month TEXT NOT NULL, kind TEXT NOT NULL, minutes REAL NOT NULL DEFAULT 0, PRIMARY KEY (month, kind))").catch(() => (minTable = null));
+  return minTable;
+}
+function addMinutes(kind, minutes) {
+  if (!(kind in pendingMin) || !(minutes > 0)) return;
+  pendingMin[kind] += minutes;
+  minCache.minutes[kind] = (minCache.minutes[kind] || 0) + minutes;
+}
+async function flushMinutes() {
+  const p = pendingMin;
+  if (!p.cf && !p.sfu && !p.mesh) return;
+  pendingMin = { cf: 0, sfu: 0, mesh: 0 };
+  await ensureMinutes();
+  for (const [kind, m] of Object.entries(p)) {
+    if (!m) continue;
+    await run(
+      `INSERT INTO live_minutes(month, kind, minutes) VALUES(?,?,?) ON CONFLICT(month, kind) DO UPDATE SET minutes = minutes + excluded.minutes`,
+      [month(), kind, m],
+    ).catch(() => (pendingMin[kind] += m));
+  }
+}
+setInterval(() => void flushMinutes(), 60_000).unref?.();
+async function minutes() {
+  const m = month();
+  if (minCache.month === m && Date.now() - minCache.at < 60_000) return minCache.minutes;
+  await ensureMinutes();
+  const rows = await all("SELECT kind, minutes FROM live_minutes WHERE month = ?", [m]).catch(() => []);
+  const out = { cf: 0, sfu: 0, mesh: 0 };
+  for (const r of rows) if (r.kind in out) out[r.kind] = Number(r.minutes);
+  for (const k of Object.keys(out)) out[k] += pendingMin[k];
+  minCache = { month: m, at: Date.now(), minutes: out };
+  return out;
+}
+async function minutesHistory() {
+  await ensureMinutes();
+  return all("SELECT month, kind, minutes FROM live_minutes ORDER BY month DESC LIMIT 36").catch(() => []);
+}
+
 async function history() {
   await ensureUsage();
   return (await all("SELECT month, bytes FROM live_usage ORDER BY month DESC LIMIT 12").catch(() => [])).map((r) => ({ month: r.month, bytes: Number(r.bytes) }));
@@ -143,14 +191,15 @@ async function chooseTransport() {
   const c = await loadConfig();
   // The monthly limit is Cloudflare's (its free 1,000 GB); LiveKit has its own.
   const over = c.monthlyGb > 0 && (await usage()) >= c.monthlyGb * 1e9;
+  const lkOver = c.livekitMinutes > 0 && (await minutes()).sfu >= c.livekitMinutes;
   const cf = cloudflare(c) && !over && c.cloudflare?.test?.ok !== false;
-  const lk = livekit(c) && c.livekit?.test?.ok !== false;
-  if (c.provider === "direct") return { kind: "mesh", over };
-  if (c.provider === "cloudflare") return cf ? { kind: "cf" } : { kind: "mesh", over };
-  if (c.provider === "livekit") return lk ? { kind: "sfu" } : { kind: "mesh", over };
+  const lk = livekit(c) && !lkOver && c.livekit?.test?.ok !== false;
+  if (c.provider === "direct") return { kind: "mesh", over, lkOver };
+  if (c.provider === "cloudflare") return cf ? { kind: "cf", lkOver } : { kind: "mesh", over, lkOver };
+  if (c.provider === "livekit") return lk ? { kind: "sfu", over } : { kind: "mesh", over, lkOver };
   // Automatic: both together. Cloudflare first (most free traffic); when its
   // monthly limit is reached or its last test failed, LiveKit; then direct.
-  return cf ? { kind: "cf" } : lk ? { kind: "sfu", over } : { kind: "mesh", over };
+  return cf ? { kind: "cf", lkOver } : lk ? { kind: "sfu", over } : { kind: "mesh", over, lkOver };
 }
 
 /* ── Cloudflare Realtime calls (server side; the browser never sees the secret) ── */
@@ -217,6 +266,9 @@ module.exports = {
   testLivekit,
   addUsage,
   usage,
+  addMinutes,
+  minutes,
+  minutesHistory,
   history,
   newSecret,
   rid,
