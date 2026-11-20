@@ -1696,7 +1696,7 @@
           "body": "Printed as $(\\forall x\\, \\text{fsa}(x)) \\Rightarrow (\\exists y\\, \\text{pda}(y) \\wedge \\text{equivalent}(x, y))$; read with ∀x covering the whole implication (as the examiners intended) it is exactly the formula above. Strictly, the bracket closes early and leaves x free in the consequent."
         },
         {
-          "title": "C and D",
+          "title": "Options C and D",
           "body": "$\\forall x\\, \\exists y\\, (\\text{fsa}(x) \\wedge \\dots)$ requires every x in the domain to be an FSA; D also swaps the roles of x and y. B negates the whole statement."
         }
       ],

@@ -551,15 +551,15 @@
       "given": "F: ∀x(∃y R(x, y)), non-empty domains.",
       "steps": [
         {
-          "title": "I",
+          "title": "Statement I",
           "body": "Take any element d and its witness y: R(d, y). So ∃y∃x R(x, y). Implied."
         },
         {
-          "title": "IV",
+          "title": "Statement IV",
           "body": "¬∃x∀y¬R ≡ ∀x∃y R = F. Implied."
         },
         {
-          "title": "II and III",
+          "title": "Statements II and III",
           "body": "II: {1, 2} with R = {(1, 2), (2, 1)}: F true, no full column. III: R = {(1, 1), (2, 1)}: F true, column 2 empty."
         }
       ],

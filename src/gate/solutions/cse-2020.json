@@ -3177,7 +3177,7 @@
           "body": "A: ∀ past ∨. B: ∃ past ∧. D: ∃x(p → W) ≡ ∃x(¬p ∨ W) ≡ ∃x¬p ∨ W ≡ ¬∀x p ∨ W ≡ ∀x p → W."
         },
         {
-          "title": "C",
+          "title": "Option C",
           "body": "∀x(p → W) ≡ ∀x¬p ∨ W ≡ ¬∃x p ∨ W ≡ ∃x p → W, not ∀x p → W."
         },
         {

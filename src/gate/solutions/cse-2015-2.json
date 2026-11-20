@@ -4178,15 +4178,15 @@
       "given": "Which is a tautology (valid)?",
       "steps": [
         {
-          "title": "C",
+          "title": "Option C",
           "body": "P(x, y) → R(x, y) ≡ ¬P(x, y) ∨ R(x, y) for every pair, so the two sides of C agree in every world: valid."
         },
         {
-          "title": "A and B",
+          "title": "Options A and B",
           "body": "A claims ∀x∃y ⇔ ∃y∀x: the grid world refutes it. B: with R empty the hypothesis is vacuously true while ∀x∃y S fails when S is empty."
         },
         {
-          "title": "D",
+          "title": "Option D",
           "body": "As printed, ∀x∀y P(x, y) → ∀x∀y P(y, x) is also valid (both sides say P holds for every pair). The published key is C."
         }
       ],

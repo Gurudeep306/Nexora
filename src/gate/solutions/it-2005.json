@@ -1981,11 +1981,11 @@
           "body": "If each element keeps P ⇒ Q and all are P, all are Q."
         },
         {
-          "title": "A",
+          "title": "Option A",
           "body": "∀ over ∨: refuted by the turn-taking world $D = \\{1, 2\\}$, $P = \\{1\\}$, $Q = \\{2\\}$."
         },
         {
-          "title": "C and D",
+          "title": "Options C and D",
           "body": "C is the converse of B: P = {1}, Q = ∅. D: P = {1}, Q = {2} makes both ∀'s false (so ⇔ is true) while P ⇔ Q fails at 1."
         }
       ],

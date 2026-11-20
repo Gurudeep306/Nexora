@@ -131,7 +131,7 @@ SOLUTIONS["cse-2008-cs-30"] = {
     "steps": [
         {"title": "The intended formula", "body": "$\\forall x\\, (\\text{fsa}(x) \\Rightarrow \\exists y\\, (\\text{pda}(y) \\wedge \\text{equivalent}(x, y)))$."},
         {"title": "Option A", "body": "Printed as $(\\forall x\\, \\text{fsa}(x)) \\Rightarrow (\\exists y\\, \\text{pda}(y) \\wedge \\text{equivalent}(x, y))$; read with ∀x covering the whole implication (as the examiners intended) it is exactly the formula above. Strictly, the bracket closes early and leaves x free in the consequent."},
-        {"title": "C and D", "body": "$\\forall x\\, \\exists y\\, (\\text{fsa}(x) \\wedge \\dots)$ requires every x in the domain to be an FSA; D also swaps the roles of x and y. B negates the whole statement."},
+        {"title": "Options C and D", "body": "$\\forall x\\, \\exists y\\, (\\text{fsa}(x) \\wedge \\dots)$ requires every x in the domain to be an FSA; D also swaps the roles of x and y. B negates the whole statement."},
     ],
     "answer": {"value": "A (published key; read ∀x as covering the implication)", "choice": ["A"], "matchesKey": True},
     "optionAnalysis": [
@@ -151,7 +151,7 @@ SOLUTIONS["it-2008-it-22"] = {
     "given": "Negate $\\forall x\\, [\\alpha \\to (\\exists y\\, [\\beta \\to (\\forall u\\, \\exists v\\, \\gamma)])]$.",
     "steps": [
         {"title": "Outer ∀x", "body": "$\\exists x\\, \\neg[\\alpha \\to (\\dots)] \\equiv \\exists x\\, [\\alpha \\wedge \\neg\\exists y\\, [\\dots]]$."},
-        {"title": "∃y", "body": "$\\neg\\exists y\\, [\\beta \\to \\dots] \\equiv \\forall y\\, [\\beta \\wedge \\neg\\forall u\\, \\exists v\\, \\gamma]$."},
+        {"title": "Then ∃y", "body": "$\\neg\\exists y\\, [\\beta \\to \\dots] \\equiv \\forall y\\, [\\beta \\wedge \\neg\\forall u\\, \\exists v\\, \\gamma]$."},
         {"title": "∀u∃v", "body": "$\\neg\\forall u\\, \\exists v\\, \\gamma \\equiv \\exists u\\, \\forall v\\, \\neg\\gamma$."},
         {"title": "Assemble", "body": "$\\exists x\\, [\\alpha \\wedge (\\forall y\\, [\\beta \\wedge (\\exists u\\, \\forall v\\, \\neg\\gamma)])]$: option D."},
     ],
@@ -354,9 +354,9 @@ SOLUTIONS["cse-2023-cs-16"] = {
     "concepts": ["∃∀ ⇒ ∀∃", "Existential statements are weak"],
     "given": "Conjecture: $\\forall x\\, (P(x) \\Rightarrow \\exists y\\, Q(x, y))$.",
     "steps": [
-        {"title": "B", "body": "If $Q(x, y)$ holds for all pairs, every x has a witness y. B implies the conjecture."},
-        {"title": "C", "body": "Let $y_0$ witness C. For any x with P(x), $Q(x, y_0)$ holds. C implies the conjecture."},
-        {"title": "A and D", "body": "Both speak about one x. World {0, 1}: P true on both, Q(0, ·) true, Q(1, ·) false. A and D hold, the conjecture fails at x = 1."},
+        {"title": "Option B", "body": "If $Q(x, y)$ holds for all pairs, every x has a witness y. B implies the conjecture."},
+        {"title": "Option C", "body": "Let $y_0$ witness C. For any x with P(x), $Q(x, y_0)$ holds. C implies the conjecture."},
+        {"title": "Options A and D", "body": "Both speak about one x. World {0, 1}: P true on both, Q(0, ·) true, Q(1, ·) false. A and D hold, the conjecture fails at x = 1."},
     ],
     "answer": {"value": "B and C", "choice": ["B", "C"], "matchesKey": True},
     "optionAnalysis": [
@@ -376,9 +376,9 @@ SOLUTIONS["cse-2025-1-cs-38"] = {
     "given": "'Everyone has exactly one mother'; mother(y, x), noteq(x, y).",
     "steps": [
         {"title": "Pattern", "body": "For every x: some y is x's mother, and no z other than y is x's mother."},
-        {"title": "B", "body": "$\\forall z\\, (\\text{noteq}(z, y) \\to \\neg\\text{mother}(z, x))$ is the guard: exactly one."},
-        {"title": "D", "body": "$\\neg\\exists z\\, (\\text{noteq}(z, y) \\wedge \\text{mother}(z, x))$ is the same guard written with ¬∃."},
-        {"title": "A and C", "body": "A only says someone is and someone is not x's mother. C is trivially true (take z = y)."},
+        {"title": "Option B", "body": "$\\forall z\\, (\\text{noteq}(z, y) \\to \\neg\\text{mother}(z, x))$ is the guard: exactly one."},
+        {"title": "Option D", "body": "$\\neg\\exists z\\, (\\text{noteq}(z, y) \\wedge \\text{mother}(z, x))$ is the same guard written with ¬∃."},
+        {"title": "Options A and C", "body": "A only says someone is and someone is not x's mother. C is trivially true (take z = y)."},
     ],
     "answer": {"value": "B and D", "choice": ["B", "D"], "matchesKey": True},
     "optionAnalysis": [

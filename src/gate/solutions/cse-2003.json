@@ -1781,15 +1781,15 @@
       "given": "α and β have x as their only free variable.",
       "steps": [
         {
-          "title": "D",
+          "title": "Option D",
           "body": "If every element keeps the promise α ⇒ β and every element satisfies α, every element satisfies β. **Valid.**"
         },
         {
-          "title": "A",
+          "title": "Option A",
           "body": "Converse of D: α = {1}, β = ∅ on {1, 2}: ∀x α is F so the hypothesis is T, but α ⇒ β fails at 1."
         },
         {
-          "title": "B and C",
+          "title": "Options B and C",
           "body": "B: α everywhere, β nowhere. C: α = {1}, β = ∅ makes ∀x(α ∨ β) false, so the hypothesis is T, while ∀x α is F."
         }
       ],

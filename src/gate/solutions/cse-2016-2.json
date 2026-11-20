@@ -1651,15 +1651,15 @@
       "given": "Which is NOT valid?",
       "steps": [
         {
-          "title": "A",
+          "title": "Option A",
           "body": "(∀x p ⇒ ∀x q) ≡ ¬∀x p ∨ ∀x q ≡ ∃x¬p ∨ ∀x q: the hypothesis equals the conclusion. Valid."
         },
         {
-          "title": "B and C",
+          "title": "Options B and C",
           "body": "B is (one direction of) ∃ over ∨; C is ∃(p ∧ q) ⇒ ∃p ∧ ∃q. Both valid."
         },
         {
-          "title": "D",
+          "title": "Option D",
           "body": "∀x(p ∨ q) ⇒ ∀x p ∨ ∀x q fails in the turn-taking world $D = \\{1, 2\\}$, $P = \\{1\\}$, $Q = \\{2\\}$."
         }
       ],

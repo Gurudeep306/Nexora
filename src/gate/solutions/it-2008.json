@@ -1215,15 +1215,15 @@
       "given": "α(x) has x free; β is a sentence.",
       "steps": [
         {
-          "title": "C",
+          "title": "Option C",
           "body": "By the pull-out law, its hypothesis and conclusion are equivalent, so C is ‘A → A’: valid."
         },
         {
-          "title": "A and B",
+          "title": "Options A and B",
           "body": "With β true and α = {1} on {1, 2}: A's hypothesis β → ∃x α is T but ∀x(β → α) fails at 2; B's hypothesis ∃x(β → α) is T (witness 1) but β → ∀x α is F."
         },
         {
-          "title": "D",
+          "title": "Option D",
           "body": "β false and α = {1}: (∀x α) → β is T (∀x α is F), but α → β fails at x = 1."
         }
       ],
@@ -1276,7 +1276,7 @@
           "body": "$\\exists x\\, \\neg[\\alpha \\to (\\dots)] \\equiv \\exists x\\, [\\alpha \\wedge \\neg\\exists y\\, [\\dots]]$."
         },
         {
-          "title": "∃y",
+          "title": "Then ∃y",
           "body": "$\\neg\\exists y\\, [\\beta \\to \\dots] \\equiv \\forall y\\, [\\beta \\wedge \\neg\\forall u\\, \\exists v\\, \\gamma]$."
         },
         {

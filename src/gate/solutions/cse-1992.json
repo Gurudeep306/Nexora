@@ -1127,15 +1127,15 @@
       "given": "Which are valid: A $(\\forall x)P \\vee (\\forall x)Q \\to (\\forall x)(P \\vee Q)$; B $(\\exists x)P \\wedge (\\exists x)Q \\to (\\exists x)(P \\wedge Q)$; C $(\\forall x)(P \\vee Q) \\to (\\forall x)P \\vee (\\forall x)Q$; D $(\\exists x)(P \\vee Q) \\to \\sim(\\forall x)P \\vee (\\exists x)Q$.",
       "steps": [
         {
-          "title": "A",
+          "title": "Option A",
           "body": "If all are P, all are P ∨ Q; same if all are Q. **Valid.**"
         },
         {
-          "title": "B and C",
+          "title": "Options B and C",
           "body": "Both fail in the turn-taking world $D = \\{1, 2\\}$, $P = \\{1\\}$, $Q = \\{2\\}$: B's hypothesis is true (witnesses 1 and 2) but no element is both; C's hypothesis is true but neither ∀ holds."
         },
         {
-          "title": "D",
+          "title": "Option D",
           "body": "Take P everywhere and Q nowhere: ∃x(P ∨ Q) is T, ∼∀x P is F and ∃x Q is F. **Not valid.**"
         }
       ],

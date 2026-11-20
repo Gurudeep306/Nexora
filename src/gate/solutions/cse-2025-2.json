@@ -1324,7 +1324,7 @@
       "given": "P an arbitrary predicate on ℕ.",
       "steps": [
         {
-          "title": "A",
+          "title": "Option A",
           "body": "P(0) and P(x) ⇒ P(x + 1): every n is reached from 0 in n steps, so ∀x P(x). True for every P."
         },
         {

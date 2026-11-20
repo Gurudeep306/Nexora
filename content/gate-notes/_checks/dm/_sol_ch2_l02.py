@@ -29,9 +29,9 @@ SOLUTIONS["cse-1992-a-2-xv"] = {
     "concepts": ["∀ over ∨ (one way)", "∃ over ∧ (one way)", "Counter-models"],
     "given": "Which are valid: A $(\\forall x)P \\vee (\\forall x)Q \\to (\\forall x)(P \\vee Q)$; B $(\\exists x)P \\wedge (\\exists x)Q \\to (\\exists x)(P \\wedge Q)$; C $(\\forall x)(P \\vee Q) \\to (\\forall x)P \\vee (\\forall x)Q$; D $(\\exists x)(P \\vee Q) \\to \\sim(\\forall x)P \\vee (\\exists x)Q$.",
     "steps": [
-        {"title": "A", "body": "If all are P, all are P ∨ Q; same if all are Q. **Valid.**"},
-        {"title": "B and C", "body": f"Both fail in {TURN}: B's hypothesis is true (witnesses 1 and 2) but no element is both; C's hypothesis is true but neither ∀ holds."},
-        {"title": "D", "body": "Take P everywhere and Q nowhere: ∃x(P ∨ Q) is T, ∼∀x P is F and ∃x Q is F. **Not valid.**"},
+        {"title": "Option A", "body": "If all are P, all are P ∨ Q; same if all are Q. **Valid.**"},
+        {"title": "Options B and C", "body": f"Both fail in {TURN}: B's hypothesis is true (witnesses 1 and 2) but no element is both; C's hypothesis is true but neither ∀ holds."},
+        {"title": "Option D", "body": "Take P everywhere and Q nowhere: ∃x(P ∨ Q) is T, ∼∀x P is F and ∃x Q is F. **Not valid.**"},
     ],
     "answer": {"value": "A only", "choice": ["A"], "matchesKey": True},
     "optionAnalysis": [
@@ -50,9 +50,9 @@ SOLUTIONS["cse-2003-cs-32"] = {
     "concepts": ["One-way laws", "Counter-models"],
     "given": "α and β have x as their only free variable.",
     "steps": [
-        {"title": "D", "body": "If every element keeps the promise α ⇒ β and every element satisfies α, every element satisfies β. **Valid.**"},
-        {"title": "A", "body": "Converse of D: α = {1}, β = ∅ on {1, 2}: ∀x α is F so the hypothesis is T, but α ⇒ β fails at 1."},
-        {"title": "B and C", "body": "B: α everywhere, β nowhere. C: α = {1}, β = ∅ makes ∀x(α ∨ β) false, so the hypothesis is T, while ∀x α is F."},
+        {"title": "Option D", "body": "If every element keeps the promise α ⇒ β and every element satisfies α, every element satisfies β. **Valid.**"},
+        {"title": "Option A", "body": "Converse of D: α = {1}, β = ∅ on {1, 2}: ∀x α is F so the hypothesis is T, but α ⇒ β fails at 1."},
+        {"title": "Options B and C", "body": "B: α everywhere, β nowhere. C: α = {1}, β = ∅ makes ∀x(α ∨ β) false, so the hypothesis is T, while ∀x α is F."},
     ],
     "answer": {"value": "D", "choice": ["D"], "matchesKey": True},
     "optionAnalysis": [
@@ -114,8 +114,8 @@ SOLUTIONS["it-2005-cs-36"] = {
     "given": "P(x), Q(x) arbitrary predicates.",
     "steps": [
         {"title": "B is valid", "body": "If each element keeps P ⇒ Q and all are P, all are Q."},
-        {"title": "A", "body": f"∀ over ∨: refuted by {TURN}."},
-        {"title": "C and D", "body": "C is the converse of B: P = {1}, Q = ∅. D: P = {1}, Q = {2} makes both ∀'s false (so ⇔ is true) while P ⇔ Q fails at 1."},
+        {"title": "Option A", "body": f"∀ over ∨: refuted by {TURN}."},
+        {"title": "Options C and D", "body": "C is the converse of B: P = {1}, Q = ∅. D: P = {1}, Q = {2} makes both ∀'s false (so ⇔ is true) while P ⇔ Q fails at 1."},
     ],
     "answer": {"value": "B", "choice": ["B"], "matchesKey": True},
     "optionAnalysis": [
@@ -155,9 +155,9 @@ SOLUTIONS["it-2007-cs-21"] = {
     "concepts": ["One-way laws", "∀∃ vs ∃∀", "∃ over ∧"],
     "given": "Which is valid?",
     "steps": [
-        {"title": "A", "body": "∀x(P ⇒ Q) ⇒ (∀x P ⇒ ∀x Q): valid (modus ponens element by element)."},
-        {"title": "B", "body": "∃x(P ∨ Q) ⇒ (∃x P ⇒ ∃x Q): P = {1}, Q = ∅ makes the left T and ∃x P ⇒ ∃x Q = T ⇒ F."},
-        {"title": "C and D", "body": f"C claims ∃ distributes over ∧ both ways: {TURN} refutes it. D is ∀∃ ⇒ ∃∀: Lesson 1's grid refutes it."},
+        {"title": "Option A", "body": "∀x(P ⇒ Q) ⇒ (∀x P ⇒ ∀x Q): valid (modus ponens element by element)."},
+        {"title": "Option B", "body": "∃x(P ∨ Q) ⇒ (∃x P ⇒ ∃x Q): P = {1}, Q = ∅ makes the left T and ∃x P ⇒ ∃x Q = T ⇒ F."},
+        {"title": "Options C and D", "body": f"C claims ∃ distributes over ∧ both ways: {TURN} refutes it. D is ∀∃ ⇒ ∃∀: Lesson 1's grid refutes it."},
     ],
     "answer": {"value": "A", "choice": ["A"], "matchesKey": True},
     "optionAnalysis": [
@@ -176,9 +176,9 @@ SOLUTIONS["it-2008-it-21"] = {
     "concepts": ["Pull-out laws", "Quantifier in a hypothesis"],
     "given": "α(x) has x free; β is a sentence.",
     "steps": [
-        {"title": "C", "body": "By the pull-out law, its hypothesis and conclusion are equivalent, so C is ‘A → A’: valid."},
-        {"title": "A and B", "body": "With β true and α = {1} on {1, 2}: A's hypothesis β → ∃x α is T but ∀x(β → α) fails at 2; B's hypothesis ∃x(β → α) is T (witness 1) but β → ∀x α is F."},
-        {"title": "D", "body": "β false and α = {1}: (∀x α) → β is T (∀x α is F), but α → β fails at x = 1."},
+        {"title": "Option C", "body": "By the pull-out law, its hypothesis and conclusion are equivalent, so C is ‘A → A’: valid."},
+        {"title": "Options A and B", "body": "With β true and α = {1} on {1, 2}: A's hypothesis β → ∃x α is T but ∀x(β → α) fails at 2; B's hypothesis ∃x(β → α) is T (witness 1) but β → ∀x α is F."},
+        {"title": "Option D", "body": "β false and α = {1}: (∀x α) → β is T (∀x α is F), but α → β fails at x = 1."},
     ],
     "answer": {"value": "C", "choice": ["C"], "matchesKey": True},
     "optionAnalysis": [
@@ -218,9 +218,9 @@ SOLUTIONS["cse-2015-2-cs-55"] = {
     "concepts": ["Equivalence inside quantifiers", "∀∃ vs ∃∀"],
     "given": "Which is a tautology (valid)?",
     "steps": [
-        {"title": "C", "body": "P(x, y) → R(x, y) ≡ ¬P(x, y) ∨ R(x, y) for every pair, so the two sides of C agree in every world: valid."},
-        {"title": "A and B", "body": "A claims ∀x∃y ⇔ ∃y∀x: the grid world refutes it. B: with R empty the hypothesis is vacuously true while ∀x∃y S fails when S is empty."},
-        {"title": "D", "body": "As printed, ∀x∀y P(x, y) → ∀x∀y P(y, x) is also valid (both sides say P holds for every pair). The published key is C."},
+        {"title": "Option C", "body": "P(x, y) → R(x, y) ≡ ¬P(x, y) ∨ R(x, y) for every pair, so the two sides of C agree in every world: valid."},
+        {"title": "Options A and B", "body": "A claims ∀x∃y ⇔ ∃y∀x: the grid world refutes it. B: with R empty the hypothesis is vacuously true while ∀x∃y S fails when S is empty."},
+        {"title": "Option D", "body": "As printed, ∀x∀y P(x, y) → ∀x∀y P(y, x) is also valid (both sides say P holds for every pair). The published key is C."},
     ],
     "answer": {"value": "C (published key; D is also valid as printed)", "choice": ["C"], "matchesKey": True},
     "optionAnalysis": [
@@ -239,9 +239,9 @@ SOLUTIONS["cse-2016-2-cs-27"] = {
     "concepts": ["One-way laws", "Counter-models"],
     "given": "Which is NOT valid?",
     "steps": [
-        {"title": "A", "body": "(∀x p ⇒ ∀x q) ≡ ¬∀x p ∨ ∀x q ≡ ∃x¬p ∨ ∀x q: the hypothesis equals the conclusion. Valid."},
-        {"title": "B and C", "body": "B is (one direction of) ∃ over ∨; C is ∃(p ∧ q) ⇒ ∃p ∧ ∃q. Both valid."},
-        {"title": "D", "body": f"∀x(p ∨ q) ⇒ ∀x p ∨ ∀x q fails in {TURN}."},
+        {"title": "Option A", "body": "(∀x p ⇒ ∀x q) ≡ ¬∀x p ∨ ∀x q ≡ ∃x¬p ∨ ∀x q: the hypothesis equals the conclusion. Valid."},
+        {"title": "Options B and C", "body": "B is (one direction of) ∃ over ∨; C is ∃(p ∧ q) ⇒ ∃p ∧ ∃q. Both valid."},
+        {"title": "Option D", "body": f"∀x(p ∨ q) ⇒ ∀x p ∨ ∀x q fails in {TURN}."},
     ],
     "answer": {"value": "D", "choice": ["D"], "matchesKey": True},
     "optionAnalysis": [
@@ -260,9 +260,9 @@ SOLUTIONS["cse-2017-1-cs-2"] = {
     "concepts": ["Logical implication", "De Morgan", "∀∃ vs ∃∀"],
     "given": "F: ∀x(∃y R(x, y)), non-empty domains.",
     "steps": [
-        {"title": "I", "body": "Take any element d and its witness y: R(d, y). So ∃y∃x R(x, y). Implied."},
-        {"title": "IV", "body": "¬∃x∀y¬R ≡ ∀x∃y R = F. Implied."},
-        {"title": "II and III", "body": "II: {1, 2} with R = {(1, 2), (2, 1)}: F true, no full column. III: R = {(1, 1), (2, 1)}: F true, column 2 empty."},
+        {"title": "Statement I", "body": "Take any element d and its witness y: R(d, y). So ∃y∃x R(x, y). Implied."},
+        {"title": "Statement IV", "body": "¬∃x∀y¬R ≡ ∀x∃y R = F. Implied."},
+        {"title": "Statements II and III", "body": "II: {1, 2} with R = {(1, 2), (2, 1)}: F true, no full column. III: R = {(1, 1), (2, 1)}: F true, column 2 empty."},
     ],
     "answer": {"value": "B (I and IV only)", "choice": ["B"], "matchesKey": True},
     "optionAnalysis": [
@@ -303,7 +303,7 @@ SOLUTIONS["cse-2020-cs-39"] = {
     "given": "W has no free x.",
     "steps": [
         {"title": "Valid ones", "body": "A: ∀ past ∨. B: ∃ past ∧. D: ∃x(p → W) ≡ ∃x(¬p ∨ W) ≡ ∃x¬p ∨ W ≡ ¬∀x p ∨ W ≡ ∀x p → W."},
-        {"title": "C", "body": "∀x(p → W) ≡ ∀x¬p ∨ W ≡ ¬∃x p ∨ W ≡ ∃x p → W, not ∀x p → W."},
+        {"title": "Option C", "body": "∀x(p → W) ≡ ∀x¬p ∨ W ≡ ¬∃x p ∨ W ≡ ∃x p → W, not ∀x p → W."},
         {"title": "Counter-model for C", "body": "{1, 2}, p = {1}, W false: ∀x(p → W) is F (at 1), ∀x p → W is T."},
     ],
     "answer": {"value": "C", "choice": ["C"], "matchesKey": True},
@@ -323,7 +323,7 @@ SOLUTIONS["cse-2025-2-cs-5"] = {
     "concepts": ["Induction schema", "Counterexample predicates"],
     "given": "P an arbitrary predicate on ℕ.",
     "steps": [
-        {"title": "A", "body": "P(0) and P(x) ⇒ P(x + 1): every n is reached from 0 in n steps, so ∀x P(x). True for every P."},
+        {"title": "Option A", "body": "P(0) and P(x) ⇒ P(x + 1): every n is reached from 0 in n steps, so ∀x P(x). True for every P."},
         {"title": "B, C, D fail", "body": "B: P = {0}. C: P = {0, …, 1000}. D: P = {1000, 1001, …}. Each meets its hypothesis but not ∀x P(x)."},
     ],
     "answer": {"value": "A", "choice": ["A"], "matchesKey": True},

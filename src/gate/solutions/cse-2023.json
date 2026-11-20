@@ -3500,15 +3500,15 @@
       "given": "Conjecture: $\\forall x\\, (P(x) \\Rightarrow \\exists y\\, Q(x, y))$.",
       "steps": [
         {
-          "title": "B",
+          "title": "Option B",
           "body": "If $Q(x, y)$ holds for all pairs, every x has a witness y. B implies the conjecture."
         },
         {
-          "title": "C",
+          "title": "Option C",
           "body": "Let $y_0$ witness C. For any x with P(x), $Q(x, y_0)$ holds. C implies the conjecture."
         },
         {
-          "title": "A and D",
+          "title": "Options A and D",
           "body": "Both speak about one x. World {0, 1}: P true on both, Q(0, ·) true, Q(1, ·) false. A and D hold, the conjecture fails at x = 1."
         }
       ],

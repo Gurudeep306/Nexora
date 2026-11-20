@@ -1307,15 +1307,15 @@
       "given": "Which is valid?",
       "steps": [
         {
-          "title": "A",
+          "title": "Option A",
           "body": "∀x(P ⇒ Q) ⇒ (∀x P ⇒ ∀x Q): valid (modus ponens element by element)."
         },
         {
-          "title": "B",
+          "title": "Option B",
           "body": "∃x(P ∨ Q) ⇒ (∃x P ⇒ ∃x Q): P = {1}, Q = ∅ makes the left T and ∃x P ⇒ ∃x Q = T ⇒ F."
         },
         {
-          "title": "C and D",
+          "title": "Options C and D",
           "body": "C claims ∃ distributes over ∧ both ways: the turn-taking world $D = \\{1, 2\\}$, $P = \\{1\\}$, $Q = \\{2\\}$ refutes it. D is ∀∃ ⇒ ∃∀: Lesson 1's grid refutes it."
         }
       ],
