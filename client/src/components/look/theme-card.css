@@ -14,32 +14,19 @@
     background-size: var(--paper-size, auto);
     font-family: var(--font-body);
   }
-  /* The theme's page pattern. */
-  .tk-paper::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    background: var(--pattern-ink, transparent);
-    -webkit-mask: var(--pattern-svg, none) 0 0 / calc(var(--tk-scale, 0.7) * 200px) repeat;
-    mask: var(--pattern-svg, none) 0 0 / calc(var(--tk-scale, 0.7) * 200px) repeat;
+  /* The theme's drawn scene, small: still, until the card is hovered. */
+  .tk-paper .ts {
+    z-index: 0;
   }
-  /* The theme's header drawing, in its corner (themes without one show none). */
-  :is([data-style='journal'], [data-style='terminal'], [data-style='clear']) > .tk-mark {
-    display: none;
+  .tk-paper .ts * {
+    animation-play-state: paused;
   }
-  .tk-mark {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    width: 34%;
-    height: 34%;
-    background: color-mix(in oklab, var(--color-accent-brand) 45%, transparent);
-    -webkit-mask: var(--kit-mark, none) top right / contain no-repeat;
-    mask: var(--kit-mark, none) top right / contain no-repeat;
+  .tk-choice:hover .tk-paper .ts * {
+    animation-play-state: running;
   }
   .tk-body {
     position: relative;
+    z-index: 1;
     display: flex;
     height: 100%;
     flex-direction: column;
@@ -62,11 +49,6 @@
     letter-spacing: var(--kit-hero-tracking, -0.02em);
     font-variation-settings: inherit;
   }
-  [data-style='journal'] .tk-title,
-  [data-style='clear'] .tk-title {
-    font-family: var(--font-display);
-    font-weight: var(--kit-heading-weight, 400);
-  }
   .tk-prose {
     max-width: 78%;
     font-family: var(--kit-read, var(--font-display));
@@ -87,14 +69,6 @@
   }
   [data-style='arcade'] .tk-card {
     clip-path: polygon(0 3px, 3px 3px, 3px 0, calc(100% - 3px) 0, calc(100% - 3px) 3px, 100% 3px, 100% calc(100% - 3px), calc(100% - 3px) calc(100% - 3px), calc(100% - 3px) 100%, 3px 100%, 3px calc(100% - 3px), 0 calc(100% - 3px));
-  }
-  [data-style='clear'] .tk-card {
-    border-width: 2px;
-    border-color: var(--color-border-strong);
-  }
-  [data-style='blockprint'] .tk-card {
-    outline: 1px dashed color-mix(in oklab, var(--color-accent-brand) 40%, transparent);
-    outline-offset: -4px;
   }
   .tk-icons {
     display: flex;
@@ -121,10 +95,6 @@
   .tk-btn-main {
     background: var(--color-accent-brand);
     color: var(--color-on-accent-brand);
-  }
-  [data-style='journal'][data-palette='parchment'] .tk-btn-main {
-    background: #d97757;
-    color: #141413;
   }
   .tk-btn-alt {
     background: var(--color-bg-surface);
@@ -161,10 +131,6 @@
     height: 0.95rem;
     padding: 0 0.35rem;
     font-size: 7px;
-  }
-  .tk-compact .tk-mark {
-    top: 0.35rem;
-    right: 0.35rem;
   }
 
   /* ── The choice ── */

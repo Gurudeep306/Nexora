@@ -19,6 +19,8 @@ import { featureForPath } from '@/lib/site'
 import { SiteBanners } from '@/components/site/SiteBanners'
 import { PartOff, SectionOff } from '@/components/site/SectionOff'
 import { DUR, EASE_EMPHASIZED } from '@/lib/motion'
+import { useTheme } from '@/context/ThemeContext'
+import { ThemeScene } from '@/components/look/ThemeScene'
 
 export function AppLayout() {
   const location = useLocation()
@@ -32,6 +34,10 @@ export function AppLayout() {
   const partOff = blockedPart(location.pathname + location.search)
   const flag = featureForPath(location.pathname)
   const sectionOff = !partOff && flag && !featureOn(flag) ? flag : null
+  // The theme's drawn scene sits behind every page except reading and solving,
+  // which keep a calm, plain paper.
+  const { shown } = useTheme()
+  const scene = wide ? null : shown.pattern
 
   // Start every page at the top.
   useEffect(() => {
@@ -49,6 +55,7 @@ export function AppLayout() {
       </a>
       <LookSync />
       <DockSync />
+      {scene && scene !== 'none' && <ThemeScene page scene={scene} />}
 
       <RouteProgress />
       <CommandPalette />

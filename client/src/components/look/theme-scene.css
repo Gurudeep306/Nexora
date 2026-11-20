@@ -1,0 +1,402 @@
+/* Theme scenes (ThemeScene.tsx). Scene artwork uses its own colours, chosen
+   per theme and per mode below (an accepted exception to "tokens only": these
+   are illustrations, like the profile covers). Light layers stay pale and
+   dark layers stay deep so text over them still reads. */
+
+/* ── Day or night: the nearest data-mode decides (works inside theme cards) ── */
+[data-mode='light'] { --ts-day: inline; --ts-night: none; }
+[data-mode='dark'] { --ts-day: none; --ts-night: inline; }
+.ts .ts-day { display: var(--ts-day, inline); }
+.ts .ts-night { display: var(--ts-night, none); }
+
+/* ── Layout ── */
+.ts {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.ts-fixed {
+  position: fixed;
+}
+.ts svg {
+  position: absolute;
+  display: block;
+  overflow: hidden;
+}
+.ts-sky {
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.ts-ground {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 46%;
+}
+.ts-corner {
+  top: 0;
+  right: 0;
+  width: 46%;
+  aspect-ratio: 4 / 3;
+}
+/* On a page: the landscape is a band across the top, under the header. It
+   scrolls with the page and softens into the paper at its foot. */
+.ts-band {
+  bottom: auto;
+  height: clamp(210px, 25vw, 360px);
+  -webkit-mask-image: linear-gradient(#000 72%, transparent);
+  mask-image: linear-gradient(#000 72%, transparent);
+}
+.ts-band .ts-ground {
+  height: 100%;
+}
+.ts-band .ts-corner {
+  top: 3.25rem;
+  width: clamp(180px, 22vw, 380px);
+}
+@media (max-width: 639px) {
+  /* Phones: the title fills the width, so the band is lower and paler. */
+  .ts-band {
+    height: 150px;
+    opacity: 0.55;
+  }
+  .ts-band .ts-corner {
+    width: 36vw;
+  }
+}
+
+/* ── Shared shapes ── */
+.ts .c-far { fill: var(--g-far); }
+.ts .c-snow { fill: var(--g-snow); }
+.ts .c-mid { fill: var(--g-mid); }
+.ts .c-snow2 { fill: var(--g-snow2, var(--g-snow)); }
+.ts .c-near { fill: var(--g-near); }
+.ts .c-tree { fill: var(--g-tree); }
+.ts .c-front { fill: var(--g-front); }
+.ts .ts-sun { fill: var(--g-sun); }
+.ts .ts-moon { fill: var(--g-moon); }
+.ts .ts-crater { fill: var(--g-crater); }
+.ts .ts-star { fill: var(--g-star); }
+.ts .ts-cloud { fill: var(--g-cloud); }
+.ts :is(.ts-line, .ts-pole, .ts-bird, .ts-egret, .ts-ripple, .ts-trunk-line, .ts-twig, .ts-branch, .ts-shoot, .ts-smoke, .ts-rib, .ts-kelp, .ts-fan, .ts-coral, .ts-brain-line, .ts-jelly-legs, .ts-bubble, .ts-planet-band, .ts-ring, .ts-kite-line, .ts-step-line, .w-line, .w-ring, .w-bird, .b-ring, .b-rule, .bp-line, .bp-faint) {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ts .ts-line, .ts .ts-pole { stroke: var(--g-line); stroke-width: 1.6; }
+.ts .ts-bird { stroke: var(--g-bird); stroke-width: 2.2; }
+.ts .ts-window { fill: var(--g-window); }
+.ts .ts-ripple { stroke: var(--g-ripple); stroke-width: 2; }
+
+/* ── Motion: slow, and only transforms and opacity ── */
+.ts :is(.ts-bird, .ts-egret, .ts-flag, .ts-petal, .ts-ribbon, .ts-cloud, .w-dance, .w-walk, .ts-spin, .ts-spin-back, .ts-float, .ts-jelly, .ts-flame, .ts-kite, .ts-ray) {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.ts .ts-twinkle { animation: ts-twinkle 3.4s ease-in-out infinite alternate; }
+.ts .ts-cloud { animation: ts-drift 80s ease-in-out infinite alternate; }
+.ts .ts-flock { animation: ts-fly 90s linear infinite; }
+.ts .ts-bird, .ts .ts-egret, .ts .w-bird { animation: ts-flap 0.9s ease-in-out infinite alternate; }
+.ts .ts-flag { transform-origin: top center; animation: ts-flutter 1.4s ease-in-out infinite alternate; }
+.ts .ts-ribbon { animation: ts-wave 24s ease-in-out infinite alternate; }
+.ts .ts-ribbon.r1 { animation-duration: 31s; animation-delay: -8s; }
+.ts .ts-ribbon.r2 { animation-duration: 19s; animation-delay: -4s; }
+.ts .ts-streak { animation: ts-pulse 7s ease-in-out infinite alternate; }
+.ts .ts-shoot { stroke: var(--g-star); stroke-width: 2; stroke-dasharray: 60 400; opacity: 0; animation: ts-shoot 16s linear infinite; }
+.ts .ts-smoke { stroke: var(--g-smoke); stroke-width: 5; animation: ts-smoke 6s ease-in-out infinite; }
+.ts .ts-petal-lane { transform-box: view-box; }
+.ts .ts-petal { fill: var(--g-petal); animation: ts-fall 20s linear infinite; }
+.ts .ts-caravan { animation: ts-walk 150s linear infinite; }
+.ts .w-dance { animation: ts-bob 0.9s ease-in-out infinite alternate; }
+.ts .w-walk { animation: ts-bob 1.3s ease-in-out infinite alternate; }
+.ts .w-alt { animation-delay: -0.45s; }
+.ts .ts-spin { animation: ts-spin 70s linear infinite; }
+.ts .ts-spin-back { animation: ts-spin 46s linear infinite reverse; }
+.ts .ts-ray { animation: ts-ray 9s ease-in-out infinite alternate; }
+.ts .ts-swim { animation: ts-swim 50s linear infinite; }
+.ts .ts-swim-back { animation-direction: reverse; }
+.ts .ts-jelly { animation: ts-jelly 7s ease-in-out infinite alternate; }
+.ts .ts-turtle-path { animation: ts-swim 130s linear infinite; }
+.ts .ts-bubble { animation: ts-rise 14s linear infinite; }
+.ts .ts-kelp { transform-box: view-box; animation: ts-sway 7s ease-in-out infinite alternate; }
+.ts .ts-float { animation: ts-floaty 30s ease-in-out infinite alternate; }
+.ts .ts-blink { animation: ts-blink 2.6s steps(2, jump-none) infinite; }
+.ts .ts-pcloud { animation: ts-pdrift 60s steps(60) infinite alternate; }
+.ts .ts-comet { animation: ts-comet 22s linear infinite; }
+.ts .ts-flicker { animation: ts-blink 5s steps(2, jump-none) infinite; }
+.ts .ts-car { animation: ts-car 46s linear infinite; }
+.ts .ts-sail { animation: ts-swim 170s linear infinite; }
+.ts .ts-sail-slow { animation: ts-swim 240s linear infinite reverse; }
+.ts .ts-orbit { transform-box: view-box; transform-origin: 0 0; animation: ts-spin 36s linear infinite; }
+.ts .ts-diya-lane { animation: ts-swim 90s linear infinite; }
+.ts .ts-flame { transform-origin: bottom center; animation: ts-flame 0.8s ease-in-out infinite alternate; }
+.ts .ts-kite { animation: ts-kite 4s ease-in-out infinite alternate; }
+
+@keyframes ts-twinkle { from { opacity: 1; } to { opacity: 0.25; } }
+@keyframes ts-drift { from { transform: translateX(-70px); } to { transform: translateX(110px); } }
+@keyframes ts-fly { from { transform: translateX(-900px); } to { transform: translateX(1500px); } }
+@keyframes ts-flap { from { transform: scaleY(1); } to { transform: scaleY(0.35); } }
+@keyframes ts-flutter { from { transform: skewY(-9deg) scaleX(0.92); } to { transform: skewY(7deg) scaleX(1); } }
+@keyframes ts-wave { from { transform: translateX(-90px) scaleY(0.88); } to { transform: translateX(90px) scaleY(1.12); } }
+@keyframes ts-pulse { from { opacity: 0.25; } to { opacity: 0.9; } }
+@keyframes ts-shoot { 0%, 88% { opacity: 0; transform: translate(0, 0); stroke-dashoffset: 60; } 90% { opacity: 1; } 96% { opacity: 0; transform: translate(260px, 92px); stroke-dashoffset: -340; } 100% { opacity: 0; } }
+@keyframes ts-smoke { 0% { opacity: 0; transform: translateY(6px); } 40% { opacity: 1; } 100% { opacity: 0; transform: translateY(-16px); } }
+@keyframes ts-fall {
+  0% { transform: translate(0, -40px) rotate(0deg); }
+  25% { transform: translate(60px, 240px) rotate(140deg); }
+  50% { transform: translate(10px, 500px) rotate(280deg); }
+  75% { transform: translate(90px, 760px) rotate(420deg); }
+  100% { transform: translate(40px, 1040px) rotate(560deg); }
+}
+@keyframes ts-walk { from { transform: translate(-260px, 236px); } to { transform: translate(1860px, 236px); } }
+@keyframes ts-bob { from { transform: translateY(0); } to { transform: translateY(-3px); } }
+@keyframes ts-spin { to { transform: rotate(360deg); } }
+@keyframes ts-ray { from { opacity: 0.55; transform: skewX(-3deg); } to { opacity: 1; transform: skewX(3deg); } }
+@keyframes ts-swim { from { transform: translateX(-260px); } to { transform: translateX(1860px); } }
+@keyframes ts-jelly { from { transform: translateY(0) scaleY(1); } to { transform: translateY(-40px) scaleY(0.9); } }
+@keyframes ts-rise { 0% { transform: translateY(0); opacity: 0; } 10% { opacity: 1; } 100% { transform: translateY(-1000px); opacity: 0.2; } }
+@keyframes ts-sway { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+@keyframes ts-floaty { from { transform: translateY(-20px) rotate(-12deg); } to { transform: translateY(20px) rotate(14deg); } }
+@keyframes ts-blink { 0% { opacity: 1; } 50% { opacity: 0.2; } }
+@keyframes ts-pdrift { from { transform: translateX(-64px); } to { transform: translateX(64px); } }
+@keyframes ts-comet { 0%, 70% { transform: translate(-80px, 520px); opacity: 0; } 72% { opacity: 1; } 98% { opacity: 1; } 100% { transform: translate(1700px, 60px); opacity: 0; } }
+@keyframes ts-car { from { transform: translateX(-60px); } to { transform: translateX(1660px); } }
+@keyframes ts-flame { from { transform: scale(1, 1); } to { transform: scale(0.8, 1.2); } }
+@keyframes ts-kite { from { transform: rotate(-7deg) translateY(0); } to { transform: rotate(6deg) translateY(-12px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ts * { animation: none !important; }
+  .ts .ts-shoot, .ts .ts-comet { display: none; }
+}
+
+/* ═══ Himalaya ═══ */
+[data-style='himalaya'][data-mode='light'] {
+  --g-far: oklch(0.93 0.022 250); --g-snow: oklch(0.99 0.004 250); --g-mid: oklch(0.9 0.03 252); --g-snow2: oklch(0.97 0.01 250);
+  --g-near: oklch(0.885 0.035 225); --g-tree: oklch(0.84 0.04 205); --g-front: oklch(0.905 0.03 215);
+  --g-sun: oklch(0.91 0.085 62); --g-cloud: oklch(0.995 0.002 250 / 0.92); --g-bird: oklch(0.6 0.03 255); --g-line: oklch(0.62 0.02 250);
+  --g-f0: oklch(0.62 0.14 255); --g-f1: oklch(0.99 0.004 90); --g-f2: oklch(0.63 0.17 28); --g-f3: oklch(0.62 0.13 150); --g-f4: oklch(0.86 0.14 90);
+}
+[data-style='himalaya'][data-mode='dark'] {
+  --g-far: oklch(0.27 0.04 262); --g-snow: oklch(0.37 0.03 250); --g-mid: oklch(0.235 0.042 262); --g-snow2: oklch(0.31 0.03 250);
+  --g-near: oklch(0.2 0.04 260); --g-tree: oklch(0.165 0.035 250); --g-front: oklch(0.16 0.03 262);
+  --g-moon: oklch(0.9 0.02 90); --g-crater: oklch(0.82 0.02 90); --g-star: oklch(0.9 0.02 250); --g-cloud: oklch(0.3 0.035 262 / 0.75);
+  --g-bird: oklch(0.55 0.03 255); --g-line: oklch(0.45 0.02 250);
+  --g-f0: oklch(0.5 0.12 255); --g-f1: oklch(0.75 0.01 90); --g-f2: oklch(0.5 0.15 28); --g-f3: oklch(0.5 0.11 150); --g-f4: oklch(0.68 0.12 90);
+}
+.ts .ts-flag.f0 { fill: var(--g-f0); }
+.ts .ts-flag.f1 { fill: var(--g-f1); }
+.ts .ts-flag.f2 { fill: var(--g-f2); }
+.ts .ts-flag.f3 { fill: var(--g-f3); }
+.ts .ts-flag.f4 { fill: var(--g-f4); }
+
+/* ═══ Aurora ═══ */
+[data-style='aurora'][data-mode='light'] {
+  --g-r0: oklch(0.88 0.08 165 / 0.5); --g-r1: oklch(0.88 0.06 205 / 0.45); --g-r2: oklch(0.87 0.06 300 / 0.35);
+  --g-far: oklch(0.925 0.02 210); --g-snow: oklch(0.985 0.005 210); --g-lake: oklch(0.935 0.03 200); --g-near: oklch(0.9 0.025 210);
+  --g-tree: oklch(0.83 0.045 190); --g-cabin: oklch(0.76 0.06 45); --g-window: oklch(0.86 0.12 85); --g-smoke: oklch(0.82 0 0 / 0.5); --g-star: oklch(0.8 0.03 210);
+}
+[data-style='aurora'][data-mode='dark'] {
+  --g-r0: oklch(0.62 0.17 158 / 0.42); --g-r1: oklch(0.6 0.12 195 / 0.32); --g-r2: oklch(0.52 0.16 305 / 0.34);
+  --g-far: oklch(0.26 0.035 245); --g-snow: oklch(0.4 0.03 230); --g-lake: oklch(0.225 0.04 230); --g-near: oklch(0.195 0.035 240);
+  --g-tree: oklch(0.14 0.03 225); --g-cabin: oklch(0.24 0.03 40); --g-window: oklch(0.85 0.14 85); --g-smoke: oklch(0.45 0.01 240 / 0.6);
+  --g-moon: oklch(0.92 0.03 100); --g-star: oklch(0.93 0.02 180);
+}
+.ts .ts-ribbon.r0, .ts .ts-streak.r0 { fill: var(--g-r0); }
+.ts .ts-ribbon.r1, .ts .ts-streak.r1 { fill: var(--g-r1); }
+.ts .ts-ribbon.r2, .ts .ts-streak.r2 { fill: var(--g-r2); }
+.ts .c-lake { fill: var(--g-lake); }
+.ts .c-cabin { fill: var(--g-cabin); }
+
+/* ═══ Sakura ═══ */
+[data-style='sakura'][data-mode='light'] {
+  --g-sun: oklch(0.93 0.045 25); --g-branch: oklch(0.55 0.05 30); --g-blossom: oklch(0.88 0.065 355); --g-blossom2: oklch(0.8 0.11 355); --g-bud: oklch(0.72 0.14 355);
+  --g-petal: oklch(0.83 0.09 355); --g-far: oklch(0.91 0.03 285); --g-snow: oklch(0.99 0.004 285); --g-mist0: oklch(0.945 0.02 10 / 0.85); --g-mist1: oklch(0.925 0.028 350 / 0.85);
+  --g-mid: oklch(0.905 0.04 355); --g-tree: oklch(0.8 0.05 340); --g-trunk: oklch(0.72 0.04 30); --g-crown: oklch(0.87 0.07 355); --g-front: oklch(0.915 0.04 355);
+  --g-star: oklch(0.8 0.04 350);
+}
+[data-style='sakura'][data-mode='dark'] {
+  --g-moon: oklch(0.9 0.03 350); --g-crater: oklch(0.82 0.03 350); --g-branch: oklch(0.4 0.04 20); --g-blossom: oklch(0.6 0.1 355); --g-blossom2: oklch(0.5 0.12 355); --g-bud: oklch(0.5 0.13 355);
+  --g-petal: oklch(0.62 0.1 355); --g-far: oklch(0.27 0.04 300); --g-snow: oklch(0.42 0.03 300); --g-mist0: oklch(0.24 0.035 330 / 0.85); --g-mist1: oklch(0.225 0.035 340 / 0.85);
+  --g-mid: oklch(0.225 0.04 340); --g-tree: oklch(0.15 0.03 340); --g-trunk: oklch(0.19 0.03 20); --g-crown: oklch(0.33 0.07 355); --g-front: oklch(0.17 0.03 340);
+  --g-star: oklch(0.9 0.03 350);
+}
+.ts .ts-branch { stroke: var(--g-branch); stroke-width: 8; }
+.ts .ts-twig { stroke: var(--g-branch); stroke-width: 3.5; }
+.ts .ts-blossom { fill: var(--g-blossom); }
+.ts .ts-blossom2 { fill: var(--g-blossom2); }
+.ts .ts-bud { fill: var(--g-bud); }
+.ts .c-mist.m0 { fill: var(--g-mist0); }
+.ts .c-mist.m1 { fill: var(--g-mist1); }
+.ts .c-trunk { fill: var(--g-trunk); }
+.ts .c-crown { fill: var(--g-crown); }
+
+/* ═══ Thar ═══ */
+[data-style='thar'][data-mode='light'] {
+  --g-sun: oklch(0.88 0.11 72); --g-far: oklch(0.925 0.05 80); --g-fort: oklch(0.865 0.06 62); --g-window: oklch(0.74 0.06 50); --g-line: oklch(0.55 0.05 50);
+  --g-mid: oklch(0.9 0.07 78); --g-camel: oklch(0.62 0.06 50); --g-near: oklch(0.885 0.08 75); --g-ripple: oklch(0.8 0.07 70);
+  --g-trunk: oklch(0.55 0.05 50); --g-crown: oklch(0.8 0.07 125); --g-front: oklch(0.86 0.085 72); --g-bird: oklch(0.55 0.04 50); --g-star: oklch(0.8 0.04 80);
+}
+[data-style='thar'][data-mode='dark'] {
+  --g-moon: oklch(0.92 0.04 85); --g-crater: oklch(0.84 0.04 85); --g-star: oklch(0.92 0.04 85); --g-far: oklch(0.26 0.05 278); --g-fort: oklch(0.17 0.04 278);
+  --g-window: oklch(0.82 0.14 80); --g-line: oklch(0.45 0.04 278); --g-mid: oklch(0.23 0.05 280); --g-camel: oklch(0.14 0.03 280); --g-near: oklch(0.2 0.05 280);
+  --g-ripple: oklch(0.3 0.05 280); --g-trunk: oklch(0.15 0.03 280); --g-crown: oklch(0.16 0.03 280); --g-front: oklch(0.17 0.045 280); --g-bird: oklch(0.5 0.04 280);
+}
+.ts .c-fort { fill: var(--g-fort); }
+.ts .c-camel { fill: var(--g-camel); }
+.ts .ts-trunk-line { stroke: var(--g-trunk); stroke-width: 6; }
+
+/* ═══ Warli ═══ */
+[data-style='warli'][data-mode='light'] { --g-ink: oklch(0.68 0.11 38); }
+[data-style='warli'][data-mode='dark'] { --g-ink: oklch(0.82 0.035 65); }
+.ts .w-fill { fill: var(--g-ink); }
+.ts .w-hut { fill: var(--g-ink); fill-rule: evenodd; }
+.ts .w-line { stroke: var(--g-ink); stroke-width: 2.4; }
+.ts .w-ring { stroke: var(--g-ink); stroke-width: 2; stroke-dasharray: 2 9; }
+.ts .w-bird { stroke: var(--g-ink); stroke-width: 2.2; }
+
+/* ═══ Reef ═══ */
+[data-style='reef'][data-mode='light'] {
+  --g-ray: oklch(1 0 0 / 0.45); --g-fish0: oklch(0.78 0.13 50); --g-fish1: oklch(0.85 0.12 95); --g-fish2: oklch(0.74 0.1 250); --g-eye: oklch(0.3 0.02 240);
+  --g-bubble: oklch(0.82 0.05 210); --g-turtle: oklch(0.74 0.07 150); --g-shell: oklch(0.64 0.07 140); --g-far: oklch(0.905 0.03 210);
+  --g-kelp: oklch(0.74 0.1 150); --g-fan: oklch(0.76 0.11 355); --g-coral0: oklch(0.76 0.12 32); --g-coral1: oklch(0.8 0.1 330);
+  --g-near: oklch(0.93 0.04 85); --g-brain: oklch(0.86 0.07 60); --g-brain-line: oklch(0.76 0.07 50);
+}
+[data-style='reef'][data-mode='dark'] {
+  --g-ray: oklch(0.6 0.08 220 / 0.11); --g-fish0: oklch(0.55 0.12 50); --g-fish1: oklch(0.6 0.1 95); --g-fish2: oklch(0.5 0.1 250); --g-eye: oklch(0.15 0.02 240);
+  --g-bubble: oklch(0.45 0.05 220); --g-jelly: oklch(0.7 0.1 320 / 0.5); --g-far: oklch(0.23 0.045 238);
+  --g-kelp: oklch(0.33 0.07 160); --g-fan: oklch(0.36 0.08 355); --g-coral0: oklch(0.38 0.1 32); --g-coral1: oklch(0.36 0.08 330);
+  --g-near: oklch(0.22 0.04 238); --g-brain: oklch(0.29 0.05 60); --g-brain-line: oklch(0.36 0.05 60);
+}
+.ts .ts-ray { fill: var(--g-ray); }
+.ts .ts-fish.k0 { fill: var(--g-fish0); }
+.ts .ts-fish.k1 { fill: var(--g-fish1); }
+.ts .ts-fish.k2 { fill: var(--g-fish2); }
+.ts .ts-eye { fill: var(--g-eye); }
+.ts .ts-bubble { stroke: var(--g-bubble); stroke-width: 2; }
+.ts .ts-turtle { fill: var(--g-turtle); }
+.ts .ts-shell { fill: var(--g-shell); }
+.ts .ts-jelly-bell { fill: var(--g-jelly); }
+.ts .ts-jelly-legs { stroke: var(--g-jelly); stroke-width: 2.5; }
+.ts .ts-kelp { stroke: var(--g-kelp); stroke-width: 9; }
+.ts .ts-fan { stroke: var(--g-fan); stroke-width: 3; }
+.ts .ts-coral.k0 { stroke: var(--g-coral0); stroke-width: 9; }
+.ts .ts-coral.k1 { stroke: var(--g-coral1); stroke-width: 7; }
+.ts .c-brain { fill: var(--g-brain); }
+.ts .ts-brain-line { stroke: var(--g-brain-line); stroke-width: 3; }
+
+/* ═══ Bauhaus ═══ */
+[data-style='bauhaus'][data-mode='light'] {
+  --g-red: oklch(0.63 0.2 28); --g-yellow: oklch(0.87 0.16 92); --g-blue: oklch(0.52 0.15 262); --g-black: oklch(0.25 0 0); --g-rule: oklch(0.25 0 0);
+}
+[data-style='bauhaus'][data-mode='dark'] {
+  --g-red: oklch(0.6 0.19 28); --g-yellow: oklch(0.82 0.16 92); --g-blue: oklch(0.52 0.14 262); --g-black: oklch(0.92 0.012 90); --g-rule: oklch(0.7 0.01 90);
+}
+.ts .b-red { fill: var(--g-red); }
+.ts .b-yellow { fill: var(--g-yellow); }
+.ts .b-blue { fill: var(--g-blue); }
+.ts .b-black { fill: var(--g-black); }
+.ts .b-paper { fill: var(--color-bg-app); }
+.ts .b-ring { stroke: var(--g-rule); stroke-width: 2; }
+.ts .b-rule { stroke: var(--g-rule); stroke-width: 3; }
+[data-scene='bauhaus'] .ts-spin { transform-box: view-box; }
+
+/* ═══ Arcade: drawn from the theme's own colours ═══ */
+[data-style='arcade'] {
+  --g-far: color-mix(in oklab, var(--color-text-primary) 9%, var(--color-bg-app));
+  --g-mid: color-mix(in oklab, var(--color-text-primary) 16%, var(--color-bg-app));
+  --g-win: color-mix(in oklab, var(--color-text-primary) 24%, var(--color-bg-app));
+  --g-win-on: color-mix(in oklab, var(--color-accent-brand) 70%, var(--color-bg-app));
+  --g-star: color-mix(in oklab, var(--color-text-primary) 45%, transparent);
+  --g-moon: color-mix(in oklab, var(--color-text-primary) 30%, var(--color-bg-app));
+  --g-sun: color-mix(in oklab, var(--color-accent-brand) 30%, var(--color-bg-app));
+  --g-cloud: color-mix(in oklab, var(--color-bg-surface) 70%, transparent);
+}
+.ts .ts-pstar { fill: var(--g-star); }
+.ts .ts-pwin { fill: var(--g-win); }
+.ts .ts-pwin.on { fill: var(--g-win-on); }
+
+/* ═══ Blueprint: lines in the theme's own ink ═══ */
+[data-style='blueprint'] {
+  --g-bp: color-mix(in oklab, var(--color-text-primary) 34%, transparent);
+  --g-bp-faint: color-mix(in oklab, var(--color-text-primary) 16%, transparent);
+}
+.ts .bp-line { stroke: var(--g-bp); stroke-width: 1.6; }
+.ts .bp-faint { stroke: var(--g-bp-faint); stroke-width: 1.2; }
+.ts .bp-text { fill: var(--g-bp); font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.08em; }
+
+/* ═══ Kerala ═══ */
+[data-style='kerala'][data-mode='light'] {
+  --g-sun: oklch(0.9 0.1 78); --g-cloud: oklch(0.995 0.003 130 / 0.9); --g-bird: oklch(0.62 0.02 140); --g-far: oklch(0.9 0.03 165); --g-mid: oklch(0.87 0.05 150);
+  --g-paddy: oklch(0.88 0.1 125); --g-paddy2: oklch(0.9 0.08 112); --g-water: oklch(0.915 0.04 200); --g-ripple: oklch(0.97 0.02 200); --g-reflect: oklch(0.86 0.05 165 / 0.45);
+  --g-bank: oklch(0.82 0.07 140); --g-trunk: oklch(0.62 0.05 60); --g-frond: oklch(0.64 0.11 145); --g-nut: oklch(0.62 0.09 95); --g-hull: oklch(0.56 0.06 50);
+  --g-roof: oklch(0.74 0.07 78); --g-rib: oklch(0.6 0.05 60); --g-star: oklch(0.8 0.04 140);
+}
+[data-style='kerala'][data-mode='dark'] {
+  --g-moon: oklch(0.92 0.03 100); --g-crater: oklch(0.84 0.03 100); --g-star: oklch(0.9 0.03 120); --g-cloud: oklch(0.27 0.035 175 / 0.75); --g-bird: oklch(0.6 0.02 140);
+  --g-far: oklch(0.24 0.04 175); --g-mid: oklch(0.21 0.045 168); --g-paddy: oklch(0.23 0.06 140); --g-paddy2: oklch(0.25 0.06 130); --g-water: oklch(0.17 0.035 205);
+  --g-ripple: oklch(0.3 0.04 200); --g-reflect: oklch(0.24 0.04 170 / 0.55); --g-bank: oklch(0.15 0.03 165); --g-trunk: oklch(0.13 0.025 160);
+  --g-frond: oklch(0.13 0.03 160); --g-nut: oklch(0.15 0.03 160); --g-hull: oklch(0.14 0.03 60); --g-roof: oklch(0.21 0.035 75); --g-rib: oklch(0.27 0.03 70);
+}
+.ts .ts-egret { stroke: var(--g-bird); stroke-width: 2.4; }
+.ts .c-paddy { fill: var(--g-paddy); }
+.ts .c-paddy2 { fill: var(--g-paddy2); }
+.ts .c-water { fill: var(--g-water); }
+.ts .c-reflect { fill: var(--g-reflect); }
+.ts .c-bank { fill: var(--g-bank); }
+.ts .c-frond { fill: var(--g-frond); }
+.ts .c-nut { fill: var(--g-nut); }
+.ts .c-hull { fill: var(--g-hull); }
+.ts .c-roof { fill: var(--g-roof); }
+.ts .ts-rib { stroke: var(--g-rib); stroke-width: 2; }
+
+/* ═══ Cosmos ═══ */
+[data-style='cosmos'][data-mode='light'] {
+  --g-star: oklch(0.76 0.06 285); --g-tail: oklch(0.86 0.06 220 / 0.6); --g-tail2: oklch(0.9 0.04 220); --g-moon: oklch(0.72 0.08 220);
+  --g-galaxy: oklch(0.8 0.07 300 / 0.28); --g-core: oklch(0.72 0.1 300); --g-p0: oklch(0.86 0.07 55); --g-p1: oklch(0.82 0.08 200); --g-p2: oklch(0.8 0.1 22);
+  --g-band: oklch(0.78 0.08 48); --g-orbit: oklch(0.78 0.04 285); --g-ring: oklch(0.7 0.08 62); --g-near: oklch(0.915 0.02 285); --g-crater: oklch(0.88 0.025 285); --g-line: oklch(0.6 0.03 285);
+}
+[data-style='cosmos'][data-mode='dark'] {
+  --g-star: oklch(0.92 0.02 285); --g-tail: oklch(0.7 0.08 220 / 0.35); --g-tail2: oklch(0.78 0.06 220 / 0.6); --g-moon: oklch(0.88 0.04 220);
+  --g-galaxy: oklch(0.6 0.1 300 / 0.2); --g-core: oklch(0.7 0.1 300 / 0.6); --g-p0: oklch(0.62 0.09 55); --g-p1: oklch(0.55 0.09 210); --g-p2: oklch(0.55 0.12 25);
+  --g-band: oklch(0.5 0.09 45); --g-orbit: oklch(0.36 0.04 285); --g-ring: oklch(0.72 0.08 62); --g-near: oklch(0.22 0.035 285); --g-crater: oklch(0.185 0.03 285); --g-line: oklch(0.5 0.03 285);
+}
+.ts .ts-tail { fill: var(--g-tail); }
+.ts .ts-tail2 { fill: var(--g-tail2); }
+.ts .ts-galaxy ellipse { fill: var(--g-galaxy); }
+.ts .ts-galaxy .core { fill: var(--g-core); }
+.ts .ts-planet.p0 { fill: var(--g-p0); }
+.ts .ts-planet.p1 { fill: var(--g-p1); }
+.ts .ts-planet.p2 { fill: var(--g-p2); }
+.ts .ts-planet-band { stroke: var(--g-band); stroke-width: 5; }
+.ts .ts-orbit-ring ellipse { fill: none; stroke: var(--g-orbit); stroke-width: 1.5; stroke-dasharray: 3 8; }
+.ts .ts-ring { stroke: var(--g-ring); stroke-width: 7; }
+.ts .c-crater { fill: var(--g-crater); }
+
+/* ═══ Ghats ═══ */
+[data-style='ghats'][data-mode='light'] {
+  --g-sun: oklch(0.86 0.12 55); --g-bird: oklch(0.55 0.04 40); --g-kite: oklch(0.7 0.15 22); --g-kite-line: oklch(0.6 0.03 40 / 0.6);
+  --g-far: oklch(0.905 0.04 58); --g-mid: oklch(0.85 0.06 45); --g-pennant: oklch(0.66 0.17 42); --g-steps: oklch(0.915 0.04 62); --g-step-line: oklch(0.86 0.04 55);
+  --g-umbrella: oklch(0.78 0.09 72); --g-line: oklch(0.55 0.04 50); --g-water: oklch(0.91 0.03 270); --g-ripple: oklch(0.97 0.015 270);
+  --g-hull: oklch(0.6 0.06 50); --g-leaf: oklch(0.62 0.1 140); --g-flame: oklch(0.8 0.16 72); --g-star: oklch(0.8 0.04 60);
+}
+[data-style='ghats'][data-mode='dark'] {
+  --g-moon: oklch(0.92 0.04 80); --g-crater: oklch(0.84 0.04 80); --g-star: oklch(0.92 0.03 80); --g-bird: oklch(0.5 0.03 300);
+  --g-kite: oklch(0.45 0.12 22); --g-kite-line: oklch(0.45 0.03 300 / 0.6); --g-far: oklch(0.17 0.035 300); --g-mid: oklch(0.14 0.03 300);
+  --g-pennant: oklch(0.5 0.14 40); --g-steps: oklch(0.23 0.04 300); --g-step-line: oklch(0.28 0.04 300); --g-umbrella: oklch(0.3 0.06 60); --g-line: oklch(0.4 0.03 300);
+  --g-water: oklch(0.18 0.045 280); --g-ripple: oklch(0.3 0.04 280); --g-hull: oklch(0.14 0.03 300); --g-leaf: oklch(0.35 0.07 140); --g-flame: oklch(0.86 0.16 75);
+}
+.ts .ts-kite-body { fill: var(--g-kite); }
+.ts .ts-kite-line { stroke: var(--g-kite-line); stroke-width: 1.4; }
+.ts .ts-pennant { fill: var(--g-pennant); }
+.ts .c-steps { fill: var(--g-steps); }
+.ts .ts-step-line { stroke: var(--g-step-line); stroke-width: 1.5; }
+.ts .c-umbrella { fill: var(--g-umbrella); }
+.ts .c-leaf { fill: var(--g-leaf); }
+.ts .ts-flame { fill: var(--g-flame); }
+
+/* Dark: the bright illustrations step back a little. */
+[data-mode='dark'] .ts[data-scene='bauhaus'] { opacity: 0.85; }

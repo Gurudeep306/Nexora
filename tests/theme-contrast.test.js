@@ -26,7 +26,7 @@ test('twelve themes, each a whole design with its own palette in both modes', as
   const { UI_FONTS, CODE_FONTS } = await theme('fonts.ts');
   assert.equal(THEMES.length, 12, 'there are exactly twelve themes');
   assert.equal(new Set(THEMES.map((t) => t.id)).size, 12, 'theme ids are unique');
-  assert.equal(THEMES[0].id, 'journal', 'Field Journal comes first');
+  assert.equal(THEMES[0].id, 'himalaya', 'Himalaya, the default, comes first');
   assert.equal(new Set(PALETTES.map((p) => p.id)).size, PALETTES.length, 'palette ids are unique');
   const usedPalettes = new Set();
   for (const t of THEMES) {
@@ -140,7 +140,7 @@ test('sanitizeLook v6: personal choices on top of a theme', async () => {
   const bad = sanitizeLook({ v: 6, style: 'sakura', accent: '<script>', ink: 'red', uiFont: 'comic', headingFont: 7, readFont: null, corners: 'blob', drawings: 'maybe' });
   for (const [k, v] of Object.entries(own)) assert.equal(bad[k], v, `${k} rejects a bad value`);
   assert.equal(bad.font, 'nunito');
-  assert.equal(bad.pattern, 'petals');
+  assert.equal(bad.pattern, 'sakura');
   assert.equal(lookAttributes(bad, 'dark')['data-ink'], undefined, 'no attribute when it is the theme\'s own');
   // Accents saved by the old style pack (before v5) reset.
   assert.equal(sanitizeLook({ v: 4, style: 'studio', theme: 'midnight', accent: 'violet' }).accent, 'theme');
@@ -162,8 +162,8 @@ test('sanitizeLook: defaults, validation and a v5 round-trip', async () => {
   assert.deepEqual(sanitizeLook(null), DEFAULT_LOOK);
   assert.deepEqual(sanitizeLook('nope'), DEFAULT_LOOK);
   assert.deepEqual(sanitizeLook({ v: 5, style: '<script>', textSize: 42, codeFont: 'no-such-font' }), DEFAULT_LOOK);
-  assert.equal(DEFAULT_LOOK.style, 'journal');
-  assert.equal(DEFAULT_LOOK.theme, 'parchment');
+  assert.equal(DEFAULT_LOOK.style, 'himalaya');
+  assert.equal(DEFAULT_LOOK.theme, 'himalaya');
   for (const t of THEMES) {
     const look = sanitizeLook({ v: 5, style: t.id, textSize: 'large', codeFont: 'fira', solutionFont: 'mali' });
     assert.equal(look.style, t.id);
@@ -183,7 +183,7 @@ test('sanitizeLook: defaults, validation and a v5 round-trip', async () => {
   assert.equal(bent.theme, 'sakura');
   assert.equal(bent.font, 'nunito');
   assert.equal(bent.radius, 'round');
-  assert.equal(bent.pattern, 'petals');
+  assert.equal(bent.pattern, 'sakura');
   assert.equal(bent.iconSet, 'phosphor');
   // Solution fonts: every offered one round-trips; unknown ones are the default.
   const { SOLUTION_FONTS } = await theme('fonts.ts');
@@ -193,29 +193,38 @@ test('sanitizeLook: defaults, validation and a v5 round-trip', async () => {
   assert.ok(!LOOK_TABLES.styles.includes('studio'), 'Hive\'s internal look is never stored');
 });
 
-test('look migration v5: the old style pack folds into the ten themes', async () => {
+test('look migration: old styles and retired themes fold into the twelve themes', async () => {
   const { sanitizeLook } = await theme('look.ts');
   const style = (raw) => sanitizeLook(raw).style;
-  // The untouched old default and the house style land on Field Journal.
-  assert.equal(style({ v: 3, style: 'studio', theme: 'midnight' }), 'journal');
-  assert.equal(style({ v: 4, style: 'journal', theme: 'parchment' }), 'journal');
-  assert.equal(style({ v: 2 }), 'journal');
+  // The untouched old default and the retired house style land on Himalaya, the default.
+  assert.equal(style({ v: 3, style: 'studio', theme: 'midnight' }), 'himalaya');
+  assert.equal(style({ v: 4, style: 'journal', theme: 'parchment' }), 'himalaya');
+  assert.equal(style({ v: 6, style: 'journal' }), 'himalaya');
+  assert.equal(style({ v: 2 }), 'himalaya');
   // Each old style goes to the theme nearest in spirit.
   const expect = {
-    editorial: 'journal', manuscript: 'journal', glass: 'sakura', washi: 'sakura', luxe: 'observatory', atelier: 'observatory',
-    signal: 'arcade', poster: 'arcade', console: 'terminal', terminal: 'terminal', nordic: 'greenhouse', swiss: 'blueprint',
-    blueprint: 'blueprint', canvas: 'sketchbook',
+    editorial: 'himalaya', manuscript: 'himalaya', glass: 'sakura', washi: 'sakura', luxe: 'cosmos', atelier: 'cosmos',
+    signal: 'arcade', poster: 'arcade', console: 'arcade', terminal: 'arcade', nordic: 'aurora', swiss: 'bauhaus',
+    blueprint: 'blueprint', canvas: 'warli',
   };
   for (const [from, to] of Object.entries(expect)) assert.equal(style({ v: 4, style: from, theme: 'midnight' }), to, `${from} → ${to}`);
+  // Themes retired in 2026-11 move to their nearest new theme, keeping personal choices.
+  const retired = { observatory: 'cosmos', kintsugi: 'ghats', monsoon: 'kerala', greenhouse: 'kerala', blockprint: 'thar', sketchbook: 'warli', terminal: 'arcade', clear: 'bauhaus' };
+  for (const [from, to] of Object.entries(retired)) {
+    const moved = sanitizeLook({ v: 6, style: from, textSize: 'large', accent: 'ocean' });
+    assert.equal(moved.style, to, `${from} → ${to}`);
+    assert.equal(moved.textSize, 'large');
+    assert.equal(moved.accent, 'ocean');
+  }
   // A palette picked on the old default style says more than the style.
   assert.equal(style({ v: 4, style: 'studio', theme: 'dracula' }), 'arcade');
-  assert.equal(style({ v: 4, style: 'studio', theme: 'everforest' }), 'greenhouse');
-  assert.equal(style({ v: 4, style: 'studio', theme: 'tokyo-night' }), 'observatory');
+  assert.equal(style({ v: 4, style: 'studio', theme: 'everforest' }), 'kerala');
+  assert.equal(style({ v: 4, style: 'studio', theme: 'tokyo-night' }), 'cosmos');
   assert.equal(style({ v: 4, style: 'studio', theme: 'rose-pine' }), 'sakura');
-  assert.equal(style({ v: 4, style: 'studio', theme: 'phosphor' }), 'terminal');
-  // Accessibility palettes always move to Clear, whatever the style was.
+  assert.equal(style({ v: 4, style: 'studio', theme: 'phosphor' }), 'arcade');
+  // Old accessibility palettes land on Bauhaus, the highest-contrast theme.
   for (const p of ['contrast-dark', 'contrast-light', 'colour-safe', 'tritan-safe', 'e-ink']) {
-    assert.equal(style({ v: 4, style: 'washi', theme: p }), 'clear', `${p} → clear`);
+    assert.equal(style({ v: 4, style: 'washi', theme: p }), 'bauhaus', `${p} → bauhaus`);
   }
   // Personal settings survive; the old style's code font gives way to the theme's.
   const moved = sanitizeLook({ v: 4, style: 'washi', theme: 'washi', textSize: 'xl', solutionFont: 'patrick', codeFont: 'plex-mono' });
@@ -230,7 +239,7 @@ test('sanitizeLook: migrates a v1 (wallpaper era) look', async () => {
   const { sanitizeLook } = await theme('look.ts');
   const out = sanitizeLook({ wallpaper: 'synthwave-grid', accent: 'purple', glass: 'frosted', cardStyle: 'neon', iconPack: 'clay', fontStyle: 'handwriting-caveat', fontSize: 'huge', solutionFont: 'shantell' });
   assert.equal(out.v, 6);
-  assert.equal(out.style, 'journal');
+  assert.equal(out.style, 'himalaya');
   assert.equal(out.textSize, 'xl', 'the v1 text size is kept');
   assert.equal(out.solutionFont, 'off', 'the old handwriting default moves to plain text');
   for (const gone of ['wallpaper', 'glass', 'iconPack', 'fontStyle', 'fontSize', 'fontColor']) assert.ok(!(gone in out), `${gone} should not survive migration`);
@@ -251,7 +260,7 @@ test('the validator survives serialisation into the first-paint script', async (
     { solutionFont: 'comic-sans' },
   ];
   for (const s of samples) assert.deepEqual(fn(s, T), sanitizeLookWith(s, LOOK_TABLES));
-  assert.equal(fn({ v: 5, style: 'arcade' }, T).pattern, 'pixels');
+  assert.equal(fn({ v: 5, style: 'arcade' }, T).pattern, 'arcade');
 });
 
 test('the first-paint script sets data-solution-font, and the theme CSS defines every solution font', async () => {

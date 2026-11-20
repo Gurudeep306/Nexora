@@ -7,39 +7,11 @@
      --kit-display / --kit-read     heading face and reading face
      --kit-heading-weight            heading weight
      --kit-card-radius, --kit-control-radius, --kit-btn-radius   shapes
-     --pattern-svg, --pattern-size   the drawing behind the page (a mask, so
-                                      it takes the theme's own ink)
-     --kit-mark                      a drawing beside page headers
-   and a few rules of its own below. The drawings are original line work,
-   drawn for NexoraGuru. They sit in the margins: the reading column fades
-   them out so text never runs over a drawing. Nothing animates.
+     --paper-image, --paper-size     a texture on the paper itself (optional)
+   and a few rules of its own below. Each theme's drawn scene (mountains, a
+   reef, a fort…) is components/look/ThemeScene.tsx with its colours in
+   components/look/theme-scene.css.
    ═══════════════════════════════════════════════════════════════════════════ */
-
-/* ── The page pattern: a fixed layer behind everything, faded in the middle ── */
-[data-kit='journal'] {
-  --pattern-ink: color-mix(in oklab, var(--color-text-primary) 9%, transparent);
-  --pattern-size: 200px 200px;
-  --pattern-fade: linear-gradient(90deg, #000 0, #000 12%, transparent 30%, transparent 70%, #000 88%, #000 100%);
-}
-html[data-kit='journal']:not([data-pattern='none']) body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: var(--pattern-ink);
-  -webkit-mask: var(--pattern-svg) 0 0 / var(--pattern-size) repeat, var(--pattern-fade);
-  -webkit-mask-composite: source-in;
-  mask: var(--pattern-svg) 0 0 / var(--pattern-size) repeat, var(--pattern-fade);
-  mask-composite: intersect;
-}
-@media (max-width: 767px) {
-  /* Phones have no margins: the drawing steps back further. */
-  [data-kit='journal'] {
-    --pattern-ink: color-mix(in oklab, var(--color-text-primary) 5%, transparent);
-    --pattern-fade: linear-gradient(90deg, #000 0, transparent 22%, transparent 78%, #000 100%);
-  }
-}
 
 /* ── The paper itself: a grid, dots or ruled bands under everything ── */
 html[data-kit='journal'] body {
@@ -48,23 +20,51 @@ html[data-kit='journal'] body {
   background-attachment: fixed;
 }
 
-/* ── A drawing beside page headers (desktop) ── */
 [data-kit='journal'] [data-ui='page-header'] {
   position: relative;
 }
-@media (min-width: 900px) {
-  html[data-kit='journal'][data-style]:not([data-style='journal'], [data-style='clear']) [data-ui='page-header']::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 9rem;
-    height: 6.75rem;
-    pointer-events: none;
-    background: color-mix(in oklab, var(--color-accent-brand) 38%, transparent);
-    -webkit-mask: var(--kit-mark) center / contain no-repeat;
-    mask: var(--kit-mark) center / contain no-repeat;
-  }
+
+/* ═══ Himalaya ═════════════════════════════════════════════════════════════ */
+[data-style='himalaya'] {
+  --kit-hero: var(--kit-display);
+  --kit-hero-weight: 600;
+  --kit-hero-tracking: -0.015em;
+  --kit-display: 'Cormorant Garamond Variable', 'Cormorant Garamond', ui-serif, Georgia, serif;
+  --kit-read: 'Literata Variable', 'Literata', ui-serif, Georgia, serif;
+  --kit-heading-weight: 600;
+  --kit-heading-tracking: -0.005em;
+  --kit-card-radius: 1.125rem;
+  --kit-card-radius-sm: 0.875rem;
+  --kit-control-radius: 0.75rem;
+  --kit-btn-radius: 0.75rem;
+  --kit-tool-radius: 0.75rem;
+}
+/* Small caps labels, set wide like a mountaineering map. */
+[data-style='himalaya'] :is(.ed-label, [data-ui='eyebrow'], [data-ui='stat-label']) {
+  letter-spacing: 0.16em;
+}
+
+/* ═══ Aurora ═══════════════════════════════════════════════════════════════ */
+[data-style='aurora'] {
+  --kit-hero: var(--kit-display);
+  --kit-hero-weight: 600;
+  --kit-hero-tracking: -0.03em;
+  --kit-display: 'Unbounded Variable', 'Unbounded', ui-sans-serif, system-ui, sans-serif;
+  --kit-read: var(--font-body);
+  --kit-heading-weight: 500;
+  --kit-heading-tracking: -0.02em;
+  --kit-card-radius: 1.5rem;
+  --kit-card-radius-sm: 1rem;
+  --kit-control-radius: 999px;
+  --kit-btn-radius: 999px;
+  --kit-tool-radius: 999px;
+}
+/* A thin band of aurora colour along the top of every card. */
+[data-style='aurora'] :is(.ed-card, [data-ui='card'], .nx-panel) {
+  box-shadow: inset 0 2px 0 color-mix(in oklab, var(--color-accent-brand) 55%, transparent);
+}
+[data-style='aurora'] :is(.ed-label, [data-ui='eyebrow'], [data-ui='stat-label']) {
+  letter-spacing: 0.12em;
 }
 
 /* ═══ Sakura ═══════════════════════════════════════════════════════════════ */
@@ -81,16 +81,97 @@ html[data-kit='journal'] body {
   --kit-control-radius: 1rem;
   --kit-btn-radius: 999px;
   --kit-tool-radius: 999px;
-  --pattern-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cg transform='translate(40 46)'%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(8) scale(1.15)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(80) scale(1.15)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(152) scale(1.15)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(224) scale(1.15)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(296) scale(1.15)'/%3E%3C/g%3E%3Cg transform='translate(132 118)'%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(40) scale(0.85)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(112) scale(0.85)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(184) scale(0.85)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(256) scale(0.85)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(328) scale(0.85)'/%3E%3C/g%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='translate(110 30) rotate(35) scale(0.8)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='translate(150 60) rotate(-20) scale(0.6)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='translate(70 110) rotate(110) scale(0.7)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='translate(30 150) rotate(60) scale(0.9)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='translate(95 160) rotate(-60) scale(0.55)'/%3E%3C/svg%3E");
-  --pattern-size: 180px 180px;
-  --pattern-ink: color-mix(in oklab, var(--color-accent-brand) 16%, transparent);
-  --kit-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120' fill='black'%3E%3Cpath d='M4 112 C40 96 70 70 100 58 C122 49 140 30 156 8' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'/%3E%3Cpath d='M70 72 C64 60 66 50 74 44' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round'/%3E%3Cg transform='translate(74 40)'%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(10) scale(1.5)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(82) scale(1.5)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(154) scale(1.5)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(226) scale(1.5)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(298) scale(1.5)'/%3E%3C/g%3E%3Cg transform='translate(118 46)'%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(30) scale(1.2)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(102) scale(1.2)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(174) scale(1.2)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(246) scale(1.2)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(318) scale(1.2)'/%3E%3C/g%3E%3Cg transform='translate(146 16)'%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(0) scale(0.95)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(72) scale(0.95)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(144) scale(0.95)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(216) scale(0.95)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='rotate(288) scale(0.95)'/%3E%3C/g%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='translate(40 60) rotate(40) scale(1.1)'/%3E%3Cpath d='M0 0 C3.2 -2.4 3.6 -8 0 -10 C-3.6 -8 -3.2 -2.4 0 0 Z' transform='translate(96 90) rotate(-30) scale(0.9)'/%3E%3C/svg%3E");
 }
 [data-style='sakura'] :is(h1, h2, .ed-title, .ed-h2, .ed-display-serif, .nr-title) {
   font-variation-settings: 'SOFT' 100, 'WONK' 1;
 }
 [data-style='sakura'] ::selection {
   background: color-mix(in oklab, var(--color-accent-brand) 22%, var(--color-bg-surface));
+}
+
+
+/* ═══ Thar ═════════════════════════════════════════════════════════════════ */
+[data-style='thar'] {
+  --kit-hero: var(--kit-display);
+  --kit-hero-weight: 400;
+  --kit-hero-tracking: -0.01em;
+  --kit-display: 'Rozha One', ui-serif, Georgia, serif;
+  --kit-read: 'Literata Variable', 'Literata', ui-serif, Georgia, serif;
+  --kit-heading-weight: 400;
+  --kit-heading-tracking: 0;
+  --kit-card-radius: 1rem;
+  --kit-card-radius-sm: 0.75rem;
+  --kit-control-radius: 0.75rem;
+  /* A jharokha arch: rounded at the top, square at the base. */
+  --kit-btn-radius: 1rem 1rem 0.25rem 0.25rem;
+  --kit-tool-radius: 0.75rem 0.75rem 0.2rem 0.2rem;
+}
+/* A double rule round every card, like a carved sandstone frame. */
+[data-style='thar'] :is(.ed-card, [data-ui='card'], .nx-panel) {
+  box-shadow: inset 0 0 0 3px var(--color-bg-surface), inset 0 0 0 4px color-mix(in oklab, var(--color-accent-brand) 26%, transparent);
+}
+
+/* ═══ Warli ════════════════════════════════════════════════════════════════ */
+[data-style='warli'] {
+  --kit-hero: var(--kit-display);
+  --kit-hero-weight: 400;
+  --kit-hero-tracking: -0.01em;
+  --kit-display: 'Young Serif', ui-serif, Georgia, serif;
+  --kit-read: var(--font-body);
+  --kit-heading-weight: 400;
+  --kit-heading-tracking: -0.005em;
+  --kit-card-radius: 0.875rem;
+  --kit-card-radius-sm: 0.625rem;
+  --kit-control-radius: 0.625rem;
+  --kit-btn-radius: 0.625rem;
+  --kit-tool-radius: 0.625rem;
+}
+/* Cards edged with a painted dotted border, as Warli panels are framed. */
+[data-style='warli'] :is(.ed-card, [data-ui='card'], .nx-panel) {
+  outline: 1.5px dotted color-mix(in oklab, var(--color-accent-brand) 45%, transparent);
+  outline-offset: -6px;
+}
+
+/* ═══ Reef ═════════════════════════════════════════════════════════════════ */
+[data-style='reef'] {
+  --kit-hero: var(--kit-display);
+  --kit-hero-weight: 700;
+  --kit-hero-tracking: -0.035em;
+  --kit-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --kit-read: var(--font-body);
+  --kit-heading-weight: 650;
+  --kit-heading-tracking: -0.02em;
+  --kit-card-radius: 1.75rem;
+  --kit-card-radius-sm: 1.25rem;
+  --kit-control-radius: 1rem;
+  /* A pebble. */
+  --kit-btn-radius: 999px;
+  --kit-tool-radius: 999px;
+}
+
+/* ═══ Bauhaus ══════════════════════════════════════════════════════════════ */
+[data-style='bauhaus'] {
+  --kit-hero: var(--kit-display);
+  --kit-hero-weight: 800;
+  --kit-hero-tracking: -0.04em;
+  --kit-display: 'Outfit Variable', 'Outfit', ui-sans-serif, system-ui, sans-serif;
+  --kit-read: var(--font-body);
+  --kit-heading-weight: 700;
+  --kit-heading-tracking: -0.025em;
+  --kit-card-radius: 0;
+  --kit-card-radius-sm: 0;
+  --kit-control-radius: 0;
+  --kit-btn-radius: 0;
+  --kit-tool-radius: 0;
+}
+/* Firm ink rules round every card. */
+[data-style='bauhaus'] :is(.ed-card, [data-ui='card'], .nx-panel) {
+  border-width: 2px;
+  border-color: var(--color-text-primary);
+}
+[data-style='bauhaus'] :is(.ed-label, [data-ui='eyebrow'], [data-ui='stat-label']) {
+  font-weight: 700;
+  letter-spacing: 0.14em;
 }
 
 /* ═══ Arcade ═══════════════════════════════════════════════════════════════ */
@@ -107,10 +188,6 @@ html[data-kit='journal'] body {
   --kit-control-radius: 0;
   --kit-btn-radius: 0;
   --kit-tool-radius: 0;
-  --pattern-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Crect x='26' y='24' width='3' height='3'/%3E%3Crect x='23' y='27' width='3' height='3'/%3E%3Crect x='26' y='27' width='3' height='3'/%3E%3Crect x='29' y='27' width='3' height='3'/%3E%3Crect x='20' y='30' width='3' height='3'/%3E%3Crect x='23' y='30' width='3' height='3'/%3E%3Crect x='26' y='30' width='3' height='3'/%3E%3Crect x='29' y='30' width='3' height='3'/%3E%3Crect x='32' y='30' width='3' height='3'/%3E%3Crect x='23' y='33' width='3' height='3'/%3E%3Crect x='26' y='33' width='3' height='3'/%3E%3Crect x='29' y='33' width='3' height='3'/%3E%3Crect x='26' y='36' width='3' height='3'/%3E%3Crect x='107' y='30' width='3' height='3'/%3E%3Crect x='110' y='30' width='3' height='3'/%3E%3Crect x='116' y='30' width='3' height='3'/%3E%3Crect x='119' y='30' width='3' height='3'/%3E%3Crect x='104' y='33' width='3' height='3'/%3E%3Crect x='107' y='33' width='3' height='3'/%3E%3Crect x='110' y='33' width='3' height='3'/%3E%3Crect x='113' y='33' width='3' height='3'/%3E%3Crect x='116' y='33' width='3' height='3'/%3E%3Crect x='119' y='33' width='3' height='3'/%3E%3Crect x='122' y='33' width='3' height='3'/%3E%3Crect x='104' y='36' width='3' height='3'/%3E%3Crect x='107' y='36' width='3' height='3'/%3E%3Crect x='110' y='36' width='3' height='3'/%3E%3Crect x='113' y='36' width='3' height='3'/%3E%3Crect x='116' y='36' width='3' height='3'/%3E%3Crect x='119' y='36' width='3' height='3'/%3E%3Crect x='122' y='36' width='3' height='3'/%3E%3Crect x='107' y='39' width='3' height='3'/%3E%3Crect x='110' y='39' width='3' height='3'/%3E%3Crect x='113' y='39' width='3' height='3'/%3E%3Crect x='116' y='39' width='3' height='3'/%3E%3Crect x='119' y='39' width='3' height='3'/%3E%3Crect x='110' y='42' width='3' height='3'/%3E%3Crect x='113' y='42' width='3' height='3'/%3E%3Crect x='116' y='42' width='3' height='3'/%3E%3Crect x='113' y='45' width='3' height='3'/%3E%3Crect x='63' y='100' width='3' height='3'/%3E%3Crect x='66' y='100' width='3' height='3'/%3E%3Crect x='69' y='100' width='3' height='3'/%3E%3Crect x='60' y='103' width='3' height='3'/%3E%3Crect x='72' y='103' width='3' height='3'/%3E%3Crect x='60' y='106' width='3' height='3'/%3E%3Crect x='66' y='106' width='3' height='3'/%3E%3Crect x='72' y='106' width='3' height='3'/%3E%3Crect x='60' y='109' width='3' height='3'/%3E%3Crect x='66' y='109' width='3' height='3'/%3E%3Crect x='72' y='109' width='3' height='3'/%3E%3Crect x='60' y='112' width='3' height='3'/%3E%3Crect x='72' y='112' width='3' height='3'/%3E%3Crect x='63' y='115' width='3' height='3'/%3E%3Crect x='66' y='115' width='3' height='3'/%3E%3Crect x='69' y='115' width='3' height='3'/%3E%3Crect x='128' y='118' width='2' height='2'/%3E%3Crect x='136' y='118' width='2' height='2'/%3E%3Crect x='130' y='120' width='2' height='2'/%3E%3Crect x='134' y='120' width='2' height='2'/%3E%3Crect x='132' y='122' width='2' height='2'/%3E%3Crect x='130' y='124' width='2' height='2'/%3E%3Crect x='134' y='124' width='2' height='2'/%3E%3Crect x='128' y='126' width='2' height='2'/%3E%3Crect x='136' y='126' width='2' height='2'/%3E%3Crect x='86' y='70' width='3' height='3'/%3E%3Crect x='30' y='134' width='3' height='3'/%3E%3Crect x='144' y='8' width='3' height='3'/%3E%3C/svg%3E");
-  --pattern-size: 160px 160px;
-  --pattern-ink: color-mix(in oklab, var(--color-text-primary) 13%, transparent);
-  --kit-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120' fill='black'%3E%3Crect x='13' y='70' width='5' height='5'/%3E%3Crect x='18' y='70' width='5' height='5'/%3E%3Crect x='28' y='70' width='5' height='5'/%3E%3Crect x='33' y='70' width='5' height='5'/%3E%3Crect x='8' y='75' width='5' height='5'/%3E%3Crect x='13' y='75' width='5' height='5'/%3E%3Crect x='18' y='75' width='5' height='5'/%3E%3Crect x='23' y='75' width='5' height='5'/%3E%3Crect x='28' y='75' width='5' height='5'/%3E%3Crect x='33' y='75' width='5' height='5'/%3E%3Crect x='38' y='75' width='5' height='5'/%3E%3Crect x='8' y='80' width='5' height='5'/%3E%3Crect x='13' y='80' width='5' height='5'/%3E%3Crect x='18' y='80' width='5' height='5'/%3E%3Crect x='23' y='80' width='5' height='5'/%3E%3Crect x='28' y='80' width='5' height='5'/%3E%3Crect x='33' y='80' width='5' height='5'/%3E%3Crect x='38' y='80' width='5' height='5'/%3E%3Crect x='13' y='85' width='5' height='5'/%3E%3Crect x='18' y='85' width='5' height='5'/%3E%3Crect x='23' y='85' width='5' height='5'/%3E%3Crect x='28' y='85' width='5' height='5'/%3E%3Crect x='33' y='85' width='5' height='5'/%3E%3Crect x='18' y='90' width='5' height='5'/%3E%3Crect x='23' y='90' width='5' height='5'/%3E%3Crect x='28' y='90' width='5' height='5'/%3E%3Crect x='23' y='95' width='5' height='5'/%3E%3Crect x='80' y='20' width='5' height='5'/%3E%3Crect x='75' y='25' width='5' height='5'/%3E%3Crect x='80' y='25' width='5' height='5'/%3E%3Crect x='85' y='25' width='5' height='5'/%3E%3Crect x='70' y='30' width='5' height='5'/%3E%3Crect x='75' y='30' width='5' height='5'/%3E%3Crect x='80' y='30' width='5' height='5'/%3E%3Crect x='85' y='30' width='5' height='5'/%3E%3Crect x='90' y='30' width='5' height='5'/%3E%3Crect x='75' y='35' width='5' height='5'/%3E%3Crect x='80' y='35' width='5' height='5'/%3E%3Crect x='85' y='35' width='5' height='5'/%3E%3Crect x='80' y='40' width='5' height='5'/%3E%3Crect x='129' y='70' width='5' height='5'/%3E%3Crect x='134' y='70' width='5' height='5'/%3E%3Crect x='139' y='70' width='5' height='5'/%3E%3Crect x='124' y='75' width='5' height='5'/%3E%3Crect x='144' y='75' width='5' height='5'/%3E%3Crect x='124' y='80' width='5' height='5'/%3E%3Crect x='134' y='80' width='5' height='5'/%3E%3Crect x='144' y='80' width='5' height='5'/%3E%3Crect x='124' y='85' width='5' height='5'/%3E%3Crect x='134' y='85' width='5' height='5'/%3E%3Crect x='144' y='85' width='5' height='5'/%3E%3Crect x='124' y='90' width='5' height='5'/%3E%3Crect x='144' y='90' width='5' height='5'/%3E%3Crect x='129' y='95' width='5' height='5'/%3E%3Crect x='134' y='95' width='5' height='5'/%3E%3Crect x='139' y='95' width='5' height='5'/%3E%3C/svg%3E");
 }
 /* Pixel corners: every card and button has its corners notched out, like a sprite. */
 [data-style='arcade'] :is(.ed-card, .ed-card-sm, .ed-oat, .ed-feature, [data-ui='card'], .nx-panel, .desk-weather),
@@ -126,53 +203,6 @@ html[data-kit='journal'] body {
   letter-spacing: 0.06em;
 }
 
-/* ═══ Greenhouse ═══════════════════════════════════════════════════════════ */
-[data-style='greenhouse'] {
-  --kit-hero: var(--kit-display);
-  --kit-hero-weight: 400;
-  --kit-hero-tracking: -0.02em;
-  --kit-display: 'Young Serif', ui-serif, Georgia, serif;
-  --kit-read: 'Literata Variable', 'Literata', ui-serif, Georgia, serif;
-  --kit-heading-weight: 400;
-  --kit-heading-tracking: -0.01em;
-  --kit-card-radius: 1.5rem;
-  --kit-card-radius-sm: 1rem;
-  --kit-control-radius: 0.875rem;
-  /* A leaf: two round corners, two pointed. */
-  --kit-btn-radius: 1.25rem 0.25rem 1.25rem 0.25rem;
-  --kit-tool-radius: 0.75rem 0.2rem 0.75rem 0.2rem;
-  --pattern-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220' viewBox='0 0 220 220' stroke='black' stroke-width='1.3' stroke-linecap='round'%3E%3Cg transform='translate(50 200) rotate(-12) scale(1)'%3E%3Cpath d='M0 0 C2 -30 0 -60 -6 -88' fill='none'/%3E%3Cpath d='M-0.1 -11.0 q-8.6 -4.3 -17.2 -9.5' fill='none'/%3E%3Cpath d='M-0.1 -11.0 q8.6 -4.3 17.2 -9.5' fill='none'/%3E%3Cpath d='M-0.4 -22.0 q-7.8 -3.9 -15.5 -8.5' fill='none'/%3E%3Cpath d='M-0.4 -22.0 q7.8 -3.9 15.5 -8.5' fill='none'/%3E%3Cpath d='M-0.8 -33.0 q-6.9 -3.4 -13.8 -7.6' fill='none'/%3E%3Cpath d='M-0.8 -33.0 q6.9 -3.4 13.8 -7.6' fill='none'/%3E%3Cpath d='M-1.5 -44.0 q-6.0 -3.0 -12.0 -6.6' fill='none'/%3E%3Cpath d='M-1.5 -44.0 q6.0 -3.0 12.0 -6.6' fill='none'/%3E%3Cpath d='M-2.3 -55.0 q-5.1 -2.6 -10.2 -5.6' fill='none'/%3E%3Cpath d='M-2.3 -55.0 q5.1 -2.6 10.2 -5.6' fill='none'/%3E%3Cpath d='M-3.4 -66.0 q-4.2 -2.1 -8.5 -4.7' fill='none'/%3E%3Cpath d='M-3.4 -66.0 q4.2 -2.1 8.5 -4.7' fill='none'/%3E%3Cpath d='M-4.6 -77.0 q-3.4 -1.7 -6.8 -3.7' fill='none'/%3E%3Cpath d='M-4.6 -77.0 q3.4 -1.7 6.8 -3.7' fill='none'/%3E%3C/g%3E%3Cg transform='translate(170 215) rotate(18) scale(0.8)'%3E%3Cpath d='M0 0 C2 -30 0 -60 -6 -88' fill='none'/%3E%3Cpath d='M-0.1 -11.0 q-8.6 -4.3 -17.2 -9.5' fill='none'/%3E%3Cpath d='M-0.1 -11.0 q8.6 -4.3 17.2 -9.5' fill='none'/%3E%3Cpath d='M-0.4 -22.0 q-7.8 -3.9 -15.5 -8.5' fill='none'/%3E%3Cpath d='M-0.4 -22.0 q7.8 -3.9 15.5 -8.5' fill='none'/%3E%3Cpath d='M-0.8 -33.0 q-6.9 -3.4 -13.8 -7.6' fill='none'/%3E%3Cpath d='M-0.8 -33.0 q6.9 -3.4 13.8 -7.6' fill='none'/%3E%3Cpath d='M-1.5 -44.0 q-6.0 -3.0 -12.0 -6.6' fill='none'/%3E%3Cpath d='M-1.5 -44.0 q6.0 -3.0 12.0 -6.6' fill='none'/%3E%3Cpath d='M-2.3 -55.0 q-5.1 -2.6 -10.2 -5.6' fill='none'/%3E%3Cpath d='M-2.3 -55.0 q5.1 -2.6 10.2 -5.6' fill='none'/%3E%3Cpath d='M-3.4 -66.0 q-4.2 -2.1 -8.5 -4.7' fill='none'/%3E%3Cpath d='M-3.4 -66.0 q4.2 -2.1 8.5 -4.7' fill='none'/%3E%3Cpath d='M-4.6 -77.0 q-3.4 -1.7 -6.8 -3.7' fill='none'/%3E%3Cpath d='M-4.6 -77.0 q3.4 -1.7 6.8 -3.7' fill='none'/%3E%3C/g%3E%3Cg transform='translate(150 60) rotate(30)'%3E%3Cpath d='M0 0 C10 -10 10 -30 0 -40 C-10 -30 -10 -10 0 0 Z' fill='none'/%3E%3Cpath d='M0 0 L0 -38' fill='none'/%3E%3C/g%3E%3C/svg%3E");
-  --pattern-size: 220px 220px;
-  --pattern-ink: color-mix(in oklab, var(--color-text-primary) 11%, transparent);
-  --kit-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120' stroke='black' stroke-width='1.6' fill='none' stroke-linecap='round'%3E%3Cg transform='translate(60 118) rotate(-24) scale(1.25)'%3E%3Cpath d='M0 0 C2 -30 0 -60 -6 -88' fill='none'/%3E%3Cpath d='M-0.1 -11.0 q-8.6 -4.3 -17.2 -9.5' fill='none'/%3E%3Cpath d='M-0.1 -11.0 q8.6 -4.3 17.2 -9.5' fill='none'/%3E%3Cpath d='M-0.4 -22.0 q-7.8 -3.9 -15.5 -8.5' fill='none'/%3E%3Cpath d='M-0.4 -22.0 q7.8 -3.9 15.5 -8.5' fill='none'/%3E%3Cpath d='M-0.8 -33.0 q-6.9 -3.4 -13.8 -7.6' fill='none'/%3E%3Cpath d='M-0.8 -33.0 q6.9 -3.4 13.8 -7.6' fill='none'/%3E%3Cpath d='M-1.5 -44.0 q-6.0 -3.0 -12.0 -6.6' fill='none'/%3E%3Cpath d='M-1.5 -44.0 q6.0 -3.0 12.0 -6.6' fill='none'/%3E%3Cpath d='M-2.3 -55.0 q-5.1 -2.6 -10.2 -5.6' fill='none'/%3E%3Cpath d='M-2.3 -55.0 q5.1 -2.6 10.2 -5.6' fill='none'/%3E%3Cpath d='M-3.4 -66.0 q-4.2 -2.1 -8.5 -4.7' fill='none'/%3E%3Cpath d='M-3.4 -66.0 q4.2 -2.1 8.5 -4.7' fill='none'/%3E%3Cpath d='M-4.6 -77.0 q-3.4 -1.7 -6.8 -3.7' fill='none'/%3E%3Cpath d='M-4.6 -77.0 q3.4 -1.7 6.8 -3.7' fill='none'/%3E%3C/g%3E%3Cg transform='translate(110 120) rotate(14) scale(1)'%3E%3Cpath d='M0 0 C2 -30 0 -60 -6 -88' fill='none'/%3E%3Cpath d='M-0.1 -11.0 q-8.6 -4.3 -17.2 -9.5' fill='none'/%3E%3Cpath d='M-0.1 -11.0 q8.6 -4.3 17.2 -9.5' fill='none'/%3E%3Cpath d='M-0.4 -22.0 q-7.8 -3.9 -15.5 -8.5' fill='none'/%3E%3Cpath d='M-0.4 -22.0 q7.8 -3.9 15.5 -8.5' fill='none'/%3E%3Cpath d='M-0.8 -33.0 q-6.9 -3.4 -13.8 -7.6' fill='none'/%3E%3Cpath d='M-0.8 -33.0 q6.9 -3.4 13.8 -7.6' fill='none'/%3E%3Cpath d='M-1.5 -44.0 q-6.0 -3.0 -12.0 -6.6' fill='none'/%3E%3Cpath d='M-1.5 -44.0 q6.0 -3.0 12.0 -6.6' fill='none'/%3E%3Cpath d='M-2.3 -55.0 q-5.1 -2.6 -10.2 -5.6' fill='none'/%3E%3Cpath d='M-2.3 -55.0 q5.1 -2.6 10.2 -5.6' fill='none'/%3E%3Cpath d='M-3.4 -66.0 q-4.2 -2.1 -8.5 -4.7' fill='none'/%3E%3Cpath d='M-3.4 -66.0 q4.2 -2.1 8.5 -4.7' fill='none'/%3E%3Cpath d='M-4.6 -77.0 q-3.4 -1.7 -6.8 -3.7' fill='none'/%3E%3Cpath d='M-4.6 -77.0 q3.4 -1.7 6.8 -3.7' fill='none'/%3E%3C/g%3E%3Cpath d='M128 118 h28 l-4 -22 h-20 z'/%3E%3C/svg%3E");
-}
-
-/* ═══ Observatory ══════════════════════════════════════════════════════════ */
-[data-style='observatory'] {
-  --kit-hero: var(--kit-display);
-  --kit-hero-weight: 600;
-  --kit-hero-tracking: -0.01em;
-  --kit-display: 'Cormorant Garamond Variable', 'Cormorant Garamond', ui-serif, Georgia, serif;
-  --kit-read: 'Literata Variable', 'Literata', ui-serif, Georgia, serif;
-  --kit-heading-weight: 560;
-  --kit-heading-tracking: 0;
-  --kit-card-radius: 1rem;
-  --kit-card-radius-sm: 0.75rem;
-  --kit-control-radius: 999px;
-  --kit-btn-radius: 999px;
-  --kit-tool-radius: 999px;
-  --pattern-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200' stroke='black' stroke-width='0.8' fill='black'%3E%3Cline x1='30' y1='40' x2='70' y2='28'/%3E%3Cline x1='70' y1='28' x2='98' y2='56'/%3E%3Cline x1='98' y1='56' x2='84' y2='92'/%3E%3Cline x1='84' y1='92' x2='140' y2='110'/%3E%3Ccircle cx='30' cy='40' r='2.2' stroke='none'/%3E%3Ccircle cx='70' cy='28' r='2.2' stroke='none'/%3E%3Ccircle cx='98' cy='56' r='2.2' stroke='none'/%3E%3Ccircle cx='84' cy='92' r='2.2' stroke='none'/%3E%3Ccircle cx='140' cy='110' r='2.2' stroke='none'/%3E%3Ccircle cx='150' cy='30' r='1' stroke='none'/%3E%3Ccircle cx='20' cy='120' r='1.2' stroke='none'/%3E%3Ccircle cx='60' cy='150' r='0.9' stroke='none'/%3E%3Ccircle cx='120' cy='160' r='1.4' stroke='none'/%3E%3Ccircle cx='175' cy='70' r='0.8' stroke='none'/%3E%3Ccircle cx='110' cy='10' r='1' stroke='none'/%3E%3Ccircle cx='10' cy='80' r='0.8' stroke='none'/%3E%3Ccircle cx='180' cy='170' r='1.1' stroke='none'/%3E%3Cpath d='M160 134 L161.5 138.5 L166 140 L161.5 141.5 L160 146 L158.5 141.5 L154 140 L158.5 138.5 Z' stroke='none'/%3E%3Ccircle cx='200' cy='200' r='70' fill='none' stroke-dasharray='2 5'/%3E%3C/svg%3E");
-  --pattern-size: 200px 200px;
-  --pattern-ink: color-mix(in oklab, var(--color-text-primary) 16%, transparent);
-  --kit-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120' stroke='black' stroke-width='1.2' fill='none'%3E%3Ccircle cx='80' cy='60' r='12' fill='black'/%3E%3Cellipse cx='80' cy='60' rx='62' ry='20' transform='rotate(-14 80 60)'/%3E%3Cellipse cx='80' cy='60' rx='40' ry='40' stroke-dasharray='2 4'/%3E%3Ccircle cx='138' cy='44' r='4' fill='black'/%3E%3Cpath d='M24 15 L25.75 20.25 L31 22 L25.75 23.75 L24 29 L22.25 23.75 L17 22 L22.25 20.25 Z' stroke='none'/%3E%3Cpath d='M140 95 L141.25 98.75 L145 100 L141.25 101.25 L140 105 L138.75 101.25 L135 100 L138.75 98.75 Z' stroke='none'/%3E%3C/svg%3E");
-}
-/* Instruments: a fine inner rule inside every card, like an engraved plate. */
-[data-style='observatory'] :is(.ed-card, [data-ui='card'], .nx-panel) {
-  box-shadow: inset 0 0 0 3px var(--color-bg-surface), inset 0 0 0 4px color-mix(in oklab, var(--color-accent-brand) 30%, transparent);
-}
-[data-style='observatory'] :is(.ed-label, [data-ui='eyebrow']) {
-  letter-spacing: 0.18em;
-}
 
 /* ═══ Blueprint ════════════════════════════════════════════════════════════ */
 [data-style='blueprint'] {
@@ -188,10 +218,6 @@ html[data-kit='journal'] body {
   --kit-control-radius: 0.125rem;
   --kit-btn-radius: 0;
   --kit-tool-radius: 0.125rem;
-  --pattern-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240' stroke='black' stroke-width='1' fill='none'%3E%3Ccircle cx='60' cy='60' r='34'/%3E%3Cpath d='M60 20 V100 M20 60 H100' stroke-dasharray='6 3 1 3'/%3E%3Cpath d='M150 200 A60 60 0 0 1 210 140' /%3E%3Cpath d='M150 196 V204 M146 200 H154 M210 136 V144 M206 140 H214'/%3E%3Cpath d='M120 120 H200 M120 116 V124 M200 116 V124 M126 117 L120 120 L126 123 M194 117 L200 120 L194 123'/%3E%3C/svg%3E");
-  --pattern-size: 240px 240px;
-  --pattern-ink: color-mix(in oklab, var(--color-text-primary) 14%, transparent);
-  --kit-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120' stroke='black' stroke-width='1.3' fill='none' stroke-linecap='round'%3E%3Cpath d='M80 12 L50 104 M80 12 L112 104'/%3E%3Ccircle cx='80' cy='12' r='5'/%3E%3Cpath d='M44 86 A60 60 0 0 0 118 86' stroke-dasharray='4 4'/%3E%3Cpath d='M14 114 H146 M14 110 V118 M146 110 V118'/%3E%3Cpath d='M74 30 h12'/%3E%3C/svg%3E");
   --bp-grid: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
   /* The drafting grid under the drawings. */
   --paper-image: linear-gradient(var(--bp-grid) 1px, transparent 1px), linear-gradient(90deg, var(--bp-grid) 1px, transparent 1px);
@@ -211,205 +237,72 @@ html[data-kit='journal'] body {
   letter-spacing: 0.08em;
 }
 
-/* ═══ Sketchbook ═══════════════════════════════════════════════════════════ */
-[data-style='sketchbook'] {
+
+/* ═══ Kerala ═══════════════════════════════════════════════════════════════ */
+[data-style='kerala'] {
   --kit-hero: var(--kit-display);
-  --kit-hero-weight: 700;
-  --kit-hero-tracking: -0.01em;
-  --kit-display: 'Kalam', 'Comic Neue', ui-rounded, cursive;
-  --kit-read: var(--font-body);
-  --kit-heading-weight: 700;
-  --kit-heading-tracking: 0;
-  /* Hand-drawn edges: four different radii make the box wobble like a pencil line. */
-  --kit-card-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-  --kit-card-radius-sm: 125px 10px 115px 10px / 10px 115px 10px 125px;
-  --kit-control-radius: 120px 8px 110px 8px / 8px 110px 8px 120px;
-  --kit-btn-radius: 90px 6px 80px 6px / 6px 80px 6px 90px;
-  --kit-tool-radius: 60px 6px 50px 6px / 6px 50px 6px 60px;
-  --pattern-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260' stroke='black' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M30 30 c-8 0 -8 4 -8 10 s-1 9 -7 10 c6 1 7 4 7 10 s0 10 8 10'/%3E%3Cpath d='M70 40 q30 -18 58 4 M120 36 l9 8 -11 4'/%3E%3Ccircle cx='190' cy='40' r='8'/%3E%3Ccircle cx='172' cy='76' r='8'/%3E%3Ccircle cx='208' cy='76' r='8'/%3E%3Cpath d='M185 47 L176 69 M195 47 L204 69'/%3E%3Cpath d='M28 150 h96 v24 h-96 z M52 150 v24 M76 150 v24 M100 150 v24'/%3E%3Cpath d='M168 160 l6 13 14 2 -10 10 2 14 -12 -7 -12 7 2 -14 -10 -10 14 -2 z'/%3E%3Cpath d='M210 210 q12 -6 22 0 t22 0' /%3E%3Cpath d='M40 222 l12 -12 M40 210 l12 12'/%3E%3C/svg%3E");
-  --pattern-size: 260px 260px;
-  --pattern-ink: color-mix(in oklab, var(--color-text-primary) 13%, transparent);
-  --kit-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120' stroke='black' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 100 L118 16 L136 34 L38 118 L16 122 Z M110 24 L128 42 M30 108 L36 114'/%3E%3Cpath d='M60 30 q10 -14 24 -6' stroke-dasharray='3 4'/%3E%3Cpath d='M140 80 q-20 10 -12 26 q8 12 22 -2'/%3E%3C/svg%3E");
-  --marker: oklch(0.9 0.15 100 / 0.55);
+  --kit-hero-weight: 560;
+  --kit-hero-tracking: -0.02em;
+  --kit-display: 'Newsreader Variable', 'Newsreader', ui-serif, Georgia, serif;
+  --kit-read: 'Newsreader Variable', 'Newsreader', ui-serif, Georgia, serif;
+  --kit-heading-weight: 540;
+  --kit-heading-tracking: -0.01em;
+  --kit-card-radius: 1.5rem;
+  --kit-card-radius-sm: 1rem;
+  --kit-control-radius: 0.875rem;
+  /* A palm leaf: two round corners, two pointed. */
+  --kit-btn-radius: 1.25rem 0.3rem 1.25rem 0.3rem;
+  --kit-tool-radius: 0.75rem 0.2rem 0.75rem 0.2rem;
 }
-[data-style='sketchbook'][data-mode='dark'] {
-  --marker: oklch(0.9 0.12 95 / 0.28);
-}
-/* Dot-grid paper under the doodles. */
-[data-style='sketchbook'] {
-  --paper-image: radial-gradient(color-mix(in oklab, var(--color-text-primary) 14%, transparent) 1px, transparent 1.3px);
-  --paper-size: 22px 22px;
-}
-[data-style='sketchbook'] :is(.ed-card, [data-ui='card'], .nx-panel, .ed-oat, .ed-feature) {
-  border-width: 1.5px;
-}
-/* Page titles get a highlighter stroke under the words. */
-[data-style='sketchbook'] :is(.ed-title, [data-ui='page-title'], .nr-title) {
-  text-decoration: underline;
-  text-decoration-color: var(--marker);
-  text-decoration-thickness: 0.32em;
-  text-underline-offset: -0.12em;
-  text-decoration-skip-ink: none;
+[data-style='kerala'] :is(h1, h2, .ed-title, .ed-h2, .nr-title) {
+  font-style: italic;
 }
 
-/* ═══ Block Print ══════════════════════════════════════════════════════════ */
-[data-style='blockprint'] {
+/* ═══ Cosmos ═══════════════════════════════════════════════════════════════ */
+[data-style='cosmos'] {
   --kit-hero: var(--kit-display);
-  --kit-hero-weight: 400;
-  --kit-hero-tracking: 0;
-  --kit-display: 'Rozha One', ui-serif, Georgia, serif;
-  --kit-read: var(--font-body);
-  --kit-heading-weight: 400;
-  --kit-heading-tracking: 0;
-  --kit-card-radius: 1rem;
-  --kit-card-radius-sm: 0.75rem;
-  --kit-control-radius: 0.625rem;
-  --kit-btn-radius: 999px;
-  --kit-tool-radius: 0.625rem;
-  --pattern-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120' stroke='black' stroke-width='1.3' fill='black'%3E%3Cg transform='translate(30 34) rotate(-20)'%3E%3Cpath d='M0 -22 C14 -22 22 -6 15 7 C8 20 -11 22 -14 10 C-17 -1 -7 -6 -1 -2 C5 2 0 9 -4 7' fill='none'/%3E%3Ccircle cx='4' cy='-8' r='2'/%3E%3C/g%3E%3Cg transform='translate(90 94) rotate(160)'%3E%3Cpath d='M0 -22 C14 -22 22 -6 15 7 C8 20 -11 22 -14 10 C-17 -1 -7 -6 -1 -2 C5 2 0 9 -4 7' fill='none'/%3E%3Ccircle cx='4' cy='-8' r='2'/%3E%3C/g%3E%3Cg transform='translate(90 30)' fill='none'%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(0)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(45)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(90)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(135)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(180)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(225)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(270)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(315)'/%3E%3Ccircle r='3.15' fill='black'/%3E%3C/g%3E%3Cg transform='translate(30 92)' fill='none'%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(0)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(45)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(90)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(135)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(180)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(225)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(270)'/%3E%3Cellipse cx='0' cy='-9' rx='4.05' ry='6.75' transform='rotate(315)'/%3E%3Ccircle r='3.15' fill='black'/%3E%3C/g%3E%3Ccircle cx='60' cy='60' r='2.2'/%3E%3Ccircle cx='0' cy='0' r='2.2'/%3E%3Ccircle cx='120' cy='0' r='2.2'/%3E%3Ccircle cx='0' cy='120' r='2.2'/%3E%3Ccircle cx='120' cy='120' r='2.2'/%3E%3C/svg%3E");
-  --pattern-size: 120px 120px;
-  --pattern-ink: color-mix(in oklab, var(--color-accent-brand) 14%, transparent);
-  --kit-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120' stroke='black' stroke-width='1.6' fill='black'%3E%3Cg transform='translate(52 62) rotate(-25) scale(2)'%3E%3Cpath d='M0 -22 C14 -22 22 -6 15 7 C8 20 -11 22 -14 10 C-17 -1 -7 -6 -1 -2 C5 2 0 9 -4 7' fill='none'/%3E%3Ccircle cx='4' cy='-8' r='2'/%3E%3C/g%3E%3Cg transform='translate(122 40)' fill='none'%3E%3Cellipse cx='0' cy='-14' rx='6.3' ry='10.5' transform='rotate(0)'/%3E%3Cellipse cx='0' cy='-14' rx='6.3' ry='10.5' transform='rotate(45)'/%3E%3Cellipse cx='0' cy='-14' rx='6.3' ry='10.5' transform='rotate(90)'/%3E%3Cellipse cx='0' cy='-14' rx='6.3' ry='10.5' transform='rotate(135)'/%3E%3Cellipse cx='0' cy='-14' rx='6.3' ry='10.5' transform='rotate(180)'/%3E%3Cellipse cx='0' cy='-14' rx='6.3' ry='10.5' transform='rotate(225)'/%3E%3Cellipse cx='0' cy='-14' rx='6.3' ry='10.5' transform='rotate(270)'/%3E%3Cellipse cx='0' cy='-14' rx='6.3' ry='10.5' transform='rotate(315)'/%3E%3Ccircle r='4.8999999999999995' fill='black'/%3E%3C/g%3E%3Cg transform='translate(126 96)' fill='none'%3E%3Cellipse cx='0' cy='-8' rx='3.6' ry='6.0' transform='rotate(0)'/%3E%3Cellipse cx='0' cy='-8' rx='3.6' ry='6.0' transform='rotate(45)'/%3E%3Cellipse cx='0' cy='-8' rx='3.6' ry='6.0' transform='rotate(90)'/%3E%3Cellipse cx='0' cy='-8' rx='3.6' ry='6.0' transform='rotate(135)'/%3E%3Cellipse cx='0' cy='-8' rx='3.6' ry='6.0' transform='rotate(180)'/%3E%3Cellipse cx='0' cy='-8' rx='3.6' ry='6.0' transform='rotate(225)'/%3E%3Cellipse cx='0' cy='-8' rx='3.6' ry='6.0' transform='rotate(270)'/%3E%3Cellipse cx='0' cy='-8' rx='3.6' ry='6.0' transform='rotate(315)'/%3E%3Ccircle r='2.8' fill='black'/%3E%3C/g%3E%3C/svg%3E");
-  --marigold: oklch(0.78 0.15 75);
-}
-/* A printed border: a stitched rule just inside every card. */
-[data-style='blockprint'] :is(.ed-card, [data-ui='card'], .nx-panel) {
-  outline: 1px dashed color-mix(in oklab, var(--color-accent-brand) 40%, transparent);
-  outline-offset: -7px;
-}
-[data-style='blockprint'] :is(.ed-label, [data-ui='eyebrow'])::before {
-  content: '';
-  display: inline-block;
-  width: 0.5em;
-  height: 0.5em;
-  margin-right: 0.5em;
-  border-radius: 999px;
-  background: var(--marigold);
-  vertical-align: 0.08em;
-}
-
-/* ═══ Terminal ═════════════════════════════════════════════════════════════ */
-[data-style='terminal'] {
-  --kit-hero: var(--font-mono);
   --kit-hero-weight: 700;
   --kit-hero-tracking: -0.04em;
-  --kit-display: var(--font-mono);
-  --kit-read: var(--font-mono);
-  --kit-read-size: 1.05rem;
-  --kit-heading-weight: 700;
-  --kit-heading-tracking: -0.02em;
-  --kit-card-radius: 0;
-  --kit-card-radius-sm: 0;
-  --kit-control-radius: 0;
-  --kit-btn-radius: 0;
-  --kit-tool-radius: 0;
-  --pattern-svg: none;
-}
-/* One monospaced face for the whole interface. */
-[data-style='terminal'][data-font],
-[data-style='terminal'] [data-font] {
-  --font-body: var(--font-mono);
-  --font-sans: var(--font-mono);
-}
-/* Dark: faint scan lines. Light: green-bar printer paper. */
-[data-style='terminal'][data-mode='dark'] {
-  --paper-image: repeating-linear-gradient(0deg, color-mix(in oklab, var(--color-text-primary) 4%, transparent) 0 1px, transparent 1px 4px);
-  --paper-size: auto;
-}
-[data-style='terminal'][data-mode='light'] {
-  --paper-image: repeating-linear-gradient(180deg, transparent 0 2.25rem, var(--color-bg-surface-2) 2.25rem 4.5rem);
-  --paper-size: auto;
-}
-/* A prompt before every page title. */
-[data-style='terminal'] :is(.ed-title, [data-ui='page-title'])::before {
-  content: '> ';
-  color: var(--color-accent-brand);
-}
-
-/* ═══ Clear ════════════════════════════════════════════════════════════════ */
-[data-style='clear'] {
-  --kit-display: 'Atkinson Hyperlegible Next Variable', 'Atkinson Hyperlegible Next', ui-sans-serif, system-ui, sans-serif;
-  --kit-read: 'Atkinson Hyperlegible Next Variable', 'Atkinson Hyperlegible Next', ui-sans-serif, system-ui, sans-serif;
-  --kit-read-size: 1.25rem;
-  --kit-heading-weight: 700;
-  --kit-heading-tracking: -0.01em;
-  --kit-card-radius: 0.75rem;
-  --kit-card-radius-sm: 0.5rem;
-  --kit-control-radius: 0.5rem;
-  --kit-btn-radius: 0.5rem;
-  --kit-tool-radius: 0.5rem;
-  --pattern-svg: none;
-}
-/* Firm edges: two-pixel borders on cards, inputs and outlined buttons. */
-[data-style='clear'] :is(.ed-card, .ed-card-sm, [data-ui='card'], .nx-panel, input, textarea, select, .nx-input) {
-  border-width: 2px;
-  border-color: var(--color-border-strong);
-}
-/* Links are always underlined; focus is a thick ring that can't be missed. */
-[data-style='clear'] a:not([class*='btn']):not([data-ui='button']) {
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
-}
-[data-style='clear'] :focus-visible {
-  outline: 3px solid var(--color-text-primary) !important;
-  outline-offset: 3px !important;
-}
-[data-style='clear'] .nr-main {
-  --read-leading: 1.7;
-  letter-spacing: 0.01em;
-}
-
-/* ═══ Monsoon ══════════════════════════════════════════════════════════════ */
-[data-style='monsoon'] {
-  --kit-hero: var(--kit-display);
-  --kit-hero-weight: 650;
-  --kit-hero-tracking: -0.045em;
-  --kit-display: 'Bricolage Grotesque Variable', 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --kit-display: 'Space Grotesk Variable', 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
   --kit-read: var(--font-body);
   --kit-heading-weight: 600;
-  --kit-heading-tracking: -0.03em;
+  --kit-heading-tracking: -0.025em;
   --kit-card-radius: 1.25rem;
   --kit-card-radius-sm: 0.875rem;
-  --kit-control-radius: 0.75rem;
-  /* A raindrop: round, then a point. */
-  --kit-btn-radius: 999px 999px 999px 0.375rem;
-  --kit-tool-radius: 0.625rem;
-  --pattern-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240' stroke='black' stroke-width='1.2' fill='none' stroke-linecap='round'%3E %3Cpath d='M24 18 l-8 22 M58 6 l-8 22 M92 30 l-8 22 M140 10 l-8 22 M176 40 l-8 22 M214 16 l-8 22'/%3E %3Cpath d='M36 92 l-8 22 M112 80 l-8 22 M200 96 l-8 22 M70 132 l-8 22 M150 142 l-8 22'/%3E %3Cpath d='M40 196 l-6 16 M226 176 l-6 16 M120 214 l-6 16'/%3E %3Cpath d='M60 66 c-4 6 -6 9 -6 12 a6 6 0 0 0 12 0 c0 -3 -2 -6 -6 -12 z'/%3E %3Cpath d='M188 196 c-4 6 -6 9 -6 12 a6 6 0 0 0 12 0 c0 -3 -2 -6 -6 -12 z'/%3E %3Cellipse cx='108' cy='190' rx='22' ry='5'/%3E%3Cellipse cx='108' cy='190' rx='11' ry='2.4'/%3E %3Cellipse cx='192' cy='68' rx='16' ry='3.6'/%3E %3C/svg%3E");
-  --pattern-size: 240px 240px;
-  --pattern-ink: color-mix(in oklab, var(--color-text-primary) 12%, transparent);
-  --kit-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120' stroke='black' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E %3Cpath d='M42 62 a18 18 0 0 1 6 -35 a26 26 0 0 1 49 -6 a20 20 0 0 1 22 22 a14 14 0 0 1 -3 27 h-74 a14 14 0 0 1 0 -8 z'/%3E %3Cpath d='M52 82 l-6 16 M72 82 l-6 16 M92 82 l-6 16 M112 82 l-6 16'/%3E %3Cpath d='M60 104 l-4 10 M100 104 l-4 10'/%3E %3C/svg%3E");
+  --kit-control-radius: 999px;
+  --kit-btn-radius: 999px;
+  --kit-tool-radius: 999px;
 }
-[data-style='monsoon'] :is(.ed-label, [data-ui='eyebrow'], [data-ui='stat-label']) {
-  letter-spacing: 0.06em;
+/* Instruments: a fine inner rule inside every card. */
+[data-style='cosmos'] :is(.ed-card, [data-ui='card'], .nx-panel) {
+  box-shadow: inset 0 0 0 3px var(--color-bg-surface), inset 0 0 0 4px color-mix(in oklab, var(--color-accent-brand) 28%, transparent);
+}
+[data-style='cosmos'] :is(.ed-label, [data-ui='eyebrow'], [data-ui='stat-label']) {
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
 }
 
-/* ═══ Kintsugi ═════════════════════════════════════════════════════════════ */
-[data-style='kintsugi'] {
+/* ═══ Ghats ════════════════════════════════════════════════════════════════ */
+[data-style='ghats'] {
   --kit-hero: var(--kit-display);
-  --kit-hero-weight: 400;
+  --kit-hero-weight: 600;
   --kit-hero-tracking: -0.025em;
-  --kit-display: 'Literata Variable', 'Literata', ui-serif, Georgia, serif;
+  --kit-display: 'Fraunces Variable', 'Fraunces', ui-serif, Georgia, serif;
   --kit-read: 'Literata Variable', 'Literata', ui-serif, Georgia, serif;
-  --kit-heading-weight: 450;
+  --kit-heading-weight: 560;
   --kit-heading-tracking: -0.015em;
-  --kit-card-radius: 0.75rem;
-  --kit-card-radius-sm: 0.5rem;
-  --kit-control-radius: 0.5rem;
-  --kit-btn-radius: 0.5rem;
-  --kit-tool-radius: 0.375rem;
-  --pattern-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260' viewBox='0 0 260 260' stroke='black' stroke-width='1.1' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E %3Cpath d='M0 46 l22 6 l14 -10 l20 14 l18 -4 l12 12 l26 -6'/%3E %3Cpath d='M56 56 l6 18 l-8 16 l10 20'/%3E %3Cpath d='M112 58 l10 22 l24 8 l16 -12 l22 10'/%3E %3Cpath d='M146 88 l-6 26 l12 18'/%3E %3Cpath d='M30 170 l18 -8 l16 12 l22 -6 l10 16 l24 2 l14 -14 l20 8'/%3E %3Cpath d='M86 168 l-4 -22 l10 -14'/%3E %3Cpath d='M176 172 l10 24 l-6 18 l14 22'/%3E %3Cpath d='M210 30 l14 16 l-4 20 l14 14'/%3E %3Ccircle cx='224' cy='46' r='1.6'/%3E%3Ccircle cx='64' cy='74' r='1.4'/%3E%3Ccircle cx='186' cy='196' r='1.6'/%3E %3C/svg%3E");
-  --pattern-size: 260px 260px;
-  /* The seams are gold: the theme's own accent, faint. */
-  --pattern-ink: color-mix(in oklab, var(--color-accent-brand) 22%, transparent);
-  --kit-mark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120' stroke='black' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'%3E %3Cpath d='M24 40 h112 a58 52 0 0 1 -112 0 z'/%3E %3Cpath d='M60 104 h40'/%3E %3Cpath d='M58 40 l8 14 l-6 12 l12 14 l-2 16' stroke-width='2.2'/%3E %3Cpath d='M66 66 l18 -4 l10 10' stroke-width='2.2'/%3E %3Cpath d='M112 40 l-6 16 l10 10'/%3E %3C/svg%3E");
+  --kit-card-radius: 1.125rem;
+  --kit-card-radius-sm: 0.75rem;
+  --kit-control-radius: 0.75rem;
+  /* A temple arch over each button. */
+  --kit-btn-radius: 1.5rem 1.5rem 0.3rem 0.3rem;
+  --kit-tool-radius: 0.875rem 0.875rem 0.2rem 0.2rem;
 }
-/* A gold seam along the top of every card, like a mended rim. */
-[data-style='kintsugi'] :is(.ed-card, [data-ui='card'], .nx-panel) {
-  background-image: linear-gradient(var(--color-accent-brand), var(--color-accent-brand));
-  background-size: 2.5rem 1.5px;
-  background-position: 1.25rem 0;
-  background-repeat: no-repeat;
+[data-style='ghats'] :is(h1, h2, .ed-title, .ed-h2, .ed-display-serif, .nr-title) {
+  font-variation-settings: 'SOFT' 0, 'WONK' 0, 'opsz' 96;
 }
-[data-style='kintsugi'] :is(.ed-label, [data-ui='eyebrow'], [data-ui='stat-label']) {
-  letter-spacing: 0.1em;
+
+/* Himalaya's featured spread is snow-cool, not tinted with the saffron accent. */
+[data-style='himalaya'] {
+  --ed-feature: color-mix(in oklab, var(--color-text-primary) 4%, var(--color-bg-surface));
 }

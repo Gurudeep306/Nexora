@@ -132,26 +132,29 @@ export const LOOK_TABLES: LookTables = {
   defaults: DEFAULT_LOOK,
   hive: { style: 'studio', ...bundleOf('studio'), ...OWN },
   v5: {
+    // Old style ids (before v5, and themes retired since) → the theme nearest in spirit.
     styles: {
-      journal: 'journal', studio: 'journal', editorial: 'journal', manuscript: 'journal',
+      journal: 'himalaya', studio: 'himalaya', editorial: 'himalaya', manuscript: 'himalaya',
       glass: 'sakura', washi: 'sakura',
-      luxe: 'observatory', atelier: 'observatory',
+      luxe: 'cosmos', atelier: 'cosmos', observatory: 'cosmos',
       signal: 'arcade', poster: 'arcade',
-      console: 'terminal', terminal: 'terminal',
-      nordic: 'greenhouse',
-      swiss: 'blueprint', blueprint: 'blueprint',
-      canvas: 'sketchbook',
+      console: 'arcade', terminal: 'arcade',
+      nordic: 'aurora',
+      swiss: 'bauhaus', blueprint: 'blueprint',
+      canvas: 'warli', sketchbook: 'warli',
+      greenhouse: 'kerala', monsoon: 'kerala', kintsugi: 'ghats', blockprint: 'thar',
+      clear: 'bauhaus',
     },
     accessible: ['contrast-dark', 'contrast-light', 'colour-safe', 'tritan-safe', 'e-ink'],
     palettes: {
       sakura: 'sakura', lavender: 'sakura', 'rose-pine': 'sakura', 'rose-pine-moon': 'sakura', 'rose-pine-dawn': 'sakura', 'catppuccin-latte': 'sakura', 'catppuccin-frappe': 'sakura',
-      forest: 'greenhouse', mint: 'greenhouse', everforest: 'greenhouse',
+      forest: 'kerala', mint: 'kerala', everforest: 'kerala',
       synthwave: 'arcade', 'neon-city': 'arcade', vaporwave: 'arcade', electric: 'arcade', dracula: 'arcade', 'catppuccin-mocha': 'arcade', 'catppuccin-macchiato': 'arcade',
-      phosphor: 'terminal', carbon: 'terminal', monokai: 'terminal', gruvbox: 'terminal',
-      ocean: 'observatory', cobalt: 'observatory', nord: 'observatory', 'tokyo-night': 'observatory', 'tokyo-storm': 'observatory', kanagawa: 'observatory', obsidian: 'observatory', noir: 'observatory', aurora: 'observatory',
-      ember: 'blockprint', saffron: 'blockprint', crimson: 'blockprint', citrus: 'blockprint',
-      glacier: 'blueprint', fjord: 'greenhouse', swiss: 'blueprint', blueprint: 'blueprint', 'tokyo-day': 'blueprint', slate: 'blueprint',
-      console: 'terminal', signal: 'arcade', washi: 'sakura',
+      phosphor: 'arcade', carbon: 'arcade', monokai: 'arcade', gruvbox: 'arcade',
+      ocean: 'reef', cobalt: 'cosmos', nord: 'aurora', 'tokyo-night': 'cosmos', 'tokyo-storm': 'cosmos', kanagawa: 'cosmos', obsidian: 'cosmos', noir: 'cosmos', aurora: 'aurora',
+      ember: 'thar', saffron: 'thar', crimson: 'thar', citrus: 'thar',
+      glacier: 'himalaya', fjord: 'aurora', swiss: 'bauhaus', blueprint: 'blueprint', 'tokyo-day': 'blueprint', slate: 'blueprint',
+      console: 'arcade', signal: 'arcade', washi: 'sakura',
     },
   },
   legacyFontSize: { normal: 'default', comfortable: 'default', large: 'large', huge: 'xl' },
@@ -170,8 +173,8 @@ export function sanitizeLookWith(raw: unknown, T: LookTables): Look {
   const before5 = typeof r.v !== 'number' || r.v < 5
   const oldStyle = str(r.style)
   const oldPalette = str(r.theme)
-  // An accessibility palette from before v5 always lands on Clear.
-  let style = before5 && T.v5.accessible.indexOf(oldPalette) >= 0 ? 'clear' : ok(oldStyle)
+  // An accessibility palette from before v5 lands on the theme Clear used to stand for.
+  let style = before5 && T.v5.accessible.indexOf(oldPalette) >= 0 ? ok(own(T.v5.styles, 'clear')) : ok(oldStyle)
   if (!style) {
     // A palette picked on the old default style says more than the style does.
     if (!oldStyle || oldStyle === 'studio') style = ok(own(T.v5.palettes, oldPalette)) || ok(own(T.v5.styles, oldStyle))

@@ -16,7 +16,7 @@ export function DefaultStylePanel() {
   const { status, refresh } = useSite()
   const { look, preferredMode } = useTheme()
   const [busy, setBusy] = useState<string | null>(null)
-  // No setting means the house style (Field Journal).
+  // No setting means the default theme (Himalaya).
   const current = status?.defaultStyle ?? DEFAULT_STYLE
 
   const save = async (id: string) => {
