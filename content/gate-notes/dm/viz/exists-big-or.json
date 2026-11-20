@@ -1,0 +1,321 @@
+{
+ "version": 1,
+ "title": "∃ is a big OR",
+ "width": 640,
+ "height": 296,
+ "narrow": {
+  "width": 360,
+  "height": 270
+ },
+ "intro": "Same four elements. Q is true only at c. Watch the existential look for a witness.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "∃x Q(x) on the same domain: one big OR",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∃x Q(x): a big OR",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "e0",
+   "type": "box",
+   "x": 40,
+   "y": 70,
+   "w": 120,
+   "h": 52,
+   "size": 17,
+   "mono": true,
+   "narrow": {
+    "x": 14,
+    "y": 62,
+    "w": 74,
+    "h": 44
+   },
+   "label": "a"
+  },
+  {
+   "id": "v0",
+   "type": "box",
+   "x": 40,
+   "y": 140,
+   "w": 120,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 14,
+    "y": 122,
+    "w": 74,
+    "h": 40,
+    "size": 12
+   },
+   "label": "Q(a) = ?"
+  },
+  {
+   "id": "e1",
+   "type": "box",
+   "x": 184,
+   "y": 70,
+   "w": 120,
+   "h": 52,
+   "size": 17,
+   "mono": true,
+   "narrow": {
+    "x": 98,
+    "y": 62,
+    "w": 74,
+    "h": 44
+   },
+   "label": "b"
+  },
+  {
+   "id": "v1",
+   "type": "box",
+   "x": 184,
+   "y": 140,
+   "w": 120,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 98,
+    "y": 122,
+    "w": 74,
+    "h": 40,
+    "size": 12
+   },
+   "label": "Q(b) = ?"
+  },
+  {
+   "id": "e2",
+   "type": "box",
+   "x": 328,
+   "y": 70,
+   "w": 120,
+   "h": 52,
+   "size": 17,
+   "mono": true,
+   "narrow": {
+    "x": 182,
+    "y": 62,
+    "w": 74,
+    "h": 44
+   },
+   "label": "c"
+  },
+  {
+   "id": "v2",
+   "type": "box",
+   "x": 328,
+   "y": 140,
+   "w": 120,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 182,
+    "y": 122,
+    "w": 74,
+    "h": 40,
+    "size": 12
+   },
+   "label": "Q(c) = ?"
+  },
+  {
+   "id": "e3",
+   "type": "box",
+   "x": 472,
+   "y": 70,
+   "w": 120,
+   "h": 52,
+   "size": 17,
+   "mono": true,
+   "narrow": {
+    "x": 266,
+    "y": 62,
+    "w": 74,
+    "h": 44
+   },
+   "label": "d"
+  },
+  {
+   "id": "v3",
+   "type": "box",
+   "x": 472,
+   "y": 140,
+   "w": 120,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 266,
+    "y": 122,
+    "w": 74,
+    "h": 40,
+    "size": 12
+   },
+   "label": "Q(d) = ?"
+  },
+  {
+   "id": "disj",
+   "type": "text",
+   "x": 320,
+   "y": 236,
+   "text": "Q(a) ∨ Q(b) ∨ Q(c) ∨ Q(d)",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 214,
+    "size": 13
+   }
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 276,
+   "text": "",
+   "anchor": "middle",
+   "size": 16,
+   "narrow": {
+    "x": 180,
+    "y": 252,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "An existential claim is the OR of one term per element: ∃x Q(x) = Q(a) ∨ Q(b) ∨ Q(c) ∨ Q(d).",
+   "patches": [
+    {
+     "id": "e0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e3",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check a: Q(a) is false. A false term does not hurt an OR; keep looking.",
+   "patches": [
+    {
+     "id": "e0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "label": "Q(a) = F",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check b: Q(b) is false too. Still no witness.",
+   "patches": [
+    {
+     "id": "e1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "label": "Q(b) = F",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check c: Q(c) is true. c is a witness, and one true term makes the whole OR true.",
+   "patches": [
+    {
+     "id": "e2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "label": "Q(c) = T",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "We can stop here: d is never needed. ∃x Q(x) = F ∨ F ∨ T ∨ … = T. To prove an ∃, show one witness.",
+   "patches": [
+    {
+     "id": "disj",
+     "set": {
+      "text": "F ∨ F ∨ T ∨ … = T",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "verdict",
+     "set": {
+      "text": "∃x Q(x) is true (witness c)",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The two quantifiers are mirror images: ∀ needs no counterexample, ∃ needs one witness.",
+   "patches": [
+    {
+     "id": "verdict",
+     "set": {
+      "text": "∀: no counterexample. ∃: one witness.",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

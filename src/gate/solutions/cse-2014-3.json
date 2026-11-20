@@ -4017,23 +4017,24 @@
       "verification": "$K_4$ ($n=4$, $e=6$, $\\delta=3$): $f=6-4+2=4\\ge4$. Cube graph ($n=8,e=12$): $f=6\\ge6$ (tight for 3-regular graphs)."
     },
     "cse-2014-3-cs-53": {
-      "approach": "\"Not all rainy days are cold\" $=\\neg\\forall d\\,(R(d)\\to C(d))\\equiv\\exists d\\,(R(d)\\wedge\\neg C(d))$: some day is rainy and not cold.",
+      "approach": "Concept tested: **'not all A are B' = ∃d (A(d) ∧ ¬B(d))**, against ∀-with-∧ and ∃-with-→ distractors.",
       "concepts": [
-        "Quantifier negation",
-        "Implication negation"
+        "Not all A are B",
+        "Pairing rule"
       ],
+      "given": "'Not all rainy days are cold.'",
       "steps": [
         {
-          "title": "Formalise \"all rainy days are cold\"",
-          "body": "$\\forall d\\,(Rainy(d)\\to Cold(d))$."
+          "title": "Negate 'all rainy days are cold'",
+          "body": "$\\neg\\forall d\\, (R(d) \\to C(d)) \\equiv \\exists d\\, (R(d) \\wedge \\neg C(d))$."
         },
         {
-          "title": "Negate",
-          "body": "$\\neg\\forall d\\,(R\\to C)\\equiv\\exists d\\,\\neg(R\\to C)\\equiv\\exists d\\,\\neg(\\neg R\\vee C)\\equiv\\exists d\\,(R(d)\\wedge\\neg C(d))$."
+          "title": "Match",
+          "body": "Option D (with ∼ for ¬)."
         }
       ],
       "answer": {
-        "value": "$\\exists d\\,(Rainy(d)\\wedge\\sim Cold(d))$",
+        "value": "D",
         "choice": [
           "D"
         ],
@@ -4043,28 +4044,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong — says every day is rainy and not cold (far too strong)."
+          "reason": "∀ with ∧: every day is rainy and not cold."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong — says every non-rainy day is cold; unrelated to the sentence."
+          "reason": "'Every non-rainy day is cold': unrelated."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Wrong — $\\exists d(\\neg R\\to C)\\equiv\\exists d(R\\vee C)$: some day is rainy or cold — not the meaning."
+          "reason": "∃ with →: true as soon as one day is rainy (false hypothesis ¬R) or cold."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct — some rainy day is not cold."
+          "reason": "Some day is rainy and not cold."
         }
       ],
+      "shortcut": "Same pattern as 'not all that glitters is gold' (paper 1 of the same year).",
       "pitfalls": [
-        "Negating $\\forall$ to $\\exists$ but keeping the implication — the negation of $R\\to C$ is $R\\wedge\\neg C$."
+        "Choosing A because it 'contains rainy and not cold'."
       ],
-      "verification": "A world where every day is rainy and cold makes the sentence false and D false; adding one warm rainy day makes both true."
+      "verification": "World with a cold rainy day and a warm rainy day: D true; A false (the cold day)."
     },
     "cse-2014-3-cs-54": {
       "approach": "NOT EXISTS (customer of E whose rating ≠ GOOD) means E has no non-GOOD customer, i.e. every customer of E is GOOD (a \"for all\" written as \"not exists … not\").",

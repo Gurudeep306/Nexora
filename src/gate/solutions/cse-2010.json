@@ -2208,22 +2208,24 @@
       "verification": "$\\det\\begin{bmatrix}2-\\lambda&3\\\\-4&10-\\lambda\\end{bmatrix} = \\lambda^2 - 12\\lambda + 32 = (\\lambda-4)(\\lambda-8)$ ✓"
     },
     "cse-2010-cs-30": {
-      "approach": "Push the negation outward: the formula is the negation of \"someone can fool everyone at all times\".",
+      "approach": "Concept tested: **reading a negated nested formula back into English** by pulling the ¬ out of the inner existentials.",
       "concepts": [
-        "Quantifier negation"
+        "∃¬ = ¬∀",
+        "Nested quantifiers"
       ],
+      "given": "$\\forall x\\, \\exists y\\, \\exists t\\, (\\neg F(x, y, t))$, F(x, y, t): x can fool y at time t.",
       "steps": [
         {
-          "title": "Rewrite",
-          "body": "$\\forall x\\,\\exists y\\,\\exists t\\,\\lnot F(x,y,t) \\equiv \\lnot\\,\\exists x\\,\\forall y\\,\\forall t\\,F(x,y,t)$."
+          "title": "Pull ¬ out",
+          "body": "$\\exists y\\, \\exists t\\, \\neg F \\equiv \\neg\\forall y\\, \\forall t\\, F$: 'x cannot fool every person at every time'."
         },
         {
-          "title": "Read it",
-          "body": "$\\exists x\\,\\forall y\\,\\forall t\\,F$ = \"someone can fool everyone all the time\". Its negation: **no one can fool everyone all the time**."
+          "title": "Outer ∀x",
+          "body": "For every person x, x cannot fool everyone all the time: 'No one can fool everyone all the time'."
         }
       ],
       "answer": {
-        "value": "No one can fool everyone all the time.",
+        "value": "B",
         "choice": [
           "B"
         ],
@@ -2233,25 +2235,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "That is $\\forall x\\exists y\\exists t\\,F$ — the negation sign is missing."
+          "reason": "Drops the negation: that is $\\forall x\\, \\exists y\\, \\exists t\\, F$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Exact reading of ¬∃x∀y∀t F."
+          "reason": "Exactly $\\forall x\\, \\neg\\forall y\\, \\forall t\\, F$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "\"cannot fool some person all the time\" reads as $\\forall x\\exists y\\forall t\\,\\lnot F$ — the time quantifier is wrong."
+          "reason": "'Everyone cannot fool some person all the time' reads as $\\forall x\\, \\exists y\\, \\forall t\\, \\neg F$ (or is ambiguous); the formula has ∃t, not ∀t."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "That is $\\lnot\\exists x\\exists y\\exists t\\,F$, i.e. nobody ever fools anyone — far stronger."
+          "reason": "'No one can fool some person at some time' is $\\forall x\\, \\neg\\exists y\\, \\exists t\\, F = \\forall x\\, \\forall y\\, \\forall t\\, \\neg F$, far stronger."
         }
       ],
-      "verification": "For each x the formula only needs one victim y and one instant t where x fails — exactly what \"x cannot fool everyone all the time\" means."
+      "shortcut": "∃…∃¬ is ¬∀…∀: 'not everyone, not every time'.",
+      "pitfalls": [
+        "Losing the negation.",
+        "Turning ∃t into 'all the time'."
+      ],
+      "verification": "The equivalence $\\exists y \\exists t \\neg F \\equiv \\neg \\forall y \\forall t F$ is checked by predlib on all small interpretations."
     },
     "cse-2010-cs-31": {
       "approach": "Concept tested: **reading stacked NOR gates**. A NOR of two NORs is the AND of their ORs; then absorption shows that $P$ drops out. (The paper's figure has first-level NORs on (P, Q), (Q, R), (P, R) and (Q, R).)",

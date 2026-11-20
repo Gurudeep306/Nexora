@@ -107,27 +107,28 @@
       "verification": "Regions: only P = 125−50−35+15 = 55, only D = 85−50−30+15 = 20, only C = 65−35−30+15 = 15, P∩D only = 35, P∩C only = 20, D∩C only = 15, all = 15; sum = 175."
     },
     "it-2004-it-3": {
-      "approach": "Write the statement as a double negation and push the inner negation through the quantifiers; ¬(p ∧ ¬q) is p → q.",
+      "approach": "Concept tested: **negating a nested quantified formula (De Morgan for quantifiers)**. Negate each candidate with ¬ outside and compare with the target.",
       "concepts": [
-        "Quantifier negation",
-        "Implication equivalence"
+        "¬∀ = ∃¬",
+        "¬(A → B) = A ∧ ¬B"
       ],
+      "given": "Target: $(\\exists x)(\\forall y)[(a \\wedge b) \\wedge \\neg c]$, with $a, b, c$ short for $a(x, y)$ etc.",
       "steps": [
         {
-          "title": "Double negation",
-          "body": "$$(\\exists x)(\\forall y)[(a\\wedge b)\\wedge\\neg c] \\equiv \\neg\\,\\neg(\\exists x)(\\forall y)[(a\\wedge b)\\wedge\\neg c]$$"
+          "title": "Write the target as a negation",
+          "body": "$(a \\wedge b) \\wedge \\neg c \\equiv \\neg((a \\wedge b) \\to c)$, so the target is $\\exists x\\, \\forall y\\, \\neg((a \\wedge b) \\to c)$."
         },
         {
-          "title": "Push the inner ¬ inwards",
-          "body": "$\\neg\\exists x\\,\\forall y\\,\\varphi \\equiv \\forall x\\,\\exists y\\,\\neg\\varphi$, so the formula is $\\neg(\\forall x)(\\exists y)\\,\\neg[(a\\wedge b)\\wedge\\neg c]$."
+          "title": "Pull ¬ out through the quantifiers",
+          "body": "$\\exists x\\, \\forall y\\, \\neg\\psi \\equiv \\exists x\\, \\neg\\exists y\\, \\psi \\equiv \\neg\\forall x\\, \\exists y\\, \\psi$ with $\\psi = (a \\wedge b) \\to c$."
         },
         {
-          "title": "Simplify the body",
-          "body": "$\\neg[(a\\wedge b)\\wedge\\neg c] \\equiv \\neg(a\\wedge b)\\vee c \\equiv (a\\wedge b)\\rightarrow c$.\n\nResult: $\\neg\\big[(\\forall x)(\\exists y)[(a\\wedge b)\\rightarrow c]\\big]$, which is option C."
+          "title": "Match",
+          "body": "$\\neg[(\\forall x)(\\exists y)((a \\wedge b) \\to c)]$ is option C."
         }
       ],
       "answer": {
-        "value": "¬[(∀x)(∃y)[(a(x,y) ∧ b(x,y)) → c(x,y)]]",
+        "value": "C",
         "choice": [
           "C"
         ],
@@ -137,28 +138,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "This is the negation of the given statement, but with ∨ in place of ∧, and the outer ¬ is missing."
+          "reason": "No outer negation: it is the negation of a different formula (with ∨) and has the opposite quantifiers."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Uses a ∨ b instead of a ∧ b. a ∨ b is weaker, so B is implied by the original but not equivalent to it."
+          "reason": "Replaces $a \\wedge b$ by $a \\vee b$: true when only $a$ holds, so it is weaker."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Exactly the double-negation form derived above."
+          "reason": "Pushing the ¬ in gives $\\exists x\\, \\forall y\\, ((a \\wedge b) \\wedge \\neg c)$, the target."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Gives ∃x∀y[(a ∨ b) ∧ ¬c], which is option B and not equivalent to the original."
+          "reason": "Same as C but with $a \\vee b$: its negation is $\\exists x\\, \\forall y\\, ((a \\vee b) \\wedge \\neg c)$, weaker than the target."
         }
       ],
+      "shortcut": "Negate each candidate inward and compare literally: C turns into the target, D into the ∨ version.",
       "pitfalls": [
-        "¬(p → q) is p ∧ ¬q. Do not change ∧ into ∨ inside the antecedent."
+        "Confusing $a \\wedge b$ with $a \\vee b$ while negating.",
+        "Forgetting that the quantifier order is kept when the ¬ moves."
       ],
-      "verification": "Expand C directly: ¬∀x∃y[(a∧b)→c] = ∃x∀y¬[¬(a∧b)∨c] = ∃x∀y[(a∧b)∧¬c], which is the given statement."
+      "verification": "predlib: C is equivalent to the target on every interpretation over domains up to size 2 (a, b, c binary); A, B, D each have a counter-world."
     },
     "it-2004-it-4": {
       "approach": "List R₁ and R₂ explicitly. (x, z) is in R₁R₂ when some y has x R₁ y and y R₂ z.",

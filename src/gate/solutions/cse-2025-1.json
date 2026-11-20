@@ -5460,71 +5460,32 @@
       "verification": "Chase/tableau: rows for $t_1$ $(n, c, b_1)$ and $t_2$ $(n, b_2, o)$; applying $\\mathit{name} \\to \\mathit{owner}$ to the first row makes it $(n, c, o)$, an all-distinguished row ⇒ lossless ✓."
     },
     "cse-2025-1-cs-38": {
-      "approach": "Translate \"exactly one\" as **existence + uniqueness**: some $y$ is the mother of $x$, and no $z$ different from $y$ is. Then test each formula on three situations for a person $x$: no mother, exactly one, two mothers — a correct formula must give F, T, F.",
+      "approach": "Concept tested: **'exactly one' with equality**: one witness, plus a guard that every other element fails.",
       "concepts": [
-        "First-order logic translation",
-        "Uniqueness quantification",
-        "Quantifier negation"
+        "Unique existence",
+        "Equality in formulas"
       ],
+      "given": "'Everyone has exactly one mother'; mother(y, x), noteq(x, y).",
       "steps": [
         {
-          "title": "The target formula",
-          "body": "\"$x$ has exactly one mother\" = \"$x$ has a mother $y$, and anyone $z \\ne y$ is not $x$'s mother\":\n$$\\forall x\\, \\exists y\\, [\\mathit{mother}(y,x) \\wedge \\forall z\\,(\\mathit{noteq}(z,y) \\to \\neg\\mathit{mother}(z,x))]$$\nThat is option (B) verbatim.",
-          "scene": {
-            "reveal": 12,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Pattern",
+          "body": "For every x: some y is x's mother, and no z other than y is x's mother."
         },
         {
-          "title": "D is the same formula",
-          "body": "Push the negation in D's inner part:\n$$\\neg\\exists z\\,(\\mathit{noteq}(z,y) \\wedge \\mathit{mother}(z,x)) \\equiv \\forall z\\,\\neg(\\mathit{noteq}(z,y) \\wedge \\mathit{mother}(z,x)) \\equiv \\forall z\\,(\\mathit{noteq}(z,y) \\to \\neg\\mathit{mother}(z,x))$$\nusing $\\neg(p \\wedge q) \\equiv p \\to \\neg q$. So D $\\equiv$ B — **correct**.",
-          "scene": {
-            "reveal": 12,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "success"
-              },
-              {
-                "r": 3,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "B",
+          "body": "$\\forall z\\, (\\text{noteq}(z, y) \\to \\neg\\text{mother}(z, x))$ is the guard: exactly one."
         },
         {
-          "title": "A and C fail",
-          "body": "- **A**: $\\exists y\\exists z\\,(\\mathit{mother}(y,x) \\wedge \\neg\\mathit{mother}(z,x))$ only says \"$x$ has a mother, and somebody is not his mother\". With two mothers it is still true (take $z$ = any non-mother, e.g. $x$ himself) — uniqueness is not expressed.\n- **C**: $\\forall y[\\mathit{mother}(y,x) \\to \\exists z(\\mathit{mother}(z,x) \\wedge z = y)]$ — choose $z = y$ and the consequent is the antecedent, so C is **always true** (a tautology). It asserts neither existence nor uniqueness.\n\nCorrect: **(B) and (D)**.",
-          "scene": {
-            "reveal": 12,
-            "hl": [
-              {
-                "r": 0,
-                "tone": "error"
-              },
-              {
-                "r": 2,
-                "tone": "error"
-              },
-              {
-                "r": 1,
-                "tone": "success"
-              },
-              {
-                "r": 3,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "D",
+          "body": "$\\neg\\exists z\\, (\\text{noteq}(z, y) \\wedge \\text{mother}(z, x))$ is the same guard written with ¬∃."
+        },
+        {
+          "title": "A and C",
+          "body": "A only says someone is and someone is not x's mother. C is trivially true (take z = y)."
         }
       ],
       "answer": {
-        "value": "Options **(B)** and **(D)**",
+        "value": "B and D",
         "choice": [
           "B",
           "D"
@@ -5535,105 +5496,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "True even when someone has two mothers; \"someone is not the mother\" does not mean \"no one else is the mother\"."
+          "reason": "No uniqueness guard: allows two mothers."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Existence ($\\mathit{mother}(y,x)$) plus uniqueness (every $z \\ne y$ is not a mother) — the standard \"exactly one\" pattern."
+          "reason": "Witness plus a ∀ guard: exactly one."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Valid formula (take $z = y$): true in every world, including people with no mother or two mothers."
+          "reason": "If y is a mother of x, z = y satisfies the inner part, so C is always true; it allows zero or many mothers."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$\\neg\\exists z(p \\wedge q) \\equiv \\forall z(p \\to \\neg q)$, so D is logically equivalent to B."
+          "reason": "Witness plus a ¬∃ guard, equivalent to B."
         }
       ],
-      "shortcut": "Look for \"∃y [mother(y,x) ∧ no other z is a mother]\". B states it with ∀…→¬, D with ¬∃…∧ — the two standard equivalent forms.",
+      "shortcut": "Look for 'mother(y, x) ∧ (no other z)': both B and D have it.",
       "pitfalls": [
-        "Reading A's $\\neg\\mathit{mother}(z,x)$ as \"nobody else is a mother\": $z$ is existentially quantified, so it says only that one non-mother exists.",
-        "Thinking C expresses uniqueness because of $\\neg\\mathit{noteq}(z,y)$ (i.e. $z = y$); it is trivially satisfied."
+        "Picking only one of B and D: the guards are equivalent by ¬∃ = ∀¬.",
+        "Accepting C because it 'mentions' equality."
       ],
-      "verification": "Truth table over the three situations (table): B and D give F, T, F exactly like \"exactly one mother\"; A gives F, T, T and C gives T, T, T.",
-      "animation": {
-        "kind": "table",
-        "title": "Truth value for one person x",
-        "corner": "formula",
-        "cols": [
-          "no mother",
-          "exactly one",
-          "two mothers"
-        ],
-        "rowLabels": [
-          "A",
-          "B",
-          "C",
-          "D"
-        ],
-        "rows": [
-          [
-            {
-              "v": "F",
-              "tone": "error"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            }
-          ],
-          [
-            {
-              "v": "F",
-              "tone": "error"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "F",
-              "tone": "error"
-            }
-          ],
-          [
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            }
-          ],
-          [
-            {
-              "v": "F",
-              "tone": "error"
-            },
-            {
-              "v": "T",
-              "tone": "success"
-            },
-            {
-              "v": "F",
-              "tone": "error"
-            }
-          ]
-        ],
-        "reveal": 0
-      }
+      "verification": "With noteq read as ≠, predlib finds B ≡ D ≡ the reference ∃! formula on every interpretation up to size 3; A and C have counter-worlds (two mothers; no mother)."
     },
     "cse-2025-1-cs-39": {
       "approach": "Check the axioms one by one for pointwise addition of functions $A \\to A$: closure, associativity and commutativity are inherited from $+$ on non-negative integers, the zero function is the identity, but inverses would need negative values — so it is a commutative (Abelian) monoid, not a group.",

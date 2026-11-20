@@ -1255,23 +1255,29 @@
       "verification": "Explicit two-element counter-models for A, B and D."
     },
     "it-2008-it-22": {
-      "approach": "Push the negation inward: $\\neg\\forall=\\exists\\neg$, $\\neg\\exists=\\forall\\neg$, $\\neg(p\\to q)=p\\land\\neg q$.",
+      "approach": "Concept tested: **pushing ¬ through a long nested formula**: each quantifier flips, the order stays, each → becomes ∧ with its right side negated.",
       "concepts": [
-        "Negation of quantifiers",
-        "Negation of implication"
+        "¬∀ = ∃¬",
+        "¬∃ = ∀¬",
+        "¬(A → B) = A ∧ ¬B"
       ],
+      "given": "Negate $\\forall x\\, [\\alpha \\to (\\exists y\\, [\\beta \\to (\\forall u\\, \\exists v\\, \\gamma)])]$.",
       "steps": [
         {
-          "title": "Outer layer",
-          "body": "$\\neg[\\forall x\\,(\\alpha\\to\\Phi)] \\equiv \\exists x\\,\\neg(\\alpha\\to\\Phi) \\equiv \\exists x\\,(\\alpha\\land\\neg\\Phi)$, with $\\Phi = \\exists y\\,(\\beta\\to\\Psi)$."
+          "title": "Outer ∀x",
+          "body": "$\\exists x\\, \\neg[\\alpha \\to (\\dots)] \\equiv \\exists x\\, [\\alpha \\wedge \\neg\\exists y\\, [\\dots]]$."
         },
         {
-          "title": "Middle layer",
-          "body": "$\\neg\\Phi = \\forall y\\,\\neg(\\beta\\to\\Psi) = \\forall y\\,(\\beta\\land\\neg\\Psi)$, with $\\Psi = \\forall u\\,\\exists v\\,\\gamma$."
+          "title": "∃y",
+          "body": "$\\neg\\exists y\\, [\\beta \\to \\dots] \\equiv \\forall y\\, [\\beta \\wedge \\neg\\forall u\\, \\exists v\\, \\gamma]$."
         },
         {
-          "title": "Inner layer",
-          "body": "$\\neg\\Psi = \\exists u\\,\\forall v\\,\\neg\\gamma$. Hence\n$$\\exists x\\,[\\alpha\\land(\\forall y\\,[\\beta\\land(\\exists u\\,\\forall v\\,\\neg\\gamma)])].$$"
+          "title": "∀u∃v",
+          "body": "$\\neg\\forall u\\, \\exists v\\, \\gamma \\equiv \\exists u\\, \\forall v\\, \\neg\\gamma$."
+        },
+        {
+          "title": "Assemble",
+          "body": "$\\exists x\\, [\\alpha \\wedge (\\forall y\\, [\\beta \\wedge (\\exists u\\, \\forall v\\, \\neg\\gamma)])]$: option D."
         }
       ],
       "answer": {
@@ -1285,25 +1291,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Keeps the implications and leaves $\\gamma$ un-negated."
+          "reason": "Flips the quantifiers but keeps both arrows and never negates γ."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Negates $\\gamma$ but keeps the implications; $\\neg(p\\to q)$ is $p\\land\\neg q$."
+          "reason": "Negates γ but keeps the arrows; ¬(A → B) is A ∧ ¬B, not A → ¬B."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Keeps $\\forall x$ and negates the antecedents — not a negation."
+          "reason": "Keeps the quantifiers and negates the parts: that is not a negation at all."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct."
+          "reason": "Every quantifier flipped, both arrows became ∧, γ negated once."
         }
       ],
-      "verification": "Each quantifier flipped exactly once; each → replaced by ∧ with the consequent negated."
+      "shortcut": "A correct negation of an implication chain has no arrows left: only D.",
+      "pitfalls": [
+        "Keeping → after negating.",
+        "Negating α and β as well as γ."
+      ],
+      "verification": "With α(x), β(y), γ(u, v) as predicates, predlib confirms D ≡ ¬(original) on all interpretations over domains of size ≤ 2, and finds counter-worlds for A, B, C."
     },
     "it-2008-it-23": {
       "approach": "Use the complement: \"at least three share a birthday\" fails exactly when either all $r$ birthdays are distinct or exactly one pair shares a day and everyone else is distinct. Subtract both from 1.",

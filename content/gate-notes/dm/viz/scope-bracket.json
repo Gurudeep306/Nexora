@@ -1,0 +1,364 @@
+{
+ "version": 1,
+ "title": "Scope, bound and free",
+ "width": 640,
+ "height": 250,
+ "narrow": {
+  "width": 360,
+  "height": 270
+ },
+ "intro": "Each quantifier owns its variable inside its scope. An occurrence outside every scope is free.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Who owns which variable? ∀x (P(x) → ∃y R(x, y)) ∧ Q(x)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Scope of each quantifier",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "t0",
+   "type": "box",
+   "x": 26,
+   "y": 80,
+   "w": 52,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 10,
+    "y": 66,
+    "w": 60,
+    "h": 44,
+    "size": 13
+   },
+   "label": "∀x"
+  },
+  {
+   "id": "t1",
+   "type": "box",
+   "x": 88,
+   "y": 80,
+   "w": 26,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 78,
+    "y": 66,
+    "w": 30,
+    "h": 44,
+    "size": 13
+   },
+   "label": "("
+  },
+  {
+   "id": "t2",
+   "type": "box",
+   "x": 124,
+   "y": 80,
+   "w": 60,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 116,
+    "y": 66,
+    "w": 66,
+    "h": 44,
+    "size": 13
+   },
+   "label": "P(x)"
+  },
+  {
+   "id": "t3",
+   "type": "box",
+   "x": 194,
+   "y": 80,
+   "w": 34,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 190,
+    "y": 66,
+    "w": 40,
+    "h": 44,
+    "size": 13
+   },
+   "label": "→"
+  },
+  {
+   "id": "t4",
+   "type": "box",
+   "x": 238,
+   "y": 80,
+   "w": 52,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 238,
+    "y": 66,
+    "w": 60,
+    "h": 44,
+    "size": 13
+   },
+   "label": "∃y"
+  },
+  {
+   "id": "t5",
+   "type": "box",
+   "x": 300,
+   "y": 80,
+   "w": 82,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 10,
+    "y": 128,
+    "w": 84,
+    "h": 44,
+    "size": 13
+   },
+   "label": "R(x, y)"
+  },
+  {
+   "id": "t6",
+   "type": "box",
+   "x": 392,
+   "y": 80,
+   "w": 26,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 102,
+    "y": 128,
+    "w": 30,
+    "h": 44,
+    "size": 13
+   },
+   "label": ")"
+  },
+  {
+   "id": "t7",
+   "type": "box",
+   "x": 428,
+   "y": 80,
+   "w": 34,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 142,
+    "y": 128,
+    "w": 34,
+    "h": 44,
+    "size": 13
+   },
+   "label": "∧"
+  },
+  {
+   "id": "t8",
+   "type": "box",
+   "x": 472,
+   "y": 80,
+   "w": 60,
+   "h": 46,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 184,
+    "y": 128,
+    "w": 66,
+    "h": 44,
+    "size": 13
+   },
+   "label": "Q(x)"
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 320,
+   "y": 190,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 214,
+    "size": 13
+   }
+  },
+  {
+   "id": "note2",
+   "type": "text",
+   "x": 320,
+   "y": 222,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 244,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A quantifier binds as tightly as ¬: ∀x applies to the next unit, which here is the whole bracket ( … ).",
+   "patches": [
+    {
+     "id": "t0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t4",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t5",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t6",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "scope of ∀x: the bracket after it",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Inside that bracket, ∃y owns the y in R(x, y). Its scope is just R(x, y).",
+   "patches": [
+    {
+     "id": "t4",
+     "set": {
+      "tone": "info",
+      "fill": "info"
+     }
+    },
+    {
+     "id": "t5",
+     "set": {
+      "tone": "info",
+      "fill": "info"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "scope of ∃y: R(x, y)",
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The x in P(x) and in R(x, y) are inside the scope of ∀x: they are bound.",
+   "patches": [
+    {
+     "id": "t2",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "t5",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "note2",
+     "set": {
+      "text": "bound: x in P(x), x and y in R(x, y)",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The bracket closes before ∧. The x in Q(x) is outside every quantifier on x: it is free.",
+   "patches": [
+    {
+     "id": "t8",
+     "set": {
+      "tone": "danger",
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "the x in Q(x) is free",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A formula with a free variable is not a sentence: its value depends on what x is. To cover Q(x) too, bracket the whole conjunction after ∀x.",
+   "patches": [
+    {
+     "id": "note2",
+     "set": {
+      "text": "fix: ∀x ((P(x) → ∃y R(x, y)) ∧ Q(x))",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

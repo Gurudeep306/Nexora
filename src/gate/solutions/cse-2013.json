@@ -1931,23 +1931,24 @@
       "verification": "Each false claim has an explicit counterexample, and P holds for all $n\\ge3$."
     },
     "cse-2013-cs-27": {
-      "approach": "\"None of my friends are perfect\" means there is no $x$ that is both a friend and perfect: $\\neg\\exists x(F(x)\\wedge P(x))$.",
+      "approach": "Concept tested: **'none of the A are B' = ¬∃x (A(x) ∧ B(x)) = ∀x (A(x) → ¬B(x))**.",
       "concepts": [
-        "Predicate logic",
-        "Quantifier negation"
+        "No A is B",
+        "¬∃ = ∀¬"
       ],
+      "given": "'None of my friends are perfect.' F(x): friend, P(x): perfect.",
       "steps": [
         {
-          "title": "Translate",
-          "body": "\"Some friend is perfect\" is $\\exists x(F(x)\\wedge P(x))$; \"none\" negates it: $\\neg\\exists x(F(x)\\wedge P(x))$."
+          "title": "Form",
+          "body": "There is no friend who is perfect: $\\neg\\exists x\\, (F(x) \\wedge P(x))$."
         },
         {
-          "title": "Equivalent form",
-          "body": "This equals $\\forall x(F(x)\\to\\neg P(x))$: every friend is not perfect."
+          "title": "Match",
+          "body": "Option D is exactly this formula."
         }
       ],
       "answer": {
-        "value": "¬∃x(F(x) ∧ P(x))",
+        "value": "D",
         "choice": [
           "D"
         ],
@@ -1957,25 +1958,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Says some friend is not perfect — it allows other friends to be perfect."
+          "reason": "'Some friend is not perfect': allows another friend to be perfect."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Says some non-friend is perfect — unrelated."
+          "reason": "'Some non-friend is perfect': says nothing about friends."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Says some non-friend is not perfect — unrelated."
+          "reason": "'Some non-friend is not perfect': irrelevant to the friends."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: no one is both a friend and perfect."
+          "reason": "No object is both a friend and perfect."
         }
       ],
-      "verification": "Pushing the negation in gives $\\forall x(\\neg F(x)\\vee\\neg P(x))$, i.e. no perfect friends."
+      "shortcut": "'None' = ¬∃ over the conjunction.",
+      "pitfalls": [
+        "Reading 'none of my friends are perfect' as 'some friend is not perfect'."
+      ],
+      "verification": "World with two friends, one perfect: A true, D false; the sentence is false there."
     },
     "cse-2013-cs-28": {
       "approach": "The sequence saves the current PC into memory at address X and loads a new address Y into PC — exactly what happens when an interrupt is accepted.",

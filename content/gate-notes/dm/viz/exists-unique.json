@@ -1,0 +1,388 @@
+{
+ "version": 1,
+ "title": "Exactly one",
+ "width": 640,
+ "height": 250,
+ "narrow": {
+  "width": 360,
+  "height": 230
+ },
+ "intro": "Domain {1, 2, 3, 4, 5}. Exactly one = at least one witness, plus a guard that rules out a second.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "∃!x φ(x) = “one qualifies, and every qualifier is that one”",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Exactly one: ∃!",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "n0",
+   "type": "box",
+   "x": 40,
+   "y": 60,
+   "w": 96,
+   "h": 50,
+   "size": 18,
+   "mono": true,
+   "narrow": {
+    "x": 10,
+    "y": 56,
+    "w": 60,
+    "h": 44
+   },
+   "label": "1"
+  },
+  {
+   "id": "q0",
+   "type": "box",
+   "x": 40,
+   "y": 124,
+   "w": 96,
+   "h": 38,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 10,
+    "y": 110,
+    "w": 60,
+    "h": 34,
+    "size": 13
+   },
+   "label": "?"
+  },
+  {
+   "id": "n1",
+   "type": "box",
+   "x": 156,
+   "y": 60,
+   "w": 96,
+   "h": 50,
+   "size": 18,
+   "mono": true,
+   "narrow": {
+    "x": 80,
+    "y": 56,
+    "w": 60,
+    "h": 44
+   },
+   "label": "2"
+  },
+  {
+   "id": "q1",
+   "type": "box",
+   "x": 156,
+   "y": 124,
+   "w": 96,
+   "h": 38,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 80,
+    "y": 110,
+    "w": 60,
+    "h": 34,
+    "size": 13
+   },
+   "label": "?"
+  },
+  {
+   "id": "n2",
+   "type": "box",
+   "x": 272,
+   "y": 60,
+   "w": 96,
+   "h": 50,
+   "size": 18,
+   "mono": true,
+   "narrow": {
+    "x": 150,
+    "y": 56,
+    "w": 60,
+    "h": 44
+   },
+   "label": "3"
+  },
+  {
+   "id": "q2",
+   "type": "box",
+   "x": 272,
+   "y": 124,
+   "w": 96,
+   "h": 38,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 150,
+    "y": 110,
+    "w": 60,
+    "h": 34,
+    "size": 13
+   },
+   "label": "?"
+  },
+  {
+   "id": "n3",
+   "type": "box",
+   "x": 388,
+   "y": 60,
+   "w": 96,
+   "h": 50,
+   "size": 18,
+   "mono": true,
+   "narrow": {
+    "x": 220,
+    "y": 56,
+    "w": 60,
+    "h": 44
+   },
+   "label": "4"
+  },
+  {
+   "id": "q3",
+   "type": "box",
+   "x": 388,
+   "y": 124,
+   "w": 96,
+   "h": 38,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 220,
+    "y": 110,
+    "w": 60,
+    "h": 34,
+    "size": 13
+   },
+   "label": "?"
+  },
+  {
+   "id": "n4",
+   "type": "box",
+   "x": 504,
+   "y": 60,
+   "w": 96,
+   "h": 50,
+   "size": 18,
+   "mono": true,
+   "narrow": {
+    "x": 290,
+    "y": 56,
+    "w": 60,
+    "h": 44
+   },
+   "label": "5"
+  },
+  {
+   "id": "q4",
+   "type": "box",
+   "x": 504,
+   "y": 124,
+   "w": 96,
+   "h": 38,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 290,
+    "y": 110,
+    "w": 60,
+    "h": 34,
+    "size": 13
+   },
+   "label": "?"
+  },
+  {
+   "id": "phi",
+   "type": "text",
+   "x": 320,
+   "y": 196,
+   "text": "φ(x): x is an even prime",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 176,
+    "size": 13
+   }
+  },
+  {
+   "id": "v",
+   "type": "text",
+   "x": 320,
+   "y": 232,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 210,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Part 1, at least one: look for a witness of φ. 2 is even and prime.",
+   "patches": [
+    {
+     "id": "n1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "q1",
+     "set": {
+      "label": "T",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Part 2, the guard: every z with φ(z) must equal 2. Test the others: 1, 3, 4 and 5 are not even primes.",
+   "patches": [
+    {
+     "id": "q0",
+     "set": {
+      "label": "F",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "q2",
+     "set": {
+      "label": "F",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "q3",
+     "set": {
+      "label": "F",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "q4",
+     "set": {
+      "label": "F",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Both parts hold, so ∃!x φ(x) is true: exactly one element qualifies.",
+   "patches": [
+    {
+     "id": "v",
+     "set": {
+      "text": "∃!x (even prime) = T: only 2",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now change φ to “x is even”. Part 1 still holds (2 is a witness)…",
+   "patches": [
+    {
+     "id": "phi",
+     "set": {
+      "text": "φ(x): x is even"
+     }
+    },
+    {
+     "id": "q0",
+     "set": {
+      "label": "F",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "q1",
+     "set": {
+      "label": "T",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "q2",
+     "set": {
+      "label": "F",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "q3",
+     "set": {
+      "label": "T",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "q4",
+     "set": {
+      "label": "F",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "v",
+     "set": {
+      "text": "at least one: yes",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "…but the guard fails: 4 also qualifies and 4 ≠ 2. So ∃! is false although ∃ is true.",
+   "patches": [
+    {
+     "id": "n3",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "q3",
+     "set": {
+      "tone": "danger",
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "v",
+     "set": {
+      "text": "∃!x (even) = F: 2 and 4 both qualify",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

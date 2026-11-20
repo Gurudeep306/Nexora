@@ -2109,23 +2109,24 @@
       "verification": "For $n=3$ path-shaped tree: only one assignment of {1,2,3} works."
     },
     "cse-2011-cs-30": {
-      "approach": "Read the formula: $x\\ne1$ and every divisor $y$ of $x$ is either 1 or $x$ — the definition of a prime.",
+      "approach": "Concept tested: **reading a number-theory predicate**: $\\exists z\\, (x = y \\cdot z)$ is 'y divides x'; test on 1, a prime and a composite.",
       "concepts": [
-        "Predicate logic",
-        "Prime numbers"
+        "Divisibility in logic",
+        "Prime"
       ],
+      "given": "$P(x) = \\neg(x = 1) \\wedge \\forall y\\, (\\exists z\\, (x = y * z) \\Rightarrow (y = x) \\vee (y = 1))$ over positive integers.",
       "steps": [
         {
           "title": "Translate",
-          "body": "$\\exists z\\,(x=y*z)$ means \"$y$ divides $x$\". So $\\forall y\\,(y\\mid x \\Rightarrow y=x \\lor y=1)$: the only divisors are 1 and $x$."
+          "body": "$x \\ne 1$, and every divisor $y$ of $x$ is $x$ or 1: the definition of a prime."
         },
         {
-          "title": "Add $\\neg(x=1)$",
-          "body": "A number $>1$ whose only divisors are 1 and itself is **prime**."
+          "title": "Test",
+          "body": "$P(1)$ = F; $P(7)$ = T; $P(6)$ = F (divisor 2)."
         }
       ],
       "answer": {
-        "value": "$x$ is prime",
+        "value": "A",
         "choice": [
           "A"
         ],
@@ -2140,23 +2141,24 @@
         {
           "option": "B",
           "correct": false,
-          "reason": "Too weak: $x=4$ is not 1 but $P(4)$ is false ($y=2$)."
+          "reason": "$P(6)$ is false although 6 ≠ 1."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$P(1)$ and $P(4)$ are false."
+          "reason": "$P(1)$ and $P(6)$ are false."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Primes have no factors other than 1 and $x$."
+          "reason": "A number with exactly two factors other than 1 and itself (like 6) makes P false."
         }
       ],
+      "shortcut": "Test x = 1, 6, 7: only 'prime' gives F, F, T.",
       "pitfalls": [
-        "Ignoring the $\\neg(x=1)$ conjunct."
+        "Missing that $\\neg(x = 1)$ excludes 1."
       ],
-      "verification": "$P(7)$ true, $P(6)$ false ($y=2$), $P(1)$ false."
+      "verification": "Brute force over x = 1..200 (y, z up to x): P(x) is true exactly for the primes."
     },
     "cse-2011-cs-31": {
       "approach": "Write numerator and denominator in Euler form: the integrand is $e^{ix}/e^{-ix}=e^{2ix}$, which integrates directly.",

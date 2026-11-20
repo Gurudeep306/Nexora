@@ -1322,27 +1322,28 @@
       "verification": "$m=4$, $X_1=\\{1,2,3\\}$, $X_2=\\{2,3,4\\}$: $f = (1,2,2,1)$, sum $6 = 3\\cdot2$."
     },
     "cse-2006-cs-26": {
-      "approach": "\"Tigers and lions\" means any animal that is a tiger or a lion (no animal is both). The condition \"if hungry or threatened\" is an implication whose consequent is \"attacks\".",
+      "approach": "Concept tested: **two kinds of subject joined by 'and', and an 'if' condition**. 'Tigers and lions' covers anything that is a tiger or a lion; 'attack if hungry or threatened' is (hungry ∨ threatened) → attacks.",
       "concepts": [
-        "First-order logic translation",
-        "Universal quantifier with implication"
+        "Subjects joined by 'and' become ∨",
+        "Implication inside a universal"
       ],
+      "given": "'Tigers and lions attack if they are hungry or threatened.'",
       "steps": [
         {
-          "title": "Subject",
-          "body": "The rule applies to every $x$ that is a tiger **or** a lion: $tiger(x) \\vee lion(x)$. Using $\\wedge$ would describe animals that are both, which is empty."
+          "title": "Who is promised about",
+          "body": "Every tiger and every lion: $(T \\to \\dots) \\wedge (L \\to \\dots) \\equiv (T \\vee L) \\to \\dots$."
         },
         {
-          "title": "Rule",
-          "body": "\"attack if hungry or threatened\" $\\Rightarrow$ $(hungry(x) \\vee threatened(x)) \\rightarrow attacks(x)$."
+          "title": "What is promised",
+          "body": "'attack if hungry or threatened': $(H \\vee R) \\to K$."
         },
         {
-          "title": "Combine",
-          "body": "$$\\forall x\\,[(tiger(x) \\vee lion(x)) \\rightarrow \\{(hungry(x) \\vee threatened(x)) \\rightarrow attacks(x)\\}]$$ which is option (D)."
+          "title": "Assemble",
+          "body": "$\\forall x\\, [(T(x) \\vee L(x)) \\to \\{(H(x) \\vee R(x)) \\to K(x)\\}]$: option D."
         }
       ],
       "answer": {
-        "value": "$\\forall x[(tiger(x) \\vee lion(x)) \\rightarrow \\{(hungry(x) \\vee threatened(x)) \\rightarrow attacks(x)\\}]$",
+        "value": "D",
         "choice": [
           "D"
         ],
@@ -1352,28 +1353,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong: $tiger(x) \\wedge lion(x)$ is never true, so the statement says nothing about real tigers or lions."
+          "reason": "$\\text{tiger} \\wedge \\text{lion}$ restricts the promise to creatures that are both, so nothing is promised about any real tiger or lion."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: uses $\\wedge$ instead of $\\rightarrow$ — claims every tiger/lion is always hungry-or-threatened and always attacks."
+          "reason": "Inner ∧ claims every tiger and lion is hungry or threatened and attacks."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Wrong: reverses the implication ($attacks \\rightarrow hungry$) and attaches $threatened$ by $\\vee$."
+          "reason": "Reverses the inner implication: 'if they attack then they are hungry', plus a stray ∨ threatened."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: universal rule over tigers or lions with the right implication."
+          "reason": "Hypothesis T ∨ L, conclusion (H ∨ R) → K."
         }
       ],
+      "shortcut": "Two plural subjects joined by 'and' are almost always ∨ in the hypothesis; then pick the option with the condition as the inner hypothesis.",
       "pitfalls": [
-        "Translating the English \"and\" in \"tigers and lions\" literally as $\\wedge$."
+        "Writing tiger ∧ lion.",
+        "Swapping the inner hypothesis and conclusion."
       ],
-      "verification": "A hungry tiger: (D) forces $attacks(x)$, as the sentence requires; a calm lion: (D) imposes nothing."
+      "verification": "$(T \\to C) \\wedge (L \\to C) \\equiv (T \\vee L) \\to C$ is checked by truth table; options A–C differ from D on small worlds."
     },
     "cse-2006-cs-27": {
       "approach": "Concept tested: **hypothesis splitting** — on the left of an arrow, ∧ and ∨ swap. Both P1 and P2 keep the connective instead of swapping it, so find a row where each pair of sides differs.",

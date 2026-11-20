@@ -1,0 +1,329 @@
+{
+ "version": 1,
+ "title": "∀ is a big AND",
+ "width": 640,
+ "height": 296,
+ "narrow": {
+  "width": 360,
+  "height": 270
+ },
+ "intro": "The domain has four elements. P is true at a, b and d, and false at c. Watch the universal check every element.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "∀x P(x) on the domain {a, b, c, d}: one big AND",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∀x P(x): a big AND",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "e0",
+   "type": "box",
+   "x": 40,
+   "y": 70,
+   "w": 120,
+   "h": 52,
+   "size": 17,
+   "mono": true,
+   "narrow": {
+    "x": 14,
+    "y": 62,
+    "w": 74,
+    "h": 44
+   },
+   "label": "a"
+  },
+  {
+   "id": "v0",
+   "type": "box",
+   "x": 40,
+   "y": 140,
+   "w": 120,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 14,
+    "y": 122,
+    "w": 74,
+    "h": 40,
+    "size": 12
+   },
+   "label": "P(a) = ?"
+  },
+  {
+   "id": "e1",
+   "type": "box",
+   "x": 184,
+   "y": 70,
+   "w": 120,
+   "h": 52,
+   "size": 17,
+   "mono": true,
+   "narrow": {
+    "x": 98,
+    "y": 62,
+    "w": 74,
+    "h": 44
+   },
+   "label": "b"
+  },
+  {
+   "id": "v1",
+   "type": "box",
+   "x": 184,
+   "y": 140,
+   "w": 120,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 98,
+    "y": 122,
+    "w": 74,
+    "h": 40,
+    "size": 12
+   },
+   "label": "P(b) = ?"
+  },
+  {
+   "id": "e2",
+   "type": "box",
+   "x": 328,
+   "y": 70,
+   "w": 120,
+   "h": 52,
+   "size": 17,
+   "mono": true,
+   "narrow": {
+    "x": 182,
+    "y": 62,
+    "w": 74,
+    "h": 44
+   },
+   "label": "c"
+  },
+  {
+   "id": "v2",
+   "type": "box",
+   "x": 328,
+   "y": 140,
+   "w": 120,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 182,
+    "y": 122,
+    "w": 74,
+    "h": 40,
+    "size": 12
+   },
+   "label": "P(c) = ?"
+  },
+  {
+   "id": "e3",
+   "type": "box",
+   "x": 472,
+   "y": 70,
+   "w": 120,
+   "h": 52,
+   "size": 17,
+   "mono": true,
+   "narrow": {
+    "x": 266,
+    "y": 62,
+    "w": 74,
+    "h": 44
+   },
+   "label": "d"
+  },
+  {
+   "id": "v3",
+   "type": "box",
+   "x": 472,
+   "y": 140,
+   "w": 120,
+   "h": 44,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 266,
+    "y": 122,
+    "w": 74,
+    "h": 40,
+    "size": 12
+   },
+   "label": "P(d) = ?"
+  },
+  {
+   "id": "conj",
+   "type": "text",
+   "x": 320,
+   "y": 236,
+   "text": "P(a) ∧ P(b) ∧ P(c) ∧ P(d)",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 214,
+    "size": 13
+   }
+  },
+  {
+   "id": "verdict",
+   "type": "text",
+   "x": 320,
+   "y": 276,
+   "text": "",
+   "anchor": "middle",
+   "size": 16,
+   "narrow": {
+    "x": 180,
+    "y": 252,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A universal claim has one term per element. On a four-element domain, ∀x P(x) is the conjunction P(a) ∧ P(b) ∧ P(c) ∧ P(d).",
+   "patches": [
+    {
+     "id": "e0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "e3",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check a: P(a) is true. The claim survives this element.",
+   "patches": [
+    {
+     "id": "e0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "label": "P(a) = T",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check b: P(b) is true. Still no counterexample.",
+   "patches": [
+    {
+     "id": "e1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "label": "P(b) = T",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check c: P(c) is false. One false term makes the whole AND false: c is a counterexample.",
+   "patches": [
+    {
+     "id": "e2",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "label": "P(c) = F",
+      "tone": "danger",
+      "fill": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "d is true as well, but it no longer matters: a universal needs every element, and c already failed.",
+   "patches": [
+    {
+     "id": "e3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v3",
+     "set": {
+      "label": "P(d) = T",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So ∀x P(x) = T ∧ T ∧ F ∧ T = F. To refute a ∀, one counterexample is enough.",
+   "patches": [
+    {
+     "id": "conj",
+     "set": {
+      "text": "T ∧ T ∧ F ∧ T = F",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "verdict",
+     "set": {
+      "text": "∀x P(x) is false (counterexample c)",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

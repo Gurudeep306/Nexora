@@ -1,0 +1,238 @@
+{
+ "version": 1,
+ "title": "Some A are B: ∧ not →",
+ "width": 640,
+ "height": 262,
+ "narrow": {
+  "width": 360,
+  "height": 250
+ },
+ "intro": "Domain: a dog that does not bark, and a cat. A(x): x is a dog. B(x): x barks.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "“Some dog barks”: ∃x (A ∧ B) versus the wrong ∃x (A → B)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Some dog barks: ∧ vs →",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "w",
+   "type": "table",
+   "x": 50,
+   "y": 56,
+   "cellW": 90,
+   "cellH": 40,
+   "rows": [
+    [
+     "",
+     "dog?",
+     "barks?",
+     "A∧B",
+     "A→B"
+    ],
+    [
+     "dog",
+     "T",
+     "F",
+     "",
+     ""
+    ],
+    [
+     "cat",
+     "F",
+     "F",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 56,
+    "cellW": 69,
+    "cellH": 38
+   }
+  },
+  {
+   "id": "v1",
+   "type": "text",
+   "x": 320,
+   "y": 210,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 202,
+    "size": 13
+   }
+  },
+  {
+   "id": "v2",
+   "type": "text",
+   "x": 320,
+   "y": 242,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 230,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A world with one silent dog and a cat. The English sentence is false here: no dog barks.",
+   "patches": [
+    {
+     "id": "w",
+     "set": {
+      "highlight": [
+       [
+        1,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column A ∧ B: the dog does not bark, and the cat is not a dog. No row is T.",
+   "patches": [
+    {
+     "id": "w",
+     "set": {
+      "rows": [
+       [
+        "",
+        "dog?",
+        "barks?",
+        "A∧B",
+        "A→B"
+       ],
+       [
+        "dog",
+        "T",
+        "F",
+        "F",
+        ""
+       ],
+       [
+        "cat",
+        "F",
+        "F",
+        "F",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So ∃x (A(x) ∧ B(x)) is false, matching the sentence.",
+   "patches": [
+    {
+     "id": "v1",
+     "set": {
+      "text": "∃x (A ∧ B) = F: matches the sentence",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column A → B: the dog breaks the promise (T → F), but the cat keeps it vacuously (F → F = T).",
+   "patches": [
+    {
+     "id": "w",
+     "set": {
+      "rows": [
+       [
+        "",
+        "dog?",
+        "barks?",
+        "A∧B",
+        "A→B"
+       ],
+       [
+        "dog",
+        "T",
+        "F",
+        "F",
+        "F"
+       ],
+       [
+        "cat",
+        "F",
+        "F",
+        "F",
+        "T"
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "One T row is enough for ∃, so ∃x (A(x) → B(x)) is true, witnessed by the cat. It says the opposite of the sentence.",
+   "patches": [
+    {
+     "id": "v2",
+     "set": {
+      "text": "∃x (A → B) = T: wrongly true (the cat)",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rule: an existential over a noun takes ∧. With →, any object outside the noun is a free witness.",
+   "patches": [
+    {
+     "id": "v2",
+     "set": {
+      "text": "∃ goes with ∧",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

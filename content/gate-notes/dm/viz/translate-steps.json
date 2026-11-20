@@ -1,0 +1,280 @@
+{
+ "version": 1,
+ "title": "English to logic, phrase by phrase",
+ "width": 640,
+ "height": 296,
+ "narrow": {
+  "width": 360,
+  "height": 350
+ },
+ "intro": "“There is a person who does not know anyone else, but that person is known by everyone else.”",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Translating phrase by phrase (GATE 2026)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Phrase by phrase",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "en0",
+   "type": "box",
+   "x": 30,
+   "y": 54,
+   "w": 270,
+   "h": 40,
+   "size": 14,
+   "narrow": {
+    "x": 8,
+    "y": 50,
+    "w": 170,
+    "h": 30,
+    "size": 12
+   },
+   "label": "There is a person"
+  },
+  {
+   "id": "fo0",
+   "type": "box",
+   "x": 330,
+   "y": 54,
+   "w": 280,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 184,
+    "y": 50,
+    "w": 168,
+    "h": 30,
+    "size": 12
+   },
+   "label": "∃y"
+  },
+  {
+   "id": "en1",
+   "type": "box",
+   "x": 30,
+   "y": 104,
+   "w": 270,
+   "h": 40,
+   "size": 14,
+   "narrow": {
+    "x": 8,
+    "y": 116,
+    "w": 170,
+    "h": 30,
+    "size": 12
+   },
+   "label": "for everyone else"
+  },
+  {
+   "id": "fo1",
+   "type": "box",
+   "x": 330,
+   "y": 104,
+   "w": 280,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 184,
+    "y": 116,
+    "w": 168,
+    "h": 30,
+    "size": 12
+   },
+   "label": "∀x (x ≠ y →"
+  },
+  {
+   "id": "en2",
+   "type": "box",
+   "x": 30,
+   "y": 154,
+   "w": 270,
+   "h": 40,
+   "size": 14,
+   "narrow": {
+    "x": 8,
+    "y": 182,
+    "w": 170,
+    "h": 30,
+    "size": 12
+   },
+   "label": "x knows y"
+  },
+  {
+   "id": "fo2",
+   "type": "box",
+   "x": 330,
+   "y": 154,
+   "w": 280,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 184,
+    "y": 182,
+    "w": 168,
+    "h": 30,
+    "size": 12
+   },
+   "label": "M(x, y)"
+  },
+  {
+   "id": "en3",
+   "type": "box",
+   "x": 30,
+   "y": 204,
+   "w": 270,
+   "h": 40,
+   "size": 14,
+   "narrow": {
+    "x": 8,
+    "y": 248,
+    "w": 170,
+    "h": 30,
+    "size": 12
+   },
+   "label": "and y does not know x"
+  },
+  {
+   "id": "fo3",
+   "type": "box",
+   "x": 330,
+   "y": 204,
+   "w": 280,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 184,
+    "y": 248,
+    "w": 168,
+    "h": 30,
+    "size": 12
+   },
+   "label": "∧ ¬M(y, x))"
+  },
+  {
+   "id": "all",
+   "type": "text",
+   "x": 320,
+   "y": 276,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 330,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "“There is a person” fixes one y first, before anyone else is considered: the outer quantifier is ∃y.",
+   "patches": [
+    {
+     "id": "en0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "fo0",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "“everyone else” ranges over every x other than y: a universal restricted by x ≠ y, so it takes →.",
+   "patches": [
+    {
+     "id": "en1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "fo1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "“is known by everyone else”: each such x knows y, M(x, y).",
+   "patches": [
+    {
+     "id": "en2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "fo2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "“does not know anyone else”: y does not know x, joined with ∧ inside the same promise.",
+   "patches": [
+    {
+     "id": "en3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "fo3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Assembled: ∃y ∀x ((x ≠ y) → (M(x, y) ∧ ¬M(y, x))). Swapping to ∀y would describe everyone; ∃x would need only one other person.",
+   "patches": [
+    {
+     "id": "all",
+     "set": {
+      "text": "∃y ∀x ((x ≠ y) → (M(x, y) ∧ ¬M(y, x)))",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -3492,29 +3492,28 @@
       "verification": "RFC 2328 describes OSPF as a link-state IGP that runs the Dijkstra SPF algorithm and supports areas — consistent with B and D being true and A, C false."
     },
     "cse-2023-cs-16": {
-      "approach": "An option implies the conjecture if, assuming it, you can produce a witness $y$ for every $x$ with $P(x)$. B and C hand you such a witness; A and D speak about only one $x$, and a single counter-model kills both.",
+      "approach": "Concept tested: **which statements imply a ∀∃ statement**: ∃∀ implies ∀∃, a universal fact about Q implies it, and statements about one x do not.",
       "concepts": [
-        "First-order logic",
-        "Quantifier order",
-        "Logical implication"
+        "∃∀ ⇒ ∀∃",
+        "Existential statements are weak"
       ],
-      "given": "Conjecture $G$: $\\forall x\\,\\big(P(x) \\Rightarrow \\exists y\\, Q(x, y)\\big)$ over the integers (non-empty domain).",
+      "given": "Conjecture: $\\forall x\\, (P(x) \\Rightarrow \\exists y\\, Q(x, y))$.",
       "steps": [
         {
-          "title": "B implies G",
-          "body": "Assume $\\forall x \\forall y\\, Q(x, y)$. Take any $x$ with $P(x)$; choose $y = 0$ (the domain is non-empty). Then $Q(x, 0)$ holds, so $\\exists y\\, Q(x, y)$. Hence $G$."
+          "title": "B",
+          "body": "If $Q(x, y)$ holds for all pairs, every x has a witness y. B implies the conjecture."
         },
         {
-          "title": "C implies G",
-          "body": "Assume $\\exists y\\, \\forall x\\, (P(x) \\Rightarrow Q(x, y))$ and fix such a $y_0$. For any $x$ with $P(x)$ we get $Q(x, y_0)$, so $\\exists y\\, Q(x, y)$ with witness $y_0$. Hence $G$. (C is the stronger \"one $y$ for all $x$\" form — $\\exists y \\forall x$ implies $\\forall x \\exists y$.)"
+          "title": "C",
+          "body": "Let $y_0$ witness C. For any x with P(x), $Q(x, y_0)$ holds. C implies the conjecture."
         },
         {
-          "title": "A and D do not: one counter-model",
-          "body": "Let $P(x)$ be true for every integer and $Q(x, y) \\equiv (x = 0)$.\n\n| formula | value | reason |\n|---|---|---|\n| A: $\\exists x\\,(P(x) \\wedge \\forall y\\, Q(x,y))$ | true | $x = 0$ |\n| D: $\\exists x\\,(P(x) \\wedge \\exists y\\, Q(x,y))$ | true | $x = 0$ |\n| $G$ | **false** | $x = 1$: $P(1)$ but no $y$ has $Q(1, y)$ |\n\nA and D are true while $G$ is false, so neither implies $G$."
+          "title": "A and D",
+          "body": "Both speak about one x. World {0, 1}: P true on both, Q(0, ·) true, Q(1, ·) false. A and D hold, the conjecture fails at x = 1."
         }
       ],
       "answer": {
-        "value": "Options **(B)** and **(C)** imply the conjecture",
+        "value": "B and C",
         "choice": [
           "B",
           "C"
@@ -3525,30 +3524,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Only guarantees one good $x$; other $x$ with $P(x)$ may have no witness (counter-model: $Q(x,y) \\equiv x = 0$)."
+          "reason": "Only one x is shown to have its witnesses; another x with P may have none."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$Q$ holds for all pairs, so any $y$ is a witness for every $x$."
+          "reason": "Every pair satisfies Q, so every x has a witness."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "A single $y_0$ that works for every $x$ satisfying $P$ certainly gives each such $x$ a witness ($\\exists y \\forall x \\Rightarrow \\forall x \\exists y$)."
+          "reason": "∃y∀x (P → Q) gives one y that works for every x with P: stronger than the conjecture."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "This is just one instance of the conjecture holding; it says nothing about other $x$ (same counter-model as A)."
+          "reason": "Again about a single x."
         }
       ],
-      "shortcut": "\"Implies a $\\forall x$ statement\" needs a $\\forall x$ (or $\\exists y \\forall x$) in the premise: B and C have it, A and D start with $\\exists x$.",
+      "shortcut": "To imply a ∀ statement you need a ∀ (or an ∃∀ that contains it); options that begin with ∃x and say nothing more cannot.",
       "pitfalls": [
-        "Reading A as \"for all $x$\" because of the inner $\\forall y$ — the outer quantifier is $\\exists x$.",
-        "Forgetting that $\\exists y \\forall x$ implies $\\forall x \\exists y$ (the converse is what fails)."
+        "Thinking a single example (A, D) proves a universal claim."
       ],
-      "verification": "Check the converse direction is not needed: we only need premise ⇒ $G$. In the counter-model, B is false ($Q(1, 0)$ fails) and C is false (no $y$ makes $Q(1, y)$ true), consistent with both still implying $G$ (an implication with a false premise is vacuously fine)."
+      "verification": "predlib: B → conjecture and C → conjecture are valid on all interpretations up to size 3; A and D have counter-models."
     },
     "cse-2023-cs-17": {
       "approach": "For each policy ask one question: is a waiting process's delay **bounded**, no matter which processes keep arriving? FIFO and Round Robin bound it; Priority and SJF let an endless stream of 'better' arrivals overtake a waiting process, so they can starve it.",
