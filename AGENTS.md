@@ -205,6 +205,13 @@ from a range, since test files run in parallel and a clash fails the run.
   table `gate_notes_highlights`): painted with the CSS Custom Highlight API, so
   the lesson's markup is never touched, and found again by quote plus context
   (`components/reader/anchor.ts`). They are listed in GATE → Notebook → Highlights.
+- **Handwritten working** (`src/routes/hand.js`, `components/hand/`, `pages/hand/`):
+  under a GATE practice question, members add handwritten solutions from a
+  tablet (one-time link/QR to the writing pad `/pad/<token>`), a phone camera
+  (`/snap/<token>`) or an upload. The device is not signed in: the token stands
+  for one member and one question for 30 minutes and can only add solutions,
+  so `/pad`, `/snap` and `/api/hand/device/*` pass private mode. Private until
+  shared; shared ones show to others only after they answer, most helpful first.
 - **Search** uses one field style, the "ledger line" (`styles/search.css`,
   `SearchInput`, `SearchCombobox`; `variant="bar"` is the top bar's pill): a
   hairline, an italic serif hint, an ink line drawn on focus. Keep text around

@@ -13,25 +13,27 @@ import { AiMarkdown } from '@/components/ai/AiMarkdown'
 import { cn } from '@/lib/utils'
 import { useApi } from '@/hooks/useApi'
 import { highlightsApi, type Highlight } from '@/gate/notes/highlights'
+import { handApi, type HandSolution } from '@/components/hand/api'
 import { gateApi, type Collection, type NoteEntry, type QuestionProgress } from '@/gate/api'
 import { GateShell } from '@/gate/shell/GateShell'
 import { useGateExam } from '@/gate/shell/examStore'
 import { useGateProgressAll, useQuestionsByIds } from '@/gate/shell/useGateData'
-import { practiceLink, testLink } from '@/gate/shell/links'
+import { practiceLink, questionLink, testLink } from '@/gate/shell/links'
 import { EmptyHint, LinkButton, Panel } from '@/gate/insights/ui'
 import { useSubjects } from '@/gate/insights/subjects'
 import { QuestionRow } from '@/gate/insights/QuestionRow'
 import { snippet, timeAgo } from '@/gate/insights/format'
 import { shortSubject } from '@/gate/insights/subjects'
 
-type Tab = 'bookmarks' | 'notes' | 'highlights' | 'mistakes'
+type Tab = 'bookmarks' | 'notes' | 'highlights' | 'handwritten' | 'mistakes'
 
 export default function GateNotebookPage() {
   const [params, setParams] = useSearchParams()
-  const tab = (['bookmarks', 'notes', 'highlights', 'mistakes'].includes(params.get('tab') ?? '') ? params.get('tab') : 'bookmarks') as Tab
+  const tab = (['bookmarks', 'notes', 'highlights', 'handwritten', 'mistakes'].includes(params.get('tab') ?? '') ? params.get('tab') : 'bookmarks') as Tab
   const progress = useGateProgressAll()
   const notes = useApi(() => gateApi.notes().then((r) => r.notes), [], { cacheKey: 'gate:me:notes' })
   const highlights = useApi(() => highlightsApi.list(), [], { cacheKey: 'gate:me:highlights' })
+  const handwritten = useApi(() => handApi.mine(), [], { cacheKey: 'gate:me:handwritten' })
 
   const entries = useMemo(() => Object.entries(progress.data ?? {}), [progress.data])
   const bookmarked = useMemo(() => entries.filter(([, p]) => p.bookmarked), [entries])
@@ -58,14 +60,52 @@ export default function GateNotebookPage() {
           { id: 'bookmarks', label: 'Bookmarks', icon: <Icon name="bookmark" className="size-4" />, badge: bookmarked.length || undefined },
           { id: 'notes', label: 'Notes', icon: <Icon name="edit" className="size-4" />, badge: notes.data?.length || undefined },
           { id: 'highlights', label: 'Highlights', icon: <Icon name="book" className="size-4" />, badge: highlights.data?.length || undefined },
+          { id: 'handwritten', label: 'Handwritten', icon: <Icon name="image" className="size-4" />, badge: handwritten.data?.length || undefined },
           { id: 'mistakes', label: 'Mistakes', icon: <Icon name="x-circle" className="size-4" />, badge: mistakes.length || undefined },
         ]}
       />
       {tab === 'bookmarks' && <Bookmarks rows={bookmarked} loading={progress.loading && !progress.data} onChanged={progress.refetch} setProgress={progress.setData} />}
       {tab === 'notes' && <Notes notes={notes.data ?? []} loading={notes.loading && !notes.data} />}
       {tab === 'highlights' && <Highlights list={highlights.data ?? []} loading={highlights.loading && !highlights.data} />}
+      {tab === 'handwritten' && <Handwritten list={handwritten.data ?? []} loading={handwritten.loading && !handwritten.data} />}
       {tab === 'mistakes' && <Mistakes rows={mistakes} loading={progress.loading && !progress.data} />}
     </GateShell>
+  )
+}
+
+/* ── Handwritten working (components/hand) ───────────────────────────────── */
+
+function Handwritten({ list, loading }: { list: HandSolution[]; loading: boolean }) {
+  const [exam] = useGateExam()
+  return (
+    <Panel title="Handwritten" icon="image" subtitle={`${list.length} handwritten ${list.length === 1 ? 'solution' : 'solutions'} from your tablet, phone or uploads`}>
+      {loading ? (
+        <Skeleton className="h-48 w-full rounded-lg" />
+      ) : !list.length ? (
+        <EmptyHint icon="image" title="No handwritten work yet" action={<LinkButton to={practiceLink({ exam })} icon="play">Open a question</LinkButton>}>
+          Under any practice question, choose “Add handwritten work” to write on a tablet, photograph your paper with your phone, or upload a scan.
+        </EmptyHint>
+      ) : (
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {list.map((h) => (
+            <li key={h.id}>
+              <Link to={questionLink(h.target)} className="group block overflow-hidden rounded-xl border border-border transition-colors hover:border-border-strong">
+                <span className="block aspect-[3/4] overflow-hidden bg-bg-surface-2">
+                  <img src={h.images[0]} alt="" loading="lazy" className="size-full object-cover object-top" />
+                </span>
+                <span className="block px-3 py-2">
+                  <span className="block truncate text-[13px] font-medium text-text-primary">{h.title}</span>
+                  <span className="mt-0.5 flex items-center gap-1.5 text-[11.5px] text-text-muted">
+                    <Icon name={h.visibility === 'public' ? 'globe' : 'lock'} className="size-3" aria-hidden="true" />
+                    {h.visibility === 'public' ? `Shared · ${h.votes} helpful` : 'Private'} · {h.images.length} {h.images.length === 1 ? 'page' : 'pages'}
+                  </span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Panel>
   )
 }
 

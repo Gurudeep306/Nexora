@@ -278,59 +278,10 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
           </div>
           <div className="pf-stage-row">
             <div className="pf-stage-pic">{portrait}</div>
-          <div className="pf-stage-note">
-            {p.bio ? (
-              <RichText text={p.bio} className="pf-bio mt-3 max-w-2xl space-y-1 text-[15px] leading-relaxed text-text-primary" />
-            ) : (
-              isSelf && (
-                <button type="button" onClick={() => setEditing(true)} className="pf-bio-empty mt-3 cursor-pointer text-sm text-text-muted italic hover:text-text-primary hover:underline">
-                  Add a bio — tell people what you're learning.
-                </button>
-              )
-            )}
-            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-text-secondary">
-              {p.location && (
-                <span className="inline-flex items-center gap-1.5">
-                  <MapPin className="size-4 text-text-muted" /> {p.location}
-                </span>
-              )}
-              {p.website && (
-                <a href={p.website} target="_blank" rel="noopener noreferrer nofollow ugc" className="inline-flex items-center gap-1.5 hover:underline" style={{ color: accent }}>
-                  <Link2 className="size-4" /> {p.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
-                </a>
-              )}
-              {p.links.map((l) => (
-                <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer nofollow ugc" className="inline-flex items-center gap-1.5 hover:underline" style={{ color: accent }}>
-                  {l.label || l.url.replace(/^https?:\/\//, '')}
-                </a>
-              ))}
-              <span className="pf-joined inline-flex items-center gap-1.5">
-                <CalendarDays className="size-4 text-text-muted" /> Joined {formatDate(p.created_at)}
-              </span>
-            </div>
-            <div className="pf-counts pf-stage-counts mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
-              {socialOn && (
-                <>
-                  <button type="button" onClick={() => setPeople('following')} className="cursor-pointer hover:underline" disabled={data.locked}>
-                    <strong className="font-semibold text-text-primary tabular-nums">{p.counts.following}</strong> <span className="text-text-secondary">Following</span>
-                  </button>
-                  <button type="button" onClick={() => setPeople('followers')} className="cursor-pointer hover:underline" disabled={data.locked}>
-                    <strong className="font-semibold text-text-primary tabular-nums">{p.counts.followers}</strong> <span className="text-text-secondary">{p.counts.followers === 1 ? 'Follower' : 'Followers'}</span>
-                  </button>
-                  <span>
-                    <strong className="font-semibold text-text-primary tabular-nums">{p.counts.posts}</strong> <span className="text-text-secondary">Posts</span>
-                  </span>
-                </>
-              )}
-              <span>
-                <strong className="font-semibold text-text-primary tabular-nums">{p.counts.friends}</strong> <span className="text-text-secondary">Friends</span>
-              </span>
-            </div>
-          </div>
           </div>
         </div>
       )}
-      <div className={cn('pf-hero-body relative px-4 pb-5 sm:px-6', !hasCover && 'is-plain')}>
+      <div className={cn('pf-hero-body relative px-4 pb-5 sm:px-6', !hasCover && 'is-plain', hasCover && 'has-cover')}>
         <div className="pf-hero-top flex flex-wrap items-end justify-between gap-3">
           {!hasCover && portrait}
           {!hasCover && (
@@ -459,6 +410,57 @@ function ProfileHero({ data, stats, days, isSelf, onChanged }: { data: ProfileRe
             </div>
           )}
         </div>
+        {hasCover && (
+          <div className="pf-cover-note">
+            {p.bio ? (
+              <RichText text={p.bio} className="pf-bio mt-3 max-w-2xl space-y-1 text-[15px] leading-relaxed text-text-primary" />
+            ) : (
+              isSelf && (
+                <button type="button" onClick={() => setEditing(true)} className="pf-bio-empty mt-3 cursor-pointer text-sm text-text-muted italic hover:text-text-primary hover:underline">
+                  Add a bio — tell people what you're learning.
+                </button>
+              )
+            )}
+            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-text-secondary">
+              {p.location && (
+                <span className="inline-flex items-center gap-1.5">
+                  <MapPin className="size-4 text-text-muted" /> {p.location}
+                </span>
+              )}
+              {p.website && (
+                <a href={p.website} target="_blank" rel="noopener noreferrer nofollow ugc" className="inline-flex items-center gap-1.5 hover:underline" style={{ color: accent }}>
+                  <Link2 className="size-4" /> {p.website.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+                </a>
+              )}
+              {p.links.map((l) => (
+                <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer nofollow ugc" className="inline-flex items-center gap-1.5 hover:underline" style={{ color: accent }}>
+                  {l.label || l.url.replace(/^https?:\/\//, '')}
+                </a>
+              ))}
+              <span className="pf-joined inline-flex items-center gap-1.5">
+                <CalendarDays className="size-4 text-text-muted" /> Joined {formatDate(p.created_at)}
+              </span>
+            </div>
+            <div className="pf-counts pf-stage-counts mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm">
+              {socialOn && (
+                <>
+                  <button type="button" onClick={() => setPeople('following')} className="cursor-pointer hover:underline" disabled={data.locked}>
+                    <strong className="font-semibold text-text-primary tabular-nums">{p.counts.following}</strong> <span className="text-text-secondary">Following</span>
+                  </button>
+                  <button type="button" onClick={() => setPeople('followers')} className="cursor-pointer hover:underline" disabled={data.locked}>
+                    <strong className="font-semibold text-text-primary tabular-nums">{p.counts.followers}</strong> <span className="text-text-secondary">{p.counts.followers === 1 ? 'Follower' : 'Followers'}</span>
+                  </button>
+                  <span>
+                    <strong className="font-semibold text-text-primary tabular-nums">{p.counts.posts}</strong> <span className="text-text-secondary">Posts</span>
+                  </span>
+                </>
+              )}
+              <span>
+                <strong className="font-semibold text-text-primary tabular-nums">{p.counts.friends}</strong> <span className="text-text-secondary">Friends</span>
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       <Suspense fallback={null}>

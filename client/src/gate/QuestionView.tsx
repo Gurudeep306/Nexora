@@ -21,6 +21,7 @@ import { QuestionStatsPanel } from './practice/QuestionStatsPanel'
 import { SimilarStrip } from './practice/SimilarStrip'
 
 const GateSolution = lazy(() => import('./solution/GateSolution'))
+const HandSolutions = lazy(() => import('@/components/hand/HandSolutions').then((m) => ({ default: m.HandSolutions })))
 
 /* ── Small pieces ───────────────────────────────────────────────────────── */
 
@@ -509,6 +510,12 @@ export function QuestionView({
 
         {insights && <NoteEditor key={q.id} ref={note} questionId={q.id} className="!mt-2" />}
       </QuestionCard>
+
+      {insights && mode !== 'test' && (
+        <Suspense fallback={null}>
+          <HandSolutions kind="gate" target={q.id} revealed={answered} />
+        </Suspense>
+      )}
 
       {insights && (
         <>

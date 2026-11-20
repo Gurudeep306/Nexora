@@ -544,3 +544,34 @@
     letter-spacing: -0.02em;
   }
 }
+
+/* ── Header with a cover: the cover holds the art, the portrait and the
+   actions; under it, the person on the left and their note (bio, joined,
+   counts) on the right, instead of a card laid over the art. ── */
+.pf-hero-body.has-cover .pf-cover-note {
+  margin-top: 1rem;
+}
+@media (min-width: 900px) {
+  .pf-hero-body.has-cover {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    column-gap: 2.5rem;
+    align-items: start;
+  }
+  .pf-hero-body.has-cover > .pf-hero-top {
+    grid-column: 1 / -1;
+  }
+  .pf-hero-body.has-cover .pf-cover-note {
+    margin-top: 0.9rem;
+    padding-left: 2rem;
+    border-left: 1px solid var(--ed-line, var(--color-border));
+  }
+  .pf-hero-body.has-cover .pf-cover-note > :first-child {
+    margin-top: 0.25rem;
+  }
+  .pf-hero-body.has-cover .pf-name {
+    font-size: 2.5rem;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+}
