@@ -1,6 +1,7 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const crypto = require("crypto");
 const { all, run } = require("../db");
 const { requireAuthenticatedUser } = require("../middleware/auth");
 const { hasAnyAdminPerm, mayUseHive } = require("../authz/permissions");
@@ -222,6 +223,24 @@ function userLimiter(max, windowMs) {
   };
 }
 
+const HL_COLORS = new Set(["yellow", "green", "blue", "pink"]);
+const HL_MAX_PER_USER = 3000;
+const hlShape = (r) => ({
+  id: r.id,
+  subject: r.subject,
+  lesson: r.lesson,
+  block: r.block,
+  quote: r.quote,
+  prefix: r.prefix,
+  suffix: r.suffix,
+  color: r.color,
+  note: r.note,
+  createdAt: Number(r.created_at) || 0,
+  updatedAt: Number(r.updated_at) || 0,
+});
+/** A string field, trimmed to `max`; undefined when absent, null when the wrong type. */
+const str = (v, max) => (v === undefined ? undefined : typeof v === "string" ? v.slice(0, max) : null);
+
 const progressShape = (r) => ({
   completed: !!r.completed,
   scrollPct: Number(r.scroll_pct) || 0,
@@ -353,6 +372,98 @@ function createGateNotesRouter() {
       [req.sessionUser.username, s.card.id, req.params.lesson, row.completed, row.scroll_pct, row.bookmarked, row.completed_at || null, now],
     );
     if (set.completed !== undefined) invalidateNexusUser(req.sessionUser.username);
+    res.json({ ok: true });
+  }));
+
+  /* ── Highlights and margin notes ── */
+
+  router.get("/api/gate/me/highlights", auth, wrap(async (req, res) => {
+    const q = req.query;
+    const subject = typeof q.subject === "string" && q.subject ? q.subject : null;
+    const lesson = subject && typeof q.lesson === "string" && q.lesson ? q.lesson : null;
+    const where = ["username=?"];
+    const args = [req.sessionUser.username];
+    if (subject) where.push("subject=?"), args.push(subject);
+    if (lesson) where.push("lesson=?"), args.push(lesson);
+    const rows = await all(
+      `SELECT * FROM gate_notes_highlights WHERE ${where.join(" AND ")} ORDER BY created_at DESC LIMIT ${HL_MAX_PER_USER}`,
+      args,
+    );
+    // Only lessons this member may still read (the Site map can hide a subject).
+    const out = [];
+    for (const r of rows) {
+      const s = subjectFor(req, r.subject);
+      const l = s && s.lessons.get(r.lesson);
+      if (!l) continue;
+      out.push({ ...hlShape(r), subjectTitle: s.card.title, lessonTitle: l.lesson?.title || r.lesson });
+    }
+    res.json({ ok: true, highlights: out });
+  }));
+
+  router.post("/api/gate/me/highlights/:subject/:lesson", auth, progressLimit, wrap(async (req, res) => {
+    const s = subjectFor(req, req.params.subject);
+    if (!s || !s.lessons.has(req.params.lesson)) return fail(res, 404, "Unknown lesson");
+    const b = req.body && typeof req.body === "object" && !Array.isArray(req.body) ? req.body : null;
+    if (!b) return fail(res, 400, "Body required");
+    const quote = str(b.quote, 1000);
+    if (typeof quote !== "string" || quote.trim().length < 1) return fail(res, 400, "quote is required");
+    const fields = { block: str(b.block, 120), prefix: str(b.prefix, 64), suffix: str(b.suffix, 64), note: str(b.note, 2000) };
+    if (Object.values(fields).some((v) => v === null)) return fail(res, 400, "Fields must be text");
+    const color = b.color === undefined ? "yellow" : b.color;
+    if (!HL_COLORS.has(color)) return fail(res, 400, "Unknown colour");
+    const n = await all("SELECT COUNT(*) AS n FROM gate_notes_highlights WHERE username=?", [req.sessionUser.username]);
+    if (Number(n[0]?.n) >= HL_MAX_PER_USER) return fail(res, 409, "You have reached the highlight limit. Remove some old ones first.");
+    const now = Date.now();
+    const row = {
+      id: `hl_${crypto.randomBytes(9).toString("base64url")}`,
+      username: req.sessionUser.username,
+      subject: s.card.id,
+      lesson: req.params.lesson,
+      block: fields.block ?? "",
+      quote,
+      prefix: fields.prefix ?? "",
+      suffix: fields.suffix ?? "",
+      color,
+      note: fields.note ?? "",
+      created_at: now,
+      updated_at: now,
+    };
+    await run(
+      `INSERT INTO gate_notes_highlights(id, username, subject, lesson, block, quote, prefix, suffix, color, note, created_at, updated_at)
+       VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
+      Object.values(row),
+    );
+    res.json({ ok: true, highlight: hlShape(row) });
+  }));
+
+  router.patch("/api/gate/me/highlights/:id", auth, progressLimit, wrap(async (req, res) => {
+    const b = req.body && typeof req.body === "object" && !Array.isArray(req.body) ? req.body : null;
+    if (!b) return fail(res, 400, "Body required");
+    const set = {};
+    if (b.color !== undefined) {
+      if (!HL_COLORS.has(b.color)) return fail(res, 400, "Unknown colour");
+      set.color = b.color;
+    }
+    if (b.note !== undefined) {
+      const note = str(b.note, 2000);
+      if (note === null) return fail(res, 400, "note must be text");
+      set.note = note;
+    }
+    if (!Object.keys(set).length) return fail(res, 400, "Nothing to update");
+    set.updated_at = Date.now();
+    const cols = Object.keys(set);
+    const r = await run(
+      `UPDATE gate_notes_highlights SET ${cols.map((c) => `${c}=?`).join(", ")} WHERE id=? AND username=?`,
+      [...cols.map((c) => set[c]), String(req.params.id), req.sessionUser.username],
+    );
+    if (!r || !(r.changes ?? r.rowsAffected)) return fail(res, 404, "Highlight not found");
+    const rows = await all("SELECT * FROM gate_notes_highlights WHERE id=? AND username=?", [String(req.params.id), req.sessionUser.username]);
+    res.json({ ok: true, highlight: hlShape(rows[0]) });
+  }));
+
+  router.delete("/api/gate/me/highlights/:id", auth, progressLimit, wrap(async (req, res) => {
+    const r = await run("DELETE FROM gate_notes_highlights WHERE id=? AND username=?", [String(req.params.id), req.sessionUser.username]);
+    if (!r || !(r.changes ?? r.rowsAffected)) return fail(res, 404, "Highlight not found");
     res.json({ ok: true });
   }));
 

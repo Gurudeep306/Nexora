@@ -4,6 +4,7 @@
 // socket.io-client is only a client/ dependency, so this test speaks the
 // engine.io v4 long-polling protocol directly over fetch (which lets us send
 // the session Cookie header).
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -100,7 +101,7 @@ let alice;
 let bob;
 
 test.before(async () => {
-  const port = 22000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   baseUrl = `http://127.0.0.1:${port}`;
   serverProc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

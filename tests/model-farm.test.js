@@ -1,5 +1,6 @@
 // The model farm gateway (deploy/model-farm/gateway.py): one address and one
 // key in front of many model servers. A mock vLLM server stands in for the GPU.
+const { freePort } = require('./helpers/free-port');
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const http = require("node:http");
@@ -50,7 +51,7 @@ test.before(async () => {
   if (!python) return;
   upstream = mockVllm("qwen3.8-27b");
   await new Promise((r) => upstream.listen(0, "127.0.0.1", r));
-  const port = 8900 + Math.floor(Math.random() * 600);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   gateway = spawn(python, [path.join(__dirname, "../deploy/model-farm/gateway.py")], {
     env: { ...process.env, FARM_KEY: "sekret", FARM_PORT: String(port), FARM_ROUTES: JSON.stringify({ "qwen3.8-27b": `http://127.0.0.1:${upstream.address().port}`, "down-model": "http://127.0.0.1:1" }) },

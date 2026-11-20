@@ -1,5 +1,6 @@
 // The solver's AI tools over HTTP: code analysis (measured metrics + real runs
 // even with no AI configured) and the test generator's errors.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -22,7 +23,7 @@ const call = async (method, p, ck, body) => {
 };
 
 test.before(async () => {
-  const port = 27100 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   serverLog = '';
   proc = spawn(process.execPath, ['src/server.js'], {

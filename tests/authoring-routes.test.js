@@ -1,6 +1,7 @@
 // "Add a coding problem" over HTTP: only staff with the Problems permission
 // reach it, and a published NexoraGuru problem is judged on its own tests
 // with its checker — the hidden tests' contents stay with staff.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -39,7 +40,7 @@ function withDb(fn) {
 }
 
 test.before(async () => {
-  const port = 27000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

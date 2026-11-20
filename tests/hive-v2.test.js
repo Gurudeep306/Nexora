@@ -2,6 +2,7 @@
 // custom instruction plugins, manual assignment to chosen agents, live-code
 // field extraction, chat with uploaded files, and image generation — against
 // local mock Claude / OpenAI-compatible / GitHub servers.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
@@ -152,7 +153,7 @@ let projectId;
 
 test.before(async () => {
   await startMock();
-  const port = 24000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

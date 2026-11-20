@@ -3,6 +3,7 @@
 // password, asks the short test-generation steps in plain code blocks, checks
 // the answers by running them, and keeps the set for the next person.
 // The model here is a stand-in that answers the way a small model does.
+const { freePort } = require('./helpers/free-port');
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const http = require("node:http");
@@ -76,7 +77,7 @@ test.before(async () => {
     });
   });
   await new Promise((r) => mock.listen(0, "127.0.0.1", r));
-  const port = 28100 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ["src/server.js"], {
     cwd: path.join(__dirname, ".."),

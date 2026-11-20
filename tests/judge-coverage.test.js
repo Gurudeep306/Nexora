@@ -2,6 +2,7 @@
 // own tests when the open dataset has them, else only the examples (and the
 // student's own tests). "Accepted" on examples alone must never look like a
 // full check: the client shows "Passed the examples" from this field.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -33,7 +34,7 @@ const addProblem = (platform, pid, samples) => withDb((db) => {
 const WRONG = "const w=+require('fs').readFileSync(0,'utf8');console.log(w%2===0?'YES':'NO')";
 
 test.before(async () => {
-  const port = 29000 + Math.floor(Math.random() * 900);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

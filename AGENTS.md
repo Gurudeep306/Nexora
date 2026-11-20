@@ -118,6 +118,10 @@ node client/scripts/check-learn.mjs <topic>        # content integrity
 Before pushing, run the tests, the typecheck and the build for the parts you
 changed.
 
+Server tests that start their own server get a free port from
+`tests/helpers/free-port.js` (`await freePort()`); never pick a random port
+from a range, since test files run in parallel and a clash fails the run.
+
 ## Design and UI conventions
 
 - Use the site's design tokens, not raw colours: `bg-bg-app`, `bg-bg-surface`,
@@ -197,6 +201,10 @@ changed.
   to `--nr-wide`). Reading pages use the whole window (`isReaderRoute`), with
   no GATE frame and no Dock. GATE notes and DSA lessons both use it, and a
   skill with written notes opens them here (the skill card is `?card=1`).
+  Members can highlight and annotate notes lessons (`components/reader/LessonHighlights.tsx`,
+  table `gate_notes_highlights`): painted with the CSS Custom Highlight API, so
+  the lesson's markup is never touched, and found again by quote plus context
+  (`components/reader/anchor.ts`). They are listed in GATE → Notebook → Highlights.
 - **Search** uses one field style, the "ledger line" (`styles/search.css`,
   `SearchInput`, `SearchCombobox`; `variant="bar"` is the top bar's pill): a
   hairline, an italic serif hint, an ink line drawn on focus. Keep text around

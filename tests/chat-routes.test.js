@@ -1,6 +1,7 @@
 // Messages over HTTP (src/routes/chat.js): sign-in required, share cards
 // built from the server's own data, uploads checked by their bytes, and
 // messages sent the old way still arrive in the new conversations.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -47,7 +48,7 @@ async function upload(cookie, bytes, name, type) {
 }
 
 test.before(async () => {
-  const port = 28000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

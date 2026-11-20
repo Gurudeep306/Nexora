@@ -1,4 +1,5 @@
 // Statement media: what the rewriter emits, and what the image proxy will fetch.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const {
@@ -126,7 +127,7 @@ let proc, base;
 let serverLog = '';
 
 test.before(async () => {
-  const port = 25000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   serverLog = '';
   proc = spawn(process.execPath, ['src/server.js'], {

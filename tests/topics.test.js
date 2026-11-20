@@ -1,6 +1,7 @@
 // Topics on every problem (src/topics.js, src/routes/topics.js): the detector,
 // the Problems filter and search, staff corrections that are kept for good,
 // the backfill, and who may change what.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -109,7 +110,7 @@ function db(fn) {
 const ids = {};
 
 test.before(async () => {
-  const port = 30500 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

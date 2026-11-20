@@ -2,6 +2,7 @@
 // public), public sets by likes, the CSES series built live from the catalog,
 // company sets that must cite a public source, and community "asked at"
 // reports that show only once enough people made them.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -39,7 +40,7 @@ const call = async (method, p, cookie, body) => {
 const ok = (r, msg) => assert.equal(r.status, 200, `${msg || ''} ${r.status} ${JSON.stringify(r.body).slice(0, 300)}`);
 
 test.before(async () => {
-  const port = 33500 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

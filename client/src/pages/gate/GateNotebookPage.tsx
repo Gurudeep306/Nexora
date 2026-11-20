@@ -6,12 +6,13 @@
     Mistakes    last attempt wrong, newest first, by subject → retest
 */
 import { useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Button, Card, ConfirmDialog, Input, SearchInput, Skeleton, Tabs, useToast } from '@/components/ui'
 import { Icon } from '@/components/icon/Icon'
 import { AiMarkdown } from '@/components/ai/AiMarkdown'
 import { cn } from '@/lib/utils'
 import { useApi } from '@/hooks/useApi'
+import { highlightsApi, type Highlight } from '@/gate/notes/highlights'
 import { gateApi, type Collection, type NoteEntry, type QuestionProgress } from '@/gate/api'
 import { GateShell } from '@/gate/shell/GateShell'
 import { useGateExam } from '@/gate/shell/examStore'
@@ -23,13 +24,14 @@ import { QuestionRow } from '@/gate/insights/QuestionRow'
 import { snippet, timeAgo } from '@/gate/insights/format'
 import { shortSubject } from '@/gate/insights/subjects'
 
-type Tab = 'bookmarks' | 'notes' | 'mistakes'
+type Tab = 'bookmarks' | 'notes' | 'highlights' | 'mistakes'
 
 export default function GateNotebookPage() {
   const [params, setParams] = useSearchParams()
-  const tab = (['bookmarks', 'notes', 'mistakes'].includes(params.get('tab') ?? '') ? params.get('tab') : 'bookmarks') as Tab
+  const tab = (['bookmarks', 'notes', 'highlights', 'mistakes'].includes(params.get('tab') ?? '') ? params.get('tab') : 'bookmarks') as Tab
   const progress = useGateProgressAll()
   const notes = useApi(() => gateApi.notes().then((r) => r.notes), [], { cacheKey: 'gate:me:notes' })
+  const highlights = useApi(() => highlightsApi.list(), [], { cacheKey: 'gate:me:highlights' })
 
   const entries = useMemo(() => Object.entries(progress.data ?? {}), [progress.data])
   const bookmarked = useMemo(() => entries.filter(([, p]) => p.bookmarked), [entries])
@@ -41,7 +43,7 @@ export default function GateNotebookPage() {
   return (
     <GateShell
       title="Notebook"
-      subtitle="Bookmarks, notes and mistakes — your personal revision deck."
+      subtitle="Bookmarks, notes, highlights and mistakes: your own revision deck."
       actions={
         <LinkButton to={testLink({ focus: 'mistakes', count: 15, durationMin: 30 })} icon="refresh">
           Retest mistakes
@@ -55,13 +57,84 @@ export default function GateNotebookPage() {
         items={[
           { id: 'bookmarks', label: 'Bookmarks', icon: <Icon name="bookmark" className="size-4" />, badge: bookmarked.length || undefined },
           { id: 'notes', label: 'Notes', icon: <Icon name="edit" className="size-4" />, badge: notes.data?.length || undefined },
+          { id: 'highlights', label: 'Highlights', icon: <Icon name="book" className="size-4" />, badge: highlights.data?.length || undefined },
           { id: 'mistakes', label: 'Mistakes', icon: <Icon name="x-circle" className="size-4" />, badge: mistakes.length || undefined },
         ]}
       />
       {tab === 'bookmarks' && <Bookmarks rows={bookmarked} loading={progress.loading && !progress.data} onChanged={progress.refetch} setProgress={progress.setData} />}
       {tab === 'notes' && <Notes notes={notes.data ?? []} loading={notes.loading && !notes.data} />}
+      {tab === 'highlights' && <Highlights list={highlights.data ?? []} loading={highlights.loading && !highlights.data} />}
       {tab === 'mistakes' && <Mistakes rows={mistakes} loading={progress.loading && !progress.data} />}
     </GateShell>
+  )
+}
+
+/* ── Highlights from the notes lessons ─────────────────────────────────── */
+
+const HL_TINT: Record<string, string> = {
+  yellow: 'var(--color-state-warning)',
+  green: 'var(--color-state-success)',
+  blue: 'var(--color-state-info)',
+  pink: 'var(--color-state-error)',
+}
+
+function Highlights({ list, loading }: { list: Highlight[]; loading: boolean }) {
+  const [query, setQuery] = useState('')
+  const q = query.trim().toLowerCase()
+  const shown = list.filter((h) => !q || `${h.quote} ${h.note} ${h.lessonTitle ?? ''} ${h.subjectTitle ?? ''}`.toLowerCase().includes(q))
+  // One group per lesson, newest first.
+  const groups = useMemo(() => {
+    const m = new Map<string, Highlight[]>()
+    for (const h of shown) {
+      const k = `${h.subject}/${h.lesson}`
+      m.set(k, [...(m.get(k) ?? []), h])
+    }
+    return [...m.values()]
+  }, [shown])
+
+  return (
+    <Panel
+      title="Highlights"
+      icon="book"
+      subtitle={`${list.length} from the notes lessons`}
+      action={<SearchInput value={query} onChange={(e) => setQuery(e.target.value)} onClear={() => setQuery('')} placeholder="Search highlights" aria-label="Search highlights" containerClassName="w-44 sm:w-64" />}
+    >
+      {loading ? (
+        <Skeleton className="h-48 w-full rounded-lg" />
+      ) : !list.length ? (
+        <EmptyHint icon="book" title="No highlights yet" action={<LinkButton to="/gate/notes" icon="book">Open the notes</LinkButton>}>
+          Select any sentence in a notes lesson to highlight it or add a note in your own words. Everything you mark shows up here.
+        </EmptyHint>
+      ) : !shown.length ? (
+        <p className="py-6 text-center text-[13px] text-text-muted">No highlights match “{query}”.</p>
+      ) : (
+        <div className="grid gap-6">
+          {groups.map((g) => (
+            <section key={`${g[0].subject}/${g[0].lesson}`} aria-label={g[0].lessonTitle ?? g[0].lesson}>
+              <p className="m-0 text-[12px] text-text-muted">{g[0].subjectTitle}</p>
+              <h3 className="mt-0.5 mb-2 font-display text-[17px] text-text-primary">{g[0].lessonTitle ?? g[0].lesson}</h3>
+              <ul className="grid gap-2">
+                {g.map((h) => (
+                  <li key={h.id}>
+                    <Link
+                      to={`/gate/notes/${encodeURIComponent(h.subject)}/${encodeURIComponent(h.lesson)}#hl=${h.id}`}
+                      className="flex gap-3 rounded-xl border border-border px-3 py-2.5 transition-colors hover:border-border-strong"
+                    >
+                      <span aria-hidden="true" className="w-1 shrink-0 self-stretch rounded-full" style={{ background: HL_TINT[h.color] ?? HL_TINT.yellow }} />
+                      <span className="min-w-0 flex-1">
+                        <span className="line-clamp-3 block font-serif text-[15px] leading-snug text-text-primary">{h.quote}</span>
+                        {h.note.trim() && <span className="mt-1 block text-[13px] text-text-secondary italic">{h.note}</span>}
+                        <span className="mt-1 block text-[11.5px] text-text-muted">{timeAgo(h.updatedAt)}</span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      )}
+    </Panel>
   )
 }
 

@@ -2,6 +2,7 @@
 // list its models, choose a model per slot and per feature, and check that
 // AI calls really go to the chosen provider and model (src/ai/settings.js,
 // /api/admin/ai/*). A fake provider runs on localhost.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
@@ -69,7 +70,7 @@ let owner, member;
 
 test.before(async () => {
   await startFake();
-  const port = 27000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   const env = { ...process.env, PORT: String(port), NODE_ENV: 'test', DB_PATH: DB, OWNER_USERNAME: OWNER, DISABLE_PUPPETEER: '1', DISABLE_SCRAPER: '1' };
   delete env.GROQ_API_KEY;
