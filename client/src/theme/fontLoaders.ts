@@ -31,6 +31,7 @@ export const UI_FONT_LOADERS: Record<string, Loader> = {
 /* Heading faces used only by design styles (styles.ts DISPLAY_FACES). */
 export const DISPLAY_FONT_LOADERS: Record<string, Loader> = {
   cormorant: () => import('@fontsource-variable/cormorant-garamond'),
+  unbounded: () => import('@fontsource-variable/unbounded'),
   fraunces: () => import('@fontsource-variable/fraunces'),
   pixelify: () => import('@fontsource-variable/pixelify-sans'),
   'young-serif': () => import('@fontsource/young-serif/400.css'),

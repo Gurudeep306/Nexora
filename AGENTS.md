@@ -165,10 +165,14 @@ from a range, since test files run in parallel and a clash fails the run.
   - Back buttons use `BackButton` with no props. It goes to the page you came
     from in this tab, else one level up, and its label names the place.
 - **Twelve themes (Appearance page, `/theme`).** A look is one of twelve themes
-  (`client/src/theme/styles.ts`): Field Journal (default), Sakura, Arcade,
-  Greenhouse, Observatory, Blueprint, Sketchbook, Block Print, Terminal,
-  Clear, Monsoon and Kintsugi. Each brings its own palette (light and dark), type, shapes, icons and
-  drawn pattern. On top of any theme people can choose (Appearance → Make it
+  (`client/src/theme/styles.ts`): Himalaya (default), Aurora, Sakura, Thar,
+  Warli, Reef, Bauhaus, Arcade, Blueprint, Kerala, Cosmos and Ghats (owner's
+  choice, 2026-11: no plain or basic themes). Each brings its own palette
+  (light and dark), type, shapes, icons and a drawn, gently animated scene
+  (`components/look/ThemeScene.tsx`, shapes in `sceneArt.ts`, colours in
+  `theme-scene.css`): a fixed sky behind the window and a landscape band
+  across the top of each page, kept calm on the left where titles sit, and
+  off on reading and solving pages. Retired themes migrate in `look.ts`. On top of any theme people can choose (Appearance → Make it
   yours, look v6): an accent colour (`ACCENTS`) and a text ink (`INKS`) in
   `theme/palettes.ts`, each checked for contrast on all twelve themes by
   `tests/theme-contrast.test.js`; interface, heading and reading faces
@@ -184,9 +188,9 @@ from a range, since test files run in parallel and a clash fails the run.
   paper, Newsreader serif for prose, Geist for controls, hairlines instead of
   shadows, one clay button (bottom-only radius) for the main action. Tokens are
   `--ed-*` in `styles/journal.css` (scope `.lp` / `.ed`), light and dark.
-- **Field Journal is the house style and the default** (rollout in phases,
-  2026-11). It carries the landing look into the app: `journal` style +
-  `parchment` palette, the shared `ed-*` classes in `styles/journal.css`, kit
+- **The Field Journal kit** carries the landing look into the app (the
+  Field Journal *theme* itself was retired in 2026-11; Himalaya is now the
+  default): the shared `ed-*` classes in `styles/journal.css`, kit
   and shell rules under `[data-kit='journal']` in `theme/styles.css` (every
   theme sets `data-kit="journal"`; to branch in code use `isJournalKit()`).
   Clay is never text; one clay action per screen; no shadows, glows or

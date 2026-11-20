@@ -1,6 +1,6 @@
 /*
   A theme, shown as itself: a small page on the theme's own paper, with its
-  drawing, its heading face, its icon set, its button shape and its colours —
+  drawn scene, its heading face, its icon set, its button shape and its colours —
   the real theme rules, scoped onto the card's root (lookAttributes), so the
   card is a true specimen in both modes.
 */
@@ -9,8 +9,9 @@ import type { IconSetId } from '@/theme/iconCatalog'
 import { lookAttributes, type Look } from '@/theme/look'
 import type { ThemeMode } from '@/theme/palettes'
 import { themeLook, themeMode } from './themeLook'
-import type { DesignStyle } from '@/theme/styles'
+import { DEFAULT_STYLE, type DesignStyle } from '@/theme/styles'
 import { cn } from '@/lib/utils'
+import { ThemeScene } from './ThemeScene'
 import './theme-card.css'
 
 const ICONS = ['learn', 'problems', 'gate', 'trophy'] as const
@@ -24,7 +25,7 @@ export function ThemeSpecimen({ theme, look, mode, compact = false, className }:
   const attrs = lookAttributes(l, mode)
   return (
     <span {...attrs} aria-hidden="true" className={cn('tk-paper', compact && 'tk-compact', className)}>
-      <span className="tk-mark" />
+      <ThemeScene scene={theme.bundle.pattern} />
       <span className="tk-body">
         <span className="tk-kicker">Chapter VII</span>
         <span className="tk-title">Shortest paths</span>
@@ -69,7 +70,7 @@ export function ThemeCard({
         <span className="tk-name">
           {theme.name}
           {checked && <span className="tk-inuse">In use</span>}
-          {theme.id === 'journal' && !checked && <span className="tk-default">Default</span>}
+          {theme.id === DEFAULT_STYLE && !checked && <span className="tk-default">Default</span>}
         </span>
         <span className="tk-tagline">{theme.tagline}</span>
         <span className="tk-about">{theme.about}</span>

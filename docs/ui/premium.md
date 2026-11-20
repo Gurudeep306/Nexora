@@ -36,22 +36,26 @@ The building blocks live in:
 
 A theme is a whole design, not a colour. Each has its own palette in light and
 dark, a heading face and a reading face, corners and button shapes, an icon
-set, an original drawing behind the page and one beside page headers.
+set and an original drawn scene: a sky fixed behind the window and a
+landscape band across the top of each page (owner's choice, 2026-11: no plain
+or basic themes; Field Journal, Greenhouse, Observatory, Sketchbook, Block
+Print, Terminal, Clear, Monsoon and Kintsugi were retired and migrate to the
+nearest theme below).
 
-| Theme | Feel | Type | Drawing | For |
+| Theme | Feel | Type | Scene | For |
 |---|---|---|---|---|
-| Field Journal | parchment, clay | Newsreader, Geist | none | readers who like it calm (default) |
-| Sakura | blush paper, plum ink; a lantern-lit garden at night | Fraunces (soft), Nunito | blossom petals | soft colours, gentle shapes |
-| Arcade | arcade cabinet; pea-green handheld by day | Pixelify Sans, Space Grotesk | pixel stars, hearts, coins; notched corners | gamers, night owls |
-| Greenhouse | sage, forest ink, terracotta | Young Serif, Literata, Figtree | fern fronds; leaf-shaped buttons | nature lovers |
-| Observatory | navy night and brass; a star atlas by day | Cormorant, Literata, Hanken | constellations, orbit rings; engraved plates | stargazers |
-| Blueprint | blueprint blue; blue ink on vellum by day | Martian Mono, Inter Tight | drafting grid, compass arcs, corner ticks | builders, engineers |
-| Sketchbook | pencil on dot grid; chalk on a green board at night | Kalam, Lexend | pencil doodles of arrays, trees and arrows; hand-drawn edges, a highlighter under titles | doodlers, creative minds |
-| Block Print | indigo, madder and marigold on cotton | Rozha One (also sets Hindi), Onest | buta and rosettes; a stitched rule inside cards | colour, craft and culture |
-| Terminal | green phosphor; green-bar printer paper by day | everything in monospace | scan lines; a prompt before titles | coders who live in the shell |
-| Clear | black and white, one strong accent | Atkinson Hyperlegible | none; two-pixel borders, underlined links, a thick focus ring | low vision, bright rooms, tired eyes |
-| Monsoon | misty grey-green paper; a storm-blue night with peacock teal | Bricolage Grotesque, Figtree | slanting rain, drops and ripples; a rain cloud by titles; raindrop-shaped main button | late-night studiers, rain lovers |
-| Kintsugi | washi paper and bronze-gold ink; black lacquer with gold at night | Literata, Instrument Sans | fine gold seams (in the accent, not the ink); a mended bowl by titles; a gold seam along card tops | patient learners, quiet luxury |
+| Himalaya (default) | icy paper, saffron; moonlit ridges at night | Cormorant, Literata, Hanken | snow peaks, prayer flags, drifting clouds, birds | everyone |
+| Aurora | arctic morning; polar night | Unbounded, Sora | aurora ribbons over a pine ridge and a lit cabin; shooting stars | night owls |
+| Sakura | blush paper, plum ink; a moonlit garden | Fraunces (soft), Nunito | a blossoming branch, falling petals, pagoda, snow-capped volcano | soft colours, gentle shapes |
+| Thar | golden sand, indigo ink; a starry desert night | Rozha One, Literata, Onest | dunes, a sandstone fort, a walking camel caravan; arched buttons | warm colours, Indian heritage |
+| Warli | terracotta on rice paper; white on red ochre | Young Serif, Figtree | the tarpa dance circle, huts, trees, a sun; dotted card frames | craft and culture |
+| Reef | sunlit lagoon; the deep blue sea | Bricolage Grotesque, Figtree | light rays, kelp, coral, fish, a turtle; jellyfish at night | ocean lovers |
+| Bauhaus | paper or black, red/yellow/blue | Outfit, heavy | circles, arcs, bars and a turning ring; square corners, firm rules | bold, clean looks |
+| Arcade | arcade cabinet; pea-green handheld by day | Pixelify Sans, Space Grotesk | a pixel city with flickering windows, pixel stars and a comet; notched corners | gamers, night owls |
+| Blueprint | blueprint blue; blue ink on vellum by day | Martian Mono, Inter Tight | a suspension bridge drawn to scale, turning gears, drafting grid | builders, engineers |
+| Kerala | paddy green; a moonlit lagoon | Newsreader (italic headings), Manrope | backwaters, a drifting houseboat, coconut palms, egrets | calm greens |
+| Cosmos | pale star chart; deep space | Space Grotesk | a ringed planet with an orbiting moon, comet, galaxy, shooting stars | space fans |
+| Ghats | saffron dusk; a river of lamps at night | Fraunces, Literata, IBM Plex Sans | temple spires, river steps, boats and floating diyas, a kite | warm evenings |
 
 On top of any theme a person can set the **text size**, the **code font** and
 the **handwriting for GATE solutions**. Everything else belongs to the theme.
@@ -95,17 +99,23 @@ Hive wears the person's own look too, dressed as "the desk"
    `node --test tests/theme-contrast.test.js` and tune lightness until every
    rule passes.
 2. Add the theme to `STYLES` in `theme/styles.ts` (with `kit: 'journal'`,
-   `forWho`, a bundle that uses your palette, and a pattern id). Add the
-   pattern id to `PATTERNS`.
-3. Draw the pattern and the header drawing as SVG line work (black on
-   transparent: it is used as a mask) and add a `[data-style='id']` block to
-   `theme/themes.css` with the kit variables.
+   `forWho`, a bundle that uses your palette, and a scene id as its
+   `pattern`). Add the id to `PATTERNS` and to `SCENE_IDS`.
+3. Draw the scene: shapes in `components/look/sceneArt.ts` (sky 1600 × 1000,
+   ground 1600 × 320, corner 400 × 300), the layers in `ThemeScene.tsx`, and
+   its day and night colours in `theme-scene.css`. Keep light layers pale
+   (lightness ≥ 0.85) and dark layers deep (≤ 0.32) so text over them reads,
+   keep busy detail on the right half (titles sit on the left), and animate
+   only transforms and opacity. Add a `[data-style='id']` block to
+   `theme/themes.css` with the kit variables (faces, corners).
 4. Make the theme's specimen look right on the Appearance page
-   (`components/look/ThemeCard.tsx` reads the same variables).
+   (`components/look/ThemeCard.tsx` draws the same scene, still until hover).
 5. Check the hub, a lesson, Problems, GATE, Profile, Admin and Nexus in light,
    dark and phone with `client/scripts/check-page.cjs` and axe: 0 violations,
    no sideways scroll. Check that `/hive` still renders Studio on Midnight.
-6. Update the test expecting twelve themes, and this table.
+6. Update the test expecting twelve themes (`tests/theme-contrast.test.js`,
+   `tests/theme-scenes.test.js`), the migration of any theme you retire in
+   `look.ts`, and this table.
 
 ## History: the 2026 premium pass
 
