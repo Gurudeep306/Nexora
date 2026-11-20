@@ -384,6 +384,8 @@ app.use(
 /* ── Body parsing ── */
 // Social image uploads carry a 2 MB image as base64 (~2.7 MB of JSON).
 app.use("/api/social/upload", express.json({ limit: "3mb" }));
+// Handwritten solutions arrive as pages of images (src/routes/hand.js).
+app.use("/api/hand", express.json({ limit: "45mb" }));
 // A coding problem's tests can be large (src/authoring.js caps them at 8 MB in all).
 app.use("/api/authoring", express.json({ limit: "12mb" }));
 app.use(express.json({ limit: "2mb" }));
@@ -6123,6 +6125,8 @@ app.use(createGateRouter());
 app.use(createGateMeRouter());
 // GATE Notes: the course reader (compiled lessons) + per-user study state
 app.use(createGateNotesRouter());
+// Handwritten solutions: tablet pad, phone photos, uploads
+app.use(require("./routes/hand").createHandRouter());
 
 // ForgeBuilder routes
 app.use("/api/forge", createForgeRouter({ all, get, run }));

@@ -8,6 +8,8 @@ import { idlePrefetchCommonRoutes, pageLoaders } from '@/routes'
 import { SiteGate } from '@/components/site/SiteGate'
 import { AdminRoute, AuthorRoute, HiveRoute } from '@/components/admin/AdminRoute'
 
+const PadPage = lazy(() => import('@/pages/hand/PadPage'))
+const SnapPage = lazy(() => import('@/pages/hand/SnapPage'))
 const AuthPage = lazy(pageLoaders.AuthPage)
 const WelcomePage = lazy(pageLoaders.WelcomePage)
 const LandingPage = lazy(pageLoaders.LandingPage)
@@ -104,6 +106,9 @@ export default function App() {
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
+          {/* Handwriting on a tablet or a phone: opened from a one-time link, no sign-in. */}
+          <Route path="/pad/:token" element={<PadPage />} />
+          <Route path="/snap/:token" element={<SnapPage />} />
           <Route path="/welcome" element={<RequireAuth><WelcomePage /></RequireAuth>} />
           <Route path="/" element={<LandingPage />} />
           {VizLab && <Route path="/viz-lab" element={<VizLab />} />}
