@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react'
+import { prefetchOn } from '@/components/hand/api'
 import { AnimatePresence, motion } from 'motion/react'
 import { Link } from 'react-router-dom'
 import { AlertTriangle, ExternalLink, Link2, PenLine, Trophy } from 'lucide-react'
@@ -466,7 +467,7 @@ export function QuestionView({
               </TextAction>
             )}
             {insights && mode !== 'test' && (
-              <TextAction onClick={() => setHandSignal((n) => n + 1)} title="Write your solution on a tablet, or photograph your paper">
+              <TextAction onClick={() => setHandSignal((n) => n + 1)} {...prefetchOn('gate', q.id)} title="Write your solution on a tablet, or photograph your paper">
                 <span className="inline-flex items-center gap-1.5">
                   <PenLine className="size-3.5" aria-hidden="true" /> Write by hand
                 </span>

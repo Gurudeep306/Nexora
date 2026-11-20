@@ -118,6 +118,21 @@ test('handwritten solutions', async (t) => {
     assert.equal(img.status, 200);
   });
 
+  await t.test('one request makes both codes (tablet and phone), each working on its own page', async () => {
+    const r = await call('POST', '/api/hand/links', ana, { kind: 'gate', target: Q, modes: ['pad', 'photo'] });
+    assert.equal(r.status, 200);
+    const { pad, photo } = r.body.links;
+    assert.match(pad.token, /^[A-Za-z0-9_-]{22}$/);
+    assert.match(photo.token, /^[A-Za-z0-9_-]{22}$/);
+    assert.notEqual(pad.token, photo.token);
+    assert.equal(pad.path, `/pad/${pad.token}`);
+    assert.equal(photo.path, `/snap/${photo.token}`);
+    assert.equal((await call('GET', `/api/hand/device/${pad.token}`)).body.mode, 'pad');
+    assert.equal((await call('GET', `/api/hand/device/${photo.token}`)).body.mode, 'photo');
+    assert.equal((await call('POST', '/api/hand/links', ana, { kind: 'gate', target: Q, modes: ['pad', 'fax'] })).status, 400);
+    assert.equal((await call('POST', '/api/hand/links', ana, { kind: 'gate', target: Q, modes: [] })).status, 400);
+  });
+
   await t.test('a bad or unknown token is refused', async () => {
     assert.equal((await call('GET', '/api/hand/device/short')).status, 410);
     assert.equal((await call('GET', `/api/hand/device/${'x'.repeat(32)}`)).status, 410);

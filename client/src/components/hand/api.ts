@@ -59,6 +59,48 @@ export const handApi = {
   sendPreview: (token: string, image: string) => api.put<{ ok: true }>(`/api/hand/device/${enc(token)}/preview`, { image }),
 }
 
+export type HandLink = { token: string; path: string; expiresAt: number }
+export type HandLinks = Record<HandMode, HandLink>
+
+/*
+  The tablet and phone codes for a question, made once and kept for this visit
+  (they last 12 hours; a fresh pair is made when less than an hour is left).
+  prefetchLinks() is called when the pointer or a finger reaches a "Write by
+  hand" button, so the code is ready before the window opens.
+*/
+const linkCache = new Map<string, { at: number; promise: Promise<HandLinks> }>()
+const SPARE_MS = 60 * 60 * 1000
+
+export function getLinks(kind: HandKind, target: string, fresh = false): Promise<HandLinks> {
+  const key = `${kind}:${target}`
+  const hit = linkCache.get(key)
+  if (!fresh && hit && hit.at > Date.now()) return hit.promise
+  const promise = api
+    .post<{ ok: true; links: HandLinks }>('/api/hand/links', { kind, target, modes: ['pad', 'photo'] })
+    .then((r) => {
+      const until = Math.min(r.links.pad.expiresAt, r.links.photo.expiresAt) - SPARE_MS
+      linkCache.set(key, { at: until, promise })
+      return r.links
+    })
+    .catch((e) => {
+      linkCache.delete(key)
+      throw e
+    })
+  // Until the answer comes, later callers share this request.
+  linkCache.set(key, { at: Date.now() + 30_000, promise })
+  return promise
+}
+
+export function prefetchLinks(kind: HandKind, target: string) {
+  void getLinks(kind, target).catch(() => {})
+}
+
+/** Props that start making the codes when a pointer or finger reaches a button. */
+export function prefetchOn(kind: HandKind, target: string) {
+  const go = () => prefetchLinks(kind, target)
+  return { onPointerEnter: go, onPointerDown: go, onFocus: go }
+}
+
 /**
  * A photo, shrunk on the device before it is sent: at most `max` pixels on the
  * long side, JPEG. A phone photo of 4–12 MB becomes a few hundred KB, which
