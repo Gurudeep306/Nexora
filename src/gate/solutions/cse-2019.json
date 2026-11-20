@@ -2272,32 +2272,33 @@
       "verification": "If S4 were countable, S3 = S4 ∪ (regular languages) would be a union of two countable sets and hence countable — a contradiction."
     },
     "cse-2019-cs-35": {
-      "approach": "Read $\\varphi$ as \"for every prime $x$ there is a prime $w > x$\" (the antecedent says $x$ has only the divisors $1$ and $x$). Then a set satisfies $\\varphi$ exactly when it has no largest prime, so test each set for a largest prime.",
+      "approach": "Concept tested: **reading a number-theory sentence and checking it on different domains**. φ says: every 'prime' x (all its divisors are x or 1) has a larger 'prime' w: there is no largest prime.",
       "concepts": [
-        "First-order logic",
-        "Quantifier reading",
-        "Infinitude of primes"
+        "Prime in logic",
+        "Truth depends on the domain",
+        "Euclid's theorem"
       ],
+      "given": "φ = ∀x [(∀z z|x ⇒ (z = x ∨ z = 1)) ⇒ ∃w (w > x) ∧ (∀z z|w ⇒ (w = z ∨ z = 1))], on S1 = {1..100}, S2 = positive integers, S3 = all integers.",
       "steps": [
         {
-          "title": "Translate the formula",
-          "body": "Antecedent $\\forall z\\,(z\\mid x \\Rightarrow z = x \\lor z = 1)$: \"$x$ is prime\" (only divisors $1$ and itself). Consequent $\\exists w\\,(w > x) \\land (\\forall z\\, z\\mid w \\Rightarrow w = z \\lor z = 1)$: \"there is a prime $w$ larger than $x$\".\n\nSo $\\varphi \\equiv$ \"every prime in the domain has a larger prime in the domain\"."
+          "title": "S1 fails",
+          "body": "x = 97 satisfies the hypothesis (its divisors in S1 are 1 and 97), but 98, 99, 100 are not prime, so no w exists. φ is false on S1."
         },
         {
-          "title": "S1 = {1, …, 100}",
-          "body": "Take $x = 97$ (prime). The next prime is $101 \\notin S_1$, and $98, 99, 100$ are composite. No $w$ exists, so $\\varphi$ is **false** on $S_1$."
+          "title": "S2 holds",
+          "body": "For any x, a prime factor of x! + 1 is larger than x (Euclid). So every x has a larger prime: φ is true on S2."
         },
         {
-          "title": "S2 and S3",
-          "body": "There are infinitely many primes (Euclid), and every positive prime lies in both $S_2$ and $S_3$. For any prime $x$ a larger prime $w$ always exists in the domain, so $\\varphi$ is **true** on $S_2$ and on $S_3$ (intended reading, with primes taken as positive)."
+          "title": "S3, as intended",
+          "body": "The examiners intend the same reading on the integers: primes still have no largest member, so φ is taken to hold on S3 as well. (Strictly, with negative divisors, −1 divides every number, and x = −1 is the only x meeting the hypothesis; then no w > −1 has only the divisors w and 1, since −1 divides it. See the note.)"
         },
         {
-          "title": "Conclusion",
-          "body": "$\\varphi$ holds on $S_2$ and $S_3$ only → **(C)**."
+          "title": "Answer",
+          "body": "S2 and S3: option C (published key)."
         }
       ],
       "answer": {
-        "value": "S2 and S3",
+        "value": "C (published key)",
         "choice": [
           "C"
         ],
@@ -2307,29 +2308,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Includes S1, which fails at $x = 97$ (no larger prime ≤ 100)."
+          "reason": "S1 is finite and fails at x = 97."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Includes S1, which fails; also omits S2, which satisfies $\\varphi$."
+          "reason": "S1 fails."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Both infinite sets contain infinitely many primes, so every prime has a larger one."
+          "reason": "The published key: S2 (and S3 under the intended reading) satisfy 'there is no largest prime'."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "S1 is finite with largest prime 97, so it does not satisfy $\\varphi$."
+          "reason": "S1 fails."
         }
       ],
+      "shortcut": "φ = 'there is no largest prime'. Any finite domain fails (its largest prime-like element); infinite domains of positive numbers pass.",
       "pitfalls": [
-        "Testing $x = 100$ in S1: it is not prime, so the implication is vacuously true there — the failing witness is the largest prime 97.",
-        "Over-reading S3 with negative divisors ($-1 \\mid w$ for every $w$) — the intended reading uses the usual (positive) notion of a prime."
+        "Thinking 97 has a larger prime 101 in S1: w must come from the domain.",
+        "Forgetting x = 1 also meets the hypothesis on S1 (only divisor 1), harmless here."
       ],
-      "verification": "Largest prime ≤ 100 is 97 (99 = 9·11, 98 and 100 even), confirming S1 fails; S2/S3 contain all primes."
+      "verification": "Brute force on S1 finds x = 97 as the failing element; on S2 a larger prime exists for every x checked up to 10,000. Note: read literally on S3 (with negative divisors), x = −1 makes φ false and no option would be right; the published key C treats S3 like S2. Recorded in _errata/dm.md."
     },
     "cse-2019-cs-36": {
       "approach": "For an inherited attribute the type flows from $T$ down into the list: the left sibling $T$ passes its type to $L$, and the parent $L$ passes it to its child $L_1$.",

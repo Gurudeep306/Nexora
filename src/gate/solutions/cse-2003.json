@@ -1773,24 +1773,28 @@
       "verification": "The 3-element model satisfies all hypotheses and A, B, C simultaneously; D fails in every model because P(c) is forced True."
     },
     "cse-2003-cs-32": {
-      "approach": "Distribution of ∀ over → is valid: if α→β holds everywhere and α holds everywhere, β holds everywhere. Break each other option with a 2-element domain.",
+      "approach": "Concept tested: **∀x(α ⇒ β) ⇒ (∀x α ⇒ ∀x β) is valid, its converse is not**; α, β behave like predicates of x.",
       "concepts": [
-        "First-order validity",
-        "Quantifier distribution",
-        "Countermodels"
+        "One-way laws",
+        "Counter-models"
       ],
+      "given": "α and β have x as their only free variable.",
       "steps": [
         {
-          "title": "Prove (D)",
-          "body": "Assume $\\forall x[\\alpha\\Rightarrow\\beta]$ and $\\forall x[\\alpha]$. For any $x$: $\\alpha(x)$ and $\\alpha(x)\\Rightarrow\\beta(x)$ give $\\beta(x)$. Hence $\\forall x[\\beta]$. Valid."
+          "title": "Option D",
+          "body": "If every element keeps the promise α ⇒ β and every element satisfies α, every element satisfies β. **Valid.**"
         },
         {
-          "title": "Countermodels",
-          "body": "Domain $\\{1,2\\}$:\n- (A) $\\alpha=\\{1\\}$, $\\beta=\\varnothing$: $\\forall\\alpha$ is false so the premise is true, but $\\alpha(1)\\Rightarrow\\beta(1)$ fails.\n- (B) $\\alpha$ everywhere, $\\beta=\\varnothing$: $\\exists x[\\alpha\\wedge\\beta]$ false.\n- (C) $\\alpha=\\beta=\\varnothing$: $\\forall[\\alpha\\vee\\beta]$ false ⇒ premise true, but $\\forall\\alpha$ false."
+          "title": "Option A",
+          "body": "Converse of D: α = {1}, β = ∅ on {1, 2}: ∀x α is F so the hypothesis is T, but α ⇒ β fails at 1."
+        },
+        {
+          "title": "Options B and C",
+          "body": "B: α everywhere, β nowhere. C: α = {1}, β = ∅ makes ∀x(α ∨ β) false, so the hypothesis is T, while ∀x α is F."
         }
       ],
       "answer": {
-        "value": "$(\\forall x)[\\alpha\\Rightarrow\\beta]\\Rightarrow((\\forall x)[\\alpha]\\Rightarrow(\\forall x)[\\beta])$",
+        "value": "D",
         "choice": [
           "D"
         ],
@@ -1800,49 +1804,54 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Invalid: the converse of the valid law; fails with α true only somewhere and β nowhere."
+          "reason": "The converse of the valid law; refuted by α = {1}, β = ∅."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Invalid: β may be false everywhere."
+          "reason": "β may be false everywhere."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Invalid: with α, β false everywhere the premise is vacuously true but the conclusion false."
+          "reason": "α = {1}, β = ∅: hypothesis vacuously true, conclusion false."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Valid: ∀ distributes over implication in this direction."
+          "reason": "Modus ponens applied element by element."
         }
       ],
-      "verification": "Each countermodel was evaluated term by term; (D) has a direct proof."
+      "shortcut": "‘∀(α ⇒ β) ⇒ (∀α ⇒ ∀β)’ is the one GATE keeps asking; spot it and stop.",
+      "pitfalls": [
+        "Choosing A because it ‘looks symmetric’ with D."
+      ],
+      "verification": "predlib with α, β as unary predicates: D valid up to size 3; A, B, C have counter-models of size 2."
     },
     "cse-2003-cs-33": {
-      "approach": "Instantiate the inner ∀y at y = x: $Q_{xx}\\Leftrightarrow\\neg Q_{xx}$ is a contradiction, so the bracket is false for every x, making the antecedent say ∀x ¬P_x — exactly the consequent. α is true in every interpretation.",
+      "approach": "Concept tested: **a formula valid for a structural reason (Russell's barber)**. Setting y = x makes the inner biconditional Q_xx ⇔ ¬Q_xx, false for every x.",
       "concepts": [
-        "First-order semantics",
-        "Russell-style diagonal argument",
-        "Satisfaction"
+        "Validity",
+        "Diagonal argument",
+        "Vacuous implication"
       ],
+      "given": "α: (∀x)[P_x ⇔ (∀y)[Q_xy ⇔ ¬Q_yy]] ⇒ (∀x)[¬P_x]; I₁: P = prime, Q_xy = ‘y divides x’; I₂: P = composite.",
       "steps": [
         {
-          "title": "Inner formula is always false",
-          "body": "Let $\\varphi(x) = (\\forall y)[Q_{xy}\\Leftrightarrow\\neg Q_{yy}]$. Taking $y=x$ gives $Q_{xx}\\Leftrightarrow\\neg Q_{xx}$, which is false. So $\\varphi(x)$ is false for **every** $x$, whatever $Q$ means."
+          "title": "The inner formula is false for every x",
+          "body": "For any x, the instance y = x reads Q_xx ⇔ ¬Q_xx, which is false. So (∀y)[Q_xy ⇔ ¬Q_yy] is false for every x."
         },
         {
-          "title": "Simplify α",
-          "body": "Then $P_x\\Leftrightarrow\\varphi(x)$ is $P_x\\Leftrightarrow\\text{False} \\equiv \\neg P_x$. So α becomes $(\\forall x)[\\neg P_x]\\Rightarrow(\\forall x)[\\neg P_x]$ — a tautology."
+          "title": "Simplify the hypothesis",
+          "body": "(∀x)[P_x ⇔ F] is (∀x)¬P_x. So α reads (∀x)¬P_x ⇒ (∀x)¬P_x: true in every interpretation."
         },
         {
-          "title": "Conclusion",
-          "body": "α is true under any interpretation, in particular both $I_1$ (primes) and $I_2$ (composites). Answer **(D)**."
+          "title": "Apply to I₁ and I₂",
+          "body": "Both satisfy α (in fact the hypothesis is false in both, since 2 is prime and 4 is composite)."
         }
       ],
       "answer": {
-        "value": "Both $I_1$ and $I_2$ satisfy α",
+        "value": "D",
         "choice": [
           "D"
         ],
@@ -1852,28 +1861,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "I₂ also satisfies α (α is valid)."
+          "reason": "I₂ satisfies α too: α is valid."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "I₁ also satisfies α."
+          "reason": "I₁ satisfies α too."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Both satisfy α."
+          "reason": "α is true in every interpretation."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: α is valid, so every interpretation satisfies it."
+          "reason": "α is valid, so every interpretation satisfies it."
         }
       ],
+      "shortcut": "Whenever a formula contains ∀y(Q(x, y) ⇔ ¬Q(y, y)), try y = x first.",
       "pitfalls": [
-        "Trying to evaluate \"prime\" vs \"composite\" is unnecessary — the meaning of P never matters."
+        "Evaluating divisibility facts in detail: the meanings never matter."
       ],
-      "verification": "Directly in I₁: $Q_{yy}$ (y divides y) is true, so the bracket asks that no y divides x — false since x | x; antecedent = \"no x is prime\", which is false, so the implication is true. Same for I₂."
+      "verification": "predlib: α is valid on all interpretations up to size 3 (P unary, Q binary); in ℕ with ‘y divides x’, every x divides itself, so the diagonal instance fails, as the proof says."
     },
     "cse-2003-cs-34": {
       "approach": "Pre-place k balls in each bag, then distribute the remaining m − kn identical balls freely by stars and bars.",
@@ -4557,28 +4567,29 @@
       "verification": "Hand-traced the 2-cycle example for every entry; the induction argument relies only on monotonicity and the split at the highest-numbered intermediate vertex."
     },
     "cse-2003-cs-71": {
-      "approach": "Translate each Horn clause: a rule head ← body is a universally quantified implication, and a headless clause ← B is a denial (the body can never hold). Variables appearing only in the body become existential on the left of the implication.",
+      "approach": "Concept tested: **reading a logic program as a first-order sentence**: a rule is a universally quantified implication; a body-only variable becomes ∃ inside the hypothesis; a headless rule is a negated existential; the program is a conjunction.",
       "concepts": [
         "Horn clauses",
-        "Logic programming semantics",
-        "Quantifier movement"
+        "Pulling ∀ into a hypothesis",
+        "Goal clauses"
       ],
+      "given": "A(x) ← B(x, y), C(y);  ← B(x, x).",
       "steps": [
         {
-          "title": "The rule",
-          "body": "$A(x) \\leftarrow B(x,y), C(y)$ means $\\forall x\\,\\forall y\\,[B(x,y)\\wedge C(y) \\Rightarrow A(x)]$. Since $y$ does not occur in $A(x)$:\\n\\n$$\\forall y\\,[\\varphi(y)\\Rightarrow A(x)] \\equiv [\\exists y\\,\\varphi(y)] \\Rightarrow A(x)$$\\n\\nso the rule is $(\\forall x)[(\\exists y)[B(x,y)\\wedge C(y)] \\Rightarrow A(x)]$."
+          "title": "First rule",
+          "body": "∀x∀y((B(x, y) ∧ C(y)) → A(x)) ≡ ∀x(∃y(B(x, y) ∧ C(y)) → A(x)), since y occurs only in the hypothesis."
         },
         {
-          "title": "The goal clause",
-          "body": "$\\leftarrow B(x,x)$ has an empty head, i.e. $\\forall x\\,[B(x,x)\\Rightarrow \\text{false}] \\equiv \\neg(\\exists x)[B(x,x)]$."
+          "title": "Second rule",
+          "body": "A rule with an empty head forbids its body: ¬∃x B(x, x)."
         },
         {
-          "title": "Conjoin",
-          "body": "A program is the **conjunction** of its clauses:\\n\\n$$(\\forall x)[(\\exists y)[B(x,y)\\wedge C(y)] \\Rightarrow A(x)] \\wedge \\neg(\\exists x)[B(x,x)]$$\\n\\nwhich is option (a)."
+          "title": "Combine",
+          "body": "The program is the conjunction of its rules: option A."
         }
       ],
       "answer": {
-        "value": "(∀x)[(∃y)[B(x,y) ∧ C(y)] ⇒ A(x)] ∧ ¬(∃x)[B(x,x)]",
+        "value": "A",
         "choice": [
           "A"
         ],
@@ -4588,29 +4599,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: body-only variable y becomes ∃y on the left of ⇒, and the clauses are conjoined."
+          "reason": "∃y inside the hypothesis, and ∧ between the rules."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: ∀y inside the antecedent demands B(x,y) ∧ C(y) for every y before concluding A(x) — a much weaker rule."
+          "reason": "∀y inside the hypothesis demands B(x, y) ∧ C(y) for every y: far too strong a condition for firing the rule."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Wrong: clauses of a program are combined with ∧, not ∨."
+          "reason": "∨ between the rules: a program asserts all of its rules."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Printed identically to (b) in the paper; wrong for the same reason (∀y in the antecedent)."
+          "reason": "As printed it is identical to B (the original paper's D differs in a connective); either way it uses ∀y in the hypothesis."
         }
       ],
+      "shortcut": "Body-only variables are existential; programs are conjunctions.",
       "pitfalls": [
-        "Moving ∀y into the antecedent without flipping it to ∃y.",
-        "Treating the headless clause as asserting B(x,x) instead of denying it."
+        "Writing ∀y inside the hypothesis.",
+        "Joining rules with ∨."
       ],
-      "verification": "Checked the quantifier law ∀y(φ(y) → ψ) ≡ (∃y φ(y)) → ψ when y is not free in ψ."
+      "verification": "predlib: ∀x∀y((B ∧ C) → A) ≡ ∀x(∃y(B ∧ C) → A) on all worlds up to size 2; A differs from B and C on small worlds. (The bank notes that D is printed identically to B.)"
     },
     "cse-2003-cs-72": {
       "approach": "Concept tested: **what the resolution rule guarantees**. The parents imply the resolvent (soundness), but not the other way round; so satisfiability passes from the parents to the resolvent, not back.",

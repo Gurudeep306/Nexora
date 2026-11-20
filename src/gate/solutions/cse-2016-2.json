@@ -1643,24 +1643,28 @@
       "verification": "Re-checked each link of the counterexample numerically."
     },
     "cse-2016-2-cs-27": {
-      "approach": "Test each formula with the standard quantifier laws; a two-element domain where $p$ and $q$ split the elements kills (D).",
+      "approach": "Concept tested: **∀ does not distribute over ∨**; the other three options are valid laws.",
       "concepts": [
-        "Predicate logic",
-        "Quantifier distribution",
-        "Validity"
+        "One-way laws",
+        "Counter-models"
       ],
+      "given": "Which is NOT valid?",
       "steps": [
         {
-          "title": "A, B, C are valid",
-          "body": "- (A) $\\forall x\\,p\\Rightarrow\\forall x\\,q\\equiv\\neg\\forall x\\,p\\vee\\forall x\\,q\\equiv\\exists x\\,\\neg p\\vee\\forall x\\,q$ — an implication between equivalent formulas: valid.\n- (B) $\\exists x\\,p\\vee\\exists x\\,q\\equiv\\exists x(p\\vee q)$: valid.\n- (C) A witness of $p\\wedge q$ is a witness for each: valid."
+          "title": "Option A",
+          "body": "(∀x p ⇒ ∀x q) ≡ ¬∀x p ∨ ∀x q ≡ ∃x¬p ∨ ∀x q: the hypothesis equals the conclusion. Valid."
         },
         {
-          "title": "D fails",
-          "body": "Domain $\\{1,2\\}$, $p=\\{1\\}$, $q=\\{2\\}$: $\\forall x(p\\vee q)$ is true, but $\\forall x\\,p$ and $\\forall x\\,q$ are both false. So (D) is **not valid** → option **(D)**."
+          "title": "Options B and C",
+          "body": "B is (one direction of) ∃ over ∨; C is ∃(p ∧ q) ⇒ ∃p ∧ ∃q. Both valid."
+        },
+        {
+          "title": "Option D",
+          "body": "∀x(p ∨ q) ⇒ ∀x p ∨ ∀x q fails in the turn-taking world $D = \\{1, 2\\}$, $P = \\{1\\}$, $Q = \\{2\\}$."
         }
       ],
       "answer": {
-        "value": "Option (D) is not valid",
+        "value": "D",
         "choice": [
           "D"
         ],
@@ -1670,25 +1674,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Valid: the consequent is just a rewriting of the antecedent."
+          "reason": "Valid: hypothesis and conclusion are the same formula after rewriting →."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Valid: $\\exists$ distributes over $\\vee$."
+          "reason": "Valid: ∃ distributes over ∨."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Valid: one witness satisfies both conjuncts."
+          "reason": "Valid: the witness of p ∧ q serves both."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$\\forall$ does not distribute over $\\vee$ — counterexample above."
+          "reason": "NOT valid: the turn-taking world."
         }
       ],
-      "verification": "The counter-model makes the antecedent of D true and its consequent false."
+      "shortcut": "Look for ∀ over ∨ (or ∃ over ∧) in the forward direction: that is the NOT-valid one.",
+      "pitfalls": [
+        "Being thrown by A's unusual form."
+      ],
+      "verification": "predlib: A, B, C valid up to size 3; D refuted on size 2."
     },
     "cse-2016-2-cs-28": {
       "approach": "Model compounds as vertices and reactions as edges; the handshake lemma forces the degree sum in $U\\setminus S$ to be odd.",

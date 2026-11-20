@@ -1969,24 +1969,28 @@
       "verification": "Parts: $\\int u^2\\sin u = -u^2\\cos u + 2u\\sin u + 2\\cos u$; at $\\pm\\pi$ both give $\\pi^2 - 2$, difference 0."
     },
     "it-2005-cs-36": {
-      "approach": "Check B directly (it is a valid inference) and give small-domain counterexamples to the other three.",
+      "approach": "Concept tested: **which one-way law is valid**: ∀x(P ⇒ Q) ⇒ (∀x P ⇒ ∀x Q).",
       "concepts": [
-        "Quantifiers",
-        "Validity",
-        "Counterexamples"
+        "One-way laws",
+        "Counter-models"
       ],
+      "given": "P(x), Q(x) arbitrary predicates.",
       "steps": [
         {
           "title": "B is valid",
-          "body": "Assume $\\forall x(P\\Rightarrow Q)$ and $\\forall x P$. For any $x$, $P(x)$ holds, so $Q(x)$ holds by modus ponens; hence $\\forall x Q$."
+          "body": "If each element keeps P ⇒ Q and all are P, all are Q."
         },
         {
-          "title": "Counterexamples",
-          "body": "Domain $\\{1,2\\}$, $P=\\{1\\}$, $Q=\\{2\\}$ (true sets).\n- A: $\\forall x(P\\vee Q)$ true, but $\\forall P$, $\\forall Q$ both false.\n- C: $\\forall P$ false so antecedent true; $\\forall x(P\\Rightarrow Q)$ false at $x=1$.\n- D: $\\forall P \\Leftrightarrow \\forall Q$ (both false) true; $\\forall x(P\\Leftrightarrow Q)$ false."
+          "title": "Option A",
+          "body": "∀ over ∨: refuted by the turn-taking world $D = \\{1, 2\\}$, $P = \\{1\\}$, $Q = \\{2\\}$."
+        },
+        {
+          "title": "Options C and D",
+          "body": "C is the converse of B: P = {1}, Q = ∅. D: P = {1}, Q = {2} makes both ∀'s false (so ⇔ is true) while P ⇔ Q fails at 1."
         }
       ],
       "answer": {
-        "value": "(∀x(P(x)⇒Q(x))) ⇒ ((∀x P(x)) ⇒ (∀x Q(x)))",
+        "value": "B",
         "choice": [
           "B"
         ],
@@ -1996,25 +2000,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "∀ does not distribute over ∨: counterexample above."
+          "reason": "∀ does not distribute over ∨ in this direction."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: valid by universal instantiation and modus ponens."
+          "reason": "Modus ponens element by element."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Antecedent can be vacuously true while $P\\Rightarrow Q$ fails pointwise."
+          "reason": "Converse of B; the hypothesis is vacuous when ∀x P fails."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Both universals false makes the antecedent true, yet $P$ and $Q$ differ pointwise."
+          "reason": "Both ∀'s can be false while P and Q differ somewhere."
         }
       ],
-      "verification": "A single interpretation refutes A, C and D simultaneously."
+      "shortcut": "Same law as GATE 2003 Q32 and IT 2007 Q21.",
+      "pitfalls": [
+        "Choosing D: equal truth values of the two ∀'s say nothing element by element."
+      ],
+      "verification": "predlib: B valid up to size 3; counter-models of size 2 for A, C and D."
     },
     "it-2005-cs-37": {
       "approach": "Run the subset construction from {X}. If every reachable subset that contains Y also contains Z (and vice versa), then the two acceptance choices accept exactly the same strings.",

@@ -1,0 +1,256 @@
+{
+ "version": 1,
+ "title": "A logic program as a first-order sentence",
+ "width": 640,
+ "height": 270,
+ "narrow": {
+  "width": 360,
+  "height": 262
+ },
+ "intro": "One Horn rule and three facts. The rule fires once for each x that has some suitable y.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "A(x) ← B(x, y), C(y): from facts to conclusions",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Forward chaining a Horn rule",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "rule",
+   "type": "box",
+   "x": 150,
+   "y": 46,
+   "w": 340,
+   "h": 36,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 30,
+    "y": 44,
+    "w": 300,
+    "h": 34,
+    "size": 14
+   },
+   "label": "A(x) ← B(x, y), C(y)"
+  },
+  {
+   "id": "f0",
+   "type": "box",
+   "x": 40,
+   "y": 110,
+   "w": 110,
+   "h": 34,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 10,
+    "y": 100,
+    "w": 104,
+    "h": 32,
+    "size": 13
+   },
+   "label": "B(a, b)"
+  },
+  {
+   "id": "f1",
+   "type": "box",
+   "x": 170,
+   "y": 110,
+   "w": 110,
+   "h": 34,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 126,
+    "y": 100,
+    "w": 104,
+    "h": 32,
+    "size": 13
+   },
+   "label": "B(c, b)"
+  },
+  {
+   "id": "f2",
+   "type": "box",
+   "x": 300,
+   "y": 110,
+   "w": 110,
+   "h": 34,
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 242,
+    "y": 100,
+    "w": 104,
+    "h": 32,
+    "size": 13
+   },
+   "label": "C(b)"
+  },
+  {
+   "id": "d0",
+   "type": "box",
+   "x": 450,
+   "y": 106,
+   "w": 140,
+   "h": 34,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 80,
+    "y": 158,
+    "w": 90,
+    "h": 32,
+    "size": 13
+   },
+   "label": "A(a)"
+  },
+  {
+   "id": "d1",
+   "type": "box",
+   "x": 450,
+   "y": 150,
+   "w": 140,
+   "h": 34,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 190,
+    "y": 158,
+    "w": 90,
+    "h": 32,
+    "size": 13
+   },
+   "label": "A(c)"
+  },
+  {
+   "id": "v",
+   "type": "text",
+   "x": 320,
+   "y": 226,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 220,
+    "size": 12
+   }
+  },
+  {
+   "id": "v2",
+   "type": "text",
+   "x": 320,
+   "y": 254,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 246,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The rule says: for all x and y, if B(x, y) and C(y) then A(x). The facts are B(a, b), B(c, b) and C(b).",
+   "patches": [
+    {
+     "id": "rule",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Match x = a, y = b: B(a, b) and C(b) both hold, so the rule fires: A(a).",
+   "patches": [
+    {
+     "id": "f0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "f2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Match x = c, y = b: B(c, b) and C(b) hold: A(c). Only one y is needed each time, so y is really ‘some y’.",
+   "patches": [
+    {
+     "id": "f0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "f1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "v",
+     "set": {
+      "text": "y appears only in the body: it is ∃y",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "As a sentence: ∀x (∃y (B(x, y) ∧ C(y)) → A(x)), and the headless rule ← B(x, x) adds ∧ ¬∃x B(x, x). No fact B(x, x) exists here, so the program holds.",
+   "patches": [
+    {
+     "id": "v2",
+     "set": {
+      "text": "∀x(∃y(B ∧ C) → A(x)) ∧ ¬∃x B(x, x)",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

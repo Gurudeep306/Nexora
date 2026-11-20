@@ -1,0 +1,533 @@
+{
+ "version": 1,
+ "title": "Which way do the laws go?",
+ "width": 640,
+ "height": 320,
+ "narrow": {
+  "width": 360,
+  "height": 370
+ },
+ "intro": "Each pair is checked: valid left-to-right, and is the converse valid too?",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "The quantifier laws: two-way and one-way",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Two-way and one-way laws",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "a0",
+   "type": "box",
+   "x": 40,
+   "y": 50,
+   "w": 210,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 48,
+    "w": 150,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∀x (P ∧ Q)"
+  },
+  {
+   "id": "b0",
+   "type": "box",
+   "x": 390,
+   "y": 50,
+   "w": 210,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 204,
+    "y": 48,
+    "w": 150,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∀x P ∧ ∀x Q"
+  },
+  {
+   "id": "r0",
+   "type": "arrow",
+   "from": "a0",
+   "to": "b0",
+   "head": "end",
+   "hidden": true
+  },
+  {
+   "id": "a1",
+   "type": "box",
+   "x": 40,
+   "y": 94,
+   "w": 210,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 100,
+    "w": 150,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∃x (P ∨ Q)"
+  },
+  {
+   "id": "b1",
+   "type": "box",
+   "x": 390,
+   "y": 94,
+   "w": 210,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 204,
+    "y": 100,
+    "w": 150,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∃x P ∨ ∃x Q"
+  },
+  {
+   "id": "r1",
+   "type": "arrow",
+   "from": "a1",
+   "to": "b1",
+   "head": "end",
+   "hidden": true
+  },
+  {
+   "id": "a2",
+   "type": "box",
+   "x": 40,
+   "y": 138,
+   "w": 210,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 152,
+    "w": 150,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∀x P ∨ ∀x Q"
+  },
+  {
+   "id": "b2",
+   "type": "box",
+   "x": 390,
+   "y": 138,
+   "w": 210,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 204,
+    "y": 152,
+    "w": 150,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∀x (P ∨ Q)"
+  },
+  {
+   "id": "r2",
+   "type": "arrow",
+   "from": "a2",
+   "to": "b2",
+   "head": "end",
+   "hidden": true
+  },
+  {
+   "id": "a3",
+   "type": "box",
+   "x": 40,
+   "y": 182,
+   "w": 210,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 204,
+    "w": 150,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∃x (P ∧ Q)"
+  },
+  {
+   "id": "b3",
+   "type": "box",
+   "x": 390,
+   "y": 182,
+   "w": 210,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 204,
+    "y": 204,
+    "w": 150,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∃x P ∧ ∃x Q"
+  },
+  {
+   "id": "r3",
+   "type": "arrow",
+   "from": "a3",
+   "to": "b3",
+   "head": "end",
+   "hidden": true
+  },
+  {
+   "id": "a4",
+   "type": "box",
+   "x": 40,
+   "y": 226,
+   "w": 210,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 256,
+    "w": 150,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∀x (P → Q)"
+  },
+  {
+   "id": "b4",
+   "type": "box",
+   "x": 390,
+   "y": 226,
+   "w": 210,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 204,
+    "y": 256,
+    "w": 150,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∀x P → ∀x Q"
+  },
+  {
+   "id": "r4",
+   "type": "arrow",
+   "from": "a4",
+   "to": "b4",
+   "head": "end",
+   "hidden": true
+  },
+  {
+   "id": "a5",
+   "type": "box",
+   "x": 40,
+   "y": 270,
+   "w": 210,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 308,
+    "w": 150,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∃y ∀x R"
+  },
+  {
+   "id": "b5",
+   "type": "box",
+   "x": 390,
+   "y": 270,
+   "w": 210,
+   "h": 34,
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 204,
+    "y": 308,
+    "w": 150,
+    "h": 32,
+    "size": 12
+   },
+   "label": "∀x ∃y R"
+  },
+  {
+   "id": "r5",
+   "type": "arrow",
+   "from": "a5",
+   "to": "b5",
+   "head": "end",
+   "hidden": true
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Six statements on the left, six on the right. For each pair we ask: does the left imply the right, and does the right imply the left?",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a4",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a5",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∀ distributes over ∧: both directions hold (two-way).",
+   "patches": [
+    {
+     "id": "r0",
+     "set": {
+      "hidden": false,
+      "head": "both",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∃ distributes over ∨: both directions hold (two-way).",
+   "patches": [
+    {
+     "id": "r1",
+     "set": {
+      "hidden": false,
+      "head": "both",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "b1",
+     "set": {
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∀P ∨ ∀Q gives ∀(P ∨ Q), but not back: the turn-taking world refutes the converse.",
+   "patches": [
+    {
+     "id": "r2",
+     "set": {
+      "hidden": false,
+      "head": "end",
+      "tone": "info"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "b2",
+     "set": {
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∃(P ∧ Q) gives ∃P ∧ ∃Q, but not back: two witnesses are not one.",
+   "patches": [
+    {
+     "id": "r3",
+     "set": {
+      "hidden": false,
+      "head": "end",
+      "tone": "info"
+     }
+    },
+    {
+     "id": "a3",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "b3",
+     "set": {
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∀(P → Q) gives ∀P → ∀Q, but not back: make P fail somewhere, then the right side is vacuous.",
+   "patches": [
+    {
+     "id": "r4",
+     "set": {
+      "hidden": false,
+      "head": "end",
+      "tone": "info"
+     }
+    },
+    {
+     "id": "a4",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "b4",
+     "set": {
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∃y∀x gives ∀x∃y, but not back: Lesson 1's grid.",
+   "patches": [
+    {
+     "id": "r5",
+     "set": {
+      "hidden": false,
+      "head": "end",
+      "tone": "info"
+     }
+    },
+    {
+     "id": "a5",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "b5",
+     "set": {
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Two-headed arrows are equivalences; one-headed arrows are the one-way laws GATE asks about. Learn the one-way ones with their counter-models.",
+   "patches": [
+    {
+     "id": "r0",
+     "set": {
+      "label": ""
+     }
+    },
+    {
+     "id": "r1",
+     "set": {
+      "label": ""
+     }
+    },
+    {
+     "id": "r2",
+     "set": {
+      "label": ""
+     }
+    },
+    {
+     "id": "r3",
+     "set": {
+      "label": ""
+     }
+    },
+    {
+     "id": "r4",
+     "set": {
+      "label": ""
+     }
+    },
+    {
+     "id": "r5",
+     "set": {
+      "label": ""
+     }
+    }
+   ]
+  }
+ ]
+}

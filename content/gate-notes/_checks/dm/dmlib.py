@@ -137,7 +137,7 @@ OPEN = re.compile(r"^(:{3,})([a-z]+)(\{.*\})?\s*$")
 CLOSE = re.compile(r"^(:{3,})\s*$")
 
 
-def check_lessons(ch, min_words=0):
+def check_lessons(ch, min_words=0, min_viz=0, min_examples=0):
     folder = chapter_dir(ch)
     prac = practice(ch)
     plans = {i: p for i, _, p in outline_lessons() if i.startswith(f"dm-{ch:02d}-")}
@@ -239,6 +239,10 @@ def check_lessons(ch, min_words=0):
         words = len(re.findall(r"[A-Za-z][A-Za-z'’-]*", re.sub(r"\$[^$]*\$", " ", body)))
         if words < min_words:
             problems.append(f"{fname}: {words} words (< {min_words})")
+        if len(set(viz)) < min_viz:
+            problems.append(f"{fname}: {len(set(viz))} distinct viz scenes (< {min_viz})")
+        if len(examples) < min_examples:
+            problems.append(f"{fname}: {len(examples)} worked examples (< {min_examples})")
         status = re.search(r"^status: (\w+)", fm, re.M).group(1)
         review = re.search(r"^needs_review: (\w+)", fm, re.M).group(1)
         if status == "published" and review != "false":

@@ -142,3 +142,11 @@ Legend: **E** = error in one set · **X** = sets disagree · **B** = question-ba
 
 (Filled in as the chapters are written: any key that a script disagrees with is fixed through
 `src/gate/fixes/<paper>.json` and logged here.)
+
+| # | PYQ | Note | What the lesson does |
+|---|---|---|---|
+| B1 | cse-2008-cs-30 | Option A is printed as $(\forall x\, \text{fsa}(x)) \Rightarrow (\exists y\, \text{pda}(y) \wedge \text{equivalent}(x, y))$: the brackets close early, leaving $x$ free. The intended reading (∀x and ∃y over the whole formula) is the correct translation; B–D are wrong under any reading. | Key A kept (official); the solution and `ex-nest-fsa` explain the intended scope. |
+| B2 | cse-2019-cs-35 | Read literally over all integers (S3), −1 divides every number, so x = −1 is the only x meeting the hypothesis and no w > −1 qualifies: φ is false on S3, and no option would be right. The published key C treats S3 like the positive integers. | Key C kept (official); the solution says so; `l2_01_quantifiers.py` checks both the intended and the literal readings. |
+| B3 | cse-2013-cs-47 | As printed, **both** A and D are NOT equivalent to the given formula (A ≡ ∀x(P ∨ Q), D ≡ ∀x(P ∨ ¬Q), target ∀x(¬P ∨ ¬Q)). | Key D kept (official); the solution names A too; `l2_02_validity.py` asserts the non-equivalent set is {A, D}. |
+| B4 | cse-2015-2-cs-55 | As printed, option D ($\forall x \forall y P(x,y) \to \forall x \forall y P(y,x)$) is valid as well as C. | Key C kept (official); the solution notes D. |
+| B5 | cse-2003-cs-71 | Option D is printed identically to B (the original likely had a different connective). | Key A unaffected. |

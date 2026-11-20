@@ -9,7 +9,7 @@ import dmlib  # noqa: E402
 if dmlib.chapter_dir(2) is None:
     print("lessons_ch2: chapter not started")
     sys.exit(0)
-report, problems = dmlib.check_lessons(2, min_words=3500)
+report, problems = dmlib.check_lessons(2, min_words=7000, min_viz=8, min_examples=25)
 print("\n".join(report))
 assert not problems, "\n" + "\n".join(problems)
 print("lessons_ch2: structure OK")

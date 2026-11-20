@@ -1,0 +1,260 @@
+{
+ "version": 1,
+ "title": "A quantifier leaving a hypothesis flips",
+ "width": 640,
+ "height": 232,
+ "narrow": {
+  "width": 360,
+  "height": 220
+ },
+ "intro": "W does not mention x. Compare ∀x (p(x) → W) with ∃x p(x) → W and with the tempting ∀x p(x) → W.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Pulling ∀x out of a hypothesis flips it: ∀x (p(x) → W) ≡ ∃x p(x) → W",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∀x (p → W) ≡ ∃x p → W",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "world",
+   "type": "text",
+   "x": 320,
+   "y": 56,
+   "text": "Domain {1, 2}; p true at 1 only; W has no x",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 54,
+    "size": 13
+   }
+  },
+  {
+   "id": "t",
+   "type": "table",
+   "x": 28,
+   "y": 76,
+   "cellW": 146,
+   "cellH": 36,
+   "rows": [
+    [
+     "W",
+     "∀(p→W)",
+     "∃p → W",
+     "∀p → W"
+    ],
+    [
+     "T",
+     "",
+     "",
+     ""
+    ],
+    [
+     "F",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 4,
+    "y": 72,
+    "cellW": 88,
+    "cellH": 34
+   }
+  },
+  {
+   "id": "v",
+   "type": "text",
+   "x": 320,
+   "y": 214,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 200,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "W is a sentence without x, so it is simply T or F. We compare three formulas in both cases.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        2,
+        0
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∀x (p(x) → W): if W is T every promise is kept; if W is F the promise fails at x = 1 (p is true there).",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "W",
+        "∀(p→W)",
+        "∃p → W",
+        "∀p → W"
+       ],
+       [
+        "T",
+        "T",
+        "",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∃x p(x) → W gives the same column: someone (1) is p, so it equals W.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "W",
+        "∀(p→W)",
+        "∃p → W",
+        "∀p → W"
+       ],
+       [
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "F",
+        "F",
+        "F",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        2
+       ],
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "v",
+     "set": {
+      "text": "∀x (p → W) ≡ ∃x p → W",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∀x p(x) → W differs when W is F: ∀x p is false (2 is not p), so the implication is vacuously true.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "W",
+        "∀(p→W)",
+        "∃p → W",
+        "∀p → W"
+       ],
+       [
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "F",
+        "F",
+        "F",
+        "T"
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "v",
+     "set": {
+      "text": "∀x p → W is NOT the same (GATE 2020)",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Why: p(x) → W is ¬p(x) ∨ W. Pulling ∀x past W gives ∀x ¬p(x) ∨ W = ¬∃x p(x) ∨ W = ∃x p(x) → W. The hidden ¬ flips ∀ to ∃.",
+   "patches": [
+    {
+     "id": "v",
+     "set": {
+      "text": "a hypothesis hides a ¬, and ¬ flips the quantifier",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

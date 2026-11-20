@@ -1,0 +1,292 @@
+{
+ "version": 1,
+ "title": "Why ∀x (P ∨ Q) does not give ∀x P ∨ ∀x Q",
+ "width": 640,
+ "height": 264,
+ "narrow": {
+  "width": 360,
+  "height": 380
+ },
+ "intro": "The turn-taking world: P holds at 1, Q at 2. Each element is covered, but neither predicate covers everything.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "∀ over ∨ fails: P and Q take turns",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "∀ over ∨ fails",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "d0",
+   "type": "node",
+   "cx": 110,
+   "cy": 92,
+   "r": 34,
+   "size": 20,
+   "mono": true,
+   "narrow": {
+    "cx": 80,
+    "cy": 86,
+    "r": 30
+   },
+   "label": "1"
+  },
+  {
+   "id": "p0",
+   "type": "box",
+   "x": 70,
+   "y": 136,
+   "w": 80,
+   "h": 30,
+   "size": 14,
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 40,
+    "y": 126,
+    "w": 80,
+    "h": 28,
+    "size": 13
+   },
+   "label": "P T"
+  },
+  {
+   "id": "q0",
+   "type": "box",
+   "x": 70,
+   "y": 172,
+   "w": 80,
+   "h": 30,
+   "size": 14,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 40,
+    "y": 158,
+    "w": 80,
+    "h": 28,
+    "size": 13
+   },
+   "label": "Q F"
+  },
+  {
+   "id": "d1",
+   "type": "node",
+   "cx": 260,
+   "cy": 92,
+   "r": 34,
+   "size": 20,
+   "mono": true,
+   "narrow": {
+    "cx": 230,
+    "cy": 86,
+    "r": 30
+   },
+   "label": "2"
+  },
+  {
+   "id": "p1",
+   "type": "box",
+   "x": 220,
+   "y": 136,
+   "w": 80,
+   "h": 30,
+   "size": 14,
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 190,
+    "y": 126,
+    "w": 80,
+    "h": 28,
+    "size": 13
+   },
+   "label": "P F"
+  },
+  {
+   "id": "q1",
+   "type": "box",
+   "x": 220,
+   "y": 172,
+   "w": 80,
+   "h": 30,
+   "size": 14,
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 190,
+    "y": 158,
+    "w": 80,
+    "h": 28,
+    "size": 13
+   },
+   "label": "Q T"
+  },
+  {
+   "id": "f0",
+   "type": "box",
+   "x": 380,
+   "y": 60,
+   "w": 236,
+   "h": 38,
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 200,
+    "w": 320,
+    "h": 36,
+    "size": 13
+   },
+   "label": "∀x (P ∨ Q)"
+  },
+  {
+   "id": "f1",
+   "type": "box",
+   "x": 380,
+   "y": 108,
+   "w": 236,
+   "h": 38,
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 244,
+    "w": 320,
+    "h": 36,
+    "size": 13
+   },
+   "label": "∀x P"
+  },
+  {
+   "id": "f2",
+   "type": "box",
+   "x": 380,
+   "y": 156,
+   "w": 236,
+   "h": 38,
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 288,
+    "w": 320,
+    "h": 36,
+    "size": 13
+   },
+   "label": "∀x Q"
+  },
+  {
+   "id": "f3",
+   "type": "box",
+   "x": 380,
+   "y": 204,
+   "w": 236,
+   "h": 38,
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 332,
+    "w": 320,
+    "h": 36,
+    "size": 13
+   },
+   "label": "∀x P ∨ ∀x Q"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A world with two elements: P is true only at 1, Q only at 2.",
+   "patches": [
+    {
+     "id": "d0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Element 1 is P, element 2 is Q: every element is P or Q, so ∀x (P ∨ Q) is true.",
+   "patches": [
+    {
+     "id": "f0",
+     "set": {
+      "hidden": false,
+      "label": "∀x (P ∨ Q) = T",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "But element 2 is not P, so ∀x P is false.",
+   "patches": [
+    {
+     "id": "f1",
+     "set": {
+      "hidden": false,
+      "label": "∀x P = F",
+      "tone": "danger",
+      "fill": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "And element 1 is not Q, so ∀x Q is false.",
+   "patches": [
+    {
+     "id": "f2",
+     "set": {
+      "hidden": false,
+      "label": "∀x Q = F",
+      "tone": "danger",
+      "fill": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So ∀x P ∨ ∀x Q is false: ∀ does not distribute over ∨. Only the direction ∀P ∨ ∀Q → ∀(P ∨ Q) is valid.",
+   "patches": [
+    {
+     "id": "f3",
+     "set": {
+      "hidden": false,
+      "label": "∀x P ∨ ∀x Q = F",
+      "tone": "danger",
+      "fill": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

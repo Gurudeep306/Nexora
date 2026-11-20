@@ -1300,27 +1300,29 @@
       "verification": "800 × 12 = 9600 bits/s."
     },
     "cse-2004-cs-23": {
-      "approach": "Pattern: \"some A are B\" → ∃x (A(x) ∧ B(x)); \"taller than all girls\" → ∀y (girl(y) → taller(x, y)). Combine them.",
+      "approach": "Concept tested: **translating nested quantifiers with the →/∧ pairing at every level**. 'Some boy' is ∃ with ∧; 'all the girls' is ∀ with →.",
       "concepts": [
-        "First-order logic",
-        "Quantifier translation"
+        "Existential with ∧",
+        "Universal with →",
+        "Nested quantifiers"
       ],
+      "given": "'Some boys in the class are taller than all the girls'; taller(x, y): x is taller than y.",
       "steps": [
         {
-          "title": "Inner part",
-          "body": "\"$x$ is taller than all the girls\": for every $y$, **if** $y$ is a girl then taller$(x,y)$: $(\\forall y)(\\text{girl}(y)\\rightarrow\\text{taller}(x,y))$. Using $\\wedge$ here would claim every object is a girl."
+          "title": "Outer phrase",
+          "body": "'Some boy x such that …': $\\exists x\\, (\\text{boy}(x) \\wedge \\dots)$."
         },
         {
-          "title": "Outer part",
-          "body": "\"Some boy has that property\": $(\\exists x)(\\text{boy}(x)\\wedge\\dots)$. Using $\\rightarrow$ under $\\exists$ is trivially satisfied by any non-boy $x$."
+          "title": "Inner phrase",
+          "body": "'x is taller than every girl': $\\forall y\\, (\\text{girl}(y) \\to \\text{taller}(x, y))$."
         },
         {
-          "title": "Combine",
-          "body": "$(\\exists x)(\\text{boy}(x)\\wedge(\\forall y)(\\text{girl}(y)\\rightarrow\\text{taller}(x,y)))$ — option D."
+          "title": "Assemble",
+          "body": "$(\\exists x)(\\text{boy}(x) \\wedge (\\forall y)(\\text{girl}(y) \\to \\text{taller}(x, y)))$: option D."
         }
       ],
       "answer": {
-        "value": "(∃x)(boy(x) ∧ (∀y)(girl(y) → taller(x, y)))",
+        "value": "D",
         "choice": [
           "D"
         ],
@@ -1330,28 +1332,70 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "∃x(boy(x) → …) is true as soon as any x is not a boy; and ∀y(girl(y) ∧ …) says everyone is a girl."
+          "reason": "Outer → makes it true whenever the class contains a non-boy, and the inner ∧ claims everyone is a girl."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "∀y(girl(y) ∧ taller(x, y)) asserts every object is a girl that x is taller than."
+          "reason": "Inner $\\forall y\\, (\\text{girl}(y) \\wedge \\dots)$ claims every person in the domain is a girl; it fails as soon as one boy exists."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "∃x(boy(x) → …) is vacuously true for any non-boy x, so it does not say that a boy exists."
+          "reason": "Outer $\\exists x\\, (\\text{boy}(x) \\to \\dots)$ is witnessed by any girl (false hypothesis), so it says almost nothing."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: ∃ pairs with ∧, ∀ pairs with →."
+          "reason": "∃ with ∧ outside, ∀ with → inside, exactly the sentence."
         }
       ],
+      "shortcut": "Check the two connectives: the outer one after ∃ must be ∧, the inner one after ∀ must be →. Only D has both.",
       "pitfalls": [
-        "Swapping the connectives: ∃ goes with ∧, ∀ goes with →."
+        "Applying the pairing rule only to the outermost quantifier.",
+        "Reading 'some' as →."
       ],
-      "verification": "In a world with no boys, D is false (as the sentence should be), while A and C become true."
+      "verification": "Model search over all interpretations on domains of size ≤ 3: A, B and C each have a world where they disagree with D, e.g. a domain with one girl and no boy makes A and C true but D false.",
+      "animation": {
+        "kind": "table",
+        "title": "A world: one boy b taller than the only girl g",
+        "cols": [
+          "formula",
+          "value"
+        ],
+        "rows": [
+          [
+            "A",
+            "T"
+          ],
+          [
+            "B",
+            "F"
+          ],
+          [
+            "C",
+            "T"
+          ],
+          [
+            "D",
+            "T"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 1,
+            "c": 1,
+            "tone": "error"
+          },
+          {
+            "r": 3,
+            "c": 1,
+            "tone": "success"
+          }
+        ],
+        "caption": "B fails because the boy is not a girl; the intended sentence is D."
+      }
     },
     "cse-2004-cs-24": {
       "approach": "$S$ links each number to its successor. Transitive closure chains successors to give all pairs with $y > x$; the reflexive part adds $y = x$.",

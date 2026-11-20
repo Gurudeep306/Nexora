@@ -158,9 +158,15 @@
         "Universal and existential quantifiers",
         "Nested quantifiers and order",
         "Negating quantified statements",
-        "Translating English to logic"
+        "Translating English to logic",
+        "Quantifier laws and validity",
+        "Models and counter-models"
       ],
       "kind": "lesson",
+      "lessons": [
+        "predicates-quantifiers",
+        "quantifier-laws-validity"
+      ],
       "requires": [
         "propositional-logic"
       ],

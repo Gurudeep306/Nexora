@@ -1426,23 +1426,23 @@
       "verification": "Equivalent DFA: $\\{q_0\\} \\xrightarrow{a} \\{q_0,q_1,q_2\\}$ (accepting) with an $a$ self-loop — exactly $a^+$."
     },
     "cse-2012-cs-13": {
-      "approach": "\"Some A are B\" is existential with a conjunction: there is an $x$ that is both real and rational.",
+      "approach": "Concept tested: **'some A are B' = ∃x (A(x) ∧ B(x))**.",
       "concepts": [
-        "Predicate logic",
-        "Existential quantifier"
+        "Existential with ∧"
       ],
+      "given": "'Some real numbers are rational.'",
       "steps": [
         {
-          "title": "Pattern",
-          "body": "\"All A are B\" $\\equiv \\forall x\\,(A(x) \\rightarrow B(x))$; \"Some A are B\" $\\equiv \\exists x\\,(A(x) \\wedge B(x))$."
+          "title": "Form",
+          "body": "Some-statement: an object that is real and rational, $\\exists x\\, (\\text{real}(x) \\wedge \\text{rational}(x))$."
         },
         {
-          "title": "Apply",
-          "body": "$\\exists x\\,(\\mathrm{real}(x) \\wedge \\mathrm{rational}(x))$."
+          "title": "Check",
+          "body": "It is option C; the others use ∨, ∀ or →."
         }
       ],
       "answer": {
-        "value": "∃x (real(x) ∧ rational(x))",
+        "value": "C",
         "choice": [
           "C"
         ],
@@ -1452,28 +1452,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "True as soon as anything is real *or* rational — it does not require a real rational number."
+          "reason": "∨ is satisfied by anything real or anything rational, e.g. $\\sqrt 2$ alone."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Says *all* reals are rational."
+          "reason": "That is 'every real number is rational', false and not what is said."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "There exists something that is both real and rational."
+          "reason": "One object with both properties."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Vacuously true for any non-rational $x$ (false antecedent), so it asserts nothing about real rationals."
+          "reason": "∃ with → is witnessed by any non-rational object."
         }
       ],
+      "shortcut": "∃ with ∧; reject every option with → under ∃.",
       "pitfalls": [
-        "Using $\\rightarrow$ inside $\\exists$ — it makes the statement almost always true."
+        "Choosing D because 'rational numbers are real' is true."
       ],
-      "verification": "In a domain with no rational numbers, A and D could still be true while the English sentence is false; only C tracks it exactly."
+      "verification": "Domain {π, 1/2, a matrix}: C true; on {π, a matrix}, C false but A and D true."
     },
     "cse-2012-cs-14": {
       "approach": "ER allows multivalued and composite attributes; the relational model requires atomic values (1NF), so a cell holds exactly one value or NULL.",

@@ -2410,24 +2410,29 @@
       "verification": "Truth tables over $P, Q, R$: $X \\to Y$ is T on all 8 rows; each other option has a false row."
     },
     "cse-2005-cs-41": {
-      "approach": "For each teacher x there must exist (possibly a different) y who is a student and likes x. \"Some … is …\" uses ∃ with ∧, \"every … is …\" uses ∀ with →.",
+      "approach": "Concept tested: **translation with nested quantifiers and the order ∀∃**. 'Every teacher' is ∀ with →; 'some student' is ∃ with ∧ and may depend on the teacher.",
       "concepts": [
-        "First-order logic",
-        "Quantifier scope",
-        "Translating English"
+        "Universal with →",
+        "Existential with ∧",
+        "Quantifier order"
       ],
+      "given": "'Every teacher is liked by some student.'",
       "steps": [
         {
-          "title": "Structure",
-          "body": "\"Every teacher …\": $\\forall x\\,[\\text{teacher}(x) \\to \\dots]$. \"… is liked by some student\": $\\exists y\\,[\\text{student}(y) \\wedge \\text{likes}(y,x)]$."
+          "title": "Outer",
+          "body": "$\\forall x\\, [\\text{teacher}(x) \\to \\dots]$."
         },
         {
-          "title": "Combine",
-          "body": "$\\forall x\\,[\\text{teacher}(x) \\to \\exists y\\,[\\text{student}(y) \\wedge \\text{likes}(y,x)]]$ — option (B)."
+          "title": "Inner",
+          "body": "'some student likes x': $\\exists y\\, [\\text{student}(y) \\wedge \\text{likes}(y, x)]$; the student may differ from teacher to teacher."
+        },
+        {
+          "title": "Assemble",
+          "body": "$\\forall x\\, [\\text{teacher}(x) \\to \\exists y\\, [\\text{student}(y) \\wedge \\text{likes}(y, x)]]$: option B."
         }
       ],
       "answer": {
-        "value": "$\\forall(x)[\\text{teacher}(x) \\rightarrow \\exists(y)[\\text{student}(y) \\wedge \\text{likes}(y,x)]]$",
+        "value": "B",
         "choice": [
           "B"
         ],
@@ -2437,29 +2442,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$\\exists y[\\text{student}(y)\\to\\dots]$ is satisfied by any non-student $y$, so it does not require a liking student."
+          "reason": "Inner ∃ with →: any non-student y makes it true, so it says nothing about students."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct."
+          "reason": "→ under ∀, ∧ under ∃, and the student chosen after the teacher."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\exists y\\forall x$ demands one single student who likes every teacher — stronger than the sentence."
+          "reason": "∃y∀x puts one student first, who likes every teacher: a stronger claim (and it even needs that y to be a student when there are no teachers)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\forall x[\\text{teacher}(x)\\wedge\\dots]$ asserts that everything is a teacher; also uses $\\to$ under $\\exists$."
+          "reason": "Outer ∧ claims everything is a teacher."
         }
       ],
+      "shortcut": "Order first: the English lets the student depend on the teacher, so ∀x must come before ∃y; that rules out C. Then the pairing rule leaves B.",
       "pitfalls": [
-        "∃ pairs with ∧, ∀ pairs with →.",
-        "Quantifier order: ∀x∃y ≠ ∃y∀x."
+        "Moving ∃y to the front.",
+        "Pairing the inner ∃ with →."
       ],
-      "verification": "A world with no student liking a teacher makes (A) true via a non-student y but (B) false — so only (B) captures the sentence."
+      "verification": "Model search: B differs from A, C and D on worlds of size ≤ 3 (e.g. two teachers each liked by a different student: B true, C false)."
     },
     "cse-2005-cs-42": {
       "approach": "Reflexivity, symmetry and transitivity are each preserved by intersection. Union preserves reflexivity and symmetry but can break transitivity.",

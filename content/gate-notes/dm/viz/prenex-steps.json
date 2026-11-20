@@ -1,0 +1,274 @@
+{
+ "version": 1,
+ "title": "Converting to prenex form",
+ "width": 640,
+ "height": 306,
+ "narrow": {
+  "width": 360,
+  "height": 360
+ },
+ "intro": "Rename bound variables apart, then pull quantifiers out, flipping those that leave a hypothesis.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Prenex form, one move at a time",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Prenex form",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "f0",
+   "type": "box",
+   "x": 20,
+   "y": 54,
+   "w": 290,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": false,
+   "narrow": {
+    "x": 10,
+    "y": 50,
+    "w": 340,
+    "h": 36,
+    "size": 14
+   },
+   "label": "∀x P(x) → ∃x Q(x)"
+  },
+  {
+   "id": "f1",
+   "type": "box",
+   "x": 20,
+   "y": 108,
+   "w": 290,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 122,
+    "w": 340,
+    "h": 36,
+    "size": 14
+   },
+   "label": "∀x P(x) → ∃y Q(y)"
+  },
+  {
+   "id": "w1",
+   "type": "text",
+   "x": 326,
+   "y": 134,
+   "text": "rename bound variables apart",
+   "size": 13,
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "x": 14,
+    "y": 100,
+    "size": 12
+   }
+  },
+  {
+   "id": "f2",
+   "type": "box",
+   "x": 20,
+   "y": 162,
+   "w": 290,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 194,
+    "w": 340,
+    "h": 36,
+    "size": 14
+   },
+   "label": "∃x (P(x) → ∃y Q(y))"
+  },
+  {
+   "id": "w2",
+   "type": "text",
+   "x": 326,
+   "y": 188,
+   "text": "∀x leaves the hypothesis: flips to ∃x",
+   "size": 13,
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "x": 14,
+    "y": 172,
+    "size": 12
+   }
+  },
+  {
+   "id": "f3",
+   "type": "box",
+   "x": 20,
+   "y": 216,
+   "w": 290,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 266,
+    "w": 340,
+    "h": 36,
+    "size": 14
+   },
+   "label": "∃x ∃y (P(x) → Q(y))"
+  },
+  {
+   "id": "w3",
+   "type": "text",
+   "x": 326,
+   "y": 242,
+   "text": "∃y leaves the conclusion: unchanged",
+   "size": 13,
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "x": 14,
+    "y": 244,
+    "size": 12
+   }
+  },
+  {
+   "id": "end",
+   "type": "text",
+   "x": 320,
+   "y": 290,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 342,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start: an implication whose two sides are quantified, both with the letter x.",
+   "patches": [
+    {
+     "id": "f0",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rename bound variables apart.",
+   "patches": [
+    {
+     "id": "f1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "f0",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∀x leaves the hypothesis: flips to ∃x.",
+   "patches": [
+    {
+     "id": "f2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "f1",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∃y leaves the conclusion: unchanged.",
+   "patches": [
+    {
+     "id": "f3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "f2",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "All quantifiers are now in front: the prefix ∃x ∃y says this is an ∃∃ sentence, so it has a model iff it has one with at most 2 elements.",
+   "patches": [
+    {
+     "id": "f3",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "end",
+     "set": {
+      "text": "prefix ∃∃: models of size ≤ 2 suffice",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

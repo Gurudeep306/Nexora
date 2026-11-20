@@ -542,28 +542,29 @@
       "verification": "Truth tables over $p, q$: the given statement, II and III are T, T, F, T (false only on FT); I and IV are T, F, T, T."
     },
     "cse-2017-1-cs-2": {
-      "approach": "Take each sentence and ask whether every model of $\\forall x\\,\\exists y\\,R(x,y)$ satisfies it; a small counter-model kills the non-implied ones.",
+      "approach": "Concept tested: **logical implication between quantified sentences**: F = ∀x∃y R implies ∃y∃x R (non-empty domain) and ¬∃x∀y¬R (the same as F), but neither ∃y∀x R nor ∀y∃x R.",
       "concepts": [
-        "Quantifier order",
-        "De Morgan for quantifiers",
-        "Counter-models"
+        "Logical implication",
+        "De Morgan",
+        "∀∃ vs ∃∀"
       ],
+      "given": "F: ∀x(∃y R(x, y)), non-empty domains.",
       "steps": [
         {
-          "title": "I is implied",
-          "body": "The domain is non-empty, so pick any $x_0$. $F$ gives a $y_0$ with $R(x_0,y_0)$, hence $\\exists y\\,\\exists x\\,R(x,y)$."
+          "title": "Statement I",
+          "body": "Take any element d and its witness y: R(d, y). So ∃y∃x R(x, y). Implied."
         },
         {
-          "title": "IV is implied",
-          "body": "Push the negation inside: $$\\neg\\exists x\\,\\forall y\\,\\neg R(x,y) \\equiv \\forall x\\,\\neg\\forall y\\,\\neg R(x,y) \\equiv \\forall x\\,\\exists y\\,R(x,y) = F.$$"
+          "title": "Statement IV",
+          "body": "¬∃x∀y¬R ≡ ∀x∃y R = F. Implied."
         },
         {
-          "title": "II and III are not implied",
-          "body": "Domain $\\{1,2\\}$, $R=\\{(1,1),(2,2)\\}$ (equality). $F$ holds (each $x$ relates to itself).\n\n- II needs one $y$ related to **every** $x$: $y=1$ fails for $x=2$, $y=2$ fails for $x=1$.\n\nFor III take domain $\\{1,2\\}$, $R=\\{(1,1),(2,1)\\}$: $F$ holds, but $y=2$ has no $x$ with $R(x,2)$, so III fails."
+          "title": "Statements II and III",
+          "body": "II: {1, 2} with R = {(1, 2), (2, 1)}: F true, no full column. III: R = {(1, 1), (2, 1)}: F true, column 2 empty."
         }
       ],
       "answer": {
-        "value": "I and IV only",
+        "value": "B (I and IV only)",
         "choice": [
           "B"
         ],
@@ -573,29 +574,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "IV is implied, but I is also implied, so \"IV only\" is incomplete."
+          "reason": "I is implied too."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "I follows from non-emptiness; IV is logically identical to $F$."
+          "reason": "I and IV are implied; II and III are not."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "II swaps $\\forall\\exists$ to $\\exists\\forall$, which is strictly stronger; the equality relation is a counter-model."
+          "reason": "II (∃∀) does not follow from ∀∃."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Neither II nor III is implied (counter-models in step 3), and the true ones I, IV are missing."
+          "reason": "Neither II nor III follows."
         }
       ],
+      "shortcut": "IV is F in disguise; I needs only one element. Rows vs columns rule out II and III.",
       "pitfalls": [
-        "$\\forall x\\,\\exists y$ does not imply $\\exists y\\,\\forall x$ — the witness $y$ may depend on $x$.",
-        "III swaps the roles of the variables; it is a different statement, not a rewriting."
+        "Thinking ∀x∃y gives ∀y∃x (rows vs columns)."
       ],
-      "verification": "IV was reduced to $F$ by two quantifier De Morgan steps; I and the counter-models were checked element by element."
+      "verification": "predlib checks F → I and F → IV valid up to size 3 and finds counter-models for II and III."
     },
     "cse-2017-1-cs-3": {
       "approach": "Notice $b = A\\mathbf{1}$, so the system is consistent; the non-trivial dependency $\\sum c_i a_i=0$ makes $A$ singular, so the solution is not unique.",

@@ -1,0 +1,267 @@
+{
+ "version": 1,
+ "title": "All A are B: → not ∧",
+ "width": 640,
+ "height": 290,
+ "narrow": {
+  "width": 360,
+  "height": 270
+ },
+ "intro": "Domain: two dogs and a cat. A(x): x is a dog. B(x): x barks.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "“All dogs bark”: ∀x (A → B) versus the wrong ∀x (A ∧ B)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "All dogs bark: → vs ∧",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "w",
+   "type": "table",
+   "x": 50,
+   "y": 50,
+   "cellW": 90,
+   "cellH": 38,
+   "rows": [
+    [
+     "",
+     "dog?",
+     "barks?",
+     "A→B",
+     "A∧B"
+    ],
+    [
+     "dog 1",
+     "T",
+     "T",
+     "",
+     ""
+    ],
+    [
+     "dog 2",
+     "T",
+     "T",
+     "",
+     ""
+    ],
+    [
+     "cat",
+     "F",
+     "F",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 6,
+    "y": 50,
+    "cellW": 69,
+    "cellH": 36
+   }
+  },
+  {
+   "id": "v1",
+   "type": "text",
+   "x": 320,
+   "y": 236,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 222,
+    "size": 13
+   }
+  },
+  {
+   "id": "v2",
+   "type": "text",
+   "x": 320,
+   "y": 268,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 250,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A world with two barking dogs and a cat. The English sentence is true here: every dog barks.",
+   "patches": [
+    {
+     "id": "w",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        2,
+        0
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column A → B: for each dog the promise is kept (T → T). For the cat the hypothesis is false, so the promise is kept vacuously.",
+   "patches": [
+    {
+     "id": "w",
+     "set": {
+      "rows": [
+       [
+        "",
+        "dog?",
+        "barks?",
+        "A→B",
+        "A∧B"
+       ],
+       [
+        "dog 1",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "dog 2",
+        "T",
+        "T",
+        "T",
+        ""
+       ],
+       [
+        "cat",
+        "F",
+        "F",
+        "T",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Every row of A → B is T, so ∀x (A(x) → B(x)) is true, matching the English.",
+   "patches": [
+    {
+     "id": "v1",
+     "set": {
+      "text": "∀x (A → B) = T: matches the sentence",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column A ∧ B: true for the dogs, but false for the cat, because the cat is not a dog.",
+   "patches": [
+    {
+     "id": "w",
+     "set": {
+      "rows": [
+       [
+        "",
+        "dog?",
+        "barks?",
+        "A→B",
+        "A∧B"
+       ],
+       [
+        "dog 1",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "dog 2",
+        "T",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "cat",
+        "F",
+        "F",
+        "T",
+        "F"
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So ∀x (A(x) ∧ B(x)) is false: the cat is a counterexample. That formula claims everything is a barking dog.",
+   "patches": [
+    {
+     "id": "v2",
+     "set": {
+      "text": "∀x (A ∧ B) = F: wrongly fails on the cat",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rule: a universal over a noun takes →. The ∧ version is stronger than the sentence and fails as soon as the domain has a non-dog.",
+   "patches": [
+    {
+     "id": "v2",
+     "set": {
+      "text": "∀ goes with →",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

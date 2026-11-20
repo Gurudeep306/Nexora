@@ -1,0 +1,268 @@
+{
+ "version": 1,
+ "title": "Negating a nested formula",
+ "width": 640,
+ "height": 300,
+ "narrow": {
+  "width": 360,
+  "height": 360
+ },
+ "intro": "De Morgan's laws for quantifiers, applied one symbol at a time, then the Chapter 1 law for ¬(A → B).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Pushing ¬ inward, one symbol at a time",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Negation, step by step",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "f0",
+   "type": "box",
+   "x": 40,
+   "y": 56,
+   "w": 330,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": false,
+   "narrow": {
+    "x": 10,
+    "y": 50,
+    "w": 340,
+    "h": 38,
+    "size": 14
+   },
+   "label": "¬∀x ∃y (P(x) → Q(x, y))"
+  },
+  {
+   "id": "f1",
+   "type": "box",
+   "x": 40,
+   "y": 108,
+   "w": 330,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 120,
+    "w": 340,
+    "h": 38,
+    "size": 14
+   },
+   "label": "∃x ¬∃y (P(x) → Q(x, y))"
+  },
+  {
+   "id": "l1",
+   "type": "text",
+   "x": 392,
+   "y": 134,
+   "text": "¬∀ = ∃¬",
+   "size": 15,
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 102,
+    "size": 13
+   }
+  },
+  {
+   "id": "f2",
+   "type": "box",
+   "x": 40,
+   "y": 160,
+   "w": 330,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 190,
+    "w": 340,
+    "h": 38,
+    "size": 14
+   },
+   "label": "∃x ∀y ¬(P(x) → Q(x, y))"
+  },
+  {
+   "id": "l2",
+   "type": "text",
+   "x": 392,
+   "y": 186,
+   "text": "¬∃ = ∀¬",
+   "size": 15,
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 172,
+    "size": 13
+   }
+  },
+  {
+   "id": "f3",
+   "type": "box",
+   "x": 40,
+   "y": 212,
+   "w": 330,
+   "h": 40,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 10,
+    "y": 260,
+    "w": 340,
+    "h": 38,
+    "size": 14
+   },
+   "label": "∃x ∀y (P(x) ∧ ¬Q(x, y))"
+  },
+  {
+   "id": "l3",
+   "type": "text",
+   "x": 392,
+   "y": 238,
+   "text": "¬(A → B) = A ∧ ¬B",
+   "size": 15,
+   "tone": "info",
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 242,
+    "size": 13
+   }
+  },
+  {
+   "id": "end",
+   "type": "text",
+   "x": 320,
+   "y": 284,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 340,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start: the negation of “for every x there is a y with P(x) → Q(x, y)”. The ¬ sits outside both quantifiers.",
+   "patches": [
+    {
+     "id": "f0",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Move ¬ past ∀x: it becomes ∃x and the ¬ moves inside. The variable x stays where it is.",
+   "patches": [
+    {
+     "id": "f1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "l1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "f0",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Move ¬ past ∃y: it becomes ∀y. The order x, y is unchanged; only the kinds flipped.",
+   "patches": [
+    {
+     "id": "f2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "l2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "f1",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now ¬ meets an implication. A promise is broken exactly when the hypothesis holds and the conclusion fails: ¬(A → B) = A ∧ ¬B.",
+   "patches": [
+    {
+     "id": "f3",
+     "set": {
+      "hidden": false,
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "l3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "f2",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Final form: some x has P, and every y fails Q(x, y). Check: two quantifiers flipped, the arrow became ∧, one new ¬ on Q.",
+   "patches": [
+    {
+     "id": "end",
+     "set": {
+      "text": "same order x, y · kinds flipped · → became ∧",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -4170,28 +4170,28 @@
       "verification": "Both methods give 0.95."
     },
     "cse-2015-2-cs-55": {
-      "approach": "Use $P \\rightarrow R \\equiv \\neg P \\vee R$: the two sides of (C) are the same formula, so the biconditional is valid. Disprove A and B with small models.",
+      "approach": "Concept tested: **which quantified formula is valid**: replacing P → R by ¬P ∨ R inside the same quantifiers changes nothing.",
       "concepts": [
-        "First-order logic",
-        "Validity",
-        "Quantifier order"
+        "Equivalence inside quantifiers",
+        "∀∃ vs ∃∀"
       ],
+      "given": "Which is a tautology (valid)?",
       "steps": [
         {
           "title": "Option C",
-          "body": "Since $P(x,y) \\rightarrow R(x,y) \\equiv \\neg P(x,y) \\vee R(x,y)$ for every $x,y$, both sides of the $\\leftrightarrow$ are logically equivalent, so (C) is valid."
+          "body": "P(x, y) → R(x, y) ≡ ¬P(x, y) ∨ R(x, y) for every pair, so the two sides of C agree in every world: valid."
         },
         {
           "title": "Options A and B",
-          "body": "(A): over $\\{1,2\\}$ with $R = \\{(1,1),(2,2)\\}$, $\\forall x\\exists y R$ is true but $\\exists y \\forall x R$ is false.\n\n(B): with $R = S = \\emptyset$ the antecedent is true (every implication has a false premise) but $\\forall x\\exists y S(x,y)$ is false."
+          "body": "A claims ∀x∃y ⇔ ∃y∀x: the grid world refutes it. B: with R empty the hypothesis is vacuously true while ∀x∃y S fails when S is empty."
         },
         {
-          "title": "Answer",
-          "body": "Option (C) is the intended tautology. (D), which only renames bound variables, is also valid as printed — see the review note on this question."
+          "title": "Option D",
+          "body": "As printed, ∀x∀y P(x, y) → ∀x∀y P(y, x) is also valid (both sides say P holds for every pair). The published key is C."
         }
       ],
       "answer": {
-        "value": "Option C",
+        "value": "C (published key; D is also valid as printed)",
         "choice": [
           "C"
         ],
@@ -4201,28 +4201,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Swapping $\\forall\\exists$ to $\\exists\\forall$ is not valid (only $\\exists\\forall \\Rightarrow \\forall\\exists$ holds)."
+          "reason": "∀∃ and ∃∀ are not equivalent."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Countermodel: $R = S = \\emptyset$ makes the antecedent true and $\\forall x\\exists y S$ false."
+          "reason": "R and S empty: hypothesis vacuously true, conclusion false."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Both sides are equivalent by $P\\rightarrow R \\equiv \\neg P \\vee R$."
+          "reason": "The two sides are identical up to P → R ≡ ¬P ∨ R."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Intended as a distractor, but strictly it is also valid: both sides say $P$ holds for every ordered pair. The key is C."
+          "reason": "As printed it is valid too, but the published key is C; the question intended a non-valid D."
         }
       ],
+      "shortcut": "An equivalence between two formulas that differ only by a propositional law inside identical quantifiers is always valid.",
       "pitfalls": [
-        "Reading (D) as a symmetry claim — the variables are bound on both sides, so it is not about $P$ being symmetric."
+        "Marking A because one direction holds."
       ],
-      "verification": "C checked by equivalence; A and B refuted by explicit models; D noted as also valid (record already flagged needsReview)."
+      "verification": "predlib: C and D valid up to size 2; A and B refuted. Recorded in _errata/dm.md (B-notes)."
     }
   }
 }
