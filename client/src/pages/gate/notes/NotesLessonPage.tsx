@@ -15,8 +15,10 @@
   mode, Depth dial), block anchors (data-block-id) for highlights and margin
   notes, and NotesContext for per-lesson features.
 */
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
+// Members' video explanations of this lesson (client/src/explain).
+const ExplainVideos = lazy(() => import('@/explain/ExplainVideos').then((m) => ({ default: m.ExplainVideos })))
 import { Icon } from '@/components/icon/Icon'
 import { EmptyState, LoadingBlock } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -367,6 +369,12 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
               <section className="nr-pyqs" aria-label="Past questions from this lesson">
                 <LessonPyqs links={lesson.pyqLinks} concepts={ctx.concepts ?? {}} />
               </section>
+            )}
+
+            {user && (
+              <Suspense fallback={null}>
+                <ExplainVideos kind="lesson" target={`${subject.id}/${lesson.id}`} about={`${subject.title} · ${lesson.title}`} />
+              </Suspense>
             )}
 
             <div className="nr-done">{completeBtn(true)}</div>

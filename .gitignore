@@ -30,6 +30,8 @@ build/
 
 # Uploads (if user-generated)
 public/uploads/*
+# Video explanations (src/routes/explain.js) live on the server's disk.
+/data/explain/
 !public/uploads/.gitkeep
 
 
