@@ -22,6 +22,7 @@ import { SimilarStrip } from './practice/SimilarStrip'
 
 const GateSolution = lazy(() => import('./solution/GateSolution'))
 const HandSolutions = lazy(() => import('@/components/hand/HandSolutions').then((m) => ({ default: m.HandSolutions })))
+const MembersHandwriting = lazy(() => import('@/components/hand/HandSolutions').then((m) => ({ default: m.MembersHandwriting })))
 
 /* ── Small pieces ───────────────────────────────────────────────────────── */
 
@@ -488,6 +489,11 @@ export function QuestionView({
                   <Suspense fallback={<div className="h-40 animate-pulse rounded-2xl bg-bg-surface-2" />}>
                     <GateSolution q={q} state={solution} />
                   </Suspense>
+                  {insights && mode !== 'test' && (
+                    <Suspense fallback={null}>
+                      <MembersHandwriting kind="gate" target={q.id} onAddMine={() => setHandSignal((n) => n + 1)} />
+                    </Suspense>
+                  )}
                   {q.reviewNote && (
                     <p className="ed-ui-sm ed-ink-2 mt-4 mb-0 flex items-start gap-2 border-l-2 border-state-warning pl-3">
                       <AlertTriangle className="mt-0.5 size-4 shrink-0 text-state-warning" aria-hidden="true" />

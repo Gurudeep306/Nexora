@@ -122,7 +122,7 @@ function Pad({ token, info, sending, onSubmit }: { token: string; info: DeviceIn
   const [color, setColor] = useState('ink')
   const [sizeIx, setSizeIx] = useState(1)
   const [penOnly, setPenOnly] = useState(false)
-  const [menu, setMenu] = useState<null | 'paper' | 'page'>(null)
+  const [menu, setMenu] = useState<null | 'paper' | 'page' | 'ink'>(null)
   const [undo, setUndo] = useState<Page[][]>([])
   const [redo, setRedo] = useState<Page[][]>([])
   const [view, setView] = useState<View>({ x: 0, y: 0, s: 0.5 })
@@ -533,7 +533,7 @@ function Pad({ token, info, sending, onSubmit }: { token: string; info: DeviceIn
   return (
     <div className="hw-pad" data-tone={tone}>
       <header className="hw-bar" role="toolbar" aria-label="Writing tools">
-        <div className="hw-group" role="radiogroup" aria-label="Tool">
+        <div className="hw-group hw-tools" role="radiogroup" aria-label="Tool">
           {(['pen', 'pencil', 'line', 'marker', 'eraser', 'hand'] as Tool[]).map((t) => (
             <button key={t} type="button" role="radio" aria-checked={tool === t} className={cn('hw-tool', tool === t && 'is-on')} onClick={() => setTool(t)} aria-label={TOOL_LABEL[t]} title={TOOL_LABEL[t]}>
               <ToolIcon tool={t} />
@@ -541,36 +541,54 @@ function Pad({ token, info, sending, onSubmit }: { token: string; info: DeviceIn
           ))}
         </div>
         <span className="hw-sep" aria-hidden="true" />
-        <div className="hw-group hw-colors" role="radiogroup" aria-label="Colour">
-          {COLORS.map((c) => (
-            <button
-              key={c.id}
-              type="button"
-              role="radio"
-              aria-checked={color === c.id}
-              aria-label={c.label}
-              title={c.label}
-              className={cn('hw-swatch', color === c.id && 'is-on')}
-              style={{ background: colorOf(c.id, tone) }}
-              onClick={() => {
-                setColor(c.id)
-                if (tool === 'eraser' || tool === 'hand') setTool('pen')
-              }}
-            />
-          ))}
-        </div>
-        {sizes.length > 0 && (
-          <>
-            <span className="hw-sep" aria-hidden="true" />
-            <div className="hw-group" role="radiogroup" aria-label="Size">
-              {sizes.map((_, i) => (
-                <button key={i} type="button" role="radio" aria-checked={sizeIx === i} aria-label={['Fine', 'Medium', 'Bold'][i]} title={['Fine', 'Medium', 'Bold'][i]} className={cn('hw-size', sizeIx === i && 'is-on')} onClick={() => setSizeIx(i)}>
-                  <span style={{ width: 6 + i * 6, height: 6 + i * 6 }} />
-                </button>
-              ))}
+        <div className="hw-menu-wrap">
+          <button
+            type="button"
+            className={cn('hw-ink-btn', menu === 'ink' && 'is-on')}
+            onClick={() => setMenu(menu === 'ink' ? null : 'ink')}
+            aria-expanded={menu === 'ink'}
+            aria-label={`Colour and size: ${COLORS.find((c) => c.id === color)?.label}, ${['fine', 'medium', 'bold'][sizeIx]}`}
+            title="Colour and size"
+          >
+            <span className="hw-ink-dot" style={{ background: colorOf(color, tone), width: 10 + sizeIx * 5, height: 10 + sizeIx * 5 }} />
+          </button>
+          {menu === 'ink' && (
+            <div className="hw-menu hw-menu-left" role="dialog" aria-label="Colour and size">
+              <p className="hw-menu-k">Colour</p>
+              <div className="hw-colors" role="radiogroup" aria-label="Colour">
+                {COLORS.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={color === c.id}
+                    aria-label={c.label}
+                    title={c.label}
+                    className={cn('hw-swatch', color === c.id && 'is-on')}
+                    style={{ background: colorOf(c.id, tone) }}
+                    onClick={() => {
+                      setColor(c.id)
+                      if (tool === 'eraser' || tool === 'hand') setTool('pen')
+                    }}
+                  />
+                ))}
+              </div>
+              {sizes.length > 0 && (
+                <>
+                  <p className="hw-menu-k">{tool === 'eraser' ? 'Eraser size' : 'Size'}</p>
+                  <div className="hw-sizes" role="radiogroup" aria-label="Size">
+                    {sizes.map((_, i) => (
+                      <button key={i} type="button" role="radio" aria-checked={sizeIx === i} className={cn('hw-size', sizeIx === i && 'is-on')} onClick={() => setSizeIx(i)}>
+                        <span style={{ width: 6 + i * 6, height: 6 + i * 6 }} />
+                        {['Fine', 'Medium', 'Bold'][i]}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
-          </>
-        )}
+          )}
+        </div>
         <span className="hw-sep" aria-hidden="true" />
         <div className="hw-group">
           <button type="button" className="hw-tool" onClick={doUndo} disabled={!undo.length} aria-label="Undo" title="Undo (⌘Z)">
