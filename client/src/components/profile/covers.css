@@ -1,11 +1,9 @@
-/* Profile covers (covers.tsx): a pattern or a live animation in the
-   profile's accent on paper tinted with it. Tokens only. */
+/* Profile covers (covers.tsx): paper-cut scenes with their own palettes.
+   The colours below are artwork, not interface colour: each scene keeps its
+   palette in every theme. Sky = flat bands (.cv-sky-N), layers near → far
+   (.cv-lN), no gradients or glows. */
 
 .cv {
-  --cv-paper: color-mix(in oklab, var(--cv-hi, var(--color-accent-brand)) 9%, var(--color-bg-surface));
-  background: var(--cv-paper);
-}
-.cv[data-kind='plain'] {
   background: var(--color-bg-surface);
 }
 .cv-svg {
@@ -15,94 +13,379 @@
   height: 100%;
   display: block;
 }
+/* Only the shapes that move get their own pivot; every other transform is placement. */
+.cv-svg :is(.cv-boat, .cv-dance, .cv-falling, .cv-bird, .cv-twinkle, .cv-flag, .cv-float, .cv-bloom, .cv-ripple, .cv-bubble, .cv-weed) {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.cv-layer {
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
 
-/* Patterns: the SVG is a mask, so it takes the accent (any theme, light or
-   dark). It drifts one tile diagonally per loop, so the loop is seamless. */
-.cv-pattern {
-  position: absolute;
-  inset: 0;
-  background-color: var(--cv-hi);
-  opacity: 0.42;
-  -webkit-mask-image: var(--cv-src);
-  mask-image: var(--cv-src);
-  -webkit-mask-size: var(--cv-w) var(--cv-h);
-  mask-size: var(--cv-w) var(--cv-h);
-  -webkit-mask-repeat: repeat;
-  mask-repeat: repeat;
+/* ── Dusk ─────────────────────────────────────────────────────────────── */
+.cv[data-cover='dusk'] {
+  --s0: #2b2350; --s1: #4b3266; --s2: #7a3f6e; --s3: #b85a6a; --s4: #e88a6a;
+  --sun: #fbd38d; --star: #fdf3d8;
+  --l0: #8e4e7a; --l1: #6c3b6e; --l2: #4b2c5e; --l3: #2f1f47; --l4: #1b1430;
 }
-[data-mode='dark'] .cv-pattern {
-  opacity: 0.5;
+/* ── Ocean ────────────────────────────────────────────────────────────── */
+.cv[data-cover='ocean'] {
+  --s0: #fdeed5; --s1: #fbdcb4; --s2: #f8c99a; --sun: #f4845f;
+  --l0: #8fd3cf; --l1: #4fb3b3; --l2: #23899b; --l3: #186a85; --l4: #0f4766;
 }
-.cv[data-run] .cv-pattern {
-  animation: cv-drift var(--cv-time, 20s) linear infinite;
+/* ── Sakura ───────────────────────────────────────────────────────────── */
+.cv[data-cover='sakura'] {
+  --s0: #fdf1f2; --s1: #fbe6ea; --s2: #f8d9e0;
+  --l0: #f0c4cf; --l1: #e5a8b8;
+  --bark: #4a2b2c; --p1: #f28fab; --p2: #f9c6d4; --heart: #b8325a;
+}
+/* ── Tea hills ────────────────────────────────────────────────────────── */
+.cv[data-cover='tea'] {
+  --s0: #eef6e6; --s1: #e3efd8; --s2: #d4e6c6; --sun: #f6c85f;
+  --l0: #a9d18e; --l1: #78b462; --l2: #4b914a; --l3: #2a6b3b;
+}
+/* ── Desert ───────────────────────────────────────────────────────────── */
+.cv[data-cover='desert'] {
+  --s0: #fde9cc; --s1: #fbd9a8; --s2: #f8c487; --sun: #e9643b;
+  --l0: #f1b46a; --l1: #e09a4e; --l2: #c47a36; --l3: #9c5a26; --camel: #4a2a16;
+}
+/* ── Forest ───────────────────────────────────────────────────────────── */
+.cv[data-cover='forest'] {
+  --s0: #e4ecee; --s1: #d6e2e5; --s2: #c6d7da; --sun: #fbf6e4;
+  --l0: #9fb9ba; --l1: #6e9496; --l2: #456d71; --l3: #23464a; --mist: #eef4f4;
+}
+/* ── Skyline ──────────────────────────────────────────────────────────── */
+.cv[data-cover='skyline'] {
+  --s0: #0e1a3c; --s1: #15255a; --s2: #1f3373; --sun: #f6ecc9; --star: #fdf6dc;
+  --l0: #2a3d78; --l1: #121a36; --window: #fcd472;
+}
+/* ── Cosmos ───────────────────────────────────────────────────────────── */
+.cv[data-cover='cosmos'] {
+  --s0: #120f2c; --s1: #191541; --star: #f4f1ff; --star2: #ffd48a;
+  --planet: #e2725b; --band: #c4523f; --ring: #f2cc8f; --moon1: #81b29a; --moon2: #a5a3d9;
+}
+/* ── Warli: rice-white on earth red ───────────────────────────────────── */
+.cv[data-cover='warli'] {
+  --s0: #9b4a2e; --white: #f8efe0;
+}
+/* ── Himalaya ─────────────────────────────────────────────────────────── */
+.cv[data-cover='himalaya'] {
+  --s0: #dcebf5; --s1: #cfe2f0; --s2: #c1d8ea; --sun: #fff4d6;
+  --l0: #7f9cb8; --l1: #4c6a8a; --snow: #fbfdff; --string: #6b5b4e;
+}
+/* ── Backwaters ───────────────────────────────────────────────────────── */
+.cv[data-cover='backwaters'] {
+  --s0: #fde2c4; --s1: #fbcfa3; --s2: #f6b88a; --sun: #f26b3a;
+  --l0: #2f5d3a; --l1: #3f8a8c; --palm: #1f3d29; --boat: #5b3622; --thatch: #c98d4a;
+}
+/* ── Balloons ─────────────────────────────────────────────────────────── */
+.cv[data-cover='balloons'] {
+  --s0: #e3f1fb; --s1: #d1e8f7; --s2: #bfdff2;
+  --l0: #b5d98a; --l1: #8cc46a; --l2: #e6c860; --rope: #5a4636; --basket: #8a5a35;
+}
+/* ── Lotus pond ───────────────────────────────────────────────────────── */
+.cv[data-cover='lotus'] {
+  --s0: #1d5c63; --s1: #17494f;
+  --pad1: #4f9d4f; --pad2: #6fb35a; --lotus: #f4a7c0; --lotus2: #fbd3e0; --heart: #f6c84c; --ripple: #a9d6d3;
+}
+/* ── Lighthouse ───────────────────────────────────────────────────────── */
+.cv[data-cover='lighthouse'] {
+  --s0: #101b33; --s1: #16264a; --s2: #1d3260; --sun: #f6ecc9; --star: #fdf6dc;
+  --l0: #1c3d63; --l1: #12294a; --cliff: #0b1628; --tower: #f4efe6; --band: #d1453b; --lamp: #ffd77a; --beam: #ffe7a3;
+}
+/* ── Reef ─────────────────────────────────────────────────────────────── */
+.cv[data-cover='reef'] {
+  --s0: #5cc6d6; --s1: #3aa7c2; --s2: #2586ad; --s3: #1a6693;
+  --weed: #2f9e6e; --sand: #f2d6a2; --c0: #ff7f6e; --c1: #f7b267; --c2: #c77dff; --eye: #102030; --bubble: #e6faff;
+}
+/* ── Aurora ───────────────────────────────────────────────────────────── */
+.cv[data-cover='aurora'] {
+  --s0: #0b1d2b; --s1: #10283a; --s2: #163449; --star: #e9fbff;
+  --l1: #0a1620; --snow: #e8f1f5; --r0: #5ef2b4; --r1: #4fd3e8; --r2: #b18cff;
+}
+
+/* Paint: shared roles. */
+.cv-sky-0 { fill: var(--s0); }
+.cv-sky-1 { fill: var(--s1); }
+.cv-sky-2 { fill: var(--s2); }
+.cv-sky-3 { fill: var(--s3); }
+.cv-sky-4 { fill: var(--s4); }
+.cv-sun { fill: var(--sun); }
+.cv-star { fill: var(--star); }
+.cv-star2 { fill: var(--star2); }
+.cv-l0 { fill: var(--l0); }
+.cv-l1 { fill: var(--l1); }
+.cv-l2 { fill: var(--l2); }
+.cv-l3 { fill: var(--l3); }
+.cv-l4 { fill: var(--l4); }
+.cv-bird {
+  fill: none;
+  stroke: var(--l4);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+/* Ocean */
+.cv-hull { fill: #3d2a24; }
+.cv-sail { fill: #fffaf0; }
+.cv-sail2 { fill: #f3e7d3; }
+
+/* Sakura */
+.cv-branch {
+  fill: none;
+  stroke: var(--bark);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cv-twig {
+  fill: none;
+  stroke: var(--bark);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.cv-petal { fill: var(--p1); }
+.cv-petal2 { fill: var(--p2); }
+.cv-heart { fill: var(--heart); }
+.cv-falling { fill: var(--p1); opacity: 0.85; }
+
+/* Tea */
+.cv-terrace {
+  fill: none;
+  stroke: #ffffff;
+  stroke-opacity: 0.22;
+  stroke-width: 1.4;
+}
+
+/* Desert */
+.cv-camel { fill: var(--camel); }
+
+/* Forest */
+.cv-mist { fill: var(--mist); opacity: 0.35; }
+
+/* Skyline */
+.cv-moon-bite { fill: var(--s0); }
+.cv-window { fill: var(--window); }
+
+/* Cosmos */
+.cv-planet { fill: var(--planet); }
+.cv-planet-band {
+  stroke: var(--band);
+  stroke-width: 7;
+  fill: none;
+}
+.cv-ring {
+  fill: none;
+  stroke: var(--ring);
+  stroke-width: 5;
+}
+.cv-moon1 { fill: var(--moon1); }
+.cv-moon2 { fill: var(--moon2); }
+
+/* Warli */
+.cv-white {
+  fill: var(--white);
+  stroke: var(--white);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cv-white .cv-line { fill: none; }
+.cv-hut { fill: none; stroke-width: 2.4; }
+.cv-dotted { stroke-dasharray: 2 7; }
+
+/* Himalaya */
+.cv-snow { fill: var(--snow); }
+.cv-string { fill: none; stroke: var(--string); stroke-width: 1.2; }
+/* Backwaters */
+.cv-trunk { fill: none; stroke: var(--palm); stroke-width: 4; stroke-linecap: round; }
+.cv-frond { fill: none; stroke: var(--palm); stroke-width: 3.2; stroke-linecap: round; }
+.cv-ripple-line { stroke: #ffffff; stroke-opacity: 0.35; stroke-width: 1.6; stroke-linecap: round; }
+.cv-hull2 { fill: var(--boat); }
+.cv-thatch { fill: var(--thatch); }
+.cv-thatch-line { stroke: var(--boat); stroke-width: 1.4; }
+/* Balloons */
+.cv-rope { stroke: var(--rope); stroke-width: 1.2; }
+.cv-basket { fill: var(--basket); }
+/* Lotus */
+.cv-pad1 { fill: var(--pad1); }
+.cv-pad2 { fill: var(--pad2); }
+.cv-lotus { fill: var(--lotus); }
+.cv-lotus2 { fill: var(--lotus2); }
+.cv-lotus-heart { fill: var(--heart); }
+.cv-ripple { fill: none; stroke: var(--ripple); stroke-width: 1.4; opacity: 0.5; }
+/* Lighthouse */
+.cv-cliff { fill: var(--cliff); }
+.cv-tower { fill: var(--tower); }
+.cv-tower-band { fill: var(--band); }
+.cv-lamp { fill: var(--lamp); }
+.cv-beam-light { fill: var(--beam); opacity: 0.22; }
+/* Reef */
+.cv-weed { fill: none; stroke: var(--weed); stroke-width: 4; stroke-linecap: round; transform-origin: 50% 100%; }
+.cv-coral { fill: none; stroke-width: 4; stroke-linecap: round; }
+.cv-coral-0 { stroke: var(--c0); }
+.cv-coral-1 { stroke: var(--c1); }
+.cv-coral-2 { stroke: var(--c2); }
+.cv-sand { fill: var(--sand); }
+.cv-eye { fill: var(--eye); }
+.cv-bubble { fill: none; stroke: var(--bubble); stroke-width: 1; opacity: 0.7; }
+/* Aurora */
+.cv-ribbon { opacity: 0.45; }
+.cv-ribbon-0 { fill: var(--r0); }
+.cv-ribbon-1 { fill: var(--r1); opacity: 0.35; }
+.cv-ribbon-2 { fill: var(--r2); opacity: 0.3; }
+
+/* In dark mode the bright scenes step down a little, so they sit with the page. */
+[data-mode='dark'] .cv:is([data-cover='ocean'], [data-cover='sakura'], [data-cover='tea'], [data-cover='desert'], [data-cover='forest'], [data-cover='balloons'], [data-cover='lotus'], [data-cover='backwaters'], [data-cover='himalaya']) .cv-svg {
+  filter: brightness(0.86) saturate(0.95);
+}
+
+/* ── Motion (only while on screen; none with reduced motion) ──────────── */
+.cv[data-run] .cv-layer {
+  animation: cv-scroll 90s linear infinite;
+}
+.cv[data-run] .cv-l1.cv-layer { animation-duration: 70s; }
+.cv[data-run] .cv-l2.cv-layer { animation-duration: 52s; }
+.cv[data-run] .cv-l3.cv-layer { animation-duration: 38s; }
+.cv[data-run] .cv-l4.cv-layer { animation-duration: 28s; }
+.cv[data-run][data-cover='ocean'] .cv-layer { animation-duration: 30s; }
+.cv[data-run][data-cover='ocean'] .cv-l2.cv-layer { animation-duration: 22s; }
+.cv[data-run][data-cover='ocean'] .cv-l4.cv-layer { animation-duration: 16s; }
+@keyframes cv-scroll {
+  to { transform: translateX(-800px); }
+}
+.cv[data-run] .cv-twinkle {
+  animation: cv-twinkle 5s ease-in-out infinite;
+}
+@keyframes cv-twinkle {
+  50% { opacity: 0.25; }
+}
+.cv[data-run] .cv-bird {
+  animation: cv-flap 0.9s ease-in-out infinite alternate;
+}
+@keyframes cv-flap {
+  to { transform: scaleY(0.4); }
+}
+.cv[data-run] .cv-boat {
+  animation: cv-bob 3.2s ease-in-out infinite alternate;
+}
+@keyframes cv-bob {
+  from { transform: translateY(0) rotate(-3deg); }
+  to { transform: translateY(4px) rotate(3deg); }
+}
+.cv[data-run] .cv-falling {
+  animation: cv-fall 9s linear infinite;
+}
+@keyframes cv-fall {
+  from { transform: translate(0, -20px) rotate(0); opacity: 0; }
+  10% { opacity: 0.9; }
+  to { transform: translate(-60px, 150px) rotate(300deg); opacity: 0; }
+}
+.cv[data-run] .cv-caravan {
+  transform-box: view-box;
+  animation: cv-walk 40s linear infinite;
+}
+@keyframes cv-walk {
+  from { transform: translateX(-620px); }
+  to { transform: translateX(460px); }
+}
+.cv[data-run] .cv-window {
+  animation: cv-lights 9s steps(1) infinite;
+}
+@keyframes cv-lights {
+  70% { opacity: 1; }
+  71% { opacity: 0.15; }
+  90% { opacity: 0.15; }
+  91% { opacity: 1; }
+}
+.cv[data-run] .cv-orbit {
+  transform-box: view-box;
+  animation: cv-orbit 30s linear infinite;
+}
+@keyframes cv-orbit {
+  to { transform: rotate(360deg); }
+}
+.cv[data-run] .cv-dance {
+  transform-origin: 50% 100%;
+  animation: cv-dance 1.4s ease-in-out infinite alternate;
+}
+@keyframes cv-dance {
+  from { transform: rotate(-5deg); }
+  to { transform: rotate(5deg) translateY(-3px); }
+}
+
+.cv[data-run] .cv-slow { animation-duration: 140s; }
+.cv[data-run] .cv-flag {
+  transform-origin: 50% 0;
+  animation: cv-flutter 1.2s ease-in-out infinite alternate;
+}
+@keyframes cv-flutter {
+  from { transform: skewX(-12deg) scaleY(0.92); }
+  to { transform: skewX(10deg) scaleY(1); }
+}
+.cv[data-run] .cv-fronds { animation: cv-sway 3s ease-in-out infinite alternate; }
+@keyframes cv-sway {
+  from { transform: rotate(-4deg); }
+  to { transform: rotate(4deg); }
+}
+.cv[data-run] .cv-houseboat-run {
+  transform-box: view-box;
+  animation: cv-drift 60s linear infinite alternate;
 }
 @keyframes cv-drift {
-  from {
-    -webkit-mask-position: 0 0;
-    mask-position: 0 0;
-  }
-  to {
-    -webkit-mask-position: var(--cv-w) var(--cv-h);
-    mask-position: var(--cv-w) var(--cv-h);
-  }
+  from { transform: translateX(-160px); }
+  to { transform: translateX(160px); }
 }
-
-/* Waves: four bands of the accent, each sliding at its own speed. */
-.cv-wave {
-  fill: var(--cv-hi);
+.cv[data-run] .cv-float { animation: cv-float 5s ease-in-out infinite alternate; }
+@keyframes cv-float {
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
+}
+.cv[data-run] .cv-bloom { animation: cv-bloom 4s ease-in-out infinite alternate; }
+@keyframes cv-bloom {
+  from { transform: translateY(0) rotate(-2deg); }
+  to { transform: translateY(-2px) rotate(2deg); }
+}
+.cv[data-run] .cv-ripple { animation: cv-ripple 6s ease-out infinite; }
+@keyframes cv-ripple {
+  from { transform: scale(0.3); opacity: 0.7; }
+  to { transform: scale(1.4); opacity: 0; }
+}
+.cv[data-run] .cv-beam {
   transform-box: view-box;
+  animation: cv-beam 8s ease-in-out infinite alternate;
 }
-.cv-wave-0 {
-  fill-opacity: 0.16;
+@keyframes cv-beam {
+  from { transform: rotate(-12deg); }
+  to { transform: rotate(10deg); }
 }
-.cv-wave-1 {
-  fill-opacity: 0.22;
+.cv[data-run] .cv-swim {
+  transform-box: view-box;
+  animation: cv-swim 20s linear infinite;
 }
-.cv-wave-2 {
-  fill-opacity: 0.3;
+@keyframes cv-swim {
+  from { transform: translateX(-60px); }
+  to { transform: translateX(860px); }
 }
-.cv-wave-3 {
-  fill-opacity: 0.42;
+.cv[data-run] .cv-weed { animation: cv-weed 3s ease-in-out infinite alternate; }
+@keyframes cv-weed {
+  from { transform: skewX(-8deg); }
+  to { transform: skewX(8deg); }
 }
-.cv[data-run] .cv-wave {
-  animation: cv-slide 14s linear infinite;
-}
-.cv[data-run] .cv-wave-1 {
-  animation-duration: 10s;
-  animation-direction: reverse;
-}
-.cv[data-run] .cv-wave-2 {
-  animation-duration: 7s;
-}
-.cv[data-run] .cv-wave-3 {
-  animation-duration: 18s;
-  animation-direction: reverse;
-}
-@keyframes cv-slide {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-200px);
-  }
-}
-
-/* Life */
-.cv-cell {
-  fill: var(--cv-hi);
-  fill-opacity: 0.35;
-}
-.cv-cell-new {
-  fill: var(--cv-hi);
+.cv[data-run] .cv-bubble { animation: cv-rise 8s linear infinite; }
+@keyframes cv-rise {
+  from { transform: translateY(0); opacity: 0; }
+  15% { opacity: 0.7; }
+  to { transform: translateY(-190px); opacity: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cv .cv-pattern,
-  .cv .cv-wave {
+  .cv * {
     animation: none !important;
+    transition: none !important;
   }
 }
-
 /* ── The profile stage (pages/ProfilePage.tsx): a chosen cover carries the
    actions (top right) and a paper note card with the bio and details; the
    portrait overlaps its lower edge. ─────────────────────────────────────── */

@@ -31,3 +31,27 @@ test('Life: the same username always starts on the same board', () => {
   const alive = a.reduce((s, v) => s + v, 0);
   assert.ok(alive > 200 && alive < 420, `about 30% alive (${alive})`);
 });
+
+// The illustrated covers (client/src/components/profile/coverArt.ts): the same
+// username always draws the same scene, different names draw different ones,
+// and nothing is placed off the 800 × 200 canvas.
+test('cover scenes: seeded, varied and on the canvas', async () => {
+  const A = await import(path.join(__dirname, '..', 'client', 'src', 'components', 'profile', 'coverArt.ts'));
+  const scenes = ['dusk', 'ocean', 'skyline', 'forest', 'sakura', 'desert', 'teaHills', 'warli', 'cosmos', 'himalaya', 'backwaters', 'balloons', 'lotus', 'lighthouse', 'reef', 'aurora'];
+  for (const name of scenes) {
+    const a = JSON.stringify(A[name]('asha'));
+    assert.equal(a, JSON.stringify(A[name]('asha')), `${name}: same name, same scene`);
+    assert.notEqual(a, JSON.stringify(A[name]('ravi')), `${name}: different names differ`);
+    assert.ok(!/NaN|undefined|Infinity/.test(a), `${name}: no broken numbers`);
+  }
+  // Ridges scroll by half their width, so the two halves must match (seamless loop).
+  const nums = (d) => d.match(/-?\d+(\.\d+)?/g).map(Number);
+  for (let s = 1; s < 6; s++) {
+    const r = F.rng(s);
+    const p = nums(A.ridge(r, 120, 30, 200, 0.3));
+    const ys = p.filter((_, i) => i % 2 === 1).slice(1, -1);
+    const half = (ys.length - 1) / 2;
+    for (let i = 0; i < half; i += 7) assert.ok(Math.abs(ys[i] - ys[i + half]) < 0.2, 'ridge halves match');
+  }
+  for (const s of A.cosmos('asha').stars) assert.ok(s.x >= 0 && s.x <= 800 && s.y >= 0 && s.y <= 200);
+});

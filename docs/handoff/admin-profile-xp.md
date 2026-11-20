@@ -127,12 +127,12 @@ something pattern type or animated type, import from internet").
   (Conway's Game of Life; newly born cells in full colour; seeded by the
   username, `coverFrames.ts`). All in the profile's accent on paper tinted
   with it, so every theme, light and dark, gets its own look.
-- **Where the patterns come from:** Hero Patterns by Steve Schoger
-  (heropatterns.com), **CC BY 4.0**, taken from the `hero-patterns` npm
-  package (its code is MIT; the drawings are CC BY). Stored as
-  `client/public/covers/<id>.svg` and used as a CSS mask. The licence needs
-  credit: Edit profile shows "Patterns from Hero Patterns by Steve Schoger
-  (CC BY 4.0)" under the covers (`CoverCredit`). Keep that line.
+- **Covers since 2026-11-20:** seventeen covers that are our own artwork, drawn in
+  code from the profile's username (`client/src/components/profile/coverArt.ts`):
+  Plain, Dusk, Ocean, Sakura, Tea hills, Desert, Forest, Skyline, Cosmos, Warli,
+  Himalaya, Backwaters, Balloons, Lotus pond, Lighthouse, Reef and Aurora: paper-cut scenes, each with its own palette in
+  `covers.css` (artwork colours, the same in every theme). The Hero Patterns set (and its credit line) was
+  removed; old cover names still load and show the closest new cover.
 - **Motion:** a cover only moves while on screen and the tab is visible;
   reduced motion and the small swatches stay still.
 - **The profile stage** (owner's ask): a chosen cover is the top of the

@@ -335,8 +335,8 @@ test('profiles: the picture is saved with Edit profile', async () => {
   assert.equal(p.body.profile.avatar, pick);
 });
 
-test('profiles: the new pattern covers, and the old names still work', async () => {
-  for (const cover of ['topography', 'waves', 'life', 'lines-in-motion', 'nebula', 'plain']) {
+test('profiles: the drawn covers, and the old names still work', async () => {
+  for (const cover of ['dusk', 'sakura', 'warli', 'himalaya', 'reef', 'aurora', 'life', 'waves', 'topography', 'nebula', 'plain']) {
     ok(await call('PUT', '/api/profiles/me', c[FAY], { cover }), cover);
     assert.equal((await call('GET', `/api/profiles/${FAY}`, c[DAN])).body.profile.cover, cover);
   }
