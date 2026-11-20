@@ -782,3 +782,284 @@
     transition: none;
   }
 }
+
+/* ── The "Write it by hand" window: tabs, the printed QR card, upload ── */
+.hs-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+}
+.hs-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+.hs-tab .hs-way-art {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: transparent;
+}
+.hs-tab .hs-way-art svg {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+}
+.hs-tab:hover {
+  color: var(--color-text-primary);
+}
+.hs-tab.is-on {
+  background: var(--color-text-primary);
+  color: var(--color-bg-app);
+  font-weight: 600;
+}
+.hs-tab:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.hs-tabpanel {
+  margin-top: 18px;
+  min-height: 300px;
+}
+.hs-link-wait {
+  display: grid;
+  place-items: center;
+  min-height: 300px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+.hs-link-main {
+  grid-template-columns: 250px minmax(0, 1fr);
+  align-items: start;
+  gap: 24px;
+}
+.hs-qrcard {
+  width: 100%;
+  border-radius: 22px;
+  outline: 1px solid var(--color-border);
+}
+.hs-qrcard svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.hs-link-side {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.hs-live-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+.hs-live-status.is-opened {
+  border-color: color-mix(in oklab, var(--color-state-success) 55%, var(--color-border));
+}
+.hs-live-status.is-opened .hs-dot {
+  background: var(--color-state-success);
+}
+.hs-live-status.is-expired .hs-dot {
+  background: var(--color-state-error);
+  animation: none;
+}
+.hs-live-wait {
+  display: grid;
+  place-items: center;
+  height: 160px;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
+.hs-upload {
+  display: grid;
+  gap: 14px;
+}
+.hs-drop {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 34px 20px;
+  border: 1.5px dashed var(--color-border-strong);
+  border-radius: 18px;
+  color: var(--color-text-secondary);
+  font-size: 13.5px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+.hs-drop strong {
+  font-size: 16px;
+  color: var(--color-text-primary);
+}
+.hs-drop:hover,
+.hs-drop.is-over {
+  border-color: var(--color-text-primary);
+  background: color-mix(in oklab, var(--color-text-primary) 4%, transparent);
+}
+.hs-drop:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.hs-up-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hs-up-list li {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: #fff;
+}
+.hs-up-list img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+.hs-up-list span {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: rgb(20 20 20 / 0.72);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+}
+.hs-up-list button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgb(20 20 20 / 0.72);
+  color: #fff;
+  cursor: pointer;
+}
+.hs-up-send {
+  justify-self: end;
+}
+@media (max-width: 560px) {
+  .hs-tab span {
+    font-size: 12.5px;
+  }
+  .hs-tab .hs-way-art {
+    display: none;
+  }
+  .hs-link-main {
+    grid-template-columns: 1fr;
+  }
+  .hs-qrcard {
+    width: min(260px, 82%);
+    justify-self: center;
+  }
+}
+
+/* ── Inside the worked solution: members' handwritten pages ── */
+.hs-members {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ed-line, var(--color-border));
+}
+.hs-members-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+.hs-members-row {
+  display: flex;
+  gap: 12px;
+  margin: 0;
+  padding: 0 0 6px;
+  overflow-x: auto;
+  list-style: none;
+  scroll-snap-type: x proximity;
+}
+.hs-members-row > li {
+  flex: none;
+  width: 148px;
+  scroll-snap-align: start;
+}
+.hs-member {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-bg-app);
+  text-align: left;
+  cursor: zoom-in;
+  transition: border-color 150ms ease;
+}
+.hs-member:hover {
+  border-color: var(--color-border-strong);
+}
+.hs-member:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.hs-member-img {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #fff;
+}
+.hs-member-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+.hs-member-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.hs-member-votes {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-left: auto;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+}
+.hs-member-votes.is-on {
+  color: var(--color-state-error);
+}

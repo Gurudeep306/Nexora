@@ -521,3 +521,76 @@
     transition: none;
   }
 }
+
+/* ── Colour and size: one button in the bar, the choices in a menu ── */
+.hw-ink-btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 42px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  cursor: pointer;
+}
+.hw-ink-btn.is-on {
+  border-color: var(--color-text-primary);
+}
+.hw-ink-dot {
+  display: block;
+  border-radius: 999px;
+  box-shadow: 0 0 0 2px var(--color-bg-app), 0 0 0 3px color-mix(in oklab, var(--color-text-primary) 25%, transparent);
+}
+.hw-menu-left {
+  right: auto;
+  left: 0;
+}
+.hw-menu .hw-colors {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+  justify-items: center;
+}
+.hw-menu .hw-swatch {
+  width: 40px;
+  height: 40px;
+}
+.hw-sizes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.hw-sizes .hw-size {
+  display: grid;
+  gap: 6px;
+  justify-items: center;
+  width: auto;
+  height: auto;
+  padding: 10px 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.hw-sizes .hw-size.is-on {
+  border-color: var(--color-text-primary);
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+.hw-ink-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+/* The bar never squeezes: on narrow screens the actions take a second row. */
+.hw-bar {
+  row-gap: 6px;
+}
+.hw-tools {
+  flex-wrap: nowrap;
+}
+@media (max-width: 760px) {
+  .hw-tool {
+    width: 40px;
+    height: 40px;
+  }
+}

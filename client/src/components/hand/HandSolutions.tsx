@@ -3,9 +3,9 @@ import { createPortal } from 'react-dom'
 import { Avatar, Modal, useToast } from '@/components/ui'
 import { Icon } from '@/components/icon/Icon'
 import { cn } from '@/lib/utils'
-import { encodeQr, qrArt } from '@/components/profile/qr'
 import { timeAgo } from '@/gate/insights/format'
 import { handApi, shrinkPhoto, type HandKind, type HandMode, type HandSolution } from './api'
+import { handQrCard } from './qrCard'
 import './hand-panel.css'
 
 /*
@@ -178,6 +178,77 @@ export function HandSolutions({ kind, target, revealed, openSignal = 0 }: { kind
   )
 }
 
+/**
+ * Inside the worked solution: the handwritten solutions members have shared,
+ * as a strip of pages (most helpful first), each opening full screen. The
+ * worked solution is already showing, so nothing is given away.
+ */
+export function MembersHandwriting({ kind, target, onAddMine }: { kind: HandKind; target: string; onAddMine?: () => void }) {
+  const toast = useToast()
+  const [list, setList] = useState<HandSolution[] | null>(null)
+  const [viewing, setViewing] = useState<HandSolution | null>(null)
+  useEffect(() => {
+    let live = true
+    handApi
+      .list(kind, target)
+      .then((r) => live && setList(r.community))
+      .catch(() => live && setList([]))
+    return () => {
+      live = false
+    }
+  }, [kind, target])
+  const vote = async (s: HandSolution) => {
+    try {
+      const r = await handApi.vote(s.id, !s.voted)
+      const next = { ...s, votes: r.votes, voted: r.voted }
+      setList((cur) => (cur ?? []).map((x) => (x.id === s.id ? next : x)))
+      setViewing((v) => (v && v.id === s.id ? next : v))
+    } catch (e) {
+      toast.error('Could not save your vote', (e as Error).message)
+    }
+  }
+  if (!list) return null
+  return (
+    <section className="hs-members" aria-label="Handwritten solutions by members">
+      <div className="hs-members-head">
+        <p className="ed-label ed-muted m-0">Handwritten by members{list.length ? ` · ${list.length}` : ''}</p>
+        {onAddMine && (
+          <button type="button" className="qc-text-action" onClick={onAddMine}>
+            Add yours
+          </button>
+        )}
+      </div>
+      {list.length ? (
+        <ul className="hs-members-row">
+          {list.map((s) => {
+            const who = s.author?.displayName || s.author?.username || ''
+            return (
+              <li key={s.id}>
+                <button type="button" className="hs-member" onClick={() => setViewing(s)} aria-label={`Open ${who}'s handwritten solution, ${s.images.length} ${s.images.length === 1 ? 'page' : 'pages'}, ${s.votes} helpful`}>
+                  <span className="hs-member-img">
+                    <img src={s.images[0]} alt="" loading="lazy" />
+                    {s.images.length > 1 && <span className="hs-pages">{s.images.length} pages</span>}
+                  </span>
+                  <span className="hs-member-meta">
+                    <Avatar seed={s.author?.username ?? 'x'} avatar={s.author?.avatar ?? undefined} src={s.author?.avatarUrl ?? undefined} name={who} size="xs" ring={false} />
+                    <span className="truncate">{who}</span>
+                    <span className={cn('hs-member-votes', s.voted && 'is-on')}>
+                      <Icon name="heart" className="size-3" aria-hidden="true" /> {s.votes}
+                    </span>
+                  </span>
+                </button>
+              </li>
+            )
+          })}
+        </ul>
+      ) : (
+        <p className="hs-fine m-0">No one has shared handwritten working for this question yet. Yours could be the first.</p>
+      )}
+      {viewing && <Viewer s={viewing} onClose={() => setViewing(null)} onVisibility={() => {}} onCaption={async () => {}} onDelete={() => {}} onVote={() => void vote(viewing)} />}
+    </section>
+  )
+}
+
 function Card({ s, onOpen, onVote }: { s: HandSolution; onOpen: () => void; onVote?: () => void }) {
   const who = s.author ? s.author.displayName || s.author.username : null
   return (
@@ -220,104 +291,94 @@ function Card({ s, onOpen, onVote }: { s: HandSolution; onOpen: () => void; onVo
 
 /* ── Adding: tablet, phone or upload ─────────────────────────────────────── */
 
-type Step = { mode: HandMode; url: string; token: string; expiresAt: number } | null
+type Way = HandMode | 'upload'
+type Link = { token: string; url: string; expiresAt: number }
+
+const WAYS: { id: Way; label: string; short: string }[] = [
+  { id: 'pad', label: 'Write on a tablet', short: 'Tablet' },
+  { id: 'photo', label: 'Photo with your phone', short: 'Phone photo' },
+  { id: 'upload', label: 'Upload from this device', short: 'Upload' },
+]
 
 function AddDialog({ kind, target, onClose, onAdded }: { kind: HandKind; target: string; onClose: () => void; onAdded: () => void }) {
-  const toast = useToast()
-  const [step, setStep] = useState<Step>(null)
-  const [busy, setBusy] = useState<HandMode | 'upload' | null>(null)
-  const file = useRef<HTMLInputElement>(null)
+  // Phones and tablets start on the camera; computers on the tablet pad.
+  const [way, setWay] = useState<Way>(() => (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches ? 'photo' : 'pad'))
+  const [links, setLinks] = useState<Partial<Record<HandMode, Link>>>({})
+  const [error, setError] = useState<string | null>(null)
 
-  const open = async (mode: HandMode) => {
-    setBusy(mode)
-    try {
-      const r = await handApi.link(kind, target, mode)
-      setStep({ mode, token: r.token, url: `${window.location.origin}${r.path}`, expiresAt: r.expiresAt })
-    } catch (e) {
-      toast.error('Could not make a link', (e as Error).message)
-    } finally {
-      setBusy(null)
+  // The code is made as soon as its tab opens: no extra click.
+  useEffect(() => {
+    if (way === 'upload' || links[way]) return
+    let live = true
+    setError(null)
+    handApi
+      .link(kind, target, way)
+      .then((r) => live && setLinks((l) => ({ ...l, [way]: { token: r.token, url: `${window.location.origin}${r.path}`, expiresAt: r.expiresAt } })))
+      .catch((e: Error) => live && setError(e.message || 'Could not make a link. Try again.'))
+    return () => {
+      live = false
     }
-  }
+  }, [way, links, kind, target])
 
-  const upload = async (files: FileList | null) => {
-    if (!files?.length) return
-    setBusy('upload')
-    try {
-      const list = [...files].filter((f) => f.type.startsWith('image/')).slice(0, 8)
-      if (!list.length) throw new Error('Choose photos or scans (JPG, PNG or WebP).')
-      const images = []
-      for (const f of list) images.push(await shrinkPhoto(f))
-      await handApi.upload(kind, target, images)
-      onAdded()
-      onClose()
-    } catch (e) {
-      toast.error('Could not upload', (e as Error).message)
-    } finally {
-      setBusy(null)
-    }
-  }
+  const sent = useCallback(() => {
+    onAdded()
+    onClose()
+  }, [onAdded, onClose])
 
   return (
-    <Modal open onClose={onClose} size={step ? 'lg' : 'md'} title={step ? (step.mode === 'pad' ? 'Write on your tablet' : 'Take a photo with your phone') : 'Add handwritten work'}>
-      {!step ? (
-        <div className="hs-ways">
-          <button type="button" className="hs-way" onClick={() => void open('pad')} disabled={!!busy}>
-            <WayArt kind="pad" />
-            <span className="min-w-0">
-              <strong>Write on a tablet</strong>
-              <span>iPad, Android tablet or drawing pad. Pens, colours, paper and pages, with the question beside you.</span>
-            </span>
-            <Icon name="external" className="hs-way-go size-4" aria-hidden="true" />
+    <Modal open onClose={onClose} size="lg" title="Write it by hand" description="Your working is saved with this question. It stays private until you share it.">
+      <div className="hs-tabs" role="tablist" aria-label="How to add it">
+        {WAYS.map((w) => (
+          <button key={w.id} type="button" role="tab" aria-selected={way === w.id} className={cn('hs-tab', way === w.id && 'is-on')} onClick={() => setWay(w.id)}>
+            <WayArt kind={w.id} />
+            <span>{w.short}</span>
           </button>
-          <button type="button" className="hs-way" onClick={() => void open('photo')} disabled={!!busy}>
-            <WayArt kind="photo" />
-            <span className="min-w-0">
-              <strong>Photo with your phone</strong>
-              <span>Solved on paper? Scan the code and take a photo of each page.</span>
-            </span>
-            <Icon name="external" className="hs-way-go size-4" aria-hidden="true" />
-          </button>
-          <button type="button" className="hs-way" onClick={() => file.current?.click()} disabled={!!busy}>
-            <WayArt kind="upload" />
-            <span className="min-w-0">
-              <strong>{busy === 'upload' ? 'Uploading…' : 'Upload from this device'}</strong>
-              <span>Photos or scans you already have, up to 8 pages.</span>
-            </span>
-            <Icon name="upload" className="hs-way-go size-4" aria-hidden="true" />
-          </button>
-          <input ref={file} type="file" accept="image/*" multiple hidden onChange={(e) => (void upload(e.target.files), (e.target.value = ''))} />
-          <p className="hs-fine">Everything you add is private until you choose to share it.</p>
-        </div>
-      ) : (
-        <LinkStep step={step} onBack={() => setStep(null)} onSent={() => (onAdded(), onClose())} />
-      )}
+        ))}
+      </div>
+      <div className="hs-tabpanel" role="tabpanel" aria-label={WAYS.find((w) => w.id === way)!.label}>
+        {way === 'upload' ? (
+          <UploadStep kind={kind} target={target} onDone={sent} />
+        ) : error ? (
+          <p className="hs-status is-bad" role="alert">
+            <span className="hs-dot" aria-hidden="true" />
+            {error}
+          </p>
+        ) : links[way] ? (
+          <LinkStep key={way} mode={way} link={links[way]!} onSent={sent} onRenew={() => setLinks((l) => ({ ...l, [way]: undefined }))} />
+        ) : (
+          <div className="hs-link-wait" aria-busy="true">
+            Making your code…
+          </div>
+        )}
+      </div>
     </Modal>
   )
 }
 
-function LinkStep({ step, onBack, onSent }: { step: NonNullable<Step>; onBack: () => void; onSent: () => void }) {
+function LinkStep({ mode, link, onSent, onRenew }: { mode: HandMode; link: Link; onSent: () => void; onRenew: () => void }) {
   const toast = useToast()
   const [state, setState] = useState<'waiting' | 'opened' | 'sent' | 'expired'>('waiting')
   const [preview, setPreview] = useState<string | null>(null)
-  const [now, setNow] = useState(() => Date.now())
   const lastPreview = useRef(0)
-  const qr = useMemo(() => {
-    const { svg, size } = qrArt(encodeQr(step.url, 'M'), { quiet: 2 })
-    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" role="img" aria-label="QR code for the link">${svg}</svg>`
-  }, [step.url])
+  const device = mode === 'pad' ? 'tablet' : 'phone'
+  const until = new Date(link.expiresAt)
+  const [madeAt] = useState(() => Date.now())
+  const untilText = `${until.toDateString() === new Date(madeAt).toDateString() ? 'today' : 'tomorrow'} at ${until.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`
+  const card = useMemo(
+    () => handQrCard(link.url, { title: mode === 'pad' ? 'Scan with your tablet' : 'Scan with your phone', sub: `Works until ${untilText}` }),
+    [link.url, mode, untilText],
+  )
 
   useEffect(() => {
     let live = true
     const tick = async () => {
-      setNow(Date.now())
       try {
-        const r = await handApi.watch(step.token)
+        const r = await handApi.watch(link.token)
         if (!live) return
         setState(r.state)
         if (r.previewAt && r.previewAt !== lastPreview.current) {
           lastPreview.current = r.previewAt
-          const p = await handApi.preview(step.token)
+          const p = await handApi.preview(link.token)
           if (live && p.image) setPreview(p.image)
         }
         if (r.state === 'sent') onSent()
@@ -331,54 +392,131 @@ function LinkStep({ step, onBack, onSent }: { step: NonNullable<Step>; onBack: (
       live = false
       window.clearInterval(id)
     }
-  }, [step.token, onSent])
+  }, [link.token, onSent])
 
-  const until = new Date(step.expiresAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
-  const sameDay = new Date(step.expiresAt).toDateString() === new Date(now).toDateString()
-  const device = step.mode === 'pad' ? 'tablet' : 'phone'
-  const status =
-    state === 'expired'
-      ? 'This link has expired. Go back and make a new one.'
-      : state === 'opened'
-        ? step.mode === 'pad'
-          ? 'Your tablet is connected. Write, then tap Submit on it.'
-          : 'Your phone is connected. Take the photos, then tap Send.'
-        : `Waiting for your ${device}…`
+  const steps =
+    mode === 'pad'
+      ? ['Open the camera on your iPad or tablet and point it at the code.', 'The question is printed at the top of the page. Write your answer below it.', 'Tap Submit. It appears here straight away.']
+      : ['Open the camera on your phone and point it at the code.', 'Take a photo of each page of your working.', 'Tap Send. It appears here straight away.']
 
   return (
     <div className="hs-link">
       <div className="hs-link-main">
-        <div className="hs-qr" dangerouslySetInnerHTML={{ __html: qr }} />
-        <ol className="hs-steps">
-          <li>Open the camera on your {device} and point it at this code.</li>
-          <li>{step.mode === 'pad' ? 'Write your solution on the pad. The question is there too.' : 'Take a photo of each page of your working.'}</li>
-          <li>Tap {step.mode === 'pad' ? 'Submit' : 'Send'}. It appears here straight away.</li>
-        </ol>
+        <div className="hs-qrcard" dangerouslySetInnerHTML={{ __html: card }} />
+        <div className="hs-link-side">
+          <ol className="hs-steps">
+            {steps.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ol>
+          <div className={cn('hs-live-status', `is-${state}`)} role="status" aria-live="polite">
+            <span className="hs-dot" aria-hidden="true" />
+            <span>
+              {state === 'expired'
+                ? 'This code has expired.'
+                : state === 'opened'
+                  ? mode === 'pad'
+                    ? 'Tablet connected. Writing…'
+                    : 'Phone connected. Taking photos…'
+                  : `Waiting for your ${device}…`}
+            </span>
+            {state === 'expired' && (
+              <button type="button" className="hs-back" onClick={onRenew}>
+                Make a new code
+              </button>
+            )}
+          </div>
+          <div className="hs-url">
+            <input readOnly value={link.url} aria-label="The link, to open on another device" onFocus={(e) => e.currentTarget.select()} />
+            <button type="button" className="hs-copy" onClick={() => void navigator.clipboard?.writeText(link.url).then(() => toast.success('Link copied', `Open it on your ${device}.`))}>
+              Copy
+            </button>
+          </div>
+          <p className="hs-fine">No sign-in needed on the {device}. The code only adds work to this question, for you.</p>
+        </div>
       </div>
-      <div className="hs-url">
-        <input readOnly value={step.url} aria-label="The link" onFocus={(e) => e.currentTarget.select()} />
-        <button
-          type="button"
-          className="hs-copy"
-          onClick={() => void navigator.clipboard?.writeText(step.url).then(() => toast.success('Link copied', `Open it on your ${device}.`))}
-        >
-          Copy link
-        </button>
-      </div>
-      <p className={cn('hs-status', state === 'opened' && 'is-live', state === 'expired' && 'is-bad')} role="status" aria-live="polite">
-        <span className="hs-dot" aria-hidden="true" />
-        {status}
-        {state !== 'expired' && <span className="hs-mins">Link works until {until}{sameDay ? '' : ' tomorrow'}</span>}
-      </p>
-      {step.mode === 'pad' && preview && state === 'opened' && (
+      {mode === 'pad' && state === 'opened' && (
         <figure className="hs-live">
-          <img src={preview} alt="Live view of the page you are writing on the tablet" />
+          {preview ? <img src={preview} alt="Live view of the page you are writing on the tablet" /> : <div className="hs-live-wait">Your page appears here as you write.</div>}
           <figcaption>Live view from your tablet</figcaption>
         </figure>
       )}
-      <button type="button" className="hs-back" onClick={onBack}>
-        ← Other ways
+    </div>
+  )
+}
+
+function UploadStep({ kind, target, onDone }: { kind: HandKind; target: string; onDone: () => void }) {
+  const toast = useToast()
+  const [files, setFiles] = useState<{ id: number; file: File; url: string }[]>([])
+  const [busy, setBusy] = useState(false)
+  const [over, setOver] = useState(false)
+  const input = useRef<HTMLInputElement>(null)
+  const seq = useRef(0)
+  useEffect(() => () => files.forEach((f) => URL.revokeObjectURL(f.url)), []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const add = (list: FileList | null) => {
+    if (!list) return
+    const next = [...list].filter((f) => f.type.startsWith('image/')).slice(0, 12 - files.length)
+    setFiles((cur) => [...cur, ...next.map((file) => ({ id: ++seq.current, file, url: URL.createObjectURL(file) }))])
+  }
+  const send = async () => {
+    setBusy(true)
+    try {
+      const images = []
+      for (const f of files) images.push(await shrinkPhoto(f.file))
+      await handApi.upload(kind, target, images)
+      onDone()
+    } catch (e) {
+      toast.error('Could not upload', (e as Error).message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div className="hs-upload">
+      <button
+        type="button"
+        className={cn('hs-drop', over && 'is-over')}
+        onClick={() => input.current?.click()}
+        onDragOver={(e) => (e.preventDefault(), setOver(true))}
+        onDragLeave={() => setOver(false)}
+        onDrop={(e) => {
+          e.preventDefault()
+          setOver(false)
+          add(e.dataTransfer.files)
+        }}
+      >
+        <WayArt kind="upload" />
+        <strong>Drop photos or scans here</strong>
+        <span>or click to choose. JPG, PNG or WebP, up to 12 pages, in page order.</span>
       </button>
+      <input ref={input} type="file" accept="image/*" multiple hidden onChange={(e) => (add(e.target.files), (e.target.value = ''))} />
+      {files.length > 0 && (
+        <>
+          <ol className="hs-up-list">
+            {files.map((f, i) => (
+              <li key={f.id}>
+                <img src={f.url} alt={`Page ${i + 1}`} />
+                <span>Page {i + 1}</span>
+                <button
+                  type="button"
+                  aria-label={`Remove page ${i + 1}`}
+                  onClick={() => {
+                    URL.revokeObjectURL(f.url)
+                    setFiles((cur) => cur.filter((x) => x.id !== f.id))
+                  }}
+                >
+                  <Icon name="x" className="size-3.5" aria-hidden="true" />
+                </button>
+              </li>
+            ))}
+          </ol>
+          <button type="button" className="hs-add hs-up-send" onClick={() => void send()} disabled={busy}>
+            {busy ? 'Uploading…' : `Upload ${files.length} ${files.length === 1 ? 'page' : 'pages'}`}
+          </button>
+        </>
+      )}
     </div>
   )
 }
@@ -417,7 +555,7 @@ function WayArt({ kind }: { kind: 'pad' | 'photo' | 'upload' }) {
 type Pan = { s: number; x: number; y: number }
 const FIT: Pan = { s: 1, x: 0, y: 0 }
 
-function Viewer({
+export function Viewer({
   s,
   onClose,
   onVisibility,
