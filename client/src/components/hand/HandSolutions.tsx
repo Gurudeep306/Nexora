@@ -4,8 +4,8 @@ import { Avatar, Modal, useToast } from '@/components/ui'
 import { Icon } from '@/components/icon/Icon'
 import { cn } from '@/lib/utils'
 import { timeAgo } from '@/gate/insights/format'
-import { handApi, shrinkPhoto, type HandKind, type HandMode, type HandSolution } from './api'
-import { handQrCard } from './qrCard'
+import { getLinks, handApi, prefetchOn, shrinkPhoto, type HandKind, type HandLinks, type HandMode, type HandSolution } from './api'
+import { handQrCard, handQrPlaceholder, themeQrColors } from './qrCard'
 import './hand-panel.css'
 
 /*
@@ -96,13 +96,13 @@ export function HandSolutions({ kind, target, revealed, openSignal = 0 }: { kind
           </h3>
           <p className="hs-sub">Solve it on paper or a tablet and keep your working with the question.</p>
         </div>
-        <button type="button" className="hs-add" onClick={() => setAdding(true)}>
+        <button type="button" className="hs-add" onClick={() => setAdding(true)} {...prefetchOn(kind, target)}>
           <Icon name="edit" className="size-4" aria-hidden="true" /> Add handwritten work
         </button>
       </header>
 
       {loaded && mine.length === 0 && shared.length === 0 && (
-        <button type="button" className="hs-empty" onClick={() => setAdding(true)}>
+        <button type="button" className="hs-empty" onClick={() => setAdding(true)} {...prefetchOn(kind, target)}>
           <span className="hs-empty-art" aria-hidden="true">
             <svg viewBox="0 0 64 48">
               <rect x="6" y="4" width="34" height="40" rx="4" />
@@ -213,7 +213,7 @@ export function MembersHandwriting({ kind, target, onAddMine }: { kind: HandKind
       <div className="hs-members-head">
         <p className="ed-label ed-muted m-0">Handwritten by members{list.length ? ` · ${list.length}` : ''}</p>
         {onAddMine && (
-          <button type="button" className="qc-text-action" onClick={onAddMine}>
+          <button type="button" className="qc-text-action" onClick={onAddMine} {...prefetchOn(kind, target)}>
             Add yours
           </button>
         )}
@@ -303,22 +303,28 @@ const WAYS: { id: Way; label: string; short: string }[] = [
 function AddDialog({ kind, target, onClose, onAdded }: { kind: HandKind; target: string; onClose: () => void; onAdded: () => void }) {
   // Phones and tablets start on the camera; computers on the tablet pad.
   const [way, setWay] = useState<Way>(() => (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches ? 'photo' : 'pad'))
-  const [links, setLinks] = useState<Partial<Record<HandMode, Link>>>({})
+  const [links, setLinks] = useState<HandLinks | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [round, setRound] = useState(0)
+  // Read once per window: the theme's colours for the card.
+  const colors = useMemo(() => themeQrColors(), [])
 
-  // The code is made as soon as its tab opens: no extra click.
+  // Both codes come from one request, usually made already when the pointer
+  // reached the button (prefetchLinks), so the card is filled at once.
   useEffect(() => {
-    if (way === 'upload' || links[way]) return
     let live = true
-    setError(null)
-    handApi
-      .link(kind, target, way)
-      .then((r) => live && setLinks((l) => ({ ...l, [way]: { token: r.token, url: `${window.location.origin}${r.path}`, expiresAt: r.expiresAt } })))
-      .catch((e: Error) => live && setError(e.message || 'Could not make a link. Try again.'))
+    getLinks(kind, target, round > 0)
+      .then((l) => live && (setLinks(l), setError(null)))
+      .catch((e: Error) => live && setError(e.message || 'Could not make a code. Try again.'))
     return () => {
       live = false
     }
-  }, [way, links, kind, target])
+  }, [kind, target, round])
+  const linkFor = (mode: HandMode): Link | null => (links ? { token: links[mode].token, url: `${window.location.origin}${links[mode].path}`, expiresAt: links[mode].expiresAt } : null)
+  const renew = () => {
+    setLinks(null)
+    setRound((n) => n + 1)
+  }
 
   const sent = useCallback(() => {
     onAdded()
@@ -342,12 +348,17 @@ function AddDialog({ kind, target, onClose, onAdded }: { kind: HandKind; target:
           <p className="hs-status is-bad" role="alert">
             <span className="hs-dot" aria-hidden="true" />
             {error}
+            <button type="button" className="hs-back" onClick={renew}>
+              Try again
+            </button>
           </p>
-        ) : links[way] ? (
-          <LinkStep key={way} mode={way} link={links[way]!} onSent={sent} onRenew={() => setLinks((l) => ({ ...l, [way]: undefined }))} />
+        ) : links ? (
+          <LinkStep key={`${way}:${links[way].token}`} mode={way} link={linkFor(way)!} colors={colors} onSent={sent} onRenew={renew} />
         ) : (
-          <div className="hs-link-wait" aria-busy="true">
-            Making your code…
+          <div className="hs-link" aria-busy="true">
+            <div className="hs-link-main">
+              <div className="hs-qrcard is-waiting" dangerouslySetInnerHTML={{ __html: handQrPlaceholder(colors) }} />
+            </div>
           </div>
         )}
       </div>
@@ -355,7 +366,7 @@ function AddDialog({ kind, target, onClose, onAdded }: { kind: HandKind; target:
   )
 }
 
-function LinkStep({ mode, link, onSent, onRenew }: { mode: HandMode; link: Link; onSent: () => void; onRenew: () => void }) {
+function LinkStep({ mode, link, colors, onSent, onRenew }: { mode: HandMode; link: Link; colors: ReturnType<typeof themeQrColors>; onSent: () => void; onRenew: () => void }) {
   const toast = useToast()
   const [state, setState] = useState<'waiting' | 'opened' | 'sent' | 'expired'>('waiting')
   const [preview, setPreview] = useState<string | null>(null)
@@ -365,8 +376,8 @@ function LinkStep({ mode, link, onSent, onRenew }: { mode: HandMode; link: Link;
   const [madeAt] = useState(() => Date.now())
   const untilText = `${until.toDateString() === new Date(madeAt).toDateString() ? 'today' : 'tomorrow'} at ${until.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`
   const card = useMemo(
-    () => handQrCard(link.url, { title: mode === 'pad' ? 'Scan with your tablet' : 'Scan with your phone', sub: `Works until ${untilText}` }),
-    [link.url, mode, untilText],
+    () => handQrCard(link.url, { title: mode === 'pad' ? 'Scan with your tablet' : 'Scan with your phone', sub: `Works until ${untilText}`, colors }),
+    [link.url, mode, untilText, colors],
   )
 
   useEffect(() => {

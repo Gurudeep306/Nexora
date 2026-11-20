@@ -1063,3 +1063,20 @@
 .hs-member-votes.is-on {
   color: var(--color-state-error);
 }
+
+/* The waiting card: the mark breathes until the code is ready (no motion when reduced). */
+.hs-qrcard.is-waiting svg > svg {
+  animation: hs-wait 1.4s ease-in-out infinite;
+  transform-origin: 170px 170px;
+  transform-box: view-box;
+}
+@keyframes hs-wait {
+  50% {
+    opacity: 0.45;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hs-qrcard.is-waiting svg > svg {
+    animation: none;
+  }
+}

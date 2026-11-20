@@ -15,7 +15,7 @@ const express = require("express");
 const crypto = require("crypto");
 const fs = require("fs");
 const path = require("path");
-const { all, get, run } = require("../db");
+const { all, get, run, runBatch } = require("../db");
 const { requireAuthenticatedUser } = require("../middleware/auth");
 const { hasAnyAdminPerm } = require("../authz/permissions");
 const { persistUpload } = require("../upload-store");
@@ -226,6 +226,14 @@ function createHandRouter() {
   const router = express.Router();
   const auth = requireAuthenticatedUser;
   const ready = ensureTables().catch((e) => console.error("[hand] table init failed:", e.message));
+  // Load the question bank now, not on the first click.
+  setImmediate(() => {
+    try {
+      loadGateBank();
+    } catch {
+      /* loaded on first use instead */
+    }
+  });
   router.use("/api/hand", (_req, _res, next) => ready.then(() => next(), next));
   const userLimit = limiter(40, 60 * 1000, (req) => req.sessionUser?.username || req.ip);
   const deviceLimit = limiter(30, 60 * 1000, (req) => String(req.params.token || ""));
@@ -234,20 +242,29 @@ function createHandRouter() {
   /* ── The member, signed in ── */
 
   // A one-time link for a tablet (pad) or a phone camera (photo).
+  // One-time links for a tablet (pad) and/or a phone camera (photo). The
+  // window asks for both at once (modes), so switching tabs is instant; the
+  // page asks before the click (on hover/press), so the code is ready when the
+  // window opens. One batched write; clearing old links never delays it.
   router.post("/api/hand/links", auth, userLimit, wrap(async (req, res) => {
-    const { kind, target, mode } = req.body || {};
-    if (!MODES.has(mode)) bad("Unknown mode");
-    const info = targetInfo(kind, target);
-    if (!info) bad("Unknown question", 404);
+    const b = req.body || {};
+    const modes = Array.isArray(b.modes) ? [...new Set(b.modes)] : [b.mode];
+    if (!modes.length || modes.length > 2 || !modes.every((m) => MODES.has(m))) bad("Unknown mode");
+    const { kind, target } = b;
+    if (!targetInfo(kind, target)) bad("Unknown question", 404);
+    const user = req.sessionUser.username;
     const now = Date.now();
-    // Old links of this member are cleared as new ones are made.
-    await run("DELETE FROM hand_links WHERE username=? AND expires_at < ?", [req.sessionUser.username, now]);
-    const token = crypto.randomBytes(24).toString("base64url");
-    await run(
-      `INSERT INTO hand_links(token, username, kind, target, mode, created_at, expires_at) VALUES(?,?,?,?,?,?,?)`,
-      [token, req.sessionUser.username, kind, target, mode, now, now + LINK_TTL_MS],
-    );
-    res.json({ ok: true, token, path: `/${mode === "pad" ? "pad" : "snap"}/${token}`, expiresAt: now + LINK_TTL_MS });
+    const links = {};
+    const rows = modes.map((mode) => {
+      // 128 random bits: short, so the QR code has fewer modules and scans fast.
+      const token = crypto.randomBytes(16).toString("base64url");
+      links[mode] = { token, path: `/${mode === "pad" ? "pad" : "snap"}/${token}`, expiresAt: now + LINK_TTL_MS };
+      return [`INSERT INTO hand_links(token, username, kind, target, mode, created_at, expires_at) VALUES(?,?,?,?,?,?,?)`, [token, user, kind, target, mode, now, now + LINK_TTL_MS]];
+    });
+    await (rows.length > 1 ? runBatch(rows) : run(rows[0][0], rows[0][1]));
+    res.json({ ok: true, links, ...links[modes[0]] });
+    // Expired links are cleared after the answer is sent.
+    run("DELETE FROM hand_links WHERE username=? AND expires_at < ?", [user, now]).catch(() => {});
   }));
 
   // The computer waits on this while the tablet or phone works.

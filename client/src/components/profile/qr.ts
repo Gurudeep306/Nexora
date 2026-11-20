@@ -7,10 +7,11 @@
  * Returns a square matrix of booleans (true = dark module).
  */
 
-export type QrLevel = 'M' | 'H'
+export type QrLevel = 'M' | 'Q' | 'H'
 // Per version 1–10 (index 0 unused), from the QR specification.
 const ECC: Record<QrLevel, { perBlock: number[]; blocks: number[]; format: number }> = {
   M: { perBlock: [-1, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26], blocks: [-1, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5], format: 0 },
+  Q: { perBlock: [-1, 13, 22, 18, 26, 18, 24, 18, 22, 20, 24], blocks: [-1, 1, 1, 2, 2, 4, 4, 6, 6, 8, 8], format: 3 },
   H: { perBlock: [-1, 17, 28, 22, 16, 22, 28, 26, 26, 24, 28], blocks: [-1, 1, 1, 2, 4, 4, 4, 5, 6, 8, 8], format: 2 },
 }
 
@@ -263,7 +264,7 @@ export function qrPath(matrix: boolean[][], quiet = 2): { d: string; size: numbe
  * (viewBox in modules, quiet zone included); `centre` is the side of the
  * cleared square in modules (0 for none). Use level H when there's a centre.
  */
-export function qrArt(matrix: boolean[][], { quiet = 3, ink = '#1C1B19', paper = '#FFFFFF', centre = 0, mark = '' } = {}): { svg: string; size: number } {
+export function qrArt(matrix: boolean[][], { quiet = 3, ink = '#1C1B19', paper = '#FFFFFF', centre = 0, mark = '', eye: eyeInk = '' } = {}): { svg: string; size: number } {
   const n = matrix.length
   const size = n + quiet * 2
   const c0 = Math.floor((n - centre) / 2)
@@ -285,7 +286,7 @@ export function qrArt(matrix: boolean[][], { quiet = 3, ink = '#1C1B19', paper =
   const eye = (fx: number, fy: number) => {
     const x = fx + quiet
     const y = fy + quiet
-    return `<rect x="${x + 0.5}" y="${y + 0.5}" width="6" height="6" rx="1.9" fill="none" stroke="${ink}" stroke-width="1"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3" rx="0.9" fill="${ink}"/>`
+    return `<rect x="${x + 0.5}" y="${y + 0.5}" width="6" height="6" rx="1.9" fill="none" stroke="${ink}" stroke-width="1"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3" rx="0.9" fill="${eyeInk || ink}"/>`
   }
   const centreArt =
     centre > 0
