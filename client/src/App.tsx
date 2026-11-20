@@ -6,10 +6,15 @@ import { MarkLoader } from '@/components/brand/Logo'
 import { useAuth } from '@/context/AuthContext'
 import { idlePrefetchCommonRoutes, pageLoaders } from '@/routes'
 import { SiteGate } from '@/components/site/SiteGate'
+import { CallRinger } from '@/components/live/CallRinger'
 import { AdminRoute, AuthorRoute, HiveRoute } from '@/components/admin/AdminRoute'
 
 const PadPage = lazy(() => import('@/pages/hand/PadPage'))
 const SnapPage = lazy(() => import('@/pages/hand/SnapPage'))
+// Live: study rooms and calls. The room and the tablet page are full screen.
+const LiveLobbyPage = lazy(() => import('@/pages/live/LiveLobbyPage'))
+const LiveRoomPage = lazy(() => import('@/pages/live/LiveRoomPage'))
+const LiveDevicePage = lazy(() => import('@/pages/live/LiveDevicePage'))
 const AuthPage = lazy(pageLoaders.AuthPage)
 const WelcomePage = lazy(pageLoaders.WelcomePage)
 const LandingPage = lazy(pageLoaders.LandingPage)
@@ -103,12 +108,16 @@ export default function App() {
   return (
     <BrowserRouter>
       <SiteGate>
+      {/* Incoming Live calls ring on any page. */}
+      <CallRinger />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
           {/* Handwriting on a tablet or a phone: opened from a one-time link, no sign-in. */}
           <Route path="/pad/:token" element={<PadPage />} />
           <Route path="/snap/:token" element={<SnapPage />} />
+          <Route path="/live/d/:token" element={<LiveDevicePage />} />
+          <Route path="/live/:code" element={<RequireAuth><LiveRoomPage /></RequireAuth>} />
           <Route path="/welcome" element={<RequireAuth><WelcomePage /></RequireAuth>} />
           <Route path="/" element={<LandingPage />} />
           {VizLab && <Route path="/viz-lab" element={<VizLab />} />}
@@ -168,6 +177,7 @@ export default function App() {
             <Route path="/gate/cbt" element={<GateCbtPage />} />
             <Route path="/gate/cbt/:paperId" element={<GateCbtPage />} />
             <Route path="/social" element={<SocialPage />} />
+            <Route path="/live" element={<LiveLobbyPage />} />
             <Route path="/social/post/:id" element={<SocialPostPage />} />
             <Route path="/social/tag/:tag" element={<SocialTagPage />} />
             <Route path="/submissions" element={<SubmissionsPage />} />

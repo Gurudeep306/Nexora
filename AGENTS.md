@@ -212,6 +212,15 @@ from a range, since test files run in parallel and a clash fails the run.
   for one member and one question for 12 hours and can only add solutions,
   so `/pad`, `/snap` and `/api/hand/device/*` pass private mode. Private until
   shared; shared ones show to others only after they answer, most helpful first.
+- **Live** (`/live`; server `src/routes/live-rooms.js` and `src/live/*`, client
+  `client/src/live/`): study rooms and calls. Video or voice, several screens
+  at once, a whiteboard, a tablet joined by QR (`/live/d/<token>`, no sign-in,
+  passes private mode), chat, hands, reactions, a waiting room and host
+  controls; calls ring friends from Messages. Media goes through LiveKit when
+  `LIVEKIT_URL`/`_API_KEY`/`_API_SECRET` are set (`deploy/livekit/README.md`),
+  otherwise browsers connect directly (5 devices). In the direct mode the
+  newcomer always starts each connection; keep that, or two offers clash and
+  Chrome's ICE stalls. `routes/live.js` is the older LiveClass API, unrelated.
 - **Search** uses one field style, the "ledger line" (`styles/search.css`,
   `SearchInput`, `SearchCombobox`; `variant="bar"` is the top bar's pill): a
   hairline, an italic serif hint, an ink line drawn on focus. Keep text around
