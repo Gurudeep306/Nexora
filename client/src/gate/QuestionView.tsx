@@ -24,6 +24,7 @@ import { SimilarStrip } from './practice/SimilarStrip'
 
 const GateSolution = lazy(() => import('./solution/GateSolution'))
 const HandSolutions = lazy(() => import('@/components/hand/HandSolutions').then((m) => ({ default: m.HandSolutions })))
+const ExplainVideos = lazy(() => import('@/explain/ExplainVideos').then((m) => ({ default: m.ExplainVideos })))
 const MembersHandwriting = lazy(() => import('@/components/hand/HandSolutions').then((m) => ({ default: m.MembersHandwriting })))
 
 /* ── Small pieces ───────────────────────────────────────────────────────── */
@@ -531,6 +532,7 @@ export function QuestionView({
       {insights && mode !== 'test' && (
         <Suspense fallback={null}>
           <HandSolutions kind="gate" target={q.id} revealed={answered} openSignal={handSignal} />
+          <ExplainVideos kind="gate" target={q.id} about={`GATE ${q.year} · Q${q.number ?? ''}`} revealed={answered} />
         </Suspense>
       )}
 

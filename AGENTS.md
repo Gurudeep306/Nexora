@@ -221,6 +221,15 @@ from a range, since test files run in parallel and a clash fails the run.
   otherwise browsers connect directly (5 devices). In the direct mode the
   newcomer always starts each connection; keep that, or two offers clash and
   Chrome's ICE stalls. `routes/live.js` is the older LiveClass API, unrelated.
+- **Video explanations** (`src/routes/explain.js`, `client/src/explain/`): under
+  GATE questions and notes lessons, members record an explanation in the
+  browser (camera, screen, screen with a face bubble, or the whiteboard),
+  trim it, mark chapters and upload it in resumable pieces; others watch it,
+  mark it helpful or report it (three reports hide it). Files live on the
+  server's disk (`EXPLAIN_DIR`, default `data/explain`, git-ignored), never in
+  the database; quotas `EXPLAIN_MAX_MB` (300), `EXPLAIN_USER_MB` (2048),
+  `EXPLAIN_TOTAL_GB` (8). Trim and chapters are numbers the player honours:
+  nothing is re-encoded. On a question, videos wait until it has been tried.
 - **Search** uses one field style, the "ledger line" (`styles/search.css`,
   `SearchInput`, `SearchCombobox`; `variant="bar"` is the top bar's pill): a
   hairline, an italic serif hint, an ink line drawn on focus. Keep text around

@@ -14,6 +14,7 @@ import { cn } from '@/lib/utils'
 import { useApi } from '@/hooks/useApi'
 import { highlightsApi, type Highlight } from '@/gate/notes/highlights'
 import { handApi, type HandSolution } from '@/components/hand/api'
+import { MyVideos } from '@/explain/MyVideos'
 import { gateApi, type Collection, type NoteEntry, type QuestionProgress } from '@/gate/api'
 import { GateShell } from '@/gate/shell/GateShell'
 import { useGateExam } from '@/gate/shell/examStore'
@@ -25,11 +26,11 @@ import { QuestionRow } from '@/gate/insights/QuestionRow'
 import { snippet, timeAgo } from '@/gate/insights/format'
 import { shortSubject } from '@/gate/insights/subjects'
 
-type Tab = 'bookmarks' | 'notes' | 'highlights' | 'handwritten' | 'mistakes'
+type Tab = 'bookmarks' | 'notes' | 'highlights' | 'handwritten' | 'videos' | 'mistakes'
 
 export default function GateNotebookPage() {
   const [params, setParams] = useSearchParams()
-  const tab = (['bookmarks', 'notes', 'highlights', 'handwritten', 'mistakes'].includes(params.get('tab') ?? '') ? params.get('tab') : 'bookmarks') as Tab
+  const tab = (['bookmarks', 'notes', 'highlights', 'handwritten', 'videos', 'mistakes'].includes(params.get('tab') ?? '') ? params.get('tab') : 'bookmarks') as Tab
   const progress = useGateProgressAll()
   const notes = useApi(() => gateApi.notes().then((r) => r.notes), [], { cacheKey: 'gate:me:notes' })
   const highlights = useApi(() => highlightsApi.list(), [], { cacheKey: 'gate:me:highlights' })
@@ -61,6 +62,7 @@ export default function GateNotebookPage() {
           { id: 'notes', label: 'Notes', icon: <Icon name="edit" className="size-4" />, badge: notes.data?.length || undefined },
           { id: 'highlights', label: 'Highlights', icon: <Icon name="book" className="size-4" />, badge: highlights.data?.length || undefined },
           { id: 'handwritten', label: 'Handwritten', icon: <Icon name="image" className="size-4" />, badge: handwritten.data?.length || undefined },
+          { id: 'videos', label: 'Videos', icon: <Icon name="play" className="size-4" /> },
           { id: 'mistakes', label: 'Mistakes', icon: <Icon name="x-circle" className="size-4" />, badge: mistakes.length || undefined },
         ]}
       />
@@ -68,6 +70,7 @@ export default function GateNotebookPage() {
       {tab === 'notes' && <Notes notes={notes.data ?? []} loading={notes.loading && !notes.data} />}
       {tab === 'highlights' && <Highlights list={highlights.data ?? []} loading={highlights.loading && !highlights.data} />}
       {tab === 'handwritten' && <Handwritten list={handwritten.data ?? []} loading={handwritten.loading && !handwritten.data} />}
+      {tab === 'videos' && <MyVideos />}
       {tab === 'mistakes' && <Mistakes rows={mistakes} loading={progress.loading && !progress.data} />}
     </GateShell>
   )

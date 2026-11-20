@@ -6129,6 +6129,8 @@ app.use(createGateNotesRouter());
 app.use(require("./routes/hand").createHandRouter());
 // Live: study rooms and calls (video, voice, screens, tablets). The socket side
 // is attached once socket.io is up (liveRooms.signal, below).
+// Video explanations on questions and lessons (files on disk, data/explain).
+app.use(require("./routes/explain").createExplainRouter());
 const liveRooms = {};
 app.use(require("./routes/live-rooms").createLiveRoomsRouter({ realtime, live: liveRooms }));
 
