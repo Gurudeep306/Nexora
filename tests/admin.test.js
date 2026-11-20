@@ -1,6 +1,7 @@
 // Owner / admin system: roles + permissions, owner protections, bans,
 // private mode ("coming soon" lockdown), feature flags, reports and the audit
 // log (src/authz/*, src/routes/admin.js).
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -54,7 +55,7 @@ const settle = () => new Promise((r) => setTimeout(r, 50));
 const c = {}; // cookies by user
 
 async function startServer() {
-  const port = 26000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

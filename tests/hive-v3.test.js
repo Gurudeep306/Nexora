@@ -3,13 +3,14 @@
 // Streamed chat replies, side-by-side answers, machine tasks with command
 // approvals, the terminal, checkpoints + restore, the GitHub access doctor,
 // cached-token accounting and the idea launchpad.
+const { freePort } = require('./helpers/free-port');
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const { spawn } = require("node:child_process");
 const path = require("node:path");
 
-const PORT = 3400 + Math.floor(Math.random() * 400);
-const base = `http://localhost:${PORT}`;
+let PORT = 0;
+let base = '';
 let demo;
 let cookie = "";
 
@@ -38,6 +39,8 @@ async function waitTask(id, { approve = false } = {}) {
 }
 
 test.before(async () => {
+  PORT = await freePort();
+  base = `http://localhost:${PORT}`;
   demo = spawn(process.execPath, [path.join(__dirname, "..", "scripts", "hive-demo.js")], {
     env: { ...process.env, PORT: String(PORT), DEMO_POLICY: "ask" },
     stdio: ["ignore", "pipe", "pipe"],

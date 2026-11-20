@@ -6,6 +6,7 @@
 //   • the session read cache is invalidated at once by sign-out, role change,
 //     ban and force-sign-out (the admin features rely on it);
 //   • the in-memory catalog answers /api/problems exactly like the SQL did.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -49,7 +50,7 @@ function withDb(fn) {
 const c = {};
 
 test.before(async () => {
-  const port = 28000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

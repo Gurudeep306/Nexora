@@ -1,6 +1,7 @@
 // GATE learning platform (src/routes/gate-me.js, contract: client/src/gate/api.ts):
 // server-side grading, spaced repetition, per-user progress and isolation,
 // tests (no answer leak before submit), daily challenge, leaderboard, stats.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -64,7 +65,7 @@ const stamp = Date.now().toString(36);
 let alice, bob;
 
 test.before(async () => {
-  const port = 25000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

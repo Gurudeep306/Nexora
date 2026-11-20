@@ -1,6 +1,7 @@
 // Importing a statement's samples as testcases must be one request, must never
 // duplicate a case, and must survive being fired twice (auto-import racing a
 // click on "Import all").
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -23,7 +24,7 @@ const call = async (method, p, ck, body) => {
 };
 
 test.before(async () => {
-  const port = 26000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   serverLog = '';
   proc = spawn(process.execPath, ['src/server.js'], {

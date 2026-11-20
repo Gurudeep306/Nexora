@@ -1,3 +1,4 @@
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -25,7 +26,7 @@ async function waitForServer(url, timeoutMs = 50000) {
 }
 
 test.before(async () => {
-  const port = 21000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   baseUrl = `http://127.0.0.1:${port}`;
   serverLog = '';
   serverProc = spawn(process.execPath, ['src/server.js'], {

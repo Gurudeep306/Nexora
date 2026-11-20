@@ -3,14 +3,15 @@
 // Streamable HTTP server here: JSON replies, SSE replies and a session id),
 // trying its tools, the Token Steward's audit / one-click fixes / prompt plan,
 // and the Steward's chat compaction.
+const { freePort } = require('./helpers/free-port');
 const test = require("node:test");
 const assert = require("node:assert/strict");
 const http = require("node:http");
 const { spawn } = require("node:child_process");
 const path = require("node:path");
 
-const PORT = 3800 + Math.floor(Math.random() * 400);
-const base = `http://localhost:${PORT}`;
+let PORT = 0;
+let base = '';
 let demo;
 let mcp;
 let mcpUrl;
@@ -84,6 +85,8 @@ function startMcp() {
 }
 
 test.before(async () => {
+  PORT = await freePort();
+  base = `http://localhost:${PORT}`;
   await startMcp();
   demo = spawn(process.execPath, [path.join(__dirname, "..", "scripts", "hive-demo.js")], {
     env: { ...process.env, PORT: String(PORT), HIVE_ALLOW_PRIVATE_TOOLS: "1" },

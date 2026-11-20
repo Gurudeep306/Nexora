@@ -1,5 +1,6 @@
 // Security regression tests for src/middleware/authz.js: users must not be
 // able to read other people's DMs or act under someone else's name.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -37,7 +38,7 @@ let alice, bob, eve;
 const A = `al${Date.now().toString(36)}`, B = `bo${Date.now().toString(36)}`, E = `ev${Date.now().toString(36)}`;
 
 test.before(async () => {
-  const port = 22000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   serverLog = '';
   proc = spawn(process.execPath, ['src/server.js'], {

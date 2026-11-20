@@ -1,6 +1,7 @@
 // Admin → Staff access (src/authz/sections.js, /api/admin/staff-access):
 // per staff member and Admin section, hidden / see only / change, enforced on
 // the server; only the owner, and admins the owner allows, can set it.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -54,7 +55,7 @@ const settle = () => new Promise((r) => setTimeout(r, 50));
 const c = {}; // cookies by user
 
 async function startServer() {
-  const port = 29000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

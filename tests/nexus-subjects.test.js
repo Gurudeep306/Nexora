@@ -1,5 +1,6 @@
 // The Nexus across every subject: outline integrity, layout, progress maths,
 // and the /api/nexus?subject= API (incl. the cache dropping on study writes).
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -144,7 +145,7 @@ const call = async (method, p, body) => {
 };
 
 test.before(async () => {
-  const port = 27000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

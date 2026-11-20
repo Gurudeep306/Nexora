@@ -1,6 +1,7 @@
 // Coding analysis: what an Accepted earns ("+XP" and the level before and
 // after), your record on one problem, verdicts week by week, and the level
 // rules the Profile explains. Each user only ever sees their own numbers.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -49,7 +50,7 @@ const stamp = Date.now().toString(36);
 let alice, bob, pid;
 
 test.before(async () => {
-  const port = 26000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

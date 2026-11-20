@@ -1,6 +1,7 @@
 // Social network + profiles (src/routes/social.js): posts, likes, comments,
 // reposts, follows, notifications, blocking, muting, privacy, moderation,
 // rate limits, profiles and the showcase.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -44,7 +45,7 @@ const c = {};
 const ok = (r, msg) => assert.equal(r.status, 200, `${msg || ''} ${r.status} ${JSON.stringify(r.body)}`);
 
 test.before(async () => {
-  const port = 27000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

@@ -1,6 +1,7 @@
 // Split deploy: website on https://nexoraguru.in (Cloudflare Pages), API on
 // https://api.nexoraguru.in. CORS / socket.io allowlist from CLIENT_ORIGINS,
 // credentialed preflight, session cookie flags, OAuth redirect targets.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -78,7 +79,7 @@ test('TRUST_PROXY override', () => {
 /* ───────────── live server ───────────── */
 
 async function startServer(extraEnv) {
-  const port = 23000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   const baseUrl = `http://127.0.0.1:${port}`;
   let log = '';
   const proc = spawn(process.execPath, ['src/server.js'], {

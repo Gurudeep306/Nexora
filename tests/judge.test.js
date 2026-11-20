@@ -1,5 +1,6 @@
 // Judge wiring: language availability on the hosted (remote-only) server and
 // the admin-only self-test endpoint. No network calls are made here.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -22,7 +23,7 @@ test('remote-only mode exposes only languages that have a sandbox', () => {
 let proc;
 let base;
 test.before(async () => {
-  const port = 23000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   let serverLog = '';
   proc = spawn(process.execPath, ['src/server.js'], {

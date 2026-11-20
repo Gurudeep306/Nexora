@@ -1,5 +1,6 @@
 // Every account must have its own progress: solving a problem as one user
 // must not change another user's solved count, XP, submissions or streak.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -38,7 +39,7 @@ const stamp = Date.now().toString(36);
 let alice, bob, pid;
 
 test.before(async () => {
-  const port = 24000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   serverLog = '';
   proc = spawn(process.execPath, ['src/server.js'], {

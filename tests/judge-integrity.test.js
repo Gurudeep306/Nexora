@@ -2,6 +2,7 @@
 // against testcases the server stores, never ones the submission brings along;
 // XP is earned once per problem; Workshop answer keys stay with their author;
 // private contests and linked Codeforces handles belong to one account.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -52,7 +53,7 @@ let alice, bob;
 let bare, stored, sampled, partialP, ownOnly, dailyP; // problem ids
 
 test.before(async () => {
-  const port = 25000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

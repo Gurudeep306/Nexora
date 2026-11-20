@@ -1,6 +1,7 @@
 // Regression tests for LiveClass (/api/live) access control:
 // the live routes used to 500 on every write, private classes were open to
 // everyone, and any signed-in user could delete other teachers' content.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -60,7 +61,7 @@ const T1 = `ta${id}`, T2 = `tb${id}`, S = `st${id}`;
 let teacher1, teacher2, stranger;
 
 test.before(async () => {
-  const port = 23000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

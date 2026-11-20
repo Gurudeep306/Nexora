@@ -118,6 +118,10 @@ node client/scripts/check-learn.mjs <topic>        # content integrity
 Before pushing, run the tests, the typecheck and the build for the parts you
 changed.
 
+Server tests that start their own server get a free port from
+`tests/helpers/free-port.js` (`await freePort()`); never pick a random port
+from a range, since test files run in parallel and a clash fails the run.
+
 ## Design and UI conventions
 
 - Use the site's design tokens, not raw colours: `bg-bg-app`, `bg-bg-surface`,

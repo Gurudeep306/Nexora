@@ -2,6 +2,7 @@
 // encrypted key vault, a GitHub project, a Claude agent editing the repo
 // through tools, review, and commit + PR — against local mock GitHub and mock
 // Claude servers (the Claude SDK is pointed at the mock via the key's base URL).
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
@@ -205,7 +206,7 @@ let member;
 
 test.before(async () => {
   await startMock();
-  const port = 23000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

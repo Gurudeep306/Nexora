@@ -1,5 +1,6 @@
 // Regression tests for the batched Nexus / stats / leaderboard queries:
 // the responses must stay exactly what the old per-topic / per-user SQL gave.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -34,7 +35,7 @@ function withDb(fn) {
 const day = (n) => new Date(Date.now() - n * 86400000).toISOString().slice(0, 10);
 
 test.before(async () => {
-  const port = 26000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

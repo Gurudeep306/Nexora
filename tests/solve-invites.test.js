@@ -1,6 +1,7 @@
 // Invite to solve (src/solve-invites.js, POST /api/chat/invite-solve) and
 // shared solutions as spoilers (chat and feed): who gets the card, real
 // solve times from the judge, notifications, forwarding, and who sees code.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -48,7 +49,7 @@ const messagesIn = async (who, conv) => (await call('GET', `/api/chat/conversati
 const notifications = async (who) => (await call('GET', '/api/social/notifications', c[who])).body;
 
 test.before(async () => {
-  const port = 31500 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

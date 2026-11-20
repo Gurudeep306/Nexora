@@ -1,5 +1,6 @@
 // Home "For you today": real picks, stable within a day, new on Shuffle, and
 // never a problem the person has already solved.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -46,7 +47,7 @@ test('rng is stable for a seed and differs across seeds', () => {
 });
 
 test.before(async () => {
-  const port = 25000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

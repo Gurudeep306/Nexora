@@ -3,6 +3,7 @@
 // /api/judge, the paper graded once), and only the host sees the marks list,
 // the analysis and the CSV. Questions are fixed once someone starts, and a
 // problem written for a contest stays hidden from everyone else.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const { spawn } = require('node:child_process');
@@ -47,7 +48,7 @@ function withDb(fn) {
 }
 
 test.before(async () => {
-  const port = 29000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: path.join(__dirname, '..'),

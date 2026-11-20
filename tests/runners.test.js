@@ -2,6 +2,7 @@
 // them, and check that code really runs on them, with each runner only given
 // the languages it has (src/runners.js, /api/admin/runners*). A fake Piston
 // runs on localhost; nothing leaves this machine.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
@@ -73,7 +74,7 @@ let owner, member;
 
 test.before(async () => {
   await startFakePiston();
-  const port = 28000 + Math.floor(Math.random() * 1000);
+  const port = await freePort();
   base = `http://127.0.0.1:${port}`;
   const env = { ...process.env, PORT: String(port), NODE_ENV: 'test', DB_PATH: DB, OWNER_USERNAME: OWNER, JUDGE_MODE: 'remote', DISABLE_PUPPETEER: '1', DISABLE_SCRAPER: '1' };
   delete env.PISTON_URL;

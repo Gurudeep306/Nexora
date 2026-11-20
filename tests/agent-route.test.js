@@ -1,5 +1,6 @@
 // /api/agent/* end to end: a real Nexora server talking to a stub Groq server
 // (GROQ_BASE_URL) — no real key, no network.
+const { freePort } = require('./helpers/free-port');
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const http = require('node:http');
@@ -47,7 +48,7 @@ function startStub() {
 }
 
 async function startServer(extraEnv, name) {
-  const port = 25000 + Math.floor(Math.random() * 3000);
+  const port = await freePort();
   const url = `http://127.0.0.1:${port}`;
   let log = '';
   const proc = spawn(process.execPath, ['src/server.js'], {
