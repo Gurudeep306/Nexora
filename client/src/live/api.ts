@@ -70,7 +70,7 @@ export interface Knock {
   at: number
 }
 
-export type TransportInfo = { kind: 'sfu'; url: string; token: string } | { kind: 'mesh' | 'cf'; iceServers: RTCIceServer[] }
+export type TransportInfo = { kind: 'sfu'; url: string; token: string } | { kind: 'mesh' | 'cf'; iceServers: RTCIceServer[]; simulcast?: boolean }
 
 export interface JoinOk {
   ok: true

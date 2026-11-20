@@ -158,3 +158,108 @@
 .lv-admin-meter span.is-high {
   background: var(--color-state-warning);
 }
+.lv-admin-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+.lv-admin-kpi {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+}
+.lv-admin-kpi-label {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.lv-admin-big {
+  margin: 0 0 8px;
+  font-size: 24px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+}
+.lv-admin-big span {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+.lv-admin-dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 12px 0 0;
+  font-size: 12.5px;
+}
+.lv-admin-dl dt {
+  color: var(--color-text-secondary);
+}
+.lv-admin-dl dd {
+  margin: 0;
+  color: var(--color-text-primary);
+}
+.lv-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.lv-admin-table th,
+.lv-admin-table td {
+  text-align: left;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--color-border);
+  white-space: nowrap;
+}
+.lv-admin-table th {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+}
+.lv-admin-test {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.lv-admin-test li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+}
+.lv-admin-test li.is-ok,
+.lv-admin-test li.is-run,
+.lv-admin-test li.is-bad {
+  color: var(--color-text-primary);
+}
+.lv-admin-test-icon {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+.is-ok > .lv-admin-test-icon {
+  background: var(--color-state-success);
+  border-color: transparent;
+  color: var(--color-bg-app);
+}
+.is-bad > .lv-admin-test-icon {
+  background: var(--color-state-error);
+  border-color: transparent;
+  color: var(--color-bg-app);
+}
+.lv-admin-test-detail {
+  display: block;
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  color: var(--color-text-muted);
+}

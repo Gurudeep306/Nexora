@@ -30,6 +30,17 @@ function budget() {
   };
 }
 
+/** Minutes a device has spent in a room since it was last counted. */
+function bill(s, p) {
+  const now = Date.now();
+  const from = p.billedAt || p.joinedAt;
+  if (now > from) config.addMinutes(s.transport, (now - from) / 60000);
+  p.billedAt = now;
+}
+setInterval(() => {
+  for (const s of rooms.values()) for (const p of s.peers.values()) bill(s, p);
+}, 60_000).unref?.();
+
 function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
   const nsp = io.of("/live");
 
@@ -102,7 +113,7 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
     let transport;
     const lk = media.livekitConfig();
     if (s.transport === "cf" && config.cloudflare()) {
-      transport = { kind: "cf", iceServers: [{ urls: ["stun:stun.cloudflare.com:3478"] }] };
+      transport = { kind: "cf", iceServers: [{ urls: ["stun:stun.cloudflare.com:3478"] }], simulcast: s.simulcast ?? config.peekConfig().simulcast };
     } else if (s.transport === "sfu" && lk) {
       transport = {
         kind: "sfu",
@@ -140,6 +151,7 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
     const s = rooms.get(code);
     if (!s) return;
     const p = s.peers.get(peerId);
+    if (p) bill(s, p);
     s.peers.delete(peerId);
     if (p) {
       to(code).emit("peer-left", { peerId, reason });
@@ -473,7 +485,9 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
     run("DELETE FROM live_devices WHERE room_id=?", [room.id]).catch(() => {});
   }
 
-  return { nsp, endRoom, realtime };
+  const api = { nsp, endRoom, realtime };
+  module.exports.current = api;
+  return api;
 }
 
 module.exports = { createLiveSignal };

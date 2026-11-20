@@ -206,7 +206,7 @@ export class LiveSession {
       r.transport.kind === 'sfu'
         ? new SfuTransport(r.transport.url, r.transport.token, events)
         : r.transport.kind === 'cf'
-          ? new CfTransport(this.socket!, r.transport.iceServers, events)
+          ? new CfTransport(this.socket!, r.transport.iceServers, events, r.transport.simulcast !== false)
           : new MeshTransport(r.self.peerId, r.transport.iceServers, (to, data) => this.socket?.emit('signal', { to, data }), events)
     this.transport = t
     try {
