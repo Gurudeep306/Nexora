@@ -3546,28 +3546,28 @@
       "verification": "Level sizes of a 2×4 decoder tree for 16 outputs: 16/4 = 4 leaf decoders, 4/4 = 1 root decoder; 4 + 1 = 5."
     },
     "cse-2013-cs-47": {
-      "approach": "Push the negation inside, then rewrite each option as a disjunction under ∀x and compare. Abbreviate P = ∀y(α), Q = ∀z(β); the quantifiers over y and z just move as whole blocks.",
+      "approach": "Concept tested: **pushing ¬ through ∃ and rewriting implications**. Abbreviate P = ∀y α, Q = ∀z β; then ∃y¬α = ¬P and ∃z¬β = ¬Q.",
       "concepts": [
-        "Quantifier negation",
-        "Implication as disjunction",
-        "Logical equivalence"
+        "De Morgan for quantifiers",
+        "Implication as disjunction"
       ],
+      "given": "Target ¬∃x(∀y α ∧ ∀z β) ≡ ∀x(¬P ∨ ¬Q).",
       "steps": [
         {
-          "title": "Simplify the given formula",
-          "body": "Let $P = \\forall y(\\alpha)$, $Q = \\forall z(\\beta)$, so $\\neg P \\equiv \\exists y(\\neg\\alpha)$ and $\\neg Q \\equiv \\exists z(\\neg\\beta)$.\n$$\\neg\\exists x(P\\wedge Q) \\equiv \\forall x\\,\\neg(P\\wedge Q) \\equiv \\forall x(\\neg P \\vee \\neg Q)$$"
+          "title": "Translate the options",
+          "body": "A: ¬Q → P ≡ Q ∨ P. B: Q → ¬P ≡ ¬P ∨ ¬Q. C: P → ¬Q ≡ ¬P ∨ ¬Q. D: ¬P → ¬Q ≡ P ∨ ¬Q (all under ∀x)."
         },
         {
-          "title": "Rewrite each option",
-          "body": "| Option | Form | As disjunction | Equivalent? |\n|---|---|---|---|\n| A | $\\neg Q \\to P$ | $Q \\vee P$ | No |\n| B | $Q \\to \\neg P$ | $\\neg Q \\vee \\neg P$ | Yes |\n| C | $P \\to \\neg Q$ | $\\neg P \\vee \\neg Q$ | Yes |\n| D | $\\neg P \\to \\neg Q$ | $P \\vee \\neg Q$ | No |"
+          "title": "Compare with the target",
+          "body": "B and C are equivalent to it. A and D are not."
         },
         {
-          "title": "Conclusion",
-          "body": "D is $\\forall x(P \\vee \\neg Q)$, which differs from $\\forall x(\\neg P \\vee \\neg Q)$ (e.g. take $P$ false, $Q$ true: the given formula is true, D is false). So D is NOT equivalent — the stored key.\n\nNote: A ($\\forall x(P\\vee Q)$) is also not equivalent (take $P, Q$ both true), so the question as printed has two correct options; it is flagged for review."
+          "title": "Key",
+          "body": "The question asks for the one NOT equivalent; as printed both A and D qualify. The published key is D (the bank keeps D)."
         }
       ],
       "answer": {
-        "value": "D (A is also not equivalent — flawed question)",
+        "value": "D (published key; A is also not equivalent as printed)",
         "choice": [
           "D"
         ],
@@ -3577,29 +3577,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$\\neg Q \\to P \\equiv Q \\vee P$ — also not equivalent (fails when P and Q are both true); a second valid answer, so the question is flawed."
+          "reason": "As printed it is also NOT equivalent (it says ∀x(P ∨ Q)), but the published key is D; the question was flawed in having two such options."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$Q \\to \\neg P \\equiv \\neg Q \\vee \\neg P$ — equivalent."
+          "reason": "Equivalent: Q → ¬P is ¬P ∨ ¬Q."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$P \\to \\neg Q \\equiv \\neg P \\vee \\neg Q$ — equivalent."
+          "reason": "Equivalent: P → ¬Q is ¬P ∨ ¬Q."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$\\neg P \\to \\neg Q \\equiv P \\vee \\neg Q$ — not equivalent (fails when P is false and Q is true). Matches the stored key."
+          "reason": "NOT equivalent: ¬P → ¬Q is P ∨ ¬Q (published key)."
         }
       ],
+      "shortcut": "Reduce every option to a disjunction of ±P, ±Q and compare with ¬P ∨ ¬Q.",
       "pitfalls": [
-        "Pushing ¬ through ∀y as ∀y(¬α) instead of ∃y(¬α).",
-        "Assuming exactly one option must fail without checking all four."
+        "Forgetting that ∃y¬α is ¬∀y α.",
+        "Missing that two options are non-equivalent; in the exam, mark the published key D."
       ],
-      "verification": "Truth-table on (P, Q): given = ¬P∨¬Q is false only at (T,T). A is false only at (F,F); D is false only at (F,T); B and C match exactly."
+      "verification": "With P, Q as 0-ary stand-ins under ∀x, truth tables confirm B ≡ C ≡ target and A, D ≢ target. Recorded in _errata/dm.md (B-notes)."
     },
     "cse-2013-cs-48": {
       "approach": "Use code motion to delay d and e into the else-branch (the only place they are used), then check the largest set of simultaneously live values. If it still exceeds two, at least one spill is unavoidable.",

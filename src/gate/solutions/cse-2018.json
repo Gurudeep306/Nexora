@@ -1958,29 +1958,29 @@
       "verification": "Binary encoding: finite subsets of N correspond one-to-one with natural numbers written in binary."
     },
     "cse-2018-cs-28": {
-      "approach": "For a ∃*∀* (Bernays–Schönfinkel) sentence without function symbols, keep only the three elements chosen as witnesses for s, t, u. The universal part still holds on this substructure, so there is a model with at most 3 elements.",
+      "approach": "Concept tested: **the small-model property of ∃*∀* sentences without function symbols**: keep only the witnesses.",
       "concepts": [
-        "First-order logic",
-        "Bernays–Schönfinkel class",
+        "Prenex prefix",
         "Substructures",
-        "Universal sentences"
+        "Small models"
       ],
+      "given": "φ = ∃s∃t∃u∀v∀w∀x∀y ψ, ψ quantifier-free with predicates and equality only; φ has a 7-element model.",
       "steps": [
         {
-          "title": "Take witnesses",
-          "body": "In the 7-element model M pick $a, b, c$ with $M \\models \\forall v\\forall w\\forall x\\forall y\\,\\psi(a,b,c,v,w,x,y)$."
+          "title": "Restrict to the witnesses",
+          "body": "Let a, b, c witness s, t, u. The world with domain {a, b, c} (≤ 3 elements) and the predicates restricted keeps the witnesses, and each ∀-instance there has the same value as in the big model."
         },
         {
-          "title": "Restrict",
-          "body": "Let $M'$ be M restricted to $\\{a,b,c\\}$ (at most 3 elements). With no function symbols this is a valid substructure. ψ is quantifier-free, so its truth for any assignment from $\\{a,b,c\\}$ is the same in $M'$ and M. The universal quantifiers now range over fewer elements, so they still hold. Hence $M' \\models \\varphi$ with size ≤ 3: option A."
+          "title": "So A holds",
+          "body": "There is a model of size ≤ 3."
         },
         {
-          "title": "Other options",
-          "body": "B contradicts the model just built. For C and D, take $\\psi \\equiv (s = s)$ (always true): then φ has models of every size, including 7 and sizes larger than 7, so neither C nor D is necessarily true."
+          "title": "B, C, D can fail",
+          "body": "With ψ = (v = v), every non-empty world is a model: of size 1, 7 or 100."
         }
       ],
       "answer": {
-        "value": "There exists at least one model of φ with universe of size ≤ 3",
+        "value": "A",
         "choice": [
           "A"
         ],
@@ -1990,28 +1990,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: the substructure on the three witnesses is a model."
+          "reason": "The witnesses alone form a model."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "False: that substructure is a model of size ≤ 3."
+          "reason": "Contradicted by the restriction argument."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Not necessary: e.g. if ψ is a tautology, φ has models of every size, including more than 7."
+          "reason": "ψ = (v = v) has models of every size."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Not necessary: the 3-element substructure is already a smaller model."
+          "reason": "Same counterexample: models of every size."
         }
       ],
+      "shortcut": "Number of leading ∃'s (here 3) bounds the size of some model.",
       "pitfalls": [
-        "Thinking the existential witnesses must be distinct: they may coincide, which is why the bound is \"≤ 3\"."
+        "Thinking the model size is fixed by the sentence."
       ],
-      "verification": "This is the standard small-model property of the Bernays–Schönfinkel class (number of existential variables, here 3)."
+      "verification": "predlib: an ∃³∀ sentence true on a 7-element world stays true on the 3 witnesses (scene small-model); the general argument is in the lesson."
     },
     "cse-2018-cs-29": {
       "approach": "C passes arguments by value. `fun1` swaps its local copies of the pointers, so main is unaffected. `fun2` gets the addresses of `str1`/`str2` and swaps the pointers themselves.",

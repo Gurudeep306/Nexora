@@ -1118,27 +1118,29 @@
       "verification": "$a^nb^nc^n$ fails the pumping lemma for CFLs, confirming the intersection counterexample."
     },
     "cse-1992-a-2-xv": {
-      "approach": "Check each implication: try to prove it in general, otherwise build a two-element counter-model.",
+      "approach": "Concept tested: **the one-way quantifier laws**: ∀P ∨ ∀Q ⇒ ∀(P ∨ Q) is valid; its converse and ∃P ∧ ∃Q ⇒ ∃(P ∧ Q) are not.",
       "concepts": [
-        "Quantifier distribution",
-        "Validity"
+        "∀ over ∨ (one way)",
+        "∃ over ∧ (one way)",
+        "Counter-models"
       ],
+      "given": "Which are valid: A $(\\forall x)P \\vee (\\forall x)Q \\to (\\forall x)(P \\vee Q)$; B $(\\exists x)P \\wedge (\\exists x)Q \\to (\\exists x)(P \\wedge Q)$; C $(\\forall x)(P \\vee Q) \\to (\\forall x)P \\vee (\\forall x)Q$; D $(\\exists x)(P \\vee Q) \\to \\sim(\\forall x)P \\vee (\\exists x)Q$.",
       "steps": [
         {
-          "title": "(a) is valid",
-          "body": "If $\\forall x\\,P(x)$ holds, then every $x$ satisfies $P(x) \\lor Q(x)$; likewise if $\\forall x\\,Q(x)$ holds. Either way $\\forall x\\,\\{P(x) \\lor Q(x)\\}$."
+          "title": "A",
+          "body": "If all are P, all are P ∨ Q; same if all are Q. **Valid.**"
         },
         {
-          "title": "Counter-models for (b), (c)",
-          "body": "Domain $\\{1, 2\\}$, $P = \\{1\\}$, $Q = \\{2\\}$.\n\n- (b): $\\exists P$ and $\\exists Q$ are true, but no element has both, so $\\exists(P \\land Q)$ is false.\n- (c): every element is in $P$ or $Q$, so $\\forall(P \\lor Q)$ is true, but neither $\\forall P$ nor $\\forall Q$ holds."
+          "title": "B and C",
+          "body": "Both fail in the turn-taking world $D = \\{1, 2\\}$, $P = \\{1\\}$, $Q = \\{2\\}$: B's hypothesis is true (witnesses 1 and 2) but no element is both; C's hypothesis is true but neither ∀ holds."
         },
         {
-          "title": "Counter-model for (d)",
-          "body": "$P$ true everywhere, $Q$ false everywhere: $\\exists x\\{P \\lor Q\\}$ is true, $\\sim\\forall x P(x)$ is false and $\\exists x Q(x)$ is false, so the implication fails."
+          "title": "D",
+          "body": "Take P everywhere and Q nowhere: ∃x(P ∨ Q) is T, ∼∀x P is F and ∃x Q is F. **Not valid.**"
         }
       ],
       "answer": {
-        "value": "Only (a)",
+        "value": "A only",
         "choice": [
           "A"
         ],
@@ -1148,25 +1150,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "$\\forall$ distributes over $\\lor$ in this direction."
+          "reason": "The valid direction of ‘∀ over ∨’."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$\\exists$ does not distribute over $\\land$: $P = \\{1\\},\\, Q = \\{2\\}$."
+          "reason": "Two different witnesses need not be one element (turn-taking world)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Converse of (a) fails with the same model."
+          "reason": "‘Each is P or Q’ does not give ‘all P or all Q’ (turn-taking world)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$P \\equiv$ true, $Q \\equiv$ false makes the antecedent true and the consequent false."
+          "reason": "P true everywhere, Q nowhere makes the hypothesis T and the conclusion F."
         }
       ],
-      "verification": "Each invalid option has an explicit finite counter-model; (a) has a direct proof."
+      "shortcut": "Only the ‘∀∨ → ∀(∨)’ and ‘∃(∧) → ∃∧’ directions are valid; A is one of them, B and C are the reversed ones.",
+      "pitfalls": [
+        "Treating ∀ and ∃ as distributing over every connective."
+      ],
+      "verification": "predlib: A valid on all worlds up to size 3; counter-models found for B, C and D."
     },
     "cse-1992-a-2-xvi": {
       "approach": "Concept tested: **testing tautologies by falsification**. An implication is false only as T → F; for each option, try to make the conclusion false and the hypothesis true. One clean row refutes an option.",

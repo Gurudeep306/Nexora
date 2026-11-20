@@ -10,25 +10,11 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import dmlib as D  # noqa: E402
 import predlib as P  # noqa: E402
+from _folnorm import norm  # noqa: E402
 
 B = D.bank()
 PR = D.practice(2)
 TXT = D.lesson_text(2, "01")
-
-
-def norm(s):
-    """PYQ option text (LaTeX) → predlib syntax."""
-    s = s.replace("$", "")
-    s = re.sub(r"\\(?:text|mathit|mathrm|operatorname)\{([^{}]*)\}", r"\1", s)
-    s = re.sub(r"\\(forall|exists)\s*\(\s*(\w+)\s*\)", r"\\\1 \2", s)
-    # "∀x: body" (colon notation) scopes over everything after the colon.
-    s = re.sub(r"(\\forall|\\exists|∀|∃)\s*(\w+)\s*:\\?\s*(.*)$", r"\1 \2 (\3)", s)
-    s = s.replace("\\{", "(").replace("\\}", ")").replace(":", " ")
-    s = re.sub(r"\\ne(?![a-zA-Z])", "!=", s)
-    s = re.sub(r"noteq\((\w+),\s*(\w+)\)", r"(\1 != \2)", s)
-    # predlib reads a bare T / F as a constant: rename predicates called T(…) or F(…).
-    s = re.sub(r"\b([TF])\(", r"\1_(", s)
-    return s
 
 
 def opt_forms(qid):
@@ -166,7 +152,7 @@ Z = range(-30, 31)
 hyp = [x for x in Z if x != 0 and all(z in (x, 1) for z in Z if z != 0 and x % z == 0)]
 assert hyp == [-1]
 assert not any(w > -1 and w != 0 and all(z in (w, 1) for z in Z if z != 0 and w % z == 0) for w in Z)
-D.assert_key("cse-2019-cs-35", "C")   # official key (see _errata/dm.md, B-notes)
+D.assert_key("cse-2019-cs-35", "C")   # published key (see _errata/dm.md, B-notes)
 conj = "forall x (P(x) -> exists y Q(x, y))"
 f23 = opt_forms("cse-2023-cs-16")
 D.assert_key("cse-2023-cs-16", sorted(l for l, f in f23.items() if P.valid(f"({P.to_str(f)}) -> ({conj})", 2)))
@@ -209,5 +195,9 @@ for bits in itertools.product([0, 1], repeat=3):
 D.assert_nat(PR["nx-dm-02-01-q10"], cnt)
 assert len([k for k in PR if k.startswith("nx-dm-02-01-")]) == 10
 
-D.must_contain(TXT, "witness 2", "**B and C.**", "**B and D.**", "$x = 97$", "**I and IV.**", "official key")
+D.must_contain(TXT, "witness 2", "**B and C.**", "**B and D.**", "$x = 97$", "**I and IV.**", "published key")
+import collections  # noqa: E402
+mk = collections.Counter(B[q]["marks"] for q in D.outline_pyqs("dm-02-01-predicates-quantifiers"))
+assert (mk[1], mk[2]) == (6, 13)
+D.must_contain(TXT, "6 one-mark, 13 two-mark")
 print("l2_01_quantifiers: theorems, 30 worked examples, 19 PYQ keys (model search) and 10 practice answers OK")

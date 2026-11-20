@@ -1298,28 +1298,29 @@
       "verification": "Equivalent to `child::*[name() != \"TOC\"]`."
     },
     "it-2007-cs-21": {
-      "approach": "Prove A directly; refute B, C, D with tiny counter-models.",
+      "approach": "Concept tested: **the valid one-way law and three invalid ones**.",
       "concepts": [
-        "First-order validity",
-        "Quantifier distribution",
-        "Counter-models"
+        "One-way laws",
+        "∀∃ vs ∃∀",
+        "∃ over ∧"
       ],
+      "given": "Which is valid?",
       "steps": [
         {
-          "title": "A is valid",
-          "body": "Assume $\\forall x(P(x)\\Rightarrow Q(x))$ and $\\forall xP(x)$. For any $a$: $P(a)$ and $P(a)\\Rightarrow Q(a)$ give $Q(a)$. Hence $\\forall xQ(x)$."
+          "title": "A",
+          "body": "∀x(P ⇒ Q) ⇒ (∀x P ⇒ ∀x Q): valid (modus ponens element by element)."
         },
         {
-          "title": "B and C fail",
-          "body": "**B:** domain $\\{1\\}$, $P=\\{1\\}$, $Q=\\varnothing$: $\\exists x(P(x)\\vee Q(x))$ true, $\\exists xP(x)$ true, $\\exists xQ(x)$ false, so the formula is false.\n\n**C:** domain $\\{1,2\\}$, $P=\\{1\\}$, $Q=\\{2\\}$: $\\exists x(P(x)\\wedge Q(x))$ false but $\\exists xP(x)\\wedge\\exists xQ(x)$ true, so the equivalence is false."
+          "title": "B",
+          "body": "∃x(P ∨ Q) ⇒ (∃x P ⇒ ∃x Q): P = {1}, Q = ∅ makes the left T and ∃x P ⇒ ∃x Q = T ⇒ F."
         },
         {
-          "title": "D fails",
-          "body": "Domain $\\mathbb N$, $P(x,y): y>x$. Every x has a larger y, but no y exceeds every x. LHS true, RHS false."
+          "title": "C and D",
+          "body": "C claims ∃ distributes over ∧ both ways: the turn-taking world $D = \\{1, 2\\}$, $P = \\{1\\}$, $Q = \\{2\\}$ refutes it. D is ∀∃ ⇒ ∃∀: Lesson 1's grid refutes it."
         }
       ],
       "answer": {
-        "value": "∀x(P(x)⇒Q(x)) ⇒ ((∀xP(x)) ⇒ (∀xQ(x)))",
+        "value": "A",
         "choice": [
           "A"
         ],
@@ -1329,25 +1330,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Valid — universal instantiation and modus ponens."
+          "reason": "The valid one-way law."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Fails when P is non-empty and Q is empty."
+          "reason": "P = {1}, Q = ∅ refutes it."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Only the ⇒ direction holds; P = {1}, Q = {2} breaks ⇐."
+          "reason": "Only ∃(P ∧ Q) ⇒ ∃P ∧ ∃Q holds; the ≡ fails backwards."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Swapping ∀∃ to ∃∀ is invalid (y > x on ℕ)."
+          "reason": "∀∃ does not imply ∃∀."
         }
       ],
-      "verification": "A is the standard law ∀x(P→Q) ⊨ ∀xP → ∀xQ."
+      "shortcut": "A is the same law as IT 2005 option B.",
+      "pitfalls": [
+        "Accepting C because one direction is true."
+      ],
+      "verification": "predlib: A valid up to size 3; counter-models for B, C, D."
     },
     "it-2007-cs-22": {
       "approach": "Use the composite trapezoidal error bound $|E|\\le\\frac{(b-a)h^2}{12}\\max|f''|$ and require it to be at most $0.5\\times10^{-7}$.",

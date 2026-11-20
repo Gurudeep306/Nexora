@@ -3165,23 +3165,24 @@
       "verification": "104 = 01101000 and 64 = 01000000 have the leading bit 0 (inside /17) and the low 3 bits 000 (aligned to /21)."
     },
     "cse-2020-cs-39": {
-      "approach": "Rewrite each implication as a disjunction and move the quantifier past W (which has no free x). The only formula that does not survive this is the ∀ with an implication.",
+      "approach": "Concept tested: **moving a quantifier past a formula W without x**: unchanged through ∨, ∧ and conclusions; flipped when leaving a hypothesis.",
       "concepts": [
-        "Quantifier laws",
-        "Prenex normal form"
+        "Pull-out laws",
+        "Implication as disjunction"
       ],
+      "given": "W has no free x.",
       "steps": [
         {
-          "title": "Pull W out",
-          "body": "Because $x$ is not free in $W$:\n- $\\forall x(p(x)\\vee W) \\equiv \\forall x\\,p(x)\\vee W$ — (A) valid.\n- $\\exists x(p(x)\\wedge W) \\equiv \\exists x\\,p(x)\\wedge W$ — (B) valid."
+          "title": "Valid ones",
+          "body": "A: ∀ past ∨. B: ∃ past ∧. D: ∃x(p → W) ≡ ∃x(¬p ∨ W) ≡ ∃x¬p ∨ W ≡ ¬∀x p ∨ W ≡ ∀x p → W."
         },
         {
-          "title": "Implications",
-          "body": "$\\forall x(p(x)\\rightarrow W) \\equiv \\forall x(\\neg p(x)\\vee W) \\equiv (\\forall x\\,\\neg p(x))\\vee W \\equiv \\neg\\exists x\\,p(x)\\vee W \\equiv \\exists x\\,p(x)\\rightarrow W$.\n\nSo the correct right side of (C) is $\\exists x\\,p(x)\\rightarrow W$, not $\\forall x\\,p(x)\\rightarrow W$.\n\n$\\exists x(p(x)\\rightarrow W) \\equiv \\exists x\\,\\neg p(x)\\vee W \\equiv \\neg\\forall x\\,p(x)\\vee W \\equiv \\forall x\\,p(x)\\rightarrow W$ — (D) valid."
+          "title": "C",
+          "body": "∀x(p → W) ≡ ∀x¬p ∨ W ≡ ¬∃x p ∨ W ≡ ∃x p → W, not ∀x p → W."
         },
         {
-          "title": "Counterexample for (C)",
-          "body": "Domain $\\{1,2\\}$, $p(1)=\\text{T}$, $p(2)=\\text{F}$, $W=\\text{F}$.\n- Left: $p(1)\\rightarrow \\text{F}$ is false, so $\\forall x(p(x)\\rightarrow W)$ is **false**.\n- Right: $\\forall x\\,p(x)$ is false, so $\\forall x\\,p(x)\\rightarrow W$ is **true**."
+          "title": "Counter-model for C",
+          "body": "{1, 2}, p = {1}, W false: ∀x(p → W) is F (at 1), ∀x p → W is T."
         }
       ],
       "answer": {
@@ -3195,29 +3196,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Valid: ∀ distributes over ∨ with a constant (x-free) disjunct."
+          "reason": "Valid: ∀ slides past ∨ when W has no x."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Valid: ∃ distributes over ∧ with an x-free conjunct."
+          "reason": "Valid: ∃ slides past ∧ (non-empty domain)."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Not valid: ∀x(p(x)→W) ≡ ∃x p(x) → W; the counterexample separates the two sides."
+          "reason": "NOT valid: the right side should be ∃x p(x) → W."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Valid: ∃x(¬p(x) ∨ W) ≡ ¬∀x p(x) ∨ W ≡ ∀x p(x) → W."
+          "reason": "Valid: the hidden ¬ flips ∃ to ∀."
         }
       ],
-      "shortcut": "A quantifier flips (∀↔∃) when it is pulled out of the antecedent of an implication.",
+      "shortcut": "A quantifier that leaves a hypothesis flips. C does not flip.",
       "pitfalls": [
-        "Pulling a quantifier out of the left side of → changes it, because the antecedent is negated."
+        "Assuming quantifiers always slide past W unchanged."
       ],
-      "verification": "The counterexample makes the two sides of (C) differ; (A), (B), (D) follow by standard equivalences."
+      "verification": "predlib with W a 0-ary predicate: A, B, D valid up to size 3; C refuted on size 2."
     },
     "cse-2020-cs-40": {
       "approach": "Sum w' along any path: the f-terms telescope, leaving only f(start) − f(end). Every path between the same two vertices shifts by the same constant, so shortest paths are preserved for any f.",

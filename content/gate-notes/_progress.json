@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-23",
+  "updated": "2026-11-20",
   "steps": {
     "N0": "review",
     "N1": "review",
@@ -166,9 +166,9 @@
       "stages": {
         "digests": "done",
         "outline": "review",
-        "lessons": "ch1 written",
-        "viz": "ch1 done",
-        "questions": "ch1 done",
+        "lessons": "ch1-ch2 written",
+        "viz": "ch1-ch2 done",
+        "questions": "ch1-ch2 done",
         "review": "ch1 reviewed",
         "wrapup": "pending",
         "graph_toolkit": "done (E3: graphlib + graphdraw + graph_toolkit, CI green)"
@@ -185,6 +185,18 @@
             "propositions-connectives": "published+reviewed",
             "equivalence-normal-forms": "published+reviewed",
             "inference-resolution": "published+reviewed"
+          }
+        },
+        {
+          "id": "02-predicate-logic",
+          "title": "First-order logic",
+          "lessons": 2,
+          "pyqs": 35,
+          "status": "published",
+          "review": "2026-11-20: written to the raised floor (7,125 / 7,022 words; 30 / 28 worked examples; 9 / 9 animated scenes; 10 / 10 practice); 35/35 PYQ keys re-derived by model search; examiner self-review fixed 6 findings (two radar mark counts, one ambiguous example world, the small-model bound for k = 0, unverified 'official key' wording on four flawed PYQs); published at the owner's request; the independent second-pass review (another model family) is still to be run.",
+          "lessons_status": {
+            "predicates-quantifiers": "published",
+            "quantifier-laws-validity": "published"
           }
         }
       ]

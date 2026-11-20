@@ -1,0 +1,324 @@
+{
+ "version": 1,
+ "title": "A sentence with only infinite models",
+ "width": 640,
+ "height": 276,
+ "narrow": {
+  "width": 360,
+  "height": 250
+ },
+ "intro": "R has successors everywhere, is transitive, asymmetric and irreflexive. Watch what happens when we try to finish a finite model.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Every element needs a successor, and you can never come back",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Only infinite models",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "n0",
+   "type": "node",
+   "cx": 60,
+   "cy": 120,
+   "r": 26,
+   "size": 15,
+   "mono": true,
+   "hidden": false,
+   "narrow": {
+    "cx": 34,
+    "cy": 110,
+    "r": 22
+   },
+   "label": "d0"
+  },
+  {
+   "id": "n1",
+   "type": "node",
+   "cx": 180,
+   "cy": 120,
+   "r": 26,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "cx": 106,
+    "cy": 110,
+    "r": 22
+   },
+   "label": "d1"
+  },
+  {
+   "id": "e1",
+   "type": "arrow",
+   "from": "n0",
+   "to": "n1",
+   "head": "end",
+   "hidden": true
+  },
+  {
+   "id": "n2",
+   "type": "node",
+   "cx": 300,
+   "cy": 120,
+   "r": 26,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "cx": 178,
+    "cy": 110,
+    "r": 22
+   },
+   "label": "d2"
+  },
+  {
+   "id": "e2",
+   "type": "arrow",
+   "from": "n1",
+   "to": "n2",
+   "head": "end",
+   "hidden": true
+  },
+  {
+   "id": "n3",
+   "type": "node",
+   "cx": 420,
+   "cy": 120,
+   "r": 26,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "cx": 250,
+    "cy": 110,
+    "r": 22
+   },
+   "label": "d3"
+  },
+  {
+   "id": "e3",
+   "type": "arrow",
+   "from": "n2",
+   "to": "n3",
+   "head": "end",
+   "hidden": true
+  },
+  {
+   "id": "n4",
+   "type": "node",
+   "cx": 540,
+   "cy": 120,
+   "r": 26,
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "cx": 322,
+    "cy": 110,
+    "r": 22
+   },
+   "label": "d4"
+  },
+  {
+   "id": "e4",
+   "type": "arrow",
+   "from": "n3",
+   "to": "n4",
+   "head": "end",
+   "hidden": true
+  },
+  {
+   "id": "back",
+   "type": "arrow",
+   "from": "n3",
+   "to": "n0",
+   "head": "end",
+   "curve": 0.45,
+   "hidden": true,
+   "tone": "danger",
+   "dashed": true
+  },
+  {
+   "id": "v",
+   "type": "text",
+   "x": 320,
+   "y": 226,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 206,
+    "size": 12
+   }
+  },
+  {
+   "id": "v2",
+   "type": "text",
+   "x": 320,
+   "y": 256,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 232,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start anywhere: d0. The first condition says it has a successor, d0 R d1.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "d1 needs a successor too: d2. Transitivity adds d0 R d2 behind the scenes.",
+   "patches": [
+    {
+     "id": "n2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e2",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "And d3. Every new element is related to all the earlier ones.",
+   "patches": [
+    {
+     "id": "n3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Try to stop: let d3's successor be an old element, d0. That closes a cycle d0 R d1 R d2 R d3 R d0.",
+   "patches": [
+    {
+     "id": "back",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "v",
+     "set": {
+      "text": "d3 R d0 would close a cycle…",
+      "tone": "warning"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Transitivity around the cycle gives d0 R d0, which irreflexivity forbids. So no old element can be a successor.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "v",
+     "set": {
+      "text": "…but then d0 R d0: forbidden",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So the chain must keep growing with new elements: no finite model exists. (ℕ, <) is a model: 0 < 1 < 2 < … forever.",
+   "patches": [
+    {
+     "id": "back",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "n4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v",
+     "set": {
+      "text": "no finite model",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "(ℕ, <) is a countable model",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

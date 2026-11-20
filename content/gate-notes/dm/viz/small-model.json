@@ -1,0 +1,303 @@
+{
+ "version": 1,
+ "title": "The small-model property",
+ "width": 640,
+ "height": 282,
+ "narrow": {
+  "width": 360,
+  "height": 250
+ },
+ "intro": "Universal claims survive when elements are removed; existential witnesses must stay. Keep only the witnesses.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "∃s ∃t ∃u ∀v … : keep only the three witnesses",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Shrinking to the witnesses",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "n0",
+   "type": "node",
+   "cx": 90,
+   "cy": 90,
+   "r": 26,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "cx": 50,
+    "cy": 80,
+    "r": 24
+   },
+   "label": "1"
+  },
+  {
+   "id": "n1",
+   "type": "node",
+   "cx": 200,
+   "cy": 90,
+   "r": 26,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "cx": 130,
+    "cy": 80,
+    "r": 24
+   },
+   "label": "2"
+  },
+  {
+   "id": "n2",
+   "type": "node",
+   "cx": 310,
+   "cy": 90,
+   "r": 26,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "cx": 210,
+    "cy": 80,
+    "r": 24
+   },
+   "label": "3"
+  },
+  {
+   "id": "n3",
+   "type": "node",
+   "cx": 420,
+   "cy": 90,
+   "r": 26,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "cx": 290,
+    "cy": 80,
+    "r": 24
+   },
+   "label": "4"
+  },
+  {
+   "id": "n4",
+   "type": "node",
+   "cx": 530,
+   "cy": 90,
+   "r": 26,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "cx": 90,
+    "cy": 150,
+    "r": 24
+   },
+   "label": "5"
+  },
+  {
+   "id": "n5",
+   "type": "node",
+   "cx": 145,
+   "cy": 170,
+   "r": 26,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "cx": 170,
+    "cy": 150,
+    "r": 24
+   },
+   "label": "6"
+  },
+  {
+   "id": "n6",
+   "type": "node",
+   "cx": 365,
+   "cy": 170,
+   "r": 26,
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "cx": 250,
+    "cy": 150,
+    "r": 24
+   },
+   "label": "7"
+  },
+  {
+   "id": "v",
+   "type": "text",
+   "x": 320,
+   "y": 236,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 206,
+    "size": 12
+   }
+  },
+  {
+   "id": "v2",
+   "type": "text",
+   "x": 320,
+   "y": 266,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 232,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A model of φ with 7 elements. The sentence starts with three ∃'s, then only ∀'s, and has no function symbols.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "n4",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "n5",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "n6",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Pick the witnesses for s, t and u, say elements 1, 2 and 3.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "v",
+     "set": {
+      "text": "witnesses: 1, 2, 3",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Send the other four elements away, and keep the predicates as they were on 1, 2, 3.",
+   "patches": [
+    {
+     "id": "n3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "n4",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "n5",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "n6",
+     "set": {
+      "hidden": true
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The witnesses are still here, and every ∀ now ranges over fewer elements, each instance with the same value as before. So φ is still true.",
+   "patches": [
+    {
+     "id": "v2",
+     "set": {
+      "text": "a model with at most 3 elements",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So if φ has any model, it has one of size ≤ 3 (GATE 2018, option A). Nothing forces a model to be large or exactly 7.",
+   "patches": [
+    {
+     "id": "v",
+     "set": {
+      "text": "∃³∀* ⇒ a model of size ≤ 3 exists",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

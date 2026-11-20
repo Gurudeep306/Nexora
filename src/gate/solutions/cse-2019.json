@@ -2294,11 +2294,11 @@
         },
         {
           "title": "Answer",
-          "body": "S2 and S3: option C (official key)."
+          "body": "S2 and S3: option C (published key)."
         }
       ],
       "answer": {
-        "value": "C (official key)",
+        "value": "C (published key)",
         "choice": [
           "C"
         ],
@@ -2318,7 +2318,7 @@
         {
           "option": "C",
           "correct": true,
-          "reason": "The official key: S2 (and S3 under the intended reading) satisfy 'there is no largest prime'."
+          "reason": "The published key: S2 (and S3 under the intended reading) satisfy 'there is no largest prime'."
         },
         {
           "option": "D",
@@ -2331,7 +2331,7 @@
         "Thinking 97 has a larger prime 101 in S1: w must come from the domain.",
         "Forgetting x = 1 also meets the hypothesis on S1 (only divisor 1), harmless here."
       ],
-      "verification": "Brute force on S1 finds x = 97 as the failing element; on S2 a larger prime exists for every x checked up to 10,000. Note: read literally on S3 (with negative divisors), x = −1 makes φ false and no option would be right; the official key C treats S3 like S2. Recorded in _errata/dm.md."
+      "verification": "Brute force on S1 finds x = 97 as the failing element; on S2 a larger prime exists for every x checked up to 10,000. Note: read literally on S3 (with negative divisors), x = −1 makes φ false and no option would be right; the published key C treats S3 like S2. Recorded in _errata/dm.md."
     },
     "cse-2019-cs-36": {
       "approach": "For an inherited attribute the type flows from $T$ down into the list: the left sibling $T$ passes its type to $L$, and the parent $L$ passes it to its child $L_1$.",

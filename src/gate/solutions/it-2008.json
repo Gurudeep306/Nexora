@@ -1207,20 +1207,24 @@
       "verification": "Eliminated A, B by II/III; D by the impossible DNS–firewall pairing."
     },
     "it-2008-it-21": {
-      "approach": "Use the equivalence $(\\exists x\\,\\alpha(x))\\to\\beta \\equiv \\forall x\\,(\\alpha(x)\\to\\beta)$ when $x$ is not free in $\\beta$; refute the others with a two-element model.",
+      "approach": "Concept tested: **moving ∃ out of a hypothesis flips it**: (∃x α(x)) → β ≡ ∀x(α(x) → β) when β has no free x.",
       "concepts": [
-        "Quantifier equivalences",
-        "Validity",
-        "Counter-models"
+        "Pull-out laws",
+        "Quantifier in a hypothesis"
       ],
+      "given": "α(x) has x free; β is a sentence.",
       "steps": [
         {
-          "title": "C is valid",
-          "body": "$(\\exists x\\,\\alpha(x))\\to\\beta \\equiv \\neg\\exists x\\,\\alpha(x)\\lor\\beta \\equiv \\forall x\\,\\neg\\alpha(x)\\lor\\beta \\equiv \\forall x\\,(\\neg\\alpha(x)\\lor\\beta)$ (as $x$ is not free in $\\beta$) $\\equiv \\forall x\\,(\\alpha(x)\\to\\beta)$. An implication between equivalent formulas is valid."
+          "title": "C",
+          "body": "By the pull-out law, its hypothesis and conclusion are equivalent, so C is ‘A → A’: valid."
         },
         {
-          "title": "Counter-model for A, B, D",
-          "body": "Domain $\\{1,2\\}$ with $\\alpha(1)$ true and $\\alpha(2)$ false.\n- A, B: take $\\beta$ true. A: LHS $\\beta\\to\\exists x\\,\\alpha$ = T, RHS $\\forall x(\\beta\\to\\alpha(x))$ fails at $x=2$. B: LHS $\\exists x(\\beta\\to\\alpha(x))$ = T ($x=1$), RHS $\\beta\\to\\forall x\\,\\alpha(x)$ = F.\n- D: take $\\beta$ false. LHS: $\\forall x\\,\\alpha$ is F, so LHS = T; RHS fails at $x=1$ since $\\alpha(1)\\to\\beta$ = F."
+          "title": "A and B",
+          "body": "With β true and α = {1} on {1, 2}: A's hypothesis β → ∃x α is T but ∀x(β → α) fails at 2; B's hypothesis ∃x(β → α) is T (witness 1) but β → ∀x α is F."
+        },
+        {
+          "title": "D",
+          "body": "β false and α = {1}: (∀x α) → β is T (∀x α is F), but α → β fails at x = 1."
         }
       ],
       "answer": {
@@ -1234,25 +1238,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Invalid: $\\beta$ true and $\\alpha$ true for only some $x$."
+          "reason": "Fails with β true, α = {1}."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Invalid: same counter-model."
+          "reason": "Fails with β true, α = {1}."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: the two sides are logically equivalent."
+          "reason": "Its two sides are equivalent by the pull-out law."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Invalid: $(\\forall x\\,\\alpha)\\to\\beta \\equiv \\exists x\\,(\\alpha(x)\\to\\beta)$, which does not imply the $\\forall$ form."
+          "reason": "Would need ∃x in the hypothesis, not ∀x; fails with β false, α = {1}."
         }
       ],
-      "verification": "Explicit two-element counter-models for A, B and D."
+      "shortcut": "Memorise ∀x(α → β) ≡ ∃x α → β; then C is visibly ‘X → X’.",
+      "pitfalls": [
+        "Pulling ∀ out of a hypothesis without flipping it (option D)."
+      ],
+      "verification": "predlib with α unary and β a 0-ary predicate: C valid up to size 3, the others refuted on size 2."
     },
     "it-2008-it-22": {
       "approach": "Concept tested: **pushing ¬ through a long nested formula**: each quantifier flips, the order stays, each → becomes ∧ with its right side negated.",

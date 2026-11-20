@@ -1316,120 +1316,24 @@
       }
     },
     "cse-2025-2-cs-5": {
-      "approach": "Option (A) is exactly the principle of mathematical induction on $\\mathbb{N} = \\{0,1,2,\\dots\\}$, so it is valid. Each other option is refuted by a single predicate that satisfies the hypothesis but is false somewhere.",
+      "approach": "Concept tested: **mathematical induction as a first-order statement over ℕ**: start at 0 and step +1.",
       "concepts": [
-        "Mathematical induction",
-        "Validity of first-order formulas",
-        "Counterexample"
+        "Induction schema",
+        "Counterexample predicates"
       ],
-      "given": "Domain: natural numbers $\\{0, 1, 2, \\dots\\}$; $P$ is **arbitrary**, so a statement is TRUE only if it holds for every predicate $P$.",
+      "given": "P an arbitrary predicate on ℕ.",
       "steps": [
         {
-          "title": "(A) is the induction principle",
-          "body": "Base case $P(0)$; step $P(x) \\Rightarrow P(x+1)$ for every $x$. From $P(0)$ the step gives $P(1)$, then $P(2)$, … and every natural number is reached from 0 by repeatedly adding 1. Hence $\\forall x\\, P(x)$. (A) holds for **every** $P$.",
-          "scene": {
-            "intervals": [
-              {
-                "from": 0,
-                "to": 1500,
-                "tone": "success",
-                "label": "P true (A)",
-                "open": [
-                  false,
-                  true
-                ]
-              }
-            ],
-            "points": [
-              {
-                "x": 0,
-                "label": "P(0)",
-                "tone": "success"
-              }
-            ],
-            "caption": "Base 0, step +1: the truth spreads to all of ℕ"
-          }
+          "title": "A",
+          "body": "P(0) and P(x) ⇒ P(x + 1): every n is reached from 0 in n steps, so ∀x P(x). True for every P."
         },
         {
-          "title": "(B) and (C): the step goes downwards",
-          "body": "Take $P(x) \\equiv (x \\le 1000)$.\n\n- $P(0)$ and $P(1000)$ are both true.\n- If $x \\le 1000$ then $x - 1 \\le 1000$, so $P(x) \\Rightarrow P(x-1)$ holds for every $x$.\n- But $P(1001)$ is false, so $\\forall x\\, P(x)$ is false.\n\nThe hypotheses of (B) and (C) are true and the conclusion is false, so both implications fail. Downward steps can never reach numbers **above** the base.",
-          "scene": {
-            "intervals": [
-              {
-                "from": 0,
-                "to": 1000,
-                "tone": "warning",
-                "label": "P(x) ≡ x ≤ 1000"
-              },
-              {
-                "from": 1000,
-                "to": 1500,
-                "tone": "error",
-                "label": "P false",
-                "open": [
-                  true,
-                  true
-                ]
-              }
-            ],
-            "points": [
-              {
-                "x": 0,
-                "label": "P(0)"
-              },
-              {
-                "x": 1000,
-                "label": "P(1000)",
-                "tone": "warning"
-              }
-            ],
-            "caption": "Hypotheses of (B)/(C) hold, but P(1001) is false"
-          }
-        },
-        {
-          "title": "(D): upward step from the wrong base",
-          "body": "Take $P(x) \\equiv (x \\ge 1000)$. $P(1000)$ is true and $x \\ge 1000 \\Rightarrow x + 1 \\ge 1000$, so the hypothesis holds; yet $P(0)$ is false. Induction from 1000 only proves $P$ for $x \\ge 1000$.",
-          "scene": {
-            "intervals": [
-              {
-                "from": 0,
-                "to": 1000,
-                "tone": "error",
-                "label": "P false",
-                "open": [
-                  false,
-                  true
-                ]
-              },
-              {
-                "from": 1000,
-                "to": 1500,
-                "tone": "warning",
-                "label": "P(x) ≡ x ≥ 1000",
-                "open": [
-                  false,
-                  true
-                ]
-              }
-            ],
-            "points": [
-              {
-                "x": 0,
-                "label": "P(0) false",
-                "tone": "error"
-              },
-              {
-                "x": 1000,
-                "label": "P(1000)",
-                "tone": "warning"
-              }
-            ],
-            "caption": "Hypothesis of (D) holds, but P(0) is false"
-          }
+          "title": "B, C, D fail",
+          "body": "B: P = {0}. C: P = {0, …, 1000}. D: P = {1000, 1001, …}. Each meets its hypothesis but not ∀x P(x)."
         }
       ],
       "answer": {
-        "value": "Option **(A)** — the principle of mathematical induction",
+        "value": "A",
         "choice": [
           "A"
         ],
@@ -1439,39 +1343,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Base $P(0)$ plus the step $P(x) \\Rightarrow P(x+1)$ reaches every natural number — this is induction, valid for every $P$."
+          "reason": "The induction principle."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Counterexample $P(x) \\equiv x \\le 1000$: $P(0)$ holds and $P$ is closed downward, but $P(1001)$ is false."
+          "reason": "P = {0}: downward steps from 0 reach nothing new."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Same counterexample $P(x) \\equiv x \\le 1000$: $P(1000)$ holds and the downward step holds, but nothing above 1000 is covered."
+          "reason": "P = {0, …, 1000}: nothing forces P(1001)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Counterexample $P(x) \\equiv x \\ge 1000$: $P(1000)$ and the upward step hold, but $P(0)$ is false."
+          "reason": "P = {1000, 1001, …}: nothing forces P(0)."
         }
       ],
-      "shortcut": "Ask \"which numbers does the hypothesis force?\" (A) forces $0,1,2,\\dots$ = all of $\\mathbb{N}$; (B) forces only $\\{0\\}$; (C) forces $\\{0,\\dots,1000\\}$; (D) forces $\\{1000, 1001, \\dots\\}$.",
+      "shortcut": "Ask which variant reaches every natural number from its start: only ‘from 0, upwards’.",
       "pitfalls": [
-        "Reading (C) as \"strong\" or \"backward\" induction: going down from 1000 only covers the finite set $\\{0,\\dots,1000\\}$.",
-        "Treating \"TRUE\" as \"true for some $P$\": $P$ is arbitrary, so the implication must hold for every predicate (validity)."
+        "Accepting C because it ‘covers’ 0."
       ],
-      "verification": "Each wrong option has an explicit predicate making its hypothesis true and conclusion false, while (A) is the standard induction axiom of the naturals.",
-      "animation": {
-        "kind": "numberline",
-        "title": "Where must P be true?",
-        "min": 0,
-        "max": 1500,
-        "step": 250,
-        "points": [],
-        "intervals": []
-      }
+      "verification": "For each of B, C, D, the stated P is checked on 0..3000: it meets the hypothesis and fails ∀x P(x); A is checked on every P ⊆ {0..8} over the domain {0..8} with x + 1 capped."
     },
     "cse-2025-2-cs-6": {
       "approach": "Check each statement against its protocol's definition: ARP resolves IP → MAC, and TCP routinely **piggybacks** acknowledgements on data segments because every segment carries an ACK field.",

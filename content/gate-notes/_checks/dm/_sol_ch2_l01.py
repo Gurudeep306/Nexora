@@ -133,7 +133,7 @@ SOLUTIONS["cse-2008-cs-30"] = {
         {"title": "Option A", "body": "Printed as $(\\forall x\\, \\text{fsa}(x)) \\Rightarrow (\\exists y\\, \\text{pda}(y) \\wedge \\text{equivalent}(x, y))$; read with ∀x covering the whole implication (as the examiners intended) it is exactly the formula above. Strictly, the bracket closes early and leaves x free in the consequent."},
         {"title": "C and D", "body": "$\\forall x\\, \\exists y\\, (\\text{fsa}(x) \\wedge \\dots)$ requires every x in the domain to be an FSA; D also swaps the roles of x and y. B negates the whole statement."},
     ],
-    "answer": {"value": "A (official key; read ∀x as covering the implication)", "choice": ["A"], "matchesKey": True},
+    "answer": {"value": "A (published key; read ∀x as covering the implication)", "choice": ["A"], "matchesKey": True},
     "optionAnalysis": [
         opt("A", True, "With ∀x scoping over the implication, it is 'every FSA has an equivalent PDA'."),
         opt("B", False, "Begins with a negation $\\sim\\forall y$: it denies something, so it cannot express the positive sentence."),
@@ -335,18 +335,18 @@ SOLUTIONS["cse-2019-cs-35"] = {
         {"title": "S1 fails", "body": "x = 97 satisfies the hypothesis (its divisors in S1 are 1 and 97), but 98, 99, 100 are not prime, so no w exists. φ is false on S1."},
         {"title": "S2 holds", "body": "For any x, a prime factor of x! + 1 is larger than x (Euclid). So every x has a larger prime: φ is true on S2."},
         {"title": "S3, as intended", "body": "The examiners intend the same reading on the integers: primes still have no largest member, so φ is taken to hold on S3 as well. (Strictly, with negative divisors, −1 divides every number, and x = −1 is the only x meeting the hypothesis; then no w > −1 has only the divisors w and 1, since −1 divides it. See the note.)"},
-        {"title": "Answer", "body": "S2 and S3: option C (official key)."},
+        {"title": "Answer", "body": "S2 and S3: option C (published key)."},
     ],
-    "answer": {"value": "C (official key)", "choice": ["C"], "matchesKey": True},
+    "answer": {"value": "C (published key)", "choice": ["C"], "matchesKey": True},
     "optionAnalysis": [
         opt("A", False, "S1 is finite and fails at x = 97."),
         opt("B", False, "S1 fails."),
-        opt("C", True, "The official key: S2 (and S3 under the intended reading) satisfy 'there is no largest prime'."),
+        opt("C", True, "The published key: S2 (and S3 under the intended reading) satisfy 'there is no largest prime'."),
         opt("D", False, "S1 fails."),
     ],
     "shortcut": "φ = 'there is no largest prime'. Any finite domain fails (its largest prime-like element); infinite domains of positive numbers pass.",
     "pitfalls": ["Thinking 97 has a larger prime 101 in S1: w must come from the domain.", "Forgetting x = 1 also meets the hypothesis on S1 (only divisor 1), harmless here."],
-    "verification": "Brute force on S1 finds x = 97 as the failing element; on S2 a larger prime exists for every x checked up to 10,000. Note: read literally on S3 (with negative divisors), x = −1 makes φ false and no option would be right; the official key C treats S3 like S2. Recorded in _errata/dm.md.",
+    "verification": "Brute force on S1 finds x = 97 as the failing element; on S2 a larger prime exists for every x checked up to 10,000. Note: read literally on S3 (with negative divisors), x = −1 makes φ false and no option would be right; the published key C treats S3 like S2. Recorded in _errata/dm.md.",
 }
 
 SOLUTIONS["cse-2023-cs-16"] = {

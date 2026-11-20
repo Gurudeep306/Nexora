@@ -8,11 +8,11 @@ prerequisites: [equivalence-normal-forms]
 pyq_topics: [dm/logic]
 est_minutes: 90
 difficulty: core
-status: review
+status: published
 needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every evaluation, translation, negation, PYQ key and practice answer is recomputed in content/gate-notes/_checks/dm/l2_01_quantifiers.py with predlib.py (exhaustive search over every interpretation on domains of size 1 to 3, plus hand-built worlds)."
-  - "Coverage checklist only (internal digests, never copied): set A pp. 26–37, set B pp. 168–173, set C pp. 296–311, set D pp. 676–679. Set A's gloss of 'only A are B' is recorded in _errata/dm.md."
+  - "Written without the reference notes (not available when this lesson was written): coverage from the official syllabus, the PYQ bank and the textbooks below; to be re-checked against the notes once their text is ready."
   - "Facts checked against standard textbooks: K. H. Rosen, Discrete Mathematics and its Applications (predicates and quantifiers, nested quantifiers); H. B. Enderton, A Mathematical Introduction to Logic (structures and satisfaction)."
   - "PYQs: src/gate/questions.json (dm/logic); all nineteen keys are re-derived by model search in l2_01_quantifiers.py; GATE 2019's set S3 is discussed in _errata/dm.md."
 updated: "2026-11-20"
@@ -44,7 +44,7 @@ $\exists\forall\exists\forall$ sentence.
 | What | Detail |
 |:--|:--|
 | PYQs mapped to this lesson | 19 (2004–2026) |
-| Marks | 5 one-mark, 14 two-mark; 2 are multiple-select |
+| Marks | 6 one-mark, 13 two-mark; 2 of them are multiple-select (2023, 2025) |
 | Pattern 1 | Translate an English sentence into a formula: 2004, 2005, 2006, 2008, 2009, 2012, 2013, 2014 (both papers), 2025, 2026 |
 | Pattern 2 | "Not all", "none" and negation of a quantified formula: 2007, 2009, 2010, 2014, IT 2004, IT 2008 |
 | Pattern 3 | Number theory written in logic (prime, divides): 2011, 2019 |
@@ -395,9 +395,9 @@ owns a cycle", (b) "some student owns a cycle".
 (b) $\exists x\, (S(x) \wedge C(x))$.
 :::
 
-:::step{why="Sanity check each on a world with one teacher and no student cyclist."}
-In that world (a) is vacuously true if there are no students, and (b) is false; the teacher never
-disturbs either formula, as the English intends.
+:::step{why="Sanity check each on a world with one teacher and no students at all."}
+There (a) is vacuously true (no student can break the promise) and (b) is false (no student to
+sight). The teacher never disturbs either formula, as the English intends.
 :::
 
 :::answer
@@ -645,7 +645,7 @@ the $\forall x$ fails. The ∧ version claims that **everything** is an FSA.
 :::answer
 $\forall x\, (\text{fsa}(x) \to \exists y\, (\text{pda}(y) \wedge \text{eq}(x, y)))$. GATE 2008 prints
 it as $(\forall x\, \text{fsa}(x)) \Rightarrow (\exists y\, \text{pda}(y) \wedge \text{equivalent}(x, y))$
-(option A, the official key) with the bracket closing too early; read the $\forall x$ as covering the
+(option A, the published key) with the bracket closing too early; read the $\forall x$ as covering the
 whole implication, as intended. The other options are wrong for the reasons above.
 :::
 ::::

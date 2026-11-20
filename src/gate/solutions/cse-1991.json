@@ -3284,30 +3284,37 @@
       "verification": "Checked on 12 and 18: 6 × 36 = 216 = 12 × 18."
     },
     "cse-1991-b-15-b": {
-      "approach": "The formula says R is serial (everyone has a successor), asymmetric, transitive and irreflexive — a strict order with no maximal element. Following successors in a finite domain must revisit an element, which transitivity turns into $R(x,x)$.",
+      "approach": "Concept tested: **a sentence whose models are all infinite**. Follow successors: transitivity plus irreflexivity forbid returning to an old element, so the chain never ends.",
       "concepts": [
-        "first-order models",
-        "strict partial order",
-        "satisfiability"
+        "Models of a sentence",
+        "Transitive irreflexive relations",
+        "Infinite models"
       ],
+      "given": "$\\Phi = \\forall x\\, \\exists y\\, R(x, y) \\wedge \\forall x\\, \\forall y\\, (R(x, y) \\to \\neg R(y, x)) \\wedge \\forall x\\, \\forall y\\, \\forall z\\, (R(x, y) \\wedge R(y, z) \\to R(x, z)) \\wedge \\forall x\\, \\neg R(x, x)$.",
       "steps": [
         {
-          "title": "No finite model",
-          "body": "Take a model with $n$ elements. Start at any $x_0$ and use $\\forall x \\exists y\\, R(x,y)$ to pick $x_1, x_2, \\ldots, x_n$ with $R(x_m, x_{m+1})$. These are $n+1$ names for $n$ elements, so $x_p = x_q$ for some $p < q$. Transitivity along the chain gives $R(x_p, x_q) = R(x_p, x_p)$, contradicting $\\forall x\\, \\neg R(x,x)$ (and asymmetry with $x=y$)."
+          "title": "Build the chain",
+          "body": "In any model pick $d_0$ and successors $d_0 R d_1 R d_2 \\cdots$ (first conjunct)."
+        },
+        {
+          "title": "All distinct",
+          "body": "Transitivity gives $d_i R d_j$ for all $i < j$. If $d_i = d_j$ with $i < j$, then $d_i R d_i$, contradicting irreflexivity. So infinitely many distinct elements: **no finite model**."
         },
         {
           "title": "A countable model",
-          "body": "Domain $\\mathbb{N}$, $R(x,y) \\iff x < y$:\n\n- every $x$ has $y = x+1$ with $x < y$ ✓\n- $x<y \\Rightarrow \\neg(y<x)$ ✓\n- $x<y,\\ y<z \\Rightarrow x<z$ ✓\n- $\\neg(x<x)$ ✓\n\nSo the formula is **satisfiable**, but only in infinite models."
+          "body": "$(\\mathbb{N}, <)$: every $n$ has $n + 1 > n$; $<$ is asymmetric, transitive and irreflexive. So $\\Phi$ is **satisfiable**."
         }
       ],
       "answer": {
-        "value": "**No finite models**; it is **satisfiable** — e.g. $(\\mathbb{N}, <)$ is a countable model.",
+        "value": "No finite models; satisfiable, e.g. by (ℕ, <)",
         "matchesKey": true
       },
+      "shortcut": "‘Every element has a successor’ + ‘strict order’ = an endless ascending chain.",
       "pitfalls": [
-        "Answering 'unsatisfiable' because no finite model exists — first-order formulas can have only infinite models."
+        "Closing the chain into a cycle: transitivity around the cycle gives R(x, x).",
+        "Concluding ‘unsatisfiable’ from ‘no finite model’."
       ],
-      "verification": "Irreflexivity already follows from asymmetry (put y = x), so the answer does not depend on how the blurred last conjunct is read."
+      "verification": "predlib finds no model on any domain of size 1 to 4; (ℕ, <) restricted to {0..5} satisfies the three universal conditions, and every n has n + 1."
     },
     "cse-1991-b-16-a": {
       "approach": "Count balanced strings and subtract the bad ones with the reflection principle; the result is the Catalan number.",

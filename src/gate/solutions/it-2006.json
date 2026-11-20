@@ -1095,24 +1095,29 @@
       "verification": "E.g. SHA-256 always outputs 256 bits regardless of input length."
     },
     "it-2006-cs-21": {
-      "approach": "The formula says R is symmetric. Find one model where R is symmetric and one where it is not.",
+      "approach": "Concept tested: **valid / satisfiable / unsatisfiable**, and the duality with the negation.",
       "concepts": [
-        "First-order logic",
-        "Satisfiability",
-        "Validity"
+        "Satisfiable",
+        "Valid",
+        "Negation of a formula"
       ],
+      "given": "∀x∀y(R(x, y) ⇒ R(y, x)), ‘R is symmetric’.",
       "steps": [
         {
           "title": "Satisfiable",
-          "body": "Take $R=\\emptyset$ (or equality): the implication holds vacuously, so the formula is satisfiable."
+          "body": "R = ∅ (or any symmetric relation) makes it true."
         },
         {
-          "title": "Negation satisfiable",
-          "body": "Domain $\\{1,2\\}$, $R=\\{(1,2)\\}$: $R(1,2)$ true, $R(2,1)$ false, so the formula is false and its negation is true. Hence the formula is not valid, and both it and its negation are satisfiable."
+          "title": "Its negation is satisfiable",
+          "body": "R = {(1, 2)} on {1, 2}: R(1, 2) holds but R(2, 1) does not, so the formula is false and its negation true."
+        },
+        {
+          "title": "Classify",
+          "body": "Satisfiable, not valid; the negation is satisfiable too: option B."
         }
       ],
       "answer": {
-        "value": "satisfiable and so is its negation",
+        "value": "B",
         "choice": [
           "B"
         ],
@@ -1122,25 +1127,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Not valid: $R=\\{(1,2)\\}$ falsifies it."
+          "reason": "Not valid: a non-symmetric relation falsifies it."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct."
+          "reason": "Both the formula and its negation have models."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "It is satisfiable ($R=\\emptyset$)."
+          "reason": "It is satisfiable (R = ∅)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "The negation is satisfiable ($R=\\{(1,2)\\}$)."
+          "reason": "The negation is satisfiable (R = {(1, 2)})."
         }
       ],
-      "verification": "Two explicit models given, one for each."
+      "shortcut": "Any formula that says ‘R has property X’ for a property some relations have and others lack is contingent.",
+      "pitfalls": [
+        "Confusing ‘satisfiable’ with ‘valid’."
+      ],
+      "verification": "predlib finds a model (R = ∅) and a counter-model ({(0, 1)}) on domains of size ≤ 2."
     },
     "it-2006-cs-22": {
       "approach": "N is geometric with success probability p; its mean is 1/p.",

@@ -1,0 +1,689 @@
+{
+ "version": 1,
+ "title": "Finding a counter-model",
+ "width": 640,
+ "height": 338,
+ "narrow": {
+  "width": 360,
+  "height": 312
+ },
+ "intro": "A validity question can be refuted by one world. Here the search runs through the worlds on {1, 2} in order until the formula fails.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Searching every world on {1, 2} for a counter-model",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Counter-model search on {1, 2}",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "t",
+   "type": "table",
+   "x": 60,
+   "y": 46,
+   "cellW": 104,
+   "cellH": 30,
+   "rows": [
+    [
+     "P",
+     "Q",
+     "∀(P∨Q)",
+     "∀P ∨ ∀Q",
+     "→"
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 4,
+    "y": 44,
+    "cellW": 70,
+    "cellH": 28
+   }
+  },
+  {
+   "id": "v",
+   "type": "text",
+   "x": 320,
+   "y": 316,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 296,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Formula: ∀x (P(x) ∨ Q(x)) → (∀x P(x) ∨ ∀x Q(x)). With two elements, P and Q each have 4 possible extensions: 16 worlds. We try them in order.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "highlight": []
+     }
+    }
+   ]
+  },
+  {
+   "caption": "World P = ∅, Q = ∅: the hypothesis is F, the conclusion F, so the implication is T. Not a counter-model; next world.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "∀(P∨Q)",
+        "∀P ∨ ∀Q",
+        "→"
+       ],
+       [
+        "∅",
+        "∅",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "World P = ∅, Q = {1}: the hypothesis is F, the conclusion F, so the implication is T. Not a counter-model; next world.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "∀(P∨Q)",
+        "∀P ∨ ∀Q",
+        "→"
+       ],
+       [
+        "∅",
+        "∅",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{1}",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "World P = ∅, Q = {2}: the hypothesis is F, the conclusion F, so the implication is T. Not a counter-model; next world.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "∀(P∨Q)",
+        "∀P ∨ ∀Q",
+        "→"
+       ],
+       [
+        "∅",
+        "∅",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{1}",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{2}",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "World P = ∅, Q = {1, 2}: the hypothesis is T, the conclusion T, so the implication is T. Not a counter-model; next world.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "∀(P∨Q)",
+        "∀P ∨ ∀Q",
+        "→"
+       ],
+       [
+        "∅",
+        "∅",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{1}",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{2}",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{1, 2}",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "World P = {1}, Q = ∅: the hypothesis is F, the conclusion F, so the implication is T. Not a counter-model; next world.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "∀(P∨Q)",
+        "∀P ∨ ∀Q",
+        "→"
+       ],
+       [
+        "∅",
+        "∅",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{1}",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{2}",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{1, 2}",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "{1}",
+        "∅",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        5,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "World P = {1}, Q = {1}: the hypothesis is F, the conclusion F, so the implication is T. Not a counter-model; next world.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "∀(P∨Q)",
+        "∀P ∨ ∀Q",
+        "→"
+       ],
+       [
+        "∅",
+        "∅",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{1}",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{2}",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{1, 2}",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "{1}",
+        "∅",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "{1}",
+        "{1}",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        6,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "World P = {1}, Q = {2}: the hypothesis is T, the conclusion F, so the implication is F. A counter-model: the search stops.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "∀(P∨Q)",
+        "∀P ∨ ∀Q",
+        "→"
+       ],
+       [
+        "∅",
+        "∅",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{1}",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{2}",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "∅",
+        "{1, 2}",
+        "T",
+        "T",
+        "T"
+       ],
+       [
+        "{1}",
+        "∅",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "{1}",
+        "{1}",
+        "F",
+        "F",
+        "T"
+       ],
+       [
+        "{1}",
+        "{2}",
+        "T",
+        "F",
+        "F"
+       ]
+      ],
+      "highlight": [
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        7,
+        2
+       ],
+       [
+        7,
+        3
+       ],
+       [
+        7,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "v",
+     "set": {
+      "text": "counter-model: P = {1}, Q = {2}  →  not valid",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "One counter-model is enough to show the formula is not valid. Note the shape: P and Q take turns, so ‘each element is P or Q’ is true while neither holds everywhere.",
+   "patches": [
+    {
+     "id": "v",
+     "set": {
+      "text": "P and Q take turns: the classic counter-model",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}
