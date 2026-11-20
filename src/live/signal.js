@@ -10,6 +10,7 @@ const { get, run } = require("../db");
 const store = require("./store");
 const media = require("./media");
 const { rooms, roomState, peerView, dropIfEmpty } = require("./state");
+const config = require("./config");
 
 const CHAT_MAX = 2000;
 const HISTORY = 150;
@@ -100,7 +101,9 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
 
     let transport;
     const lk = media.livekitConfig();
-    if (s.transport === "sfu" && lk) {
+    if (s.transport === "cf" && config.cloudflare()) {
+      transport = { kind: "cf", iceServers: [{ urls: ["stun:stun.cloudflare.com:3478"] }] };
+    } else if (s.transport === "sfu" && lk) {
       transport = {
         kind: "sfu",
         url: lk.url,
@@ -172,13 +175,14 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
         const room = await roomFor(String(payload?.code || ""));
         if (!room) return reply(ack, { ok: false, error: "This room has ended or does not exist." });
         if (socket.data.device === "tablet" && socket.data.deviceRoom !== room.id) return reply(ack, { ok: false, error: "This link is for another room." });
-        const lk = media.livekitConfig();
-        const s = roomState(room.code, room.id, lk ? "sfu" : "mesh");
-        const cap = s.transport === "sfu" ? media.SFU_MAX : media.MESH_MAX;
+        // How media travels is fixed when a room opens (Admin → Live chooses).
+        const s = rooms.get(room.code) || roomState(room.code, room.id, (await config.chooseTransport()).kind);
+        if (socket.data.device === "tablet" && !config.peekConfig().tablets) return reply(ack, { ok: false, error: "Tablets are switched off for Live right now." });
+        const cap = media.capOf(s.transport);
         if (s.peers.size >= cap) {
           return reply(ack, {
             ok: false,
-            error: s.transport === "sfu" ? `This room is full (${cap} devices).` : `This room is full. Without the video server, a room holds ${cap} devices.`,
+            error: s.transport !== "mesh" ? `This room is full (${cap} devices).` : `This room is full. Without the video server, a room holds ${cap} devices.`,
           });
         }
         const host = me === room.host || s.cohosts.has(me);
@@ -218,13 +222,15 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
       const { p } = c;
       if (typeof payload?.mic === "boolean") p.mic = payload.mic;
       if (typeof payload?.cam === "boolean") p.cam = payload.cam;
+      // Cloudflare: which publications this device sends (others pull them by name).
+      if (Array.isArray(payload?.pubs)) p.pubs = payload.pubs.filter((x) => typeof x === "string" && /^[a-z]+(-[A-Za-z0-9]{1,16})?$/.test(x)).slice(0, 8);
       if (Array.isArray(payload?.screens)) {
         p.screens = payload.screens
           .slice(0, 3)
           .filter((x) => x && typeof x.id === "string" && x.id.length <= 64)
           .map((x) => ({ id: x.id, label: String(x.label || "Screen").slice(0, 60), kind: x.kind === "board" || x.kind === "camera" ? x.kind : "screen" }));
       }
-      to(socket.data.code).emit("peer-state", { peerId: p.peerId, mic: p.mic, cam: p.cam, screens: p.screens });
+      to(socket.data.code).emit("peer-state", { peerId: p.peerId, mic: p.mic, cam: p.cam, screens: p.screens, pubs: p.pubs || [], cf: p.cf || null });
     });
 
     // Direct (mesh) connections: offers, answers and candidates between two peers of one room.
@@ -267,6 +273,7 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
     socket.on("recording", (payload) => {
       const c = ctx();
       if (!c || !allow("recording", 10, 10_000)) return;
+      if (payload?.on && !config.peekConfig().recording) return socket.emit("room", { recordingOff: true });
       c.p.recording = !!payload?.on;
       to(socket.data.code).emit("recording", { peerId: c.p.peerId, on: c.p.recording, name: c.p.name });
     });
@@ -277,6 +284,70 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
       const emoji = String(payload?.emoji || "");
       if (!REACTIONS.has(emoji)) return;
       to(socket.data.code).emit("react", { peerId: c.p.peerId, emoji, at: Date.now() });
+    });
+
+    /* ── Cloudflare Realtime: the browser's offers and answers, sent on with
+       the app secret. Each device works only on its own session, and pulls
+       only from sessions of devices in the same room. ── */
+    const cfOp = (name, fn) =>
+      socket.on(name, async (payload, ack) => {
+        const c = ctx();
+        const cf = config.cloudflare();
+        if (!c || c.s.transport !== "cf" || !cf) return reply(ack, { errorCode: "not-cf" });
+        if (!allow("cf", 240, 10_000)) return reply(ack, { errorCode: "slow-down" });
+        try {
+          reply(ack, await fn(c, cf, payload || {}));
+        } catch (e) {
+          reply(ack, { errorCode: "failed", errorDescription: e.message });
+        }
+      });
+    const sdp = (x) => typeof x === "string" && x.length < 200_000 && x.startsWith("v=0");
+    cfOp("cf:session", async (c, cf) => {
+      if (c.p.cf) return { sessionId: c.p.cf };
+      const j = await config.cfCall(cf, "/sessions/new", "POST");
+      if (j.sessionId) {
+        c.p.cf = j.sessionId;
+        to(socket.data.code).emit("peer-state", { peerId: c.p.peerId, mic: c.p.mic, cam: c.p.cam, screens: c.p.screens, pubs: c.p.pubs || [], cf: c.p.cf });
+      }
+      return { sessionId: j.sessionId, errorCode: j.errorCode, errorDescription: j.errorDescription };
+    });
+    cfOp("cf:push", async (c, cf, b) => {
+      if (!c.p.cf || !sdp(b.sdp) || !Array.isArray(b.tracks)) return { errorCode: "bad" };
+      const tracks = b.tracks.slice(0, 8).map((t) => ({ location: "local", mid: String(t.mid), trackName: String(t.trackName).slice(0, 40) }));
+      return config.cfCall(cf, `/sessions/${c.p.cf}/tracks/new`, "POST", { sessionDescription: { type: "offer", sdp: b.sdp }, tracks });
+    });
+    cfOp("cf:pull", async (c, cf, b) => {
+      if (!c.p.cf || !Array.isArray(b.tracks)) return { errorCode: "bad" };
+      const sessions = new Set([...c.s.peers.values()].filter((x) => x.peerId !== c.p.peerId && x.cf).map((x) => x.cf));
+      const tracks = b.tracks
+        .slice(0, 16)
+        .filter((t) => sessions.has(t.sessionId))
+        .map((t) => ({ location: "remote", sessionId: t.sessionId, trackName: String(t.trackName).slice(0, 40), ...(t.rid ? { simulcast: { preferredRid: String(t.rid).slice(0, 4) } } : {}) }));
+      if (!tracks.length) return { errorCode: "no-tracks" };
+      return config.cfCall(cf, `/sessions/${c.p.cf}/tracks/new`, "POST", { tracks });
+    });
+    cfOp("cf:answer", async (c, cf, b) => {
+      if (!c.p.cf || !sdp(b.sdp)) return { errorCode: "bad" };
+      return config.cfCall(cf, `/sessions/${c.p.cf}/renegotiate`, "PUT", { sessionDescription: { type: "answer", sdp: b.sdp } });
+    });
+    cfOp("cf:close", async (c, cf, b) => {
+      if (!c.p.cf || !sdp(b.sdp) || !Array.isArray(b.mids)) return { errorCode: "bad" };
+      return config.cfCall(cf, `/sessions/${c.p.cf}/tracks/close`, "PUT", { tracks: b.mids.slice(0, 16).map((mid) => ({ mid: String(mid) })), sessionDescription: { type: "offer", sdp: b.sdp }, force: false });
+    });
+    cfOp("cf:quality", async (c, cf, b) => {
+      if (!c.p.cf || !b.mid || !b.sessionId) return { errorCode: "bad" };
+      return config.cfCall(cf, `/sessions/${c.p.cf}/tracks/update`, "PUT", {
+        tracks: [{ location: "remote", sessionId: String(b.sessionId), trackName: String(b.trackName).slice(0, 40), mid: String(b.mid), simulcast: { preferredRid: String(b.rid).slice(0, 4) } }],
+      });
+    });
+    // Bytes this device received through the video server since its last report
+    // (an estimate for Admin → Live; at most ~40 Mbit/s is believed).
+    socket.on("usage", (payload) => {
+      const c = ctx();
+      if (!c || c.s.transport !== "cf" || !allow("usage", 6, 60_000)) return;
+      const ms = Math.max(1000, Math.min(120_000, Number(payload?.ms) || 0));
+      const bytes = Math.max(0, Math.min(Number(payload?.bytes) || 0, (ms / 1000) * 5_000_000));
+      config.addUsage(bytes);
     });
 
     /* ── Host controls ── */
@@ -303,7 +374,7 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
           ws.emit("denied", { reason: "The host did not let you in." });
           continue;
         }
-        const cap = h.s.transport === "sfu" ? media.SFU_MAX : media.MESH_MAX;
+        const cap = media.capOf(h.s.transport);
         if (h.s.peers.size >= cap) {
           ws.emit("denied", { reason: "The room is full." });
           continue;

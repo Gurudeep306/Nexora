@@ -93,10 +93,11 @@ function createLiveRoomsRouter({ realtime, live }) {
     return get("SELECT * FROM live_rooms WHERE id=?", [id]);
   }
 
-  router.get("/api/live/config", auth, (req, res) => {
-    const sfu = !!media.livekitConfig();
-    res.json({ ok: true, transport: sfu ? "sfu" : "mesh", maxDevices: sfu ? media.SFU_MAX : media.MESH_MAX });
-  });
+  router.get("/api/live/config", auth, wrap(async (req, res) => {
+    const t = await require("../live/config").chooseTransport();
+    const c = require("../live/config").peekConfig();
+    res.json({ ok: true, transport: t.kind, maxDevices: media.capOf(t.kind), recording: c.recording, calls: c.calls, tablets: c.tablets });
+  }));
 
   router.get("/api/live/rooms", auth, light, wrap(async (req, res) => {
     const me = req.sessionUser.username;
@@ -168,6 +169,7 @@ function createLiveRoomsRouter({ realtime, live }) {
     const me = req.sessionUser.username;
     const room = await store.roomByCode(req.params.code);
     if (!room || room.ended_at) bad("This room has ended.", 404);
+    if (!(await require("../live/config").loadConfig()).tablets) bad("Tablets are switched off for Live right now.", 403);
     const s = rooms.get(room.code);
     if (![...(s?.peers.values() || [])].some((p) => p.username === me && p.device === "main")) bad("Join the room first.", 403);
     const token = crypto.randomBytes(16).toString("base64url");
@@ -191,6 +193,7 @@ function createLiveRoomsRouter({ realtime, live }) {
   router.post("/api/live/call", auth, make, wrap(async (req, res) => {
     const me = req.sessionUser.username;
     const b = req.body || {};
+    if (!(await require("../live/config").loadConfig()).calls) bad("Calls are switched off right now.", 403);
     const list = Array.isArray(b.to) ? [...new Set(b.to.map(String))].filter((u) => u && u !== me) : [];
     if (!list.length || list.length > 8) bad("Choose 1 to 8 people to call.");
     for (const u of list) if (!(await store.mayCall(me, u))) bad(`You can call friends and people you message. ${u} is not one yet.`, 403);

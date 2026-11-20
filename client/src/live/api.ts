@@ -46,6 +46,9 @@ export interface PeerInfo {
   screens: ScreenInfo[]
   hand: boolean
   joinedAt: number
+  /** Cloudflare: the device's session, and the publications it sends. */
+  cf?: string | null
+  pubs?: string[]
 }
 
 export interface ChatMsg {
@@ -67,7 +70,7 @@ export interface Knock {
   at: number
 }
 
-export type TransportInfo = { kind: 'sfu'; url: string; token: string } | { kind: 'mesh'; iceServers: RTCIceServer[] }
+export type TransportInfo = { kind: 'sfu'; url: string; token: string } | { kind: 'mesh' | 'cf'; iceServers: RTCIceServer[] }
 
 export interface JoinOk {
   ok: true
@@ -83,7 +86,7 @@ export type JoinReply = JoinOk | { ok: false; waiting?: boolean; error?: string;
 const enc = encodeURIComponent
 
 export const liveApi = {
-  config: () => api.get<{ ok: true; transport: 'sfu' | 'mesh'; maxDevices: number }>('/api/live/config'),
+  config: () => api.get<{ ok: true; transport: 'sfu' | 'mesh' | 'cf'; maxDevices: number; recording: boolean; calls: boolean; tablets: boolean }>('/api/live/config'),
   list: () => api.get<{ ok: true; live: LiveRoom[]; invited: LiveRoom[]; mine: LiveRoom[] }>('/api/live/rooms'),
   create: (b: { title?: string; mode: LiveMode; visibility: Visibility; about?: { kind: 'gate'; target: string } }) => api.post<{ ok: true; room: LiveRoom }>('/api/live/rooms', b).then((r) => r.room),
   room: (code: string) => api.get<{ ok: true; room: LiveRoom }>(`/api/live/rooms/${enc(code)}`).then((r) => r.room),

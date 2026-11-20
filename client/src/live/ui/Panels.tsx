@@ -388,7 +388,7 @@ export function SettingsPanel({ session, s }: { session: LiveSession; s: LiveSta
         </span>
       </label>
       <p className="lv-hint">
-        {s.transport === 'sfu' ? 'Media goes through the NexoraGuru video server, so big classes stay smooth.' : 'Devices connect to each other directly. Small rooms only.'}
+        {s.transport === 'sfu' || s.transport === 'cf' ? 'Media goes through the video server, so big classes stay smooth.' : 'Devices connect to each other directly. Small rooms only.'}
       </p>
     </div>
   )
