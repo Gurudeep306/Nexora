@@ -1,12 +1,13 @@
 /*
   Video explanations (server: src/routes/explain.js). A member records a video
-  on a GATE question or a notes lesson; others watch it, mark it helpful and
+  on a GATE question, a notes lesson, a DSA lesson or one part (subtopic) of
+  a lesson ("<lesson>#<heading id>"); others watch it, mark it helpful and
   learn from it. Trimming and chapters are stored as numbers and the player
   honours them, so a video is never re-encoded.
 */
 import { api, API_BASE } from '@/lib/api'
 
-export type ExplainKind = 'gate' | 'lesson'
+export type ExplainKind = 'gate' | 'lesson' | 'learn'
 export type Source = 'camera' | 'screen' | 'screen+camera' | 'board' | 'upload'
 export type Chapter = { at: number; title: string }
 
@@ -47,6 +48,13 @@ export const explainApi = {
   vote: (id: string, on: boolean) => (on ? api.put : api.delete)<{ ok: true; votes: number; voted: boolean }>(`/api/explain/videos/${enc(id)}/vote`),
   view: (id: string) => api.post<{ ok: true }>(`/api/explain/videos/${enc(id)}/view`).catch(() => null),
   report: (id: string, reason: string) => api.post<{ ok: true }>(`/api/explain/videos/${enc(id)}/report`, { reason }),
+  /** Videos per part of a lesson: { '': whole lesson, '<heading id>': n }. */
+  counts: (kind: ExplainKind, target: string) => api.get<{ ok: true; counts: Record<string, number> }>('/api/explain/counts', { query: { kind, target } }).then((r) => r.counts),
+  /** A one-time link (QR) for recording on a tablet. */
+  link: (kind: ExplainKind, target: string, about: string) => api.post<{ ok: true; token: string; path: string; expiresAt: number }>('/api/explain/links', { kind, target, about }),
+  linkStatus: (token: string) => api.get<{ ok: true; opened: boolean; uploading: boolean; expiresAt: number; video: ExplainVideo | null }>(`/api/explain/links/${enc(token)}`),
+  /** On the tablet (not signed in). */
+  device: (token: string) => api.get<{ ok: true; about: string; name: string; maxMs: number; maxBytes: number; expiresAt: number }>(`/api/explain/device/${enc(token)}`),
 }
 
 export interface UploadMeta {
@@ -60,6 +68,8 @@ export interface UploadMeta {
   trimEndMs: number | null
   chapters: Chapter[]
   visibility: 'public' | 'private'
+  /** The lesson's name (kept for DSA lessons, whose content lives here). */
+  about?: string
 }
 
 /**
@@ -67,8 +77,16 @@ export interface UploadMeta {
  * that grows); if the server says it already has more, the upload continues
  * from there. `onProgress` gets 0…1. Returns the published video.
  */
-export async function uploadVideo(blob: Blob, meta: UploadMeta, poster: string | null, onProgress: (p: number) => void, signal?: AbortSignal): Promise<ExplainVideo> {
-  const start = await api.post<{ ok: true; id: string; piece: number }>('/api/explain/videos', { ...meta, mime: blob.type || 'video/webm', size: blob.size })
+export async function uploadVideo(
+  blob: Blob,
+  meta: UploadMeta,
+  poster: string | null,
+  onProgress: (p: number) => void,
+  signal?: AbortSignal,
+  /** Where uploads go: signed in, or a tablet's link (`/api/explain/device/<token>/videos`). */
+  base = '/api/explain/videos',
+): Promise<ExplainVideo> {
+  const start = await api.post<{ ok: true; id: string; piece: number }>(base, { ...meta, mime: blob.type || 'video/webm', size: blob.size })
   const piece = Math.min(start.piece, 4 * 1024 * 1024)
   let at = 0
   let tries = 0
@@ -76,7 +94,7 @@ export async function uploadVideo(blob: Blob, meta: UploadMeta, poster: string |
     if (signal?.aborted) throw new Error('Upload cancelled.')
     const chunk = blob.slice(at, Math.min(blob.size, at + piece))
     try {
-      const r = await fetch(mediaUrl(`/api/explain/videos/${enc(start.id)}/data?at=${at}`), {
+      const r = await fetch(mediaUrl(`${base}/${enc(start.id)}/data?at=${at}`), {
         method: 'PUT',
         credentials: 'include',
         headers: { 'Content-Type': 'application/octet-stream' },
@@ -99,7 +117,7 @@ export async function uploadVideo(blob: Blob, meta: UploadMeta, poster: string |
       await new Promise((res) => setTimeout(res, Math.min(15_000, 800 * 2 ** tries)))
     }
   }
-  const done = await api.post<{ ok: true; video: ExplainVideo }>(`/api/explain/videos/${enc(start.id)}/finish`, { poster })
+  const done = await api.post<{ ok: true; video: ExplainVideo }>(`${base}/${enc(start.id)}/finish`, { poster })
   return done.video
 }
 

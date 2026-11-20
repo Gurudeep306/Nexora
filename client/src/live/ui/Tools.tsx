@@ -16,7 +16,13 @@ import type { LiveSession, LiveState } from '../session'
 export function PollCard({ session, s }: { session: LiveSession; s: LiveState }) {
   const p = s.poll
   const [hidden, setHidden] = useState<string | null>(null)
-  if (!p || hidden === p.id) return null
+  if (!p) return null
+  if (hidden === p.id)
+    return (
+      <button type="button" className="lv-chip-btn lv-poll-show" onClick={() => setHidden(null)}>
+        <BarChart3 className="size-3.5" aria-hidden="true" /> Show the poll · {p.voters} answered
+      </button>
+    )
   const total = Math.max(1, p.counts.reduce((a, b) => a + b, 0))
   const host = session.isHost()
   const letter = (i: number) => String.fromCharCode(65 + i)

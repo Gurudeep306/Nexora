@@ -216,7 +216,10 @@ from a range, since test files run in parallel and a clash fails the run.
   `client/src/live/`): study rooms and calls. Video or voice, several screens
   at once, a whiteboard, a tablet joined by QR (`/live/d/<token>`, no sign-in,
   passes private mode), chat, hands, reactions, a waiting room and host
-  controls; calls ring friends from Messages. **Admin → Live** (`src/live/config.js`,
+  controls, study tools (the room's question, quick polls, a shared timer, a
+  shared code pad kept in step with Yjs); calls ring friends from Messages.
+  A poll takes its own column (or a row under the people on narrow screens),
+  never covering a tile. **Admin → Live** (`src/live/config.js`,
   `components/admin/LiveSection.tsx`) chooses how media travels: Cloudflare
   Realtime SFU (`client/src/live/cf.ts`; our server passes the browser's
   offers on over the socket with the sealed app token, so it never reaches a
@@ -226,8 +229,15 @@ from a range, since test files run in parallel and a clash fails the run.
   newcomer always starts each connection; keep that, or two offers clash and
   Chrome's ICE stalls. `routes/live.js` is the older LiveClass API, unrelated.
 - **Video explanations** (`src/routes/explain.js`, `client/src/explain/`): under
-  GATE questions and notes lessons, members record an explanation in the
-  browser (camera, screen, screen with a face bubble, or the whiteboard),
+  GATE questions, notes lessons and DSA lessons, and beside every subtopic
+  (h2) of a lesson (`SectionExplain`: an "Explain" mark placed into the
+  heading, label drawn by CSS so the heading text stays clean; a side sheet;
+  target `<lesson>#<heading id>`), members record an explanation in the
+  browser (camera, screen, screen with a face bubble, or the whiteboard with
+  an optional face bubble), upload a video file, or explain on an iPad by QR
+  (`/explain/pad/<token>`, not signed in, passes private mode: whiteboard +
+  mic + face, or the iPad's own Screen Recording picked as a file; the
+  computer's studio sees the upload by itself). They
   trim it, mark chapters and upload it in resumable pieces; others watch it,
   mark it helpful or report it (three reports hide it). Files live on the
   server's disk (`EXPLAIN_DIR`, default `data/explain`, git-ignored), never in

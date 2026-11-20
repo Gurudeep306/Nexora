@@ -137,7 +137,8 @@ export function Stage({ session, s, layout, pinned, onPin }: { session: LiveSess
   return (
     <div ref={ref} className={cn('lv-stage', side ? 'is-side' : 'is-bottom')} data-mode={mode}>
       <div className="lv-main" style={{ width: areaW, height: areaH }}>
-        <div className="lv-grid" style={{ gridTemplateColumns: `repeat(${box.cols}, ${box.tw}px)`, gridAutoRows: `${box.th}px` }}>
+        {/* Rows wrap and centre, so a last row with fewer people sits in the middle. */}
+        <div className="lv-grid" style={{ width: box.cols * box.tw + (box.cols - 1) * 10, ['--tw' as string]: `${box.tw}px`, ['--th' as string]: `${box.th}px` }}>
           {main.map((t) => (
             <Tile key={t.key} t={t} s={s} session={session} pinned={pinned === t.key} onPin={onPin} big />
           ))}

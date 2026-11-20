@@ -232,7 +232,8 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
             <LogoMark size={26} />
           </Link>
           <div className="min-w-0">
-            <h1 className="lv-title">
+            {/* One line: the site's headings balance-wrap, which a room's top bar has no room for. */}
+            <h1 className="lv-title" style={{ textWrap: 'nowrap' }}>
               {s.room?.title}
               {s.room?.locked && <Lock className="ml-1.5 inline size-3.5 align-[-1px] text-text-muted" aria-label="Locked" />}
             </h1>
@@ -262,7 +263,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
               {s.room.about.title}
             </Link>
           )}
-          <button type="button" className="lv-chip-btn lv-code-chip" onClick={copyLink} title="Copy the room link">
+          <button type="button" className="lv-chip-btn lv-code-chip" onClick={copyLink} title="Copy the room link" aria-label={`Copy the room link (${session.code})`}>
             <Link2 className="size-3.5" aria-hidden="true" /> <span className="max-sm:hidden">{session.code}</span>
             <span className="sm:hidden">Link</span>
           </button>
@@ -286,8 +287,10 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
       )}
 
       <main className="lv-body">
-        <div className="lv-stage-wrap">
-          <Stage session={session} s={s} layout={layout} pinned={pinned} onPin={setPinned} />
+        <div className={cn('lv-stage-wrap', s.poll && 'has-poll')}>
+          <div className="lv-stage-box">
+            <Stage session={session} s={s} layout={layout} pinned={pinned} onPin={setPinned} />
+          </div>
           {board && (
             <div className={cn('lv-board-sheet', board === 'hidden' && 'is-hidden')} aria-hidden={board === 'hidden'}>
               <div className="lv-board-head">
@@ -378,7 +381,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
       </main>
 
       <section className="lv-controls" aria-label="Room controls">
-        <div className="lv-ctrl-left max-md:hidden">
+        <div className="lv-ctrl-left max-lg:hidden">
           <span className="lv-people-n">
             <Users className="size-4" aria-hidden="true" /> {people}
           </span>
@@ -543,7 +546,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
             <span className="lv-ctrl-label">Leave</span>
           </button>
         </div>
-        <div className="lv-ctrl-right max-md:hidden">
+        <div className="lv-ctrl-right max-lg:hidden">
           {s.transport === 'mesh' && <span className="lv-hint">Small room</span>}
         </div>
       </section>

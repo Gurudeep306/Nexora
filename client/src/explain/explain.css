@@ -492,8 +492,13 @@
   }
   .ex-sources {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+  }
+  @media (min-width: 720px) {
+    .ex-sources {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
   .ex-source {
     display: grid;
@@ -800,5 +805,365 @@
     height: 100%;
     background: var(--color-accent-brand);
     transition: width 0.3s var(--ed-ease);
+  }
+
+  /* ── a video file ── */
+  .ex-file {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1px dashed var(--ed-line-strong);
+    border-radius: var(--radius-card, 14px);
+    background: var(--ed-card);
+    color: var(--ed-ink);
+    font-size: 14px;
+    line-height: 1.45;
+    cursor: pointer;
+  }
+  .ex-file strong {
+    display: block;
+    font-family: var(--ed-serif);
+    font-weight: 500;
+    font-size: 18px;
+  }
+  .ex-file > svg {
+    flex: none;
+    color: var(--ed-muted);
+  }
+  .ex-file:hover {
+    border-color: var(--ed-ink);
+  }
+  .ex-file:focus-within {
+    outline: 2px solid var(--ed-focus, var(--color-accent-brand));
+    outline-offset: 2px;
+  }
+
+  /* ── explaining on a tablet (the computer's side) ── */
+  .ex-tablet {
+    display: grid;
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+    padding: 18px;
+    border: 1px solid var(--ed-line);
+    border-radius: var(--radius-card, 14px);
+    background: var(--ed-card);
+  }
+  .ex-tablet-qr {
+    width: 100%;
+    max-width: 260px;
+  }
+  .ex-tablet-side {
+    display: grid;
+    gap: 14px;
+    min-width: 0;
+  }
+  @media (max-width: 640px) {
+    .ex-tablet {
+      grid-template-columns: minmax(0, 1fr);
+      justify-items: center;
+    }
+    .ex-tablet-side {
+      justify-items: stretch;
+      width: 100%;
+    }
+  }
+
+  /* ── a part of a lesson: the "Explain" mark beside its heading ── */
+  .ex-sec-slot {
+    display: inline-block;
+    margin-left: 10px;
+    vertical-align: middle;
+    line-height: 1;
+  }
+  .ex-sec {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 24px;
+    padding: 0 9px 0 7px;
+    border: 1px solid var(--ed-line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ed-muted);
+    font-family: var(--font-body, inherit);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0;
+    vertical-align: middle;
+    transition:
+      color 0.15s,
+      border-color 0.15s,
+      background-color 0.15s;
+  }
+  /* The label is drawn by CSS so the heading's text (outline, read aloud, highlights) stays the heading alone. */
+  .ex-sec::after {
+    content: attr(data-label);
+  }
+  .ex-sec:hover,
+  .ex-sec:focus-visible {
+    color: var(--ed-ink);
+    border-color: var(--ed-line-strong);
+    background: var(--ed-card);
+  }
+  .ex-sec.has-videos {
+    color: var(--ed-ink);
+    border-color: var(--ed-line-strong);
+  }
+  @media (hover: hover) {
+    .ex-sec:not(.has-videos) {
+      opacity: 0;
+    }
+    :is(h2, h3):hover .ex-sec,
+    .ex-sec:focus-visible {
+      opacity: 1;
+    }
+  }
+  @media print {
+    .ex-sec-slot {
+      display: none;
+    }
+  }
+
+  /* ── the side sheet for one part ── */
+  .ex-sheet-back {
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background: color-mix(in oklab, var(--ed-ink) 28%, transparent);
+  }
+  .ex-sheet {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 81;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    width: min(560px, 100vw);
+    background: var(--ed-canvas);
+    color: var(--ed-ink);
+    border-left: 1px solid var(--ed-line);
+  }
+  .ex-sheet-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid var(--ed-line);
+  }
+  .ex-sheet-title {
+    margin: 4px 0 0;
+    font-family: var(--ed-serif);
+    font-weight: 500;
+    font-size: 21px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+  .ex-sheet-body {
+    overflow: auto;
+    padding: 0 18px 24px;
+    overscroll-behavior: contain;
+  }
+  .ex-sheet-body .ex-section {
+    margin-top: 0;
+    border-top: 0;
+  }
+  @media (max-width: 640px) {
+    .ex-sheet {
+      top: auto;
+      width: 100vw;
+      height: min(88dvh, 100%);
+      border-left: 0;
+      border-top: 1px solid var(--ed-line);
+      border-radius: 18px 18px 0 0;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .ex-sheet {
+      animation: ex-sheet-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @media (max-width: 640px) {
+      .ex-sheet {
+        animation-name: ex-sheet-up;
+      }
+    }
+    .ex-sheet-back {
+      animation: ex-fade 0.2s ease-out;
+    }
+  }
+  @keyframes ex-sheet-in {
+    from {
+      transform: translateX(24px);
+      opacity: 0;
+    }
+  }
+  @keyframes ex-sheet-up {
+    from {
+      transform: translateY(32px);
+      opacity: 0;
+    }
+  }
+  @keyframes ex-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* ── the iPad page (/explain/pad/…) ── */
+  .xp {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 100dvh;
+    padding: max(12px, env(safe-area-inset-top)) 16px max(12px, env(safe-area-inset-bottom));
+    background: var(--ed-canvas);
+    color: var(--ed-ink);
+    font-family: var(--font-body, inherit);
+    --ex-mat: #151513;
+    --ex-mat-ink: #f2f0ea;
+  }
+  .xp-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .xp-head .ex-rec-pill {
+    margin-left: auto;
+    flex: none;
+  }
+  .xp-kicker {
+    margin: 0;
+    font-size: 12px;
+    color: var(--ed-muted);
+  }
+  .xp-about {
+    margin: 2px 0 0;
+    font-family: var(--ed-serif);
+    font-weight: 500;
+    font-size: 19px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .xp-modes {
+    align-self: flex-start;
+  }
+  .xp-mode {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 999px;
+    color: var(--ed-muted);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .xp-mode.is-on {
+    background: var(--ed-card);
+    color: var(--ed-ink);
+    box-shadow: inset 0 0 0 1px var(--ed-line-strong);
+  }
+  .xp-stage {
+    position: relative;
+    flex: 1;
+    min-height: 0;
+    display: grid;
+  }
+  .xp-board {
+    min-height: 0;
+  }
+  .xp-bar {
+    position: sticky;
+    bottom: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    border: 1px solid var(--ed-line);
+    border-radius: 999px;
+    background: var(--ed-card);
+  }
+  .xp-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--ed-line);
+    border-radius: 999px;
+    color: var(--ed-muted);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .xp-toggle.is-on {
+    color: var(--ed-ink);
+    border-color: var(--ed-line-strong);
+  }
+  .xp-go {
+    margin-left: auto;
+    gap: 8px;
+  }
+  .xp-turn {
+    display: none;
+    margin: 0;
+    text-align: center;
+    font-size: 13px;
+    color: var(--ed-muted);
+  }
+  @media (orientation: portrait) and (max-width: 600px) {
+    .xp-turn {
+      display: block;
+    }
+  }
+  .xp-err {
+    flex-basis: 100%;
+    order: 9;
+    margin: 0;
+  }
+  .xp-time {
+    margin: 0 auto;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+    color: var(--ed-muted);
+  }
+  .xp-bar .ex-rec-btn {
+    color: var(--ed-ink);
+  }
+  .xp-file {
+    max-width: 680px;
+    display: grid;
+    gap: 14px;
+  }
+  .xp-file .ex-h {
+    margin: 0;
+  }
+  .xp-review {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+  .xp-review-side {
+    display: grid;
+    gap: 14px;
+  }
+  @media (max-width: 760px) {
+    .xp-review {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .xp-bar {
+      border-radius: 18px;
+    }
+    .xp-go {
+      flex-basis: 100%;
+      justify-content: center;
+    }
   }
 }

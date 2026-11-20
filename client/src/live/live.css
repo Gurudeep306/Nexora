@@ -618,11 +618,43 @@
     padding: 12px;
     background: var(--ed-oat, var(--color-bg-surface-2));
   }
+  .lv-stage-box {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+  }
   .lv-stage {
     position: absolute;
-    inset: 12px;
+    inset: 0;
     display: flex;
     gap: 12px;
+  }
+  /* A poll takes its own place beside (or, on narrow screens, under) the
+     people, so it never covers anyone. */
+  .lv-stage-wrap {
+    display: flex;
+    gap: 12px;
+  }
+  @media (max-width: 899px) {
+    .lv-stage-wrap {
+      flex-direction: column;
+    }
+  }
+  /* With a side panel open the stage is narrow: the poll goes under the people. */
+  @media (max-width: 1279px) {
+    .lv-room.has-panel .lv-stage-wrap {
+      flex-direction: column;
+    }
+    .lv-room.has-panel .lv-poll {
+      align-self: stretch;
+      width: auto;
+      max-height: 46%;
+      padding: 10px 12px;
+    }
+    .lv-room.has-panel .lv-poll-options {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
   .lv-stage.is-bottom {
     flex-direction: column;
@@ -635,10 +667,16 @@
     flex-shrink: 0;
   }
   .lv-grid {
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--lv-gap);
     justify-content: center;
     align-content: center;
+  }
+  .lv-grid.lv-grid > * {
+    flex: none;
+    width: var(--tw);
+    height: var(--th);
   }
   .lv-pager {
     position: absolute;
@@ -909,6 +947,15 @@
     color: var(--ed-ink);
     font-size: 13px;
     text-align: center;
+  }
+  @media (max-width: 640px) {
+    .lv-notice:not(:last-child) {
+      display: none;
+    }
+    .lv-notice {
+      padding: 6px 12px;
+      font-size: 12.5px;
+    }
   }
   .lv-notice.is-warning {
     border-color: color-mix(in oklab, var(--color-state-warning) 60%, var(--ed-line));
@@ -1556,6 +1603,25 @@
     letter-spacing: 0.02em;
     color: var(--ed-muted);
     white-space: nowrap;
+    overflow: hidden;
+  }
+  /* Small phones: the link chip is just its icon, so the room's name has room. */
+  @media (max-width: 420px) {
+    .lv-code-chip {
+      width: 36px;
+      padding: 0;
+      justify-content: center;
+    }
+    .lv-code-chip > span {
+      display: none;
+    }
+    .lv-top {
+      gap: 8px;
+      padding: 8px 12px;
+    }
+    .lv-top-meta {
+      gap: 6px;
+    }
   }
   .lv-top-sub .lv-dot-live {
     width: 6px;
@@ -1659,8 +1725,24 @@
   .lv-tabs {
     display: flex;
     gap: 16px;
+    flex: 1;
+    min-width: 0;
     overflow-x: auto;
     scrollbar-width: none;
+  }
+  .lv-panel-head {
+    gap: 10px;
+  }
+  .lv-panel-head > .lv-round {
+    flex: none;
+  }
+  @media (max-width: 420px) {
+    .lv-tabs {
+      gap: 12px;
+    }
+    .lv-tab {
+      font-size: 13px;
+    }
   }
   .lv-tab {
     position: relative;
@@ -1943,11 +2025,13 @@
 
   /* ── study tools: poll, timer, tools panel, code pad ── */
   .lv-poll {
-    position: absolute;
-    left: 24px;
-    bottom: 24px;
+    position: relative;
     z-index: 6;
-    width: min(360px, calc(100% - 48px));
+    flex: none;
+    align-self: center;
+    width: 300px;
+    max-height: 100%;
+    overflow: auto;
     padding: 14px;
     border-radius: 14px;
     border: 1px solid var(--ed-line-strong);
@@ -1993,6 +2077,26 @@
     padding: 0;
     display: grid;
     gap: 6px;
+  }
+  @media (max-width: 899px) {
+    .lv-poll {
+      align-self: stretch;
+      width: auto;
+      max-height: 46%;
+      padding: 10px 12px;
+    }
+    .lv-poll-options {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .lv-poll-q {
+      margin: 2px 0 8px;
+    }
+  }
+  .lv-poll-show {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    z-index: 6;
   }
   .lv-poll-opt {
     position: relative;
