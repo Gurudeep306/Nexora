@@ -6127,6 +6127,10 @@ app.use(createGateMeRouter());
 app.use(createGateNotesRouter());
 // Handwritten solutions: tablet pad, phone photos, uploads
 app.use(require("./routes/hand").createHandRouter());
+// Live: study rooms and calls (video, voice, screens, tablets). The socket side
+// is attached once socket.io is up (liveRooms.signal, below).
+const liveRooms = {};
+app.use(require("./routes/live-rooms").createLiveRoomsRouter({ realtime, live: liveRooms }));
 
 // ForgeBuilder routes
 app.use("/api/forge", createForgeRouter({ all, get, run }));
@@ -6259,6 +6263,7 @@ function sharesSolveRoom(socket, targetId) {
   return false;
 }
 
+liveRooms.signal = require("./live/signal").createLiveSignal({ io, getSessionUser, socketAccess, realtime });
 realtime.online = () => Object.keys(userSockets);
 realtime.emitToUser = (username, event, payload) => emitToUser(username, event, payload);
 realtime.broadcast = (event, payload) => io.emit(event, payload);

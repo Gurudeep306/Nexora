@@ -1,8 +1,9 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react'
 import { prefetchOn } from '@/components/hand/api'
+import { liveApi } from '@/live/api'
 import { AnimatePresence, motion } from 'motion/react'
-import { Link } from 'react-router-dom'
-import { AlertTriangle, ExternalLink, Link2, PenLine, Trophy } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { AlertTriangle, ExternalLink, Link2, PenLine, Trophy, Users } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { AddToContest } from '@/components/contests/hosted/Pickers'
 import { cn } from '@/lib/utils'
@@ -473,6 +474,7 @@ export function QuestionView({
                 </span>
               </TextAction>
             )}
+            {insights && mode !== 'test' && <SolveTogether id={q.id} />}
             {q.sourceUrl && (
               <a href={q.sourceUrl} target="_blank" rel="noreferrer" className="qc-text-action inline-flex items-center gap-1">
                 Source <ExternalLink className="size-3" aria-hidden="true" />
@@ -539,5 +541,30 @@ export function QuestionView({
         </>
       )}
     </div>
+  )
+}
+
+/** Open a Live room about this question and go to it (the room shows the question's name). */
+function SolveTogether({ id }: { id: string }) {
+  const navigate = useNavigate()
+  const [busy, setBusy] = useState(false)
+  return (
+    <TextAction
+      disabled={busy}
+      title="Open a live room about this question: talk, share screens, write on a whiteboard"
+      onClick={async () => {
+        setBusy(true)
+        try {
+          const room = await liveApi.create({ mode: 'video', visibility: 'link', about: { kind: 'gate', target: id } })
+          navigate(`/live/${room.code}`)
+        } catch {
+          setBusy(false)
+        }
+      }}
+    >
+      <span className="inline-flex items-center gap-1.5">
+        <Users className="size-3.5" aria-hidden="true" /> {busy ? 'Opening…' : 'Solve together'}
+      </span>
+    </TextAction>
   )
 }

@@ -1,0 +1,24 @@
+# LiveKit server for NexoraGuru Live (deploy/livekit/README.md).
+# Replace the key and secret with the pair from `livekit-server generate-keys`
+# (keep the real file on the server only; never commit the secret).
+port: 7880
+bind_addresses: [""]
+rtc:
+  tcp_port: 7881
+  port_range_start: 50000
+  port_range_end: 60000
+  use_external_ip: true
+turn:
+  # Built-in TURN, so students on strict networks (college Wi-Fi, some mobile
+  # data) can still connect. Caddy terminates TLS for it on 5349.
+  enabled: true
+  domain: live.nexoraguru.in
+  udp_port: 3478
+  external_tls: true
+keys:
+  REPLACE_WITH_API_KEY: REPLACE_WITH_API_SECRET
+room:
+  empty_timeout: 300
+  max_participants: 100
+logging:
+  level: info

@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { ArrowDown, ArrowLeft, Info, Loader2, Pin } from 'lucide-react'
+import { ArrowDown, ArrowLeft, Info, Loader2, Phone, Pin, Video } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import type { Socket } from 'socket.io-client'
 import { Avatar, Button, useToast } from '@/components/ui'
 import { api, ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
+import { liveApi } from '@/live/api'
 import { Composer, type ComposerHandle } from './Composer'
 import { MessageItem, type MessageActions } from './MessageItem'
 import { ForwardDialog, ImageViewer, InfoDialog, PinsDialog, PollDialog, ReportDialog, ShareDialog } from './dialogs'
@@ -36,6 +38,8 @@ export function Thread({
   onLeft: () => void
 }) {
   const toast = useToast()
+  const navigate = useNavigate()
+  const [calling, setCalling] = useState(false)
   const [conv, setConv] = useState<Conversation | null>(null)
   const [people, setPeople] = useState<People>(listPeople)
   const [messages, setMessages] = useState<Message[]>([])
@@ -369,6 +373,18 @@ export function Thread({
   if (loadError || !conv) return <div className="chat-thread chat-center"><p className="text-[13px] text-text-secondary">{loadError ?? 'Not found'}</p></div>
 
   const other = otherOf(conv, me)
+  // Calls: everyone else in the conversation is rung (Live, src/routes/live-rooms.js).
+  const callable = conv.members.filter((m) => m.username !== me && (conv.kind === 'dm' || !m.invited)).map((m) => m.username)
+  const startCall = async (mode: 'voice' | 'video') => {
+    setCalling(true)
+    try {
+      const room = await liveApi.call(callable, mode)
+      navigate(`/live/${room.code}?call=1`)
+    } catch (e) {
+      toast.error('Could not start the call', (e as Error).message)
+      setCalling(false)
+    }
+  }
   const otherPerson = other ? allPeople[other] : null
   const online = otherPerson?.status === 'online'
   const typingNames = Object.keys(typing).filter((u) => u !== me)
@@ -426,6 +442,16 @@ export function Thread({
           <span className="block truncate text-[12px] text-text-muted" aria-live="polite">{subtitle}</span>
         </button>
         <span className="ml-auto flex items-center gap-0.5">
+          {callable.length > 0 && callable.length <= 8 && (
+            <>
+              <button type="button" className="chat-act" aria-label="Voice call" title="Voice call" disabled={calling} onClick={() => void startCall('voice')}>
+                <Phone className="size-4" aria-hidden="true" />
+              </button>
+              <button type="button" className="chat-act" aria-label="Video call" title="Video call" disabled={calling} onClick={() => void startCall('video')}>
+                <Video className="size-4" aria-hidden="true" />
+              </button>
+            </>
+          )}
           <button type="button" className="chat-act" aria-label="Pinned messages" onClick={() => setDialog('pins')}>
             <Pin className="size-4" aria-hidden="true" />
           </button>

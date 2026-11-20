@@ -34,6 +34,7 @@ export const DOCK_ITEMS: DockItem[] = [
   { id: 'gate', label: 'GATE', hue: 175, to: '/gate' },
   { id: 'analytics', label: 'Analytics', hue: 210, to: '/analytics' },
   { id: 'social', label: 'Social', hue: 185, to: '/social' },
+  { id: 'live', label: 'Live', hue: 20, to: '/live' },
   { id: 'workshop', label: 'Workshop', hue: 50, to: '/workshop' },
   { id: 'achievements', label: 'Achievements', hue: 95, to: '/achievements' },
   { id: 'submissions', label: 'Submissions', hue: 270, to: '/submissions' },
@@ -89,7 +90,7 @@ export const DOCK_SURFACES: { id: DockSurface; label: string }[] = [
 ]
 
 export const DEFAULT_DOCK: DockPrefs = {
-  pinned: ['hub', 'problems', 'contests', 'nexus', 'learn', 'gate', 'analytics', 'social', 'submissions', 'bookmarks', 'search'],
+  pinned: ['hub', 'problems', 'contests', 'nexus', 'learn', 'gate', 'analytics', 'social', 'live', 'submissions', 'bookmarks', 'search'],
   magnify: true,
   iconStyle: 'mono',
   autoHide: false,
