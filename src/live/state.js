@@ -28,6 +28,8 @@ const peerView = (p) => ({
   screens: p.screens,
   hand: p.hand,
   recording: !!p.recording,
+  pubs: p.pubs || [],
+  cf: p.cf || null,
   joinedAt: p.joinedAt,
 });
 

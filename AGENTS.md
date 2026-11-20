@@ -216,9 +216,13 @@ from a range, since test files run in parallel and a clash fails the run.
   `client/src/live/`): study rooms and calls. Video or voice, several screens
   at once, a whiteboard, a tablet joined by QR (`/live/d/<token>`, no sign-in,
   passes private mode), chat, hands, reactions, a waiting room and host
-  controls; calls ring friends from Messages. Media goes through LiveKit when
-  `LIVEKIT_URL`/`_API_KEY`/`_API_SECRET` are set (`deploy/livekit/README.md`),
-  otherwise browsers connect directly (5 devices). In the direct mode the
+  controls; calls ring friends from Messages. **Admin → Live** (`src/live/config.js`,
+  `components/admin/LiveSection.tsx`) chooses how media travels: Cloudflare
+  Realtime SFU (`client/src/live/cf.ts`; our server passes the browser's
+  offers on over the socket with the sealed app token, so it never reaches a
+  browser; 1,000 GB a month free), LiveKit (keys there or `LIVEKIT_*`,
+  `deploy/livekit/README.md`), or direct (5 devices). Usage is estimated from
+  what devices report; over the monthly limit new rooms go direct. In the direct mode the
   newcomer always starts each connection; keep that, or two offers clash and
   Chrome's ICE stalls. `routes/live.js` is the older LiveClass API, unrelated.
 - **Video explanations** (`src/routes/explain.js`, `client/src/explain/`): under

@@ -14,6 +14,7 @@ import { API_BASE } from '@/lib/api'
 import type { ChatMsg, JoinOk, JoinReply, Knock, LiveRoom, PeerInfo, ScreenInfo } from './api'
 import { MeshTransport } from './mesh'
 import { SfuTransport } from './sfu'
+import { CfTransport } from './cf'
 import { Meter } from './levels'
 import type { Quality, Transport } from './transport'
 import { cameraTrack, micTrack, loadPrefs, savePrefs, screenTrack, type Prefs } from './devices'
@@ -45,7 +46,7 @@ export interface LiveState {
   hands: Record<string, number>
   reactions: Reaction[]
   recording: Record<string, string>
-  transport: 'mesh' | 'sfu' | null
+  transport: 'mesh' | 'sfu' | 'cf' | null
   media_status: 'connecting' | 'connected' | 'reconnecting' | 'failed' | null
   audioBlocked: boolean
   /** Talking while the mic is off. */
@@ -177,7 +178,7 @@ export class LiveSession {
     const events = {
       track: (peerId: string, pubId: string, track: MediaStreamTrack) => {
         this.set((s) => ({ media: { ...s.media, [peerId]: { ...s.media[peerId], [pubId]: track } } }))
-        if (track.kind === 'audio' && this.transport?.kind === 'mesh') {
+        if (track.kind === 'audio' && this.transport?.kind !== 'sfu') {
           this.meters.get(peerId)?.stop()
           this.meters.set(peerId, new Meter(track))
         }
@@ -204,7 +205,9 @@ export class LiveSession {
     const t: Transport =
       r.transport.kind === 'sfu'
         ? new SfuTransport(r.transport.url, r.transport.token, events)
-        : new MeshTransport(r.self.peerId, r.transport.iceServers, (to, data) => this.socket?.emit('signal', { to, data }), events)
+        : r.transport.kind === 'cf'
+          ? new CfTransport(this.socket!, r.transport.iceServers, events)
+          : new MeshTransport(r.self.peerId, r.transport.iceServers, (to, data) => this.socket?.emit('signal', { to, data }), events)
     this.transport = t
     try {
       await t.connect()
@@ -213,6 +216,7 @@ export class LiveSession {
       return
     }
     for (const p of r.peers) t.peerJoined(p.peerId, true)
+    for (const p of r.peers) t.remotePubs?.(p.peerId, p.cf ?? null, p.pubs ?? [])
     this.transportReady = true
     for (const m of this.early.splice(0)) t.signal(m.from, m.data)
     // Our media: first join uses the pre-join choice; a rejoin restores what was on.
@@ -228,6 +232,7 @@ export class LiveSession {
     socket.on('peer-joined', (p: PeerInfo) => {
       // The newcomer starts the connection; we answer when their offer comes.
       this.set((s) => ({ peers: { ...s.peers, [p.peerId]: p } }))
+      this.transport?.remotePubs?.(p.peerId, p.cf ?? null, p.pubs ?? [])
     })
     socket.on('peer-left', ({ peerId }: { peerId: string }) => {
       this.transport?.peerLeft(peerId)
@@ -245,7 +250,8 @@ export class LiveSession {
         return { peers, media, hands, recording }
       })
     })
-    socket.on('peer-state', (p: Pick<PeerInfo, 'peerId' | 'mic' | 'cam' | 'screens'>) => {
+    socket.on('peer-state', (p: Pick<PeerInfo, 'peerId' | 'mic' | 'cam' | 'screens' | 'cf' | 'pubs'>) => {
+      if (p.peerId !== this.state.self?.peerId) this.transport?.remotePubs?.(p.peerId, p.cf ?? null, p.pubs ?? [])
       this.set((s) => {
         if (p.peerId === s.self?.peerId) return { self: { ...s.self, ...p } }
         const cur = s.peers[p.peerId]
@@ -331,7 +337,7 @@ export class LiveSession {
       const self = s.self?.peerId
       const talking = (this.selfMeter?.level() ?? 0) > 0.09
       const patch: Partial<LiveState> = {}
-      if (s.transport === 'mesh') {
+      if (s.transport !== 'sfu') {
         const speaking: Record<string, true> = {}
         for (const [id, m] of this.meters) if (s.peers[id]?.mic && m.level() > 0.06) speaking[id] = true
         if (self && s.mic && talking) speaking[self] = true
@@ -346,7 +352,9 @@ export class LiveSession {
 
   private pushState() {
     const s = this.state
-    this.socket?.emit('state', { mic: s.mic, cam: s.cam, screens: s.screens.map(({ id, label, kind }) => ({ id, label, kind })) })
+    // What this device sends (Cloudflare rooms pull these by name).
+    const pubs = [...(s.micTrack && !this.opts.device ? ['mic'] : []), ...(s.cam ? ['cam'] : []), ...s.screens.map((x) => x.id)]
+    this.socket?.emit('state', { mic: s.mic, cam: s.cam, screens: s.screens.map(({ id, label, kind }) => ({ id, label, kind })), pubs })
     this.set((st) => (st.self ? { self: { ...st.self, mic: s.mic, cam: s.cam, screens: s.screens.map(({ id, label, kind }) => ({ id, label, kind })) } } : {}))
   }
 
@@ -356,6 +364,16 @@ export class LiveSession {
   }
 
   /* ── our media ── */
+  /** Send a track; if the media server refuses, say so instead of failing silently. */
+  private async send(pubId: string, track: MediaStreamTrack) {
+    try {
+      await this.transport?.publish(pubId, track)
+    } catch (e) {
+      const what = pubId === 'mic' ? 'your microphone' : pubId === 'cam' ? 'your camera' : 'your screen'
+      this.notice(`Could not send ${what}: ${(e as Error).message || 'the connection had a problem'}. Try turning it off and on.`, 'error')
+    }
+  }
+
   private async publishMic(on: boolean) {
     if (this.opts.device) return // a tablet never sends sound (no echo)
     let t = this.state.micTrack
@@ -371,7 +389,7 @@ export class LiveSession {
     }
     this.selfMeter?.stop()
     this.selfMeter = new Meter(t)
-    await this.transport?.publish('mic', t)
+    await this.send('mic', t)
     this.transport?.setMuted('mic', !on)
     this.set({ mic: on })
   }
@@ -399,7 +417,7 @@ export class LiveSession {
         }
       }
       this.set({ camTrack: t, cam: true })
-      await this.transport?.publish('cam', t)
+      await this.send('cam', t)
     } else {
       // The light goes off: the track is stopped, not just hidden.
       await this.transport?.unpublish('cam')
@@ -431,7 +449,7 @@ export class LiveSession {
   /** A whiteboard or a camera pointed at paper (a canvas or camera track). */
   async addScreen(sc: LocalScreen) {
     this.set((s) => ({ screens: [...s.screens.filter((x) => x.id !== sc.id), sc] }))
-    await this.transport?.publish(sc.id, sc.track)
+    await this.send(sc.id, sc.track)
     this.pushState()
   }
 
@@ -454,7 +472,7 @@ export class LiveSession {
       this.set({ micTrack: t })
       this.selfMeter?.stop()
       this.selfMeter = new Meter(t)
-      await this.transport?.publish('mic', t)
+      await this.send('mic', t)
       this.transport?.setMuted('mic', !this.state.mic)
     }
     if (kind === 'cam' && this.state.cam) {
@@ -462,7 +480,7 @@ export class LiveSession {
       if (!t) return
       const old = this.state.camTrack
       this.set({ camTrack: t })
-      await this.transport?.publish('cam', t)
+      await this.send('cam', t)
       old?.stop()
     }
     if (kind === 'speaker') this.set({}) // audio elements read prefs.speaker

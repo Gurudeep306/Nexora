@@ -32,7 +32,7 @@ export interface TransportEvents {
 }
 
 export interface Transport {
-  readonly kind: 'mesh' | 'sfu'
+  readonly kind: 'mesh' | 'sfu' | 'cf'
   connect(): Promise<void>
   publish(pubId: string, track: MediaStreamTrack): Promise<void>
   unpublish(pubId: string): Promise<void>
@@ -42,6 +42,8 @@ export interface Transport {
   /** `initiate`: we just joined, so we start the connection to this peer. */
   peerJoined(peerId: string, initiate?: boolean): void
   peerLeft(peerId: string): void
+  /** Cloudflare: a peer's session and what it publishes now (pulled by name). */
+  remotePubs?(peerId: string, sessionId: string | null, pubs: string[]): void
   signal(from: string, data: unknown): void
   /** Show a remote video in an element (the SFU only sends video to visible elements). */
   attach(peerId: string, pubId: string, el: HTMLMediaElement): void

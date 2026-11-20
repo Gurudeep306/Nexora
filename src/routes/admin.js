@@ -1203,6 +1203,128 @@ function createAdminRouter(deps) {
     }),
   );
 
+  /* ═════════════ Live: how rooms connect, keys, limits ═════════════ */
+
+  const liveCfg = require("../live/config");
+  const liveView = async () => {
+    const c = await liveCfg.loadConfig();
+    const used = await liveCfg.usage();
+    const now = await liveCfg.chooseTransport();
+    const envLk = !!(process.env.LIVEKIT_URL && process.env.LIVEKIT_API_KEY && process.env.LIVEKIT_API_SECRET);
+    return {
+      provider: c.provider,
+      active: now.kind, // what a room opened now would use
+      overLimit: !!now.over,
+      cloudflare: c.cloudflare ? { appId: c.cloudflare.appId, last4: c.cloudflare.last4 || "", test: c.cloudflare.test || null } : null,
+      livekit: c.livekit ? { url: c.livekit.url, key: c.livekit.key, last4: c.livekit.last4 || "", test: c.livekit.test || null } : envLk ? { url: process.env.LIVEKIT_URL, key: "", last4: "", test: null, fromEnv: true } : null,
+      maxPeople: c.maxPeople,
+      monthlyGb: c.monthlyGb,
+      recording: c.recording,
+      calls: c.calls,
+      tablets: c.tablets,
+      usage: { month: new Date().toISOString().slice(0, 7), bytes: used, history: await liveCfg.history() },
+      live: [...require("../live/state").rooms.values()].map((r) => ({ transport: r.transport, devices: r.peers.size })),
+    };
+  };
+
+  router.get("/api/admin/live", requirePerm("site.settings"), h(async (_req, res) => res.json({ ok: true, ...(await liveView()) })));
+
+  router.put(
+    "/api/admin/live",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const b = req.body || {};
+      const c = await liveCfg.loadConfig();
+      const next = { ...c };
+      if (b.provider !== undefined) {
+        if (!liveCfg.PROVIDERS.has(b.provider)) bad("Unknown way to connect");
+        next.provider = b.provider;
+      }
+      for (const k of ["maxPeople", "monthlyGb"]) if (b[k] !== undefined) next[k] = Number(b[k]);
+      for (const k of ["recording", "calls", "tablets"]) if (b[k] !== undefined) next[k] = !!b[k];
+      await liveCfg.saveConfig(next, req.access.username);
+      await audit(req, "live.settings", { targetType: "live", target: "settings", after: { provider: next.provider, maxPeople: next.maxPeople, monthlyGb: next.monthlyGb, recording: next.recording, calls: next.calls, tablets: next.tablets } });
+      res.json({ ok: true, ...(await liveView()) });
+    }),
+  );
+
+  // Keys are tested before they are kept; a wrong key is never saved.
+  router.put(
+    "/api/admin/live/cloudflare",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const b = req.body || {};
+      const appId = str(b.appId, { max: 64, min: 8, field: "App ID" }).trim();
+      if (!/^[A-Za-z0-9_-]+$/.test(appId)) bad("The App ID has letters and numbers only.");
+      const c = await liveCfg.loadConfig();
+      const secretIn = String(b.secret || "").trim();
+      const secret = secretIn || (c.cloudflare?.appId === appId && c.cloudflare?.secret ? require("../hive/vault").open(c.cloudflare.secret) : "");
+      if (!secret) bad("Paste the app's API token.");
+      if (secret.length > 400) bad("That token is too long.");
+      const t = await liveCfg.testCloudflare(appId, secret);
+      if (!t.ok) bad(`Cloudflare did not accept these: ${t.error}`);
+      const sealed = secretIn ? liveCfg.newSecret(secretIn) : { secret: c.cloudflare.secret, last4: c.cloudflare.last4 };
+      await liveCfg.saveConfig({ ...c, cloudflare: { appId, ...sealed, test: { ok: true, at: Date.now(), ms: t.ms } } }, req.access.username);
+      await audit(req, "live.cloudflare.set", { targetType: "live", target: "cloudflare", after: { appId, last4: sealed.last4 } });
+      res.json({ ok: true, ...(await liveView()) });
+    }),
+  );
+
+  router.put(
+    "/api/admin/live/livekit",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const b = req.body || {};
+      const url = str(b.url, { max: 300, min: 8, field: "URL" }).trim().replace(/\/+$/, "");
+      if (!/^wss?:\/\/[^\s/]+/.test(url)) bad("The LiveKit URL starts with wss://");
+      const key = str(b.key, { max: 100, min: 3, field: "API key" }).trim();
+      const c = await liveCfg.loadConfig();
+      const secretIn = String(b.secret || "").trim();
+      const secret = secretIn || (c.livekit?.key === key && c.livekit?.secret ? require("../hive/vault").open(c.livekit.secret) : "");
+      if (!secret) bad("Paste the API secret.");
+      const lk = { url, key, secret, http: url.replace(/^ws(s?):\/\//, "http$1://") };
+      const t = await liveCfg.testLivekit(lk);
+      if (!t.ok) bad(`LiveKit did not accept these: ${t.error}`);
+      const sealed = secretIn ? liveCfg.newSecret(secretIn) : { secret: c.livekit.secret, last4: c.livekit.last4 };
+      await liveCfg.saveConfig({ ...c, livekit: { url, key, ...sealed, test: { ok: true, at: Date.now(), ms: t.ms } } }, req.access.username);
+      await audit(req, "live.livekit.set", { targetType: "live", target: "livekit", after: { url, key, last4: sealed.last4 } });
+      res.json({ ok: true, ...(await liveView()) });
+    }),
+  );
+
+  router.delete(
+    "/api/admin/live/:which(cloudflare|livekit)",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const c = await liveCfg.loadConfig();
+      await liveCfg.saveConfig({ ...c, [req.params.which]: null }, req.access.username);
+      await audit(req, `live.${req.params.which}.remove`, { targetType: "live", target: req.params.which });
+      res.json({ ok: true, ...(await liveView()) });
+    }),
+  );
+
+  router.post(
+    "/api/admin/live/test",
+    requirePerm("site.settings"),
+    h(async (req, res) => {
+      const which = req.body?.which === "livekit" ? "livekit" : "cloudflare";
+      const c = await liveCfg.loadConfig();
+      let t;
+      if (which === "cloudflare") {
+        const cf = liveCfg.cloudflare(c);
+        if (!cf) bad("Cloudflare is not set up yet.");
+        t = await liveCfg.testCloudflare(cf.appId, cf.secret);
+        if (c.cloudflare) await liveCfg.saveConfig({ ...c, cloudflare: { ...c.cloudflare, test: { ok: t.ok, at: Date.now(), ms: t.ms, error: t.error } } }, req.access.username);
+      } else {
+        const lk = liveCfg.livekit(c);
+        if (!lk) bad("LiveKit is not set up yet.");
+        t = await liveCfg.testLivekit(lk);
+        if (c.livekit) await liveCfg.saveConfig({ ...c, livekit: { ...c.livekit, test: { ok: t.ok, at: Date.now(), ms: t.ms, error: t.error } } }, req.access.username);
+      }
+      res.json({ ok: true, test: t, ...(await liveView()) });
+    }),
+  );
+
   /* ═════════════ AI models: providers, keys, per-feature choice ═════════════ */
 
   const ai = require("../ai/settings");

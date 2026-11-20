@@ -16,14 +16,18 @@
 const crypto = require("crypto");
 
 const MESH_MAX = 5;
-const SFU_MAX = Math.max(2, Math.min(200, Number(process.env.LIVE_MAX_PEOPLE) || 50));
+const SFU_MAX_ENV = Math.max(2, Math.min(200, Number(process.env.LIVE_MAX_PEOPLE) || 50));
+/** Devices per room through a video server (Admin → Live, else LIVE_MAX_PEOPLE). */
+const serverMax = () => {
+  const c = require("./config").peekConfig();
+  return c.maxPeople && c.maxPeople !== 50 ? c.maxPeople : SFU_MAX_ENV;
+};
+/** Devices a room may hold with this transport. */
+const capOf = (kind) => (kind === "mesh" ? MESH_MAX : serverMax());
 
+/** LiveKit settings: Admin → Live first, then LIVEKIT_* environment variables. */
 function livekitConfig() {
-  const url = (process.env.LIVEKIT_URL || "").trim();
-  const key = (process.env.LIVEKIT_API_KEY || "").trim();
-  const secret = (process.env.LIVEKIT_API_SECRET || "").trim();
-  if (!url || !key || !secret) return null;
-  return { url, key, secret, http: url.replace(/^ws(s?):\/\//, "http$1://").replace(/\/+$/, "") };
+  return require("./config").livekit();
 }
 
 const b64u = (v) => Buffer.from(typeof v === "string" ? v : JSON.stringify(v)).toString("base64url");
@@ -106,4 +110,4 @@ async function iceServers(identity) {
   return servers;
 }
 
-module.exports = { MESH_MAX, SFU_MAX, livekitConfig, livekitToken, livekitAdmin, iceServers, signJwt };
+module.exports = { MESH_MAX, capOf, serverMax, livekitConfig, livekitToken, livekitAdmin, iceServers, signJwt };

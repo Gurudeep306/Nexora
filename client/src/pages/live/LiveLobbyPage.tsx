@@ -136,7 +136,7 @@ export default function LiveLobbyPage() {
 
       {cfg.data && (
         <p className="lv-hint mt-8">
-          {cfg.data.transport === 'sfu'
+          {cfg.data.transport !== 'mesh'
             ? `Rooms go through the NexoraGuru video server and hold up to ${cfg.data.maxDevices} devices.`
             : `Rooms connect devices to each other directly and hold up to ${cfg.data.maxDevices} devices.`}
         </p>
