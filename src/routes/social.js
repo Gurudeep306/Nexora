@@ -59,9 +59,11 @@ const CODE_LANGS = new Set(["cpp", "c", "python", "java", "javascript", "typescr
 // Profile covers (client/src/components/profile/covers.tsx). The old ids stay
 // valid: covers saved before show the closest new one.
 const COVER_PRESETS = new Set([
-  "plain", "topography", "circuit-board", "waves", "life", "bubbles", "jigsaw", "temple", "four-point-stars",
-  "overlapping-circles", "endless-clouds", "wiggle", "autumn", "kiwi", "lines-in-motion",
-  "aurora", "nebula", "ember", "lagoon", "orchid", "graphite", "matrix", "dawn",
+  "plain", "dusk", "ocean", "sakura", "tea", "desert", "forest", "skyline", "cosmos", "warli",
+  "himalaya", "backwaters", "balloons", "lotus", "lighthouse", "reef", "aurora",
+  // Older names, shown as the closest new cover.
+  "bauhaus", "circuit", "life", "waves", "topography", "circuit-board", "bubbles", "jigsaw", "temple", "four-point-stars", "overlapping-circles", "endless-clouds",
+  "wiggle", "autumn", "kiwi", "lines-in-motion", "aurora", "nebula", "ember", "lagoon", "orchid", "graphite", "matrix", "dawn",
 ]);
 const ACCENTS = new Set(["brand", "info", "success", "warning", "danger"]);
 const NAME_RE = /^[A-Za-z0-9_]{1,40}$/;

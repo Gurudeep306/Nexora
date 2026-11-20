@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 import { errorText, uploadImage } from '@/components/social/feed/lib'
 import { RichText } from '@/components/social/feed/RichText'
 import type { AccentKey, ProfileLink, PublicProfile } from '@/components/social/feed/types'
-import { ACCENTS, COVERS, COVER_IDS, CoverArt, CoverCredit, coverId } from './covers'
+import { ACCENTS, COVERS, COVER_IDS, CoverArt, coverId } from './covers'
 import { AvatarChooser, type Picture } from '@/components/account/AvatarChooser'
 import { formatAvatar, resolveAvatarId } from '@/lib/avatar'
 import { useAuth } from '@/context/AuthContext'
@@ -81,7 +81,7 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
           </Group>
 
           <Group title="Cover">
-            <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
               {COVER_IDS.map((id) => (
                 <button
                   key={id}
@@ -102,7 +102,7 @@ export default function EditProfileSheet({ open, onClose, profile, onSaved }: { 
               <Button variant="subtle" size="sm" onClick={() => file.current?.click()} disabled={uploading}>
                 {uploading ? <Loader2 className="animate-spin" /> : <ImagePlus />} Upload your own
               </Button>
-              <CoverCredit />
+              <span className="text-xs text-text-muted">Each cover is drawn from your username, so yours is one of a kind.</span>
             </div>
           </Group>
 
