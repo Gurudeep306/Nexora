@@ -139,6 +139,8 @@ export default function NotesLessonPage() {
 
   if (r.error && !data)
     return (
+      // The reader uses the whole window (no page padding), so the shell gets its own.
+      <div className="px-4 md:px-6 lg:px-8">
       <GateShell title="Notes">
         <EmptyState
           icon={<Icon name="book" className="size-6" />}
@@ -151,12 +153,15 @@ export default function NotesLessonPage() {
           }
         />
       </GateShell>
+      </div>
     )
   if (!data)
     return (
+      <div className="px-4 md:px-6 lg:px-8">
       <GateShell title="Loading lesson…">
         <LoadingBlock rows={8} />
       </GateShell>
+      </div>
     )
   return <Reader data={data} chapters={tree.data?.chapters ?? null} />
 }

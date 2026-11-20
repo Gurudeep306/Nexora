@@ -1700,6 +1700,7 @@
 
   /* alone: the invitation */
   .lv-invite {
+    container-type: inline-size;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1724,6 +1725,7 @@
     line-height: 1.15;
   }
   .lv-invite-code {
+    white-space: nowrap;
     margin: 0;
     font-family: var(--ed-mono);
     font-size: clamp(16px, 1.8vw, 21px);
@@ -1917,5 +1919,225 @@
     background: var(--ed-card);
     color: var(--ed-muted);
     flex-shrink: 0;
+  }
+
+  /* A narrow invitation (phones): stack it, centred. */
+  @container (max-width: 470px) {
+    .lv-invite > * {
+      min-width: 0;
+    }
+  }
+  @media (max-width: 640px) {
+    .lv-invite {
+      flex-direction: column;
+      gap: 14px;
+      text-align: center;
+    }
+    .lv-invite-text {
+      justify-items: center;
+    }
+    .lv-invite-qr svg {
+      width: 120px;
+    }
+  }
+
+  /* ── study tools: poll, timer, tools panel, code pad ── */
+  .lv-poll {
+    position: absolute;
+    left: 24px;
+    bottom: 24px;
+    z-index: 6;
+    width: min(360px, calc(100% - 48px));
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid var(--ed-line-strong);
+    background: var(--ed-card);
+    color: var(--ed-ink);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .lv-poll {
+      animation: lv-rise-in 0.35s var(--ed-ease);
+    }
+  }
+  @keyframes lv-rise-in {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+  }
+  .lv-poll-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .lv-mini-x {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    color: var(--ed-muted);
+  }
+  .lv-mini-x:hover {
+    background: color-mix(in oklab, var(--ed-ink) 8%, transparent);
+  }
+  .lv-poll-q {
+    margin: 6px 0 10px;
+    font-family: var(--ed-serif);
+    font-size: 18px;
+    line-height: 1.25;
+  }
+  .lv-poll-options {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .lv-poll-opt {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--ed-line);
+    background: var(--ed-canvas);
+    color: var(--ed-ink);
+    text-align: left;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  .lv-poll-opt:hover:not(:disabled) {
+    border-color: var(--ed-line-strong);
+  }
+  .lv-poll-opt.is-mine {
+    border-color: var(--color-accent-brand);
+    box-shadow: inset 0 0 0 1px var(--color-accent-brand);
+  }
+  .lv-poll-bar {
+    position: absolute;
+    inset: 0 auto 0 0;
+    background: color-mix(in oklab, var(--color-accent-brand) 16%, transparent);
+    transition: width 0.4s var(--ed-ease);
+  }
+  .lv-poll-letter {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 999px;
+    border: 1px solid var(--ed-line-strong);
+    font-family: var(--ed-mono);
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .lv-poll-text {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+  }
+  .lv-poll-pct {
+    position: relative;
+    font-family: var(--ed-mono);
+    font-size: 12px;
+    color: var(--ed-muted);
+  }
+  .lv-poll-host {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .lv-timer {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--ed-line);
+    background: var(--ed-card);
+    font-size: 12.5px;
+  }
+  .lv-timer-left {
+    font-family: var(--ed-mono);
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+  }
+  .lv-timer.is-low .lv-timer-left {
+    color: var(--color-state-warning);
+  }
+  .lv-timer.is-done {
+    border-color: var(--color-state-success);
+  }
+  @media (max-width: 640px) {
+    .lv-timer-label {
+      display: none;
+    }
+  }
+  .lv-tools {
+    display: grid;
+    gap: 6px;
+    align-content: start;
+  }
+  .lv-tool-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+    gap: 8px;
+  }
+  .lv-tool-card {
+    position: relative;
+    display: grid;
+    gap: 4px;
+    justify-items: start;
+    text-align: left;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--ed-line);
+    background: var(--ed-canvas);
+    color: var(--ed-ink);
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  .lv-tool-card:hover {
+    border-color: var(--ed-line-strong);
+  }
+  .lv-tool-card strong {
+    font-size: 13.5px;
+  }
+  .lv-tool-card span {
+    color: var(--ed-muted);
+  }
+  .lv-tool-card .lv-tab-n {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    color: var(--color-on-accent-brand);
+  }
+  .lv-question .qc-card,
+  .lv-question [data-ui='card'] {
+    margin: 0;
+  }
+  .lv-code {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
+  }
+  .lv-code-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .lv-code-editor {
+    flex: 1;
+    min-height: 240px;
+    border-radius: 10px;
+    border: 1px solid var(--ed-line);
+    overflow: hidden;
   }
 }

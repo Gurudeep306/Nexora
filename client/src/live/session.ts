@@ -11,7 +11,8 @@
 import { io, type Socket } from 'socket.io-client'
 import { useSyncExternalStore } from 'react'
 import { API_BASE } from '@/lib/api'
-import type { ChatMsg, JoinOk, JoinReply, Knock, LiveRoom, PeerInfo, ScreenInfo } from './api'
+import * as Y from 'yjs'
+import type { ChatMsg, CodeLang, JoinOk, JoinReply, Knock, LiveRoom, PeerInfo, Poll, RoomTimer, ScreenInfo } from './api'
 import { MeshTransport } from './mesh'
 import { SfuTransport } from './sfu'
 import { CfTransport } from './cf'
@@ -46,6 +47,12 @@ export interface LiveState {
   hands: Record<string, number>
   reactions: Reaction[]
   recording: Record<string, string>
+  poll: Poll | null
+  myVote: number | null
+  timer: RoomTimer | null
+  codeLang: CodeLang
+  /** Someone typed in the shared code pad since it was last open here. */
+  codeNew: boolean
   transport: 'mesh' | 'sfu' | 'cf' | null
   media_status: 'connecting' | 'connected' | 'reconnecting' | 'failed' | null
   audioBlocked: boolean
@@ -75,6 +82,11 @@ const initial = (): LiveState => ({
   hands: {},
   reactions: [],
   recording: {},
+  poll: null,
+  myVote: null,
+  timer: null,
+  codeLang: 'cpp',
+  codeNew: false,
   transport: null,
   media_status: null,
   audioBlocked: false,
@@ -160,6 +172,7 @@ export class LiveSession {
   }
 
   private async onJoined(r: JoinOk, again: boolean) {
+    this.loadCode(r.code?.state)
     this.transport?.close()
     this.transport = null
     this.transportReady = false
@@ -170,6 +183,10 @@ export class LiveSession {
       peers: Object.fromEntries(r.peers.map((p) => [p.peerId, p])),
       media: {},
       messages: again ? s.messages : r.messages,
+      poll: r.poll ?? null,
+      myVote: r.myVote ?? null,
+      timer: r.timer ?? null,
+      codeLang: r.code?.lang ?? 'cpp',
       waiting: r.waiting,
       hands: Object.fromEntries(r.peers.filter((p) => p.hand).map((p) => [p.peerId, p.joinedAt])),
       transport: r.transport.kind,
@@ -288,6 +305,24 @@ export class LiveSession {
       const r = { key: ++reactionKey, peerId, emoji, at }
       this.set((s) => ({ reactions: [...s.reactions.slice(-19), r] }))
       window.setTimeout(() => this.set((s) => ({ reactions: s.reactions.filter((x) => x.key !== r.key) })), 4200)
+    })
+    socket.on('poll', (p: Poll | null) => {
+      const prev = this.state.poll
+      this.set((s) => ({ poll: p, myVote: p && prev && p.id === prev.id ? s.myVote : null }))
+      if (p && (!prev || prev.id !== p.id) && p.open) this.notice(`${p.by} started a poll`)
+    })
+    socket.on('timer', (t: RoomTimer | null) => {
+      this.set({ timer: t })
+      if (t) this.notice(`${t.by} started a timer: ${t.label}`)
+    })
+    socket.on('code:lang', ({ lang }: { lang: CodeLang }) => this.set({ codeLang: lang }))
+    socket.on('code:update', ({ update }: { update: string }) => {
+      try {
+        Y.applyUpdate(this.codePad, Uint8Array.from(atob(update), (c) => c.charCodeAt(0)), 'remote')
+        if (!this.codeOpen && !this.state.codeNew) this.set({ codeNew: true })
+      } catch {
+        /* ignore a broken update */
+      }
     })
     socket.on('recording', ({ peerId, on, name }: { peerId: string; on: boolean; name: string }) => {
       this.set((s) => {
@@ -506,6 +541,54 @@ export class LiveSession {
   react(emoji: string) {
     this.socket?.emit('react', { emoji })
   }
+  /* ── study tools ── */
+  /** The shared code pad (Yjs). Local edits go to the room; remote ones come in as 'remote'. */
+  codePad = new Y.Doc()
+  private codeOpen = false
+  private loadCode(state?: string) {
+    this.codePad.destroy()
+    this.codePad = new Y.Doc()
+    if (state) {
+      try {
+        Y.applyUpdate(this.codePad, Uint8Array.from(atob(state), (c) => c.charCodeAt(0)), 'remote')
+      } catch {
+        /* start empty */
+      }
+    }
+    this.codePad.on('update', (u: Uint8Array, origin: unknown) => {
+      if (origin === 'remote') return
+      let bin = ''
+      for (let i = 0; i < u.length; i += 0x8000) bin += String.fromCharCode(...u.subarray(i, i + 0x8000))
+      this.socket?.emit('code:update', { update: btoa(bin) })
+    })
+    this.set({})
+  }
+  setCodeOpen(open: boolean) {
+    this.codeOpen = open
+    if (open && this.state.codeNew) this.set({ codeNew: false })
+  }
+  setCodeLang(lang: CodeLang) {
+    this.socket?.emit('code:lang', { lang })
+  }
+  pollStart(question: string, options: string[]) {
+    this.socket?.emit('poll:start', { question, options })
+  }
+  pollVote(option: number) {
+    const p = this.state.poll
+    if (!p || !p.open) return
+    this.set({ myVote: option })
+    this.socket?.emit('poll:vote', { id: p.id, option })
+  }
+  pollClose(clear = false) {
+    this.socket?.emit('poll:close', { clear })
+  }
+  timerStart(minutes: number, label: string) {
+    this.socket?.emit('timer', { action: 'start', minutes, label })
+  }
+  timerStop() {
+    this.socket?.emit('timer', { action: 'stop' })
+  }
+
   setRecording(on: boolean) {
     this.socket?.emit('recording', { on })
   }

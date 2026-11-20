@@ -11,6 +11,24 @@ const store = require("./store");
 const media = require("./media");
 const { rooms, roomState, peerView, dropIfEmpty } = require("./state");
 const config = require("./config");
+const Y = require("yjs");
+
+const CODE_MAX = 200_000; // bytes of shared code per room
+const LANGS = new Set(["cpp", "java", "python", "javascript", "c", "plaintext"]);
+const pollView = (poll) =>
+  poll && {
+    id: poll.id,
+    question: poll.question,
+    options: poll.options,
+    counts: poll.options.map((_, i) => [...poll.votes.values()].filter((v) => v === i).length),
+    voters: poll.votes.size,
+    open: poll.open,
+    by: poll.by,
+  };
+const codeOf = (s) => {
+  if (!s.doc) s.doc = new Y.Doc();
+  return s.doc;
+};
 
 const CHAT_MAX = 2000;
 const HISTORY = 150;
@@ -138,6 +156,10 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
       transport,
       messages: history.reverse().map((m) => ({ id: m.id, username: m.username, name: m.display_name || m.username, body: m.body, kind: m.kind, at: m.created_at })),
       waiting: isHost(s, room, peer) ? [...s.waiting.values()].map(({ socketId, ...w }) => w) : [],
+      poll: pollView(s.poll) || null,
+      myVote: s.poll?.votes.get(me) ?? null,
+      timer: s.timer || null,
+      code: { state: Buffer.from(Y.encodeStateAsUpdate(codeOf(s))).toString("base64"), lang: s.lang || "cpp" },
     };
   }
 
@@ -362,6 +384,36 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
       config.addUsage(bytes);
     });
 
+    /* ── Study tools: quick polls, a shared timer, a shared code pad ── */
+    socket.on("code:update", (payload) => {
+      const c = ctx();
+      if (!c || !allow("code", 600, 10_000) || typeof payload?.update !== "string" || payload.update.length > 400_000) return;
+      const doc = codeOf(c.s);
+      try {
+        const buf = Buffer.from(payload.update, "base64");
+        Y.applyUpdate(doc, buf);
+        if (doc.getText("code").length > CODE_MAX) return socket.emit("room", { codeFull: true });
+        socket.to(`live:${socket.data.code}`).emit("code:update", { update: payload.update });
+      } catch {
+        /* a broken update is dropped */
+      }
+    });
+    socket.on("code:lang", (payload) => {
+      const c = ctx();
+      if (!c || !LANGS.has(payload?.lang)) return;
+      c.s.lang = payload.lang;
+      to(socket.data.code).emit("code:lang", { lang: payload.lang, by: c.p.name });
+    });
+    socket.on("poll:vote", (payload) => {
+      const c = ctx();
+      const poll = c?.s.poll;
+      if (!c || !poll || !poll.open || payload?.id !== poll.id || !allow("vote", 20, 10_000)) return;
+      const i = Number(payload.option);
+      if (!Number.isInteger(i) || i < 0 || i >= poll.options.length) return;
+      poll.votes.set(me, i);
+      to(socket.data.code).emit("poll", pollView(poll));
+    });
+
     /* ── Host controls ── */
     async function hostCtx() {
       const c = ctx();
@@ -430,6 +482,40 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
       const id = payload?.peerId && h.s.peers.has(payload.peerId) ? payload.peerId : null;
       h.s.spotlight = id;
       to(h.room.code).emit("room", { spotlight: id });
+    });
+
+    socket.on("poll:start", async (payload) => {
+      const h = await hostCtx();
+      if (!h) return;
+      const question = String(payload?.question || "").replace(/\s+/g, " ").trim().slice(0, 200);
+      const options = (Array.isArray(payload?.options) ? payload.options : [])
+        .map((o) => String(o || "").replace(/\s+/g, " ").trim().slice(0, 80))
+        .filter(Boolean)
+        .slice(0, 6);
+      if (options.length < 2) return;
+      h.s.poll = { id: newId(), question: question || "Which one?", options, votes: new Map(), open: true, by: h.p.name };
+      to(h.room.code).emit("poll", pollView(h.s.poll));
+    });
+    socket.on("poll:close", async (payload) => {
+      const h = await hostCtx();
+      if (!h || !h.s.poll) return;
+      if (payload?.clear) {
+        h.s.poll = null;
+        to(h.room.code).emit("poll", null);
+        return;
+      }
+      h.s.poll.open = false;
+      to(h.room.code).emit("poll", pollView(h.s.poll));
+    });
+    socket.on("timer", async (payload) => {
+      const h = await hostCtx();
+      if (!h) return;
+      if (payload?.action === "stop") h.s.timer = null;
+      else {
+        const minutes = Math.max(1, Math.min(180, Math.round(Number(payload?.minutes) || 25)));
+        h.s.timer = { endsAt: Date.now() + minutes * 60_000, minutes, label: String(payload?.label || "").trim().slice(0, 60) || `${minutes} minutes`, by: h.p.name };
+      }
+      to(h.room.code).emit("timer", h.s.timer);
     });
 
     socket.on("lower-hands", async () => {

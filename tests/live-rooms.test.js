@@ -224,6 +224,63 @@ test('live rooms', async (t) => {
     assert.equal((await call('POST', `/api/live/rooms/${callCode}/decline`, ben)).status, 404);
   });
 
+  await t.test('study tools: polls, a shared timer and a shared code pad', async () => {
+    const Y = require('yjs');
+    const nextWhere = (sock, ev, pred, ms = 3000) =>
+      new Promise((resolve, reject) => {
+        const tm = setTimeout(() => reject(new Error(`no matching "${ev}"`)), ms);
+        const h = (d) => {
+          if (!pred(d)) return;
+          clearTimeout(tm);
+          sock.off(ev, h);
+          resolve(d);
+        };
+        sock.on(ev, h);
+      });
+    // A member cannot start a poll; the host can; everyone sees the counts.
+    b.emit('poll:start', { question: 'x', options: ['A', 'B'] });
+    await new Promise((r) => setTimeout(r, 200));
+    const seen = next(b, 'poll');
+    a.emit('poll:start', { question: '  Which  is right? ', options: ['A', 'B', 'C', 'D', ''] });
+    const poll = await seen;
+    assert.equal(poll.question, 'Which is right?');
+    assert.deepEqual(poll.options, ['A', 'B', 'C', 'D']);
+    const voted = nextWhere(a, 'poll', (p) => p.voters === 1);
+    b.emit('poll:vote', { id: poll.id, option: 2 });
+    assert.deepEqual((await voted).counts, [0, 0, 1, 0]);
+    const changed = nextWhere(a, 'poll', (p) => p.counts[3] === 1);
+    b.emit('poll:vote', { id: poll.id, option: 3 }); // changing your answer counts once
+    assert.equal((await changed).voters, 1);
+    const closed = nextWhere(b, 'poll', (p) => p && p.open === false);
+    a.emit('poll:close', {});
+    await closed;
+
+    const timer = next(b, 'timer');
+    a.emit('timer', { action: 'start', minutes: 500, label: 'Solve alone' });
+    const tm = await timer;
+    assert.equal(tm.minutes, 180);
+    assert.ok(tm.endsAt > Date.now());
+
+    // Code typed by one person reaches the other, and a late joiner gets it all.
+    const doc = new Y.Doc();
+    const update = new Promise((resolve) => doc.on('update', (u) => resolve(u)));
+    doc.getText('code').insert(0, 'int main() { return 0; }');
+    const u = await update;
+    const got = next(b, 'code:update');
+    a.emit('code:update', { update: Buffer.from(u).toString('base64') });
+    const other = new Y.Doc();
+    Y.applyUpdate(other, Buffer.from((await got).update, 'base64'));
+    assert.equal(other.getText('code').toString(), 'int main() { return 0; }');
+    const late = await connect({ cookie: cal });
+    const lj = await emit(late, 'join', { code });
+    const ld = new Y.Doc();
+    Y.applyUpdate(ld, Buffer.from(lj.code.state, 'base64'));
+    assert.equal(ld.getText('code').toString(), 'int main() { return 0; }');
+    assert.equal(lj.poll.open, false);
+    assert.equal(lj.timer.label, 'Solve alone');
+    late.emit('leave');
+  });
+
   await t.test('the host ends the room for everyone', async () => {
     assert.equal((await call('POST', `/api/live/rooms/${code}/end`, ben)).status, 403);
     const ended = next(b, 'ended');

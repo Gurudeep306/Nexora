@@ -207,7 +207,7 @@ function History({ d }: { d: LiveState }) {
   const min = (m: string, k: Kind) => d.minutesHistory.find((h) => h.month === m && h.kind === k)?.minutes ?? 0
   return (
     <Panel title="Month by month" icon="chart">
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Month by month, scrolls sideways">
         <table className="lv-admin-table">
           <thead>
             <tr>

@@ -157,6 +157,8 @@ export function Board({ ref, className, compact = false }: { ref?: Ref<BoardHand
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
       if (!(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== 'z') return
+      // Undo in a text box or the code pad belongs to them, not the board.
+      if ((e.target as HTMLElement).closest?.('input, textarea, select, [contenteditable], .monaco-editor')) return
       e.preventDefault()
       if (e.shiftKey) redo()
       else undo()
