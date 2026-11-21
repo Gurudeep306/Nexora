@@ -38,11 +38,6 @@
     flex-shrink: 0;
     display: inline-block;
   }
-  @media (prefers-reduced-motion: no-preference) {
-    .lv-dot-live {
-      animation: lv-pulse 2.4s var(--ed-ease) infinite;
-    }
-  }
   @keyframes lv-pulse {
     50% {
       opacity: 0.35;
@@ -2243,5 +2238,37 @@
     border-radius: 10px;
     border: 1px solid var(--ed-line);
     overflow: hidden;
+  }
+}
+
+/* The muted hint's two actions (Room.tsx): steady, no blinking. */
+@layer components {
+  .lv-banner-act {
+    margin-left: 6px;
+    padding: 2px 10px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .lv-banner-x {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-left: 2px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+  .lv-banner-x:hover,
+  .lv-banner-act:hover {
+    background: color-mix(in oklab, currentColor 12%, transparent);
   }
 }

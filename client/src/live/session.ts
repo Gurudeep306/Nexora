@@ -101,6 +101,9 @@ let reactionKey = 0
 export class LiveSession {
   private state: LiveState = initial()
   private listeners = new Set<() => void>()
+  private mutedTalkFrom = 0
+  private mutedTalkLast = 0
+  private hintSnoozeUntil = 0
   private socket: Socket | null = null
   private transport: Transport | null = null
   private meters = new Map<string, Meter>()
@@ -379,7 +382,15 @@ export class LiveSession {
         const a = Object.keys(speaking).sort().join()
         if (a !== Object.keys(s.speaking).sort().join()) patch.speaking = speaking
       }
-      const hint = !s.mic && talking
+      // The "you are muted" hint: shown after a second of talking, then held
+      // steady for a while (never flickering with the voice), and quiet for a
+      // minute once closed.
+      const now = Date.now()
+      if (!s.mic && talking) {
+        if (!this.mutedTalkFrom) this.mutedTalkFrom = now
+        this.mutedTalkLast = now
+      } else if (now - this.mutedTalkLast > 1500) this.mutedTalkFrom = 0
+      const hint = !s.mic && now >= this.hintSnoozeUntil && ((this.mutedTalkFrom > 0 && now - this.mutedTalkFrom > 900) || (s.mutedTalking && now - this.mutedTalkLast < 8000))
       if (hint !== s.mutedTalking) patch.mutedTalking = hint
       if (Object.keys(patch).length) this.set(patch)
     }, 160)
@@ -438,6 +449,13 @@ export class LiveSession {
     this.transport?.setMuted('mic', !on)
     this.set({ mic: on, mutedTalking: false })
     this.pushState()
+  }
+
+  /** Close the "you are muted" hint for a minute. */
+  dismissMutedHint() {
+    this.hintSnoozeUntil = Date.now() + 60_000
+    this.mutedTalkFrom = 0
+    this.set({ mutedTalking: false })
   }
 
   async setCam(on: boolean) {
