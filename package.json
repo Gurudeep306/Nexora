@@ -1,7 +1,7 @@
 {
   "name": "nexora",
   "version": "2.0.0",
-  "description": "Nexora – Multi-Domain CS Learning Platform",
+  "description": "Nexora \u2013 Multi-Domain CS Learning Platform",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -23,7 +23,8 @@
     "scrape:hard": "node src/scraper.js --rating 1800 3500 --limit 200",
     "db:push-to-cloud": "node scripts/migrate-to-turso.js",
     "db:backup": "node scripts/backup-turso.js",
-    "user:set-password": "node scripts/set-password.js"
+    "user:set-password": "node scripts/set-password.js",
+    "voice:names": "node client/scripts/check-names.cjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",

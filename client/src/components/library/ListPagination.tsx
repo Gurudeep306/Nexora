@@ -35,7 +35,7 @@ export function ListPagination({
           onClick={() => onPageChange((page - 2) * limit)}
           aria-label="Previous page"
         >
-          <ChevronLeft aria-hidden="true" /> Prev
+          <ChevronLeft aria-hidden="true" /> Previous
         </Button>
         <span className="min-w-20 text-center text-xs text-foreground-dim">
           Page <span className="font-mono text-foreground tabular-nums">{page}</span> /{' '}

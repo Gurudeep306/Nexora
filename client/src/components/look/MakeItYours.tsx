@@ -84,7 +84,7 @@ export function MakeItYours() {
                   value={look.accent}
                   onChange={(id) => setLook({ accent: id })}
                   className="miy-accents"
-                  itemLabel={(a) => a.label}
+                  itemLabel={(a) => (a.id === 'theme' ? `Theme (${a.label})` : a.label)}
                   itemClassName={(_, checked) => cn('miy-accent', checked && 'is-on')}
                   renderItem={(a, checked) => (
                     <>
@@ -110,7 +110,6 @@ export function MakeItYours() {
                   value={look.ink}
                   onChange={(id) => setLook({ ink: id })}
                   className="miy-grid-3"
-                  itemLabel={(i) => i.label}
                   itemClassName="rounded-[var(--radius-card)]"
                   renderItem={(i, checked) => (
                     <span

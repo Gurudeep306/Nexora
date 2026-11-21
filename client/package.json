@@ -105,6 +105,7 @@
     "@types/react-dom": "^19.2.7",
     "@types/three": "0.187.0",
     "@vitejs/plugin-react": "^6.3.0",
+    "axe-core": "^4.14.1",
     "oxlint": "^1.93.0",
     "remark-directive": "4.0.0",
     "remark-parse": "11.0.0",

@@ -64,7 +64,7 @@ export function ThemeCard({
 }) {
   const mode = themeMode(theme, preferred)
   return (
-    <button type="button" role="radio" aria-checked={checked} tabIndex={tabIndex} onClick={onChoose} className="tk-choice" aria-label={`${theme.name}: ${theme.tagline}. ${theme.forWho ?? ''}`}>
+    <button type="button" role="radio" aria-checked={checked} tabIndex={tabIndex} onClick={onChoose} className="tk-choice">
       <ThemeSpecimen theme={theme} look={look} mode={mode} />
       <span className="tk-caption">
         <span className="tk-name">

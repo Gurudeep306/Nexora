@@ -256,8 +256,8 @@ export default function SubmissionsPage() {
                 onClick={() => setPage(safePage - 1)}
                 aria-label="Previous page"
               >
-                <ChevronLeft className="size-3.5" />
-                Prev
+                <ChevronLeft className="size-3.5" aria-hidden="true" />
+                Previous
               </Button>
               <Button
                 variant="subtle"

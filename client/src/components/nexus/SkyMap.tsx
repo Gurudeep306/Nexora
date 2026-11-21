@@ -152,7 +152,7 @@ export function SkyMap({
                   key={p.c.id}
                   href={`/learn/${p.c.id}`}
                   className={cn('ax-sub', on && 'is-on', linked && 'is-linked')}
-                  aria-label={`${lines.join(' ')} ${t.mastered}/${t.total} stars lit${ready?.has(p.c.id) ? ', lessons ready' : ''}${lines.join(' ') !== p.c.name ? ` (${p.c.name})` : ''}`}
+                  aria-label={`${lines.join(' ')} ${t.mastered}/${t.total}${ready?.has(p.c.id) ? ' · lessons' : ''} — stars lit${ready?.has(p.c.id) ? ', lessons ready' : ''}${lines.join(' ') !== p.c.name ? ` (${p.c.name})` : ''}`}
                   onClick={(e) => {
                     e.preventDefault()
                     onOpen(p.c.id)
