@@ -1,0 +1,282 @@
+/*
+  The mic: push to talk, say a command, the site does it. Phase 0/1 of the
+  voice blueprint (docs/voice/BLUEPRINT.md): free browser speech recognition
+  plus the Action Graph's rule matcher, no AI and no server. A sentence that
+  is not a command is offered to the AI assistant instead.
+
+  First press shows the consent screen. Nothing is recorded by NexoraGuru.
+*/
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
+import { Mic, X } from 'lucide-react'
+import { Button, Modal, Tooltip } from '@/components/ui'
+import { useAuth } from '@/context/AuthContext'
+import { openAssistantEvent } from '@/context/AgentContext'
+import { cn } from '@/lib/utils'
+import { useActionList } from './actions/useVoiceAction'
+import { expand, matchCommand, normalize, type Match } from './actions/match'
+import type { VoiceAction } from './actions/types'
+import { listenOnce, speechSupported, type ListenHandle, type SpeechError } from './speech'
+import { useVoicePrefs, type VoicePrefs } from './prefs'
+import './voice.css'
+
+type Phase =
+  | { kind: 'idle' }
+  | { kind: 'listening'; text: string }
+  | { kind: 'done'; heard: string; said: string }
+  | { kind: 'choose'; heard: string; options: { action: VoiceAction; match: Match }[] }
+  | { kind: 'confirm'; heard: string; action: VoiceAction; match: Match }
+  | { kind: 'miss'; heard: string }
+  | { kind: 'error'; error: SpeechError }
+
+const YES = new Set(['confirm', 'yes', 'haan', 'han', 'ha', 'pakka', 'sure', 'ok', 'theek', 'thik'])
+const NO = new Set(['no', 'nahi', 'nahin', 'cancel', 'mat', 'ruko', 'pause', 'stop'])
+
+const ERRORS: Record<SpeechError, string> = {
+  'not-allowed': 'The microphone is blocked. Allow it in the browser’s address bar, then try again.',
+  'no-speech': 'I didn’t hear anything. Press the mic and speak.',
+  network: 'The browser’s speech service isn’t reachable right now. Check the connection and try again.',
+  unsupported: 'Voice needs Chrome, Edge or Safari for now.',
+  other: 'Something went wrong with the microphone. Try again.',
+}
+
+/** What was done, in words: "Open Notes", "Switch to dark mode". */
+function describe(action: VoiceAction, match: Match) {
+  const slot = Object.keys(match.args)[0]
+  if (!slot) return action.title
+  // A slot value is "value|Spoken label|aliases…": show the spoken label.
+  const entry = action.args?.[slot]?.find((v) => v.split('|')[0] === match.args[slot])
+  const label = entry?.split('|')[1] ?? match.args[slot]
+  return action.id === 'nav.open' ? `Open ${label}` : `${action.title}: ${label}`
+}
+
+export function VoiceButton() {
+  const { user } = useAuth()
+  const [prefs, setPrefs] = useVoicePrefs(user?.username)
+  const actions = useActionList()
+  const [phase, setPhase] = useState<Phase>({ kind: 'idle' })
+  const [consentOpen, setConsentOpen] = useState(false)
+  const handle = useRef<ListenHandle | null>(null)
+  const hideTimer = useRef<number | null>(null)
+  const supported = speechSupported()
+
+  // Expanded phrases, rebuilt only when the action list changes.
+  const index = useMemo(() => new Map(actions.map((a) => [a.id, expand(a)])), [actions])
+
+  const clearHide = () => {
+    if (hideTimer.current) window.clearTimeout(hideTimer.current)
+    hideTimer.current = null
+  }
+  const hideSoon = useCallback((ms = 2600) => {
+    clearHide()
+    hideTimer.current = window.setTimeout(() => setPhase({ kind: 'idle' }), ms)
+  }, [])
+  useEffect(() => () => {
+    clearHide()
+    handle.current?.cancel()
+  }, [])
+
+  const runAction = useCallback(
+    (action: VoiceAction, match: Match, heard: string) => {
+      setPhase({ kind: 'done', heard, said: describe(action, match) })
+      hideSoon()
+      void action.run(match.args)
+    },
+    [hideSoon],
+  )
+
+  const decide = useCallback(
+    (heard: string) => {
+      const pending = phase
+      // A reply to "are you sure?" for an irreversible action.
+      if (pending.kind === 'confirm') {
+        const words = normalize(heard).split(' ')
+        if (words.some((w) => YES.has(w))) return runAction(pending.action, pending.match, heard)
+        if (words.some((w) => NO.has(w))) {
+          setPhase({ kind: 'done', heard, said: 'Cancelled' })
+          return hideSoon(1600)
+        }
+      }
+      const result = matchCommand(heard, actions, index)
+      const byId = (m: Match) => actions.find((a) => a.id === m.id)!
+      if (result.best) {
+        const action = byId(result.best)
+        if (action.risk === 'irreversible') return setPhase({ kind: 'confirm', heard, action, match: result.best })
+        return runAction(action, result.best, heard)
+      }
+      if (result.candidates.length > 1) return setPhase({ kind: 'choose', heard, options: result.candidates.map((m) => ({ action: byId(m), match: m })) })
+      setPhase({ kind: 'miss', heard })
+    },
+    [actions, index, phase, runAction, hideSoon],
+  )
+
+  const start = useCallback(async () => {
+    clearHide()
+    if (phase.kind === 'listening') {
+      handle.current?.stop()
+      return
+    }
+    setPhase({ kind: 'listening', text: '' })
+    handle.current = await listenOnce({
+      lang: prefs.lang,
+      onText: (text) => setPhase((p) => (p.kind === 'listening' ? { kind: 'listening', text } : p)),
+      onDone: (text, error) => {
+        handle.current = null
+        if (!text) {
+          setPhase({ kind: 'error', error: error ?? 'no-speech' })
+          hideSoon(4200)
+          return
+        }
+        decide(text)
+      },
+    })
+  }, [phase.kind, prefs.lang, decide, hideSoon])
+
+  const onMic = () => {
+    if (!prefs.consent) return setConsentOpen(true)
+    void start()
+  }
+
+  if (!user || !supported) return null
+  const listening = phase.kind === 'listening'
+
+  return (
+    <>
+      <Tooltip label={listening ? 'Listening… press to stop' : 'Speak a command'} side="bottom">
+        <button
+          type="button"
+          onClick={onMic}
+          aria-label={listening ? 'Stop listening' : 'Speak a command'}
+          aria-pressed={listening}
+          className={cn('vc-mic flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-text-primary/6 hover:text-text-primary', listening && 'is-on')}
+        >
+          <Mic className="size-[17px]" aria-hidden="true" />
+        </button>
+      </Tooltip>
+
+      <AnimatePresence>
+        {phase.kind !== 'idle' && (
+          <motion.div
+            key="pill"
+            role="status"
+            aria-live="polite"
+            className="vc-pill"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.16 }}
+          >
+            <Pill phase={phase} onClose={() => { handle.current?.cancel(); setPhase({ kind: 'idle' }) }} onRun={runAction} onAsk={(t) => { setPhase({ kind: 'idle' }); openAssistantEvent(t) }} onListen={() => void start()} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <ConsentSheet
+        open={consentOpen}
+        prefs={prefs}
+        onClose={() => setConsentOpen(false)}
+        onAccept={(patch) => {
+          setPrefs({ ...patch, consent: true, consentAt: new Date().toISOString() })
+          setConsentOpen(false)
+          void start()
+        }}
+      />
+    </>
+  )
+}
+
+function Pill({ phase, onClose, onRun, onAsk, onListen }: { phase: Phase; onClose: () => void; onRun: (a: VoiceAction, m: Match, heard: string) => void; onAsk: (t: string) => void; onListen: () => void }) {
+  return (
+    <div className="vc-pill-in">
+      <div className="vc-pill-head">
+        <span className={cn('vc-dot', phase.kind === 'listening' && 'is-live')} aria-hidden="true" />
+        <span className="vc-pill-title">
+          {phase.kind === 'listening' && 'Listening…'}
+          {phase.kind === 'done' && phase.said}
+          {phase.kind === 'choose' && 'Which one?'}
+          {phase.kind === 'confirm' && `${phase.action.title}?`}
+          {phase.kind === 'miss' && 'That isn’t a command I know'}
+          {phase.kind === 'error' && 'Couldn’t listen'}
+        </span>
+        <button type="button" className="vc-x" onClick={onClose} aria-label="Close">
+          <X className="size-3.5" aria-hidden="true" />
+        </button>
+      </div>
+      {'heard' in phase && <p className="vc-heard">“{phase.heard}”</p>}
+      {phase.kind === 'listening' && <p className="vc-heard">{phase.text ? `“${phase.text}”` : 'Say a command, like “notes kholo” or “dark mode”.'}</p>}
+      {phase.kind === 'error' && <p className="vc-note">{ERRORS[phase.error]}</p>}
+      {phase.kind === 'choose' && (
+        <ol className="vc-options">
+          {phase.options.map((o, i) => (
+            <li key={`${o.match.id}:${JSON.stringify(o.match.args)}`}>
+              <button type="button" onClick={() => onRun(o.action, o.match, phase.heard)}>
+                <span className="vc-num">{i + 1}</span> {describe(o.action, o.match)}
+              </button>
+            </li>
+          ))}
+        </ol>
+      )}
+      {phase.kind === 'confirm' && (
+        <div className="vc-actions">
+          <p className="vc-note">This can’t be undone. Say “confirm”, or tap.</p>
+          <Button size="sm" onClick={() => onRun(phase.action, phase.match, phase.heard)}>Confirm</Button>
+          <Button size="sm" variant="ghost" onClick={onClose}>Cancel</Button>
+          <Button size="sm" variant="ghost" onClick={onListen}>
+            <Mic aria-hidden="true" /> Answer by voice
+          </Button>
+        </div>
+      )}
+      {phase.kind === 'miss' && (
+        <div className="vc-actions">
+          <Button size="sm" variant="secondary" onClick={() => onAsk(phase.heard)}>Ask the AI instead</Button>
+          <Button size="sm" variant="ghost" onClick={onListen}>Try again</Button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function ConsentSheet({ open, prefs, onClose, onAccept }: { open: boolean; prefs: VoicePrefs; onClose: () => void; onAccept: (p: Partial<VoicePrefs>) => void }) {
+  const [lang, setLang] = useState(prefs.lang)
+  const [corpus, setCorpus] = useState(prefs.corpus)
+  const [adult, setAdult] = useState(prefs.adultOrGuardian)
+  return (
+    <Modal open={open} onClose={onClose} title="Talk to NexoraGuru" description="Say a command and the site does it — in English, Hinglish or Hindi." size="md">
+      <div className="vc-consent">
+        <ul className="vc-points">
+          <li><strong>It only listens while you press the mic.</strong> Never in the background.</li>
+          <li><strong>Your browser turns speech into text.</strong> Where it can, it does this on your device; otherwise your browser’s own speech service (Google, Microsoft or Apple) does it.</li>
+          <li><strong>NexoraGuru doesn’t record or keep your voice.</strong> Only the text of the command is used, and only to run it.</li>
+          <li>You can turn voice off any time in Settings → Preferences.</li>
+        </ul>
+
+        <fieldset className="vc-field">
+          <legend>I’ll speak in</legend>
+          <label><input type="radio" name="vc-lang" checked={lang === 'en-IN'} onChange={() => setLang('en-IN')} /> English or Hinglish</label>
+          <label><input type="radio" name="vc-lang" checked={lang === 'hi-IN'} onChange={() => setLang('hi-IN')} /> हिन्दी (Hindi)</label>
+        </fieldset>
+
+        <fieldset className="vc-field">
+          <legend>Optional: help Indian students</legend>
+          <label>
+            <input type="checkbox" checked={corpus} onChange={(e) => setCorpus(e.target.checked)} />
+            <span>Ask me later to help build <strong>Bharat Code Speech</strong>, a public set of recordings of how Indian students say code. Nothing is recorded now, and you’ll be asked again before anything is.</span>
+          </label>
+          {corpus && (
+            <label>
+              <input type="checkbox" checked={adult} onChange={(e) => setAdult(e.target.checked)} />
+              <span>I’m 18 or older, or my parent or guardian agrees.</span>
+            </label>
+          )}
+        </fieldset>
+
+        <div className="vc-consent-foot">
+          <Button variant="ghost" onClick={onClose}>Not now</Button>
+          <Button onClick={() => onAccept({ lang, corpus: corpus && adult, adultOrGuardian: adult })}>
+            <Mic aria-hidden="true" /> Turn on voice
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  )
+}
