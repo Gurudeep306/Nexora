@@ -51,6 +51,7 @@ export const pageLoaders = {
   NotesLessonPage: () => import('@/pages/gate/notes/NotesLessonPage'),
   NotesFontsPage: () => import('@/pages/gate/notes/NotesFontsPage'),
   SocialPage: () => import('@/pages/SocialPage'),
+  MessagesPage: () => import('@/pages/MessagesPage'),
   SocialPostPage: () => import('@/pages/social/PostPage'),
   SocialTagPage: () => import('@/pages/social/HashtagPage'),
   SubmissionsPage: () => import('@/pages/SubmissionsPage'),

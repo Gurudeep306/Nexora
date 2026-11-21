@@ -1,0 +1,153 @@
+/* New-message cards on any page (MessageAlerts.tsx). Tokens only; no glow. */
+@layer components {
+  .ma {
+    position: fixed;
+    top: 4.25rem;
+    right: 1rem;
+    z-index: 66;
+    display: grid;
+    gap: 8px;
+    width: min(22rem, calc(100vw - 2rem));
+    pointer-events: none;
+  }
+  .ma > * {
+    pointer-events: auto;
+  }
+  .ma-card {
+    position: relative;
+    display: grid;
+    gap: 8px;
+    padding: 10px 10px 10px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.875rem);
+    background: var(--color-bg-surface);
+    box-shadow: var(--elev-2);
+  }
+  .ma-open {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+    padding: 0 24px 0 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .ma-text {
+    display: grid;
+    min-width: 0;
+    gap: 2px;
+  }
+  .ma-name {
+    overflow: hidden;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .ma-group {
+    font-weight: 500;
+    color: var(--color-text-secondary);
+  }
+  .ma-body {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--color-text-secondary);
+  }
+  .ma-x {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+  .ma-x:hover {
+    background: color-mix(in oklab, var(--color-text-primary) 7%, transparent);
+    color: var(--color-text-primary);
+  }
+  .ma-acts {
+    display: flex;
+    gap: 6px;
+    padding-left: 46px;
+  }
+  .ma-act {
+    height: 28px;
+    padding: 0 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-text-primary);
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .ma-act:hover {
+    background: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
+  }
+  .ma-reply {
+    display: flex;
+    gap: 6px;
+  }
+  .ma-reply input {
+    flex: 1;
+    min-width: 0;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-bg-app);
+    color: var(--color-text-primary);
+    font: inherit;
+    font-size: 13.5px;
+    outline: none;
+  }
+  .ma-reply input:focus {
+    border-color: var(--color-accent-brand);
+  }
+  .ma-send {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border: 0;
+    border-radius: 999px;
+    background: var(--color-accent-brand);
+    color: var(--color-on-accent-brand, #fff);
+    cursor: pointer;
+  }
+  .ma-send:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  @media (max-width: 520px) {
+    .ma {
+      top: 3.6rem;
+      right: 50%;
+      transform: translateX(50%);
+    }
+  }
+}
+
+/* Under the ongoing-call bar when both are showing. */
+@layer components {
+  .oc ~ .ma {
+    top: 7.6rem;
+  }
+}

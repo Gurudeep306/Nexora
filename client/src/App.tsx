@@ -8,6 +8,7 @@ import { idlePrefetchCommonRoutes, pageLoaders } from '@/routes'
 import { SiteGate } from '@/components/site/SiteGate'
 import { CallRinger } from '@/components/live/CallRinger'
 import { OngoingCall } from '@/components/live/OngoingCall'
+import { MessageAlerts } from '@/components/social/MessageAlerts'
 import { AdminRoute, AuthorRoute, HiveRoute } from '@/components/admin/AdminRoute'
 
 const PadPage = lazy(() => import('@/pages/hand/PadPage'))
@@ -57,6 +58,7 @@ const NotesSubjectPage = lazy(pageLoaders.NotesSubjectPage)
 const NotesLessonPage = lazy(pageLoaders.NotesLessonPage)
 const NotesFontsPage = lazy(pageLoaders.NotesFontsPage)
 const SocialPage = lazy(pageLoaders.SocialPage)
+const MessagesPage = lazy(pageLoaders.MessagesPage)
 const SocialPostPage = lazy(pageLoaders.SocialPostPage)
 const SocialTagPage = lazy(pageLoaders.SocialTagPage)
 const SubmissionsPage = lazy(pageLoaders.SubmissionsPage)
@@ -114,6 +116,8 @@ export default function App() {
       <CallRinger />
       {/* A call still going while you look at another page. */}
       <OngoingCall />
+      {/* New messages, like a phone's chat app, on any page. */}
+      <MessageAlerts />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
@@ -182,6 +186,7 @@ export default function App() {
             <Route path="/gate/cbt" element={<GateCbtPage />} />
             <Route path="/gate/cbt/:paperId" element={<GateCbtPage />} />
             <Route path="/social" element={<SocialPage />} />
+            <Route path="/messages" element={<MessagesPage />} />
             <Route path="/live" element={<LiveLobbyPage />} />
             <Route path="/social/post/:id" element={<SocialPostPage />} />
             <Route path="/social/tag/:tag" element={<SocialTagPage />} />

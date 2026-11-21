@@ -906,7 +906,17 @@ async function mute(me, convId, on) {
   return !!on;
 }
 
+/** Who is in a conversation, with their mute and accept state (for alerts). */
+async function listMembersState(convId) {
+  return all("SELECT username, muted, accepted FROM chat_members WHERE conversation_id=?", [Number(convId)]);
+}
+async function conversationInfo(convId) {
+  return get("SELECT id, kind, title FROM chat_conversations WHERE id=?", [Number(convId)]);
+}
+
 module.exports = {
+  listMembersState,
+  conversationInfo,
   viewMany,
   viewFor,
   revealCode,

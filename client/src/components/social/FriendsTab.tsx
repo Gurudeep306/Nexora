@@ -159,10 +159,11 @@ export function FriendsTab({ me, socket }: Props) {
         <Card>
           <div className="border-b border-border px-5 py-4">
             <h2 className="font-display text-sm tracking-wider text-foreground uppercase">
-              Your Squad
+              Friends
             </h2>
             <p className="mt-0.5 text-xs text-foreground-dim">
-              {friends.length} friend{friends.length === 1 ? '' : 's'} · live presence via socket
+              {friends.length} friend{friends.length === 1 ? '' : 's'}
+              {friends.length > 0 && ` · ${friends.filter((f) => isOnline(f.username, f.status)).length} online now`}
             </p>
           </div>
           <div className="p-4">
@@ -173,8 +174,8 @@ export function FriendsTab({ me, socket }: Props) {
             ) : friends.length === 0 ? (
               <EmptyState
                 icon="users"
-                title="No allies yet"
-                description="Search for a coder on the right and send a friend request."
+                title="No friends yet"
+                description="Find people below and send a friend request. Friends can message you, ring you and study with you live."
               />
             ) : (
               <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -231,7 +232,7 @@ export function FriendsTab({ me, socket }: Props) {
         <Card>
           <div className="border-b border-border px-5 py-4">
             <h2 className="font-display text-sm tracking-wider text-foreground uppercase">
-              Find Coders
+              Find people
             </h2>
           </div>
           <div className="space-y-3 p-4">
@@ -361,7 +362,7 @@ export function FriendsTab({ me, socket }: Props) {
         <Card>
           <div className="border-b border-border px-5 py-4">
             <h2 className="font-display text-sm tracking-wider text-foreground uppercase">
-              Sent Requests
+              Sent requests
             </h2>
           </div>
           <div className="p-4">

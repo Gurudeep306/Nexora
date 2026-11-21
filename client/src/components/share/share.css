@@ -1,0 +1,75 @@
+/* ShareSheet: one link, every way to send it. Tokens only. */
+@layer components {
+  .sh {
+    display: grid;
+    gap: 10px;
+  }
+  .sh-link {
+    display: flex;
+    gap: 6px;
+  }
+  .sh-link input {
+    flex: 1;
+    min-width: 0;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-bg-app);
+    color: var(--color-text-secondary);
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 12.5px;
+  }
+  .sh-copy {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--color-accent-brand);
+    color: var(--color-on-accent-brand, #fff);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .sh-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .sh-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-text-primary);
+    font-size: 12.5px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .sh-btn:hover,
+  .sh-btn.is-on {
+    background: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
+  }
+  .sh-btn.is-wa svg {
+    color: #1f9d55;
+  }
+  .sh-btn.is-tg svg {
+    color: #2a8bd0;
+  }
+  .sh-qr {
+    display: flex;
+    justify-content: center;
+  }
+  .sh-qr svg {
+    width: min(100%, 15rem);
+    height: auto;
+  }
+}

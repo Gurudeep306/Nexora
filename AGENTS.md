@@ -232,6 +232,25 @@ from a range, since test files run in parallel and a clash fails the run.
   what devices report; over the monthly limit new rooms go direct. In the direct mode the
   newcomer always starts each connection; keep that, or two offers clash and
   Chrome's ICE stalls. `routes/live.js` is the older LiveClass API, unrelated.
+- **Messages, alerts and invites**: chats have their own full-window page,
+  `/messages` (`pages/MessagesPage.tsx`, the same `MessagesTab`), with a
+  top-bar button and unread badge; Community → Messages opens it. New
+  messages pop up on any page like a phone's chat app
+  (`components/social/MessageAlerts.tsx`: picture, name, text, quick reply,
+  a soft chime; muted chats and the open one stay quiet). Notifications reach
+  a device even with the site closed through free Web Push (`src/push.js`,
+  `public/sw.js`, `lib/push.ts`; VAPID keys made once and sealed in
+  `site_settings`; only people with no tab open get one; code never appears
+  in an alert). Calls ring by push too. In a Live room, **Invite**
+  (`live/ui/Invite.tsx`, `POST /api/live/rooms/:code/invite`) rings friends
+  who are online and messages the join link to the rest; `ShareSheet`
+  (`components/share/`) shares any link by WhatsApp, Telegram, email, QR or
+  the phone's share sheet. Leaving a room mid-call keeps the call
+  (`live/activeCall.ts`, `components/live/OngoingCall.tsx`).
+- **Community** (`pages/SocialPage.tsx`, `social-page.css`) is laid out like a
+  social app: a side menu on wide screens (profile, sections with badges,
+  Live rooms, New post), section chips on a phone; no theme scene behind it
+  or Messages.
 - **Video explanations** (`src/routes/explain.js`, `client/src/explain/`): under
   GATE questions, notes lessons and DSA lessons, and beside every subtopic
   (h2) of a lesson (`SectionExplain`: an "Explain" mark placed into the

@@ -12,7 +12,7 @@
   tile in front.
 */
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { Copy, ChevronLeft, ChevronRight, Hand, Maximize2, MicOff, Monitor, Pin, PinOff, PenLine, Camera, WifiOff, Star } from 'lucide-react'
+import { Copy, ChevronLeft, ChevronRight, Hand, Maximize2, MicOff, Monitor, Pin, PinOff, PenLine, Camera, WifiOff, Star, UserPlus } from 'lucide-react'
 import { Avatar, useToast } from '@/components/ui'
 import { encodeQr, qrArt } from '@/components/profile/qr'
 import { markSvg } from '@/components/brand/traversal'
@@ -288,6 +288,9 @@ function Invite({ code, compact }: { code: string; compact: boolean }) {
         </p>
         <button type="button" className="lv-chip-btn" onClick={() => void navigator.clipboard?.writeText(url).then(() => toast.success('Link copied', 'Send it to your group.'))}>
           <Copy className="size-3.5" aria-hidden="true" /> Copy the link
+        </button>
+        <button type="button" className="lv-chip-btn is-primary" onClick={() => window.dispatchEvent(new Event('lv:invite'))}>
+          <UserPlus className="size-3.5" aria-hidden="true" /> Invite friends
         </button>
       </div>
       {!compact && (

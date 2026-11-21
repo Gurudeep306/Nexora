@@ -12,7 +12,7 @@ import { liveApi, type Face, type LiveMode } from '@/live/api'
 import { ringtone } from '@/live/ring'
 import './ringer.css'
 
-type Ring = { code: string; mode: LiveMode; title: string; from: Face; at: number }
+type Ring = { code: string; mode: LiveMode; title: string; from: Face; at: number; invite?: boolean }
 
 export function CallRinger() {
   const socket = useSocket()
@@ -44,25 +44,32 @@ export function CallRinger() {
   if (!ring) return null
   const accept = () => {
     setRing(null)
-    navigate(`/live/${ring.code}?answer=1`)
+    // A call starts at once; a room invite opens the room's join screen.
+    navigate(ring.invite ? `/live/${ring.code}` : `/live/${ring.code}?answer=1`)
   }
   const decline = () => {
     void liveApi.decline(ring.code).catch(() => {})
     setRing(null)
   }
   return (
-    <div className="lv-ringer" role="alertdialog" aria-label={`${ring.from.name} is calling`}>
+    <div className="lv-ringer" role="alertdialog" aria-label={ring.invite ? `${ring.from.name} invites you to ${ring.title}` : `${ring.from.name} is calling`}>
       <Avatar src={ring.from.avatarUrl} avatar={ring.from.avatar} name={ring.from.name} seed={ring.from.username} size="lg" />
       <div className="min-w-0 flex-1">
         <p className="lv-ringer-name">{ring.from.name}</p>
-        <p className="lv-ringer-kind">{ring.mode === 'voice' ? 'Voice call' : 'Video call'}</p>
+        <p className="lv-ringer-kind">{ring.invite ? `Invites you to “${ring.title}”` : ring.mode === 'voice' ? 'Voice call' : 'Video call'}</p>
       </div>
       <button type="button" className="lv-round is-bad" onClick={decline} aria-label="Decline">
         <PhoneOff className="size-4" aria-hidden="true" />
       </button>
-      <button type="button" className="lv-round is-ok" onClick={accept} aria-label="Accept" autoFocus>
-        {ring.mode === 'voice' ? <Phone className="size-4" aria-hidden="true" /> : <Video className="size-4" aria-hidden="true" />}
-      </button>
+      {ring.invite ? (
+        <button type="button" className="lv-ringer-join" onClick={accept} autoFocus>
+          Join
+        </button>
+      ) : (
+        <button type="button" className="lv-round is-ok" onClick={accept} aria-label="Accept" autoFocus>
+          {ring.mode === 'voice' ? <Phone className="size-4" aria-hidden="true" /> : <Video className="size-4" aria-hidden="true" />}
+        </button>
+      )}
     </div>
   )
 }

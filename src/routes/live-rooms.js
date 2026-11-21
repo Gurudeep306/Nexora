@@ -203,7 +203,73 @@ function createLiveRoomsRouter({ realtime, live }) {
     const room = await createRoom({ host: me, title, mode, visibility: "invite", invite: list, isCall: true });
     const from = names.get(me) || { username: me, name: me };
     for (const u of list) realtime.emitToUser?.(u, "live:ring", { code: room.code, mode, title: room.title, from, at: Date.now() });
+    // No tab open: their phone or computer still rings (src/push.js).
+    for (const u of list) require("../push").notifyCall(u, { from, title: room.title, code: room.code, mode }).catch(() => {});
     res.json({ ok: true, room: store.roomView(room, { people: 0 }) });
+  }));
+
+  /* ── Invite people into a room or call ──
+     Online: their phone/computer rings at once. Offline: a message with the
+     join link (and a notification when they have them on), so one tap joins. */
+  const inRoom = (room, username) => room.host === username || [...(rooms.get(room.code)?.peers.values() || [])].some((p) => p.username === username);
+
+  router.get("/api/live/rooms/:code/invitable", auth, light, wrap(async (req, res) => {
+    const me = req.sessionUser.username;
+    const room = await store.roomByCode(req.params.code);
+    if (!room || room.ended_at) bad("This room has ended.", 404);
+    if (!inRoom(room, me)) bad("Join the room first.", 403);
+    // Friends, then people you message: the ones you would call.
+    const friends = await all(
+      "SELECT CASE WHEN from_user=? THEN to_user ELSE from_user END AS u FROM friendships WHERE status='accepted' AND (from_user=? OR to_user=?)",
+      [me, me, me],
+    );
+    const dms = await all(
+      "SELECT m2.username AS u, MAX(c.last_message_at) AS at FROM chat_members m1 JOIN chat_members m2 ON m2.conversation_id=m1.conversation_id AND m2.username<>m1.username JOIN chat_conversations c ON c.id=m1.conversation_id WHERE m1.username=? AND c.kind='dm' GROUP BY m2.username ORDER BY at DESC LIMIT 40",
+      [me],
+    ).catch(() => []);
+    const names = [...new Set([...friends.map((r) => r.u), ...dms.map((r) => r.u)])].filter((u) => u && u !== me).slice(0, 80);
+    const people = await store.people(names);
+    const online = new Set(realtime.online?.() || []);
+    const here = new Set([...(rooms.get(room.code)?.peers.values() || [])].map((p) => p.username));
+    const invited = new Set((await all("SELECT username FROM live_invites WHERE room_id=?", [room.id])).map((r) => r.username));
+    const list = names.map((u) => ({ ...(people.get(u) || { username: u, name: u }), username: u, online: online.has(u), inRoom: here.has(u), invited: invited.has(u), friend: friends.some((r) => r.u === u) }));
+    list.sort((a, b) => Number(b.online) - Number(a.online) || Number(b.friend) - Number(a.friend) || String(a.name).localeCompare(String(b.name)));
+    res.json({ ok: true, people: list });
+  }));
+
+  router.post("/api/live/rooms/:code/invite", auth, make, wrap(async (req, res) => {
+    const me = req.sessionUser.username;
+    const room = await store.roomByCode(req.params.code);
+    if (!room || room.ended_at) bad("This room has ended.", 404);
+    if (!inRoom(room, me)) bad("Join the room first.", 403);
+    const to = Array.isArray(req.body?.to) ? [...new Set(req.body.to.map(String))].filter((u) => u && u !== me).slice(0, 20) : [];
+    if (!to.length) bad("Choose who to invite.");
+    for (const u of to) if (!(await store.mayCall(me, u))) bad(`You can invite friends and people you message. ${u} is not one yet.`, 403);
+    await runBatch(to.map((u) => ["INSERT OR IGNORE INTO live_invites(room_id, username) VALUES(?,?)", [room.id, u]]));
+    const names = await store.people([me, ...to]);
+    const from = names.get(me) || { username: me, name: me };
+    const online = new Set(realtime.online?.() || []);
+    const link = `${String(process.env.PUBLIC_URL || "https://nexoraguru.in").replace(/\/+$/, "")}/live/${room.code}`;
+    const chat = require("../chat");
+    const out = [];
+    for (const u of to) {
+      if (online.has(u)) {
+        realtime.emitToUser?.(u, "live:ring", { code: room.code, mode: room.mode, title: room.title, from, at: Date.now(), invite: true });
+      }
+      // A message too, so the link is there later (and for whoever is offline).
+      let messaged = false;
+      try {
+        const convId = await chat.openDm(me, u);
+        const message = await chat.send(me, convId, { body: `${room.is_call ? "Join my call" : "Join me in"} “${room.title}” — ${link}` });
+        for (const n of await chat.memberNames(convId)) realtime.emitToUser?.(n, "chat:message", { message: await chat.viewFor(n, message) });
+        require("../push").notifyMessage?.(u, { from, body: `${room.is_call ? "Call" : "Room"}: ${room.title}`, url: `/live/${room.code}`, tag: `live-${room.code}` }).catch(() => {});
+        messaged = true;
+      } catch {
+        // Messages refused (a request limit, a block): the ring still went.
+      }
+      out.push({ username: u, rang: online.has(u), messaged });
+    }
+    res.json({ ok: true, invited: out, link });
   }));
 
   router.post("/api/live/rooms/:code/decline", auth, light, wrap(async (req, res) => {

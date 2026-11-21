@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { VoiceButton } from '@/voice/VoiceButton'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { ChevronRight, SearchX } from 'lucide-react'
+import { ChevronRight, MessageCircle, SearchX } from 'lucide-react'
 import { Icon } from '@/components/icon/Icon'
 import { iconComponent } from '@/components/icon/iconComponent'
 import { useAuth } from '@/context/AuthContext'
@@ -22,6 +22,9 @@ import { describeRecent, pageMatches, usePageEntries, type PageEntry } from './s
 import { LESSON_GROUP, LESSON_ICON, useLessonSearch } from '@/lib/lessonSearch'
 import { ClearRecents } from './ClearRecents'
 import { FocusTimer } from './FocusTimer'
+import { useSocket } from '@/lib/socket'
+import { cn } from '@/lib/utils'
+import { useChatUnread } from '@/components/social/useChatUnread'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
 
@@ -252,6 +255,7 @@ export function Topbar() {
         <VoiceButton />
         {user && <FocusTimer />}
         <LookPopover />
+        {user && <MessagesButton me={user.username} />}
         <Notifications />
         {user && (
           <UserMenu side="bottom" align="end">
@@ -269,5 +273,30 @@ export function Topbar() {
         )}
       </div>
     </header>
+  )
+}
+
+/** Messages, one tap from anywhere, with the unread count. */
+function MessagesButton({ me }: { me: string }) {
+  const socket = useSocket()
+  const n = useChatUnread(me, socket)
+  const { pathname } = useLocation()
+  const here = pathname.startsWith('/messages')
+  return (
+    <Tooltip label="Messages" side="bottom">
+      <Link
+        to="/messages"
+        aria-label={n ? `Messages, ${n} unread` : 'Messages'}
+        aria-current={here ? 'page' : undefined}
+        className={cn('relative flex size-9 items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-text-primary/6 hover:text-text-primary', here && 'bg-text-primary/6 text-text-primary')}
+      >
+        <MessageCircle className="size-[17px]" aria-hidden="true" />
+        {n > 0 && (
+          <span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-state-error px-1 text-[10px] font-semibold text-bg-app tabular-nums" aria-hidden="true">
+            {n > 99 ? '99+' : n}
+          </span>
+        )}
+      </Link>
+    </Tooltip>
   )
 }
