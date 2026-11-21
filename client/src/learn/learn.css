@@ -619,3 +619,13 @@ html.dark .gate-figure img {
 
 /* Pointer names drawn as text on the page need a lighter ink on dark paper. */
 [data-mode='dark'] .viz-ptr-svg-name { fill: oklch(0.8 0.12 var(--ph, 255)); }
+
+/* Scene Voice: a brief outline when the mic drives this player, so the
+   student sees which animation heard them. */
+.viz-player[data-voice-hit='a'] { animation: viz-voice-a 0.7s ease-out; }
+.viz-player[data-voice-hit='b'] { animation: viz-voice-b 0.7s ease-out; }
+@keyframes viz-voice-a { from { box-shadow: 0 0 0 2px var(--color-accent-brand); } to { box-shadow: 0 0 0 2px transparent; } }
+@keyframes viz-voice-b { from { box-shadow: 0 0 0 2px var(--color-accent-brand); } to { box-shadow: 0 0 0 2px transparent; } }
+@media (prefers-reduced-motion: reduce) {
+  .viz-player[data-voice-hit] { animation: none; }
+}

@@ -22,9 +22,11 @@ export interface VoicePrefs {
   corpus: boolean
   /** Confirmed 18+ or a parent's/guardian's permission (needed for the corpus). */
   adultOrGuardian: boolean
+  /** Read answers aloud (browser voice). */
+  speak: boolean
 }
 
-export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false }
+export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true }
 const LOCAL = 'nexora:voice'
 const KEY = 'voice_prefs'
 
@@ -39,6 +41,7 @@ function sanitize(raw: unknown): VoicePrefs {
     // The corpus opt-in never stands without the age/guardian confirmation.
     corpus: r.corpus === true && adultOrGuardian,
     adultOrGuardian,
+    speak: r.speak !== false,
   }
 }
 

@@ -51,6 +51,13 @@ export function VoiceSettings() {
               </label>
             </fieldset>
             <fieldset className="vc-field">
+              <legend>Answers</legend>
+              <label>
+                <input type="checkbox" checked={prefs.speak} onChange={(e) => setPrefs({ speak: e.target.checked })} />
+                <span>Read answers aloud (“i changed from 3 to 4…”), using your device’s voice.</span>
+              </label>
+            </fieldset>
+            <fieldset className="vc-field">
               <legend>Bharat Code Speech (optional)</legend>
               <label>
                 <input type="checkbox" checked={prefs.adultOrGuardian} onChange={(e) => setPrefs({ adultOrGuardian: e.target.checked, corpus: e.target.checked && prefs.corpus })} />

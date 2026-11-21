@@ -733,7 +733,7 @@
 [data-kit='journal'] .nr-figure:has(.viz-player) > :not(.nr-figure-label, .nr-figure-caption) {
   margin-inline: 0;
 }
-[data-kit='journal'] .nr-figure .viz-player:not(.viz-focus) .viz-head :is(.viz-badge, p) {
+[data-kit='journal'] .nr-figure .viz-player:not(.viz-focus) .viz-head :is(.viz-badge, p, .viz-blurb) {
   display: none;
 }
 /* Full screen moves up into the plate's header line instead of a row of its own. */

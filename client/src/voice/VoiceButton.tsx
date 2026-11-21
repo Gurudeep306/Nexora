@@ -18,12 +18,17 @@ import { expand, matchCommand, normalize, type Match } from './actions/match'
 import type { VoiceAction } from './actions/types'
 import { listenOnce, speechSupported, type ListenHandle, type SpeechError } from './speech'
 import { useVoicePrefs, type VoicePrefs } from './prefs'
+import { activeScene, type SceneHandle } from './scene/active'
+import { parseScene, type SceneCommand } from './scene/parse'
+import { resolveScene } from './scene/resolve'
+import { speak } from './speak'
 import './voice.css'
 
 type Phase =
   | { kind: 'idle' }
   | { kind: 'listening'; text: string }
   | { kind: 'done'; heard: string; said: string }
+  | { kind: 'scene'; heard: string; title: string; say: string }
   | { kind: 'choose'; heard: string; options: { action: VoiceAction; match: Match }[] }
   | { kind: 'confirm'; heard: string; action: VoiceAction; match: Match }
   | { kind: 'miss'; heard: string }
@@ -85,6 +90,36 @@ export function VoiceButton() {
     [hideSoon],
   )
 
+  /** Carry out a Scene Voice command on the animation on screen. */
+  const runScene = useCallback(
+    (scene: SceneHandle, cmd: SceneCommand, heard: string) => {
+      const r = resolveScene(cmd, scene.frames(), scene.at())
+      let say = r.say
+      if (r.kind === 'go') {
+        scene.go(r.index)
+      } else if (r.kind === 'answer' && r.index != null) {
+        scene.go(r.index)
+      } else if (r.kind === 'control') {
+        if (cmd.verb === 'pause') scene.pause()
+        else if (cmd.verb === 'play') scene.play()
+        else if (cmd.verb === 'replay') scene.replay()
+        else if (cmd.verb === 'speed') scene.speed(cmd.to)
+        else if (cmd.verb === 'predict') {
+          scene.predict(cmd.on)
+          if (cmd.on) scene.play()
+        } else if (cmd.verb === 'whatif') {
+          const w = scene.whatIf?.(cmd.input) ?? { error: 'This animation doesn’t take an input to change.' }
+          say = 'error' in w ? w.error : w.say
+        }
+      }
+      setPhase({ kind: 'scene', heard, title: scene.title, say })
+      // Answers are worth hearing; "Paused" is not.
+      if (prefs.speak && (r.kind === 'answer' || r.kind === 'none' || cmd.verb === 'whatif')) speak(say, prefs.lang === 'hi-IN' ? 'hi-IN' : 'en-IN')
+      hideSoon(r.kind === 'answer' ? 9000 : 3200)
+    },
+    [hideSoon, prefs.speak, prefs.lang],
+  )
+
   const decide = useCallback(
     (heard: string) => {
       const pending = phase
@@ -97,6 +132,16 @@ export function VoiceButton() {
           return hideSoon(1600)
         }
       }
+      // An animation on screen hears scene commands first ("swap pe ruko").
+      const scene = activeScene()
+      if (scene?.awaitingGuess()) {
+        const feedback = scene.guess(heard)
+        setPhase({ kind: 'scene', heard, title: scene.title, say: feedback })
+        if (prefs.speak) speak(feedback, prefs.lang)
+        return hideSoon(9000)
+      }
+      const cmd = scene ? parseScene(heard) : null
+      if (scene && cmd) return runScene(scene, cmd, heard)
       const result = matchCommand(heard, actions, index)
       const byId = (m: Match) => actions.find((a) => a.id === m.id)!
       if (result.best) {
@@ -107,7 +152,7 @@ export function VoiceButton() {
       if (result.candidates.length > 1) return setPhase({ kind: 'choose', heard, options: result.candidates.map((m) => ({ action: byId(m), match: m })) })
       setPhase({ kind: 'miss', heard })
     },
-    [actions, index, phase, runAction, hideSoon],
+    [actions, index, phase, runAction, hideSoon, runScene, prefs.speak, prefs.lang],
   )
 
   const start = useCallback(async () => {
@@ -193,6 +238,7 @@ function Pill({ phase, onClose, onRun, onAsk, onListen }: { phase: Phase; onClos
         <span className="vc-pill-title">
           {phase.kind === 'listening' && 'Listening…'}
           {phase.kind === 'done' && phase.said}
+          {phase.kind === 'scene' && phase.title}
           {phase.kind === 'choose' && 'Which one?'}
           {phase.kind === 'confirm' && `${phase.action.title}?`}
           {phase.kind === 'miss' && 'That isn’t a command I know'}
@@ -203,8 +249,9 @@ function Pill({ phase, onClose, onRun, onAsk, onListen }: { phase: Phase; onClos
         </button>
       </div>
       {'heard' in phase && <p className="vc-heard">“{phase.heard}”</p>}
-      {phase.kind === 'listening' && <p className="vc-heard">{phase.text ? `“${phase.text}”` : 'Say a command, like “notes kholo” or “dark mode”.'}</p>}
+      {phase.kind === 'listening' && <p className="vc-heard">{phase.text ? `“${phase.text}”` : activeScene() ? 'Talk to the animation: “swap pe ruko”, “why did i change?”, “what if sorted?”' : 'Say a command, like “notes kholo” or “dark mode”.'}</p>}
       {phase.kind === 'error' && <p className="vc-note">{ERRORS[phase.error]}</p>}
+      {phase.kind === 'scene' && <p className="vc-answer">{phase.say}</p>}
       {phase.kind === 'choose' && (
         <ol className="vc-options">
           {phase.options.map((o, i) => (

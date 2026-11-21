@@ -44,7 +44,7 @@ test('zero-spend: the voice feature never calls a paid AI service', () => {
 test('voice test sets are well-formed and keep growing', () => {
   const load = (n) => JSON.parse(fs.readFileSync(path.join(ROOT, 'docs', 'voice', 'tests', n), 'utf8'));
   const scene = load('scene.json');
-  const VERBS = new Set(['pause', 'play', 'jump', 'step', 'rewind', 'replay', 'whatif', 'why', 'speed', 'predict']);
+  const VERBS = new Set(['pause', 'play', 'jump', 'step', 'rewind', 'replay', 'whatif', 'why', 'speed', 'predict', 'value']);
   assert.ok(scene.cases.length >= 40, 'scene cases never shrink');
   for (const c of scene.cases) {
     assert.equal(typeof c.say, 'string');

@@ -5,6 +5,8 @@ import { cn } from '@/lib/utils'
 import { parsed } from './code'
 import { CodeLines, FramePlayer, StructureView } from './FramePlayer'
 import { LANGS, type Algorithm, type Frame, type Inputs, type Lang } from './types'
+import { whatIfInputs } from '@/voice/scene/resolve'
+import type { WhatIf } from '@/voice/scene/parse'
 
 const LANG_KEY = 'nexora:learn-lang'
 
@@ -166,6 +168,21 @@ export function VizPlayer({
       resetKey={applied}
       syncTo={syncTo}
       className={className}
+      onWhatIf={(input: WhatIf) => {
+        const r = whatIfInputs(algo.inputs, applied, input)
+        if ('error' in r) return r
+        // Try it first: an input this algorithm can't take is explained, not applied.
+        const p = parseInputs(algo, r.raw)
+        if (!p.inputs) return { error: `That input doesn’t work here — ${p.error}` }
+        try {
+          if (!algo.run(p.inputs).length) return { error: 'That input gives nothing to show.' }
+        } catch (e) {
+          return { error: `That input doesn’t work here — ${e instanceof Error ? e.message : 'it can’t run'}` }
+        }
+        setDraft(r.raw)
+        setApplied(r.raw)
+        return { say: r.say }
+      }}
     />
   )
 }
