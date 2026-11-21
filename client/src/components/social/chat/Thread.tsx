@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { setOpenConversation } from './focus'
 import { ArrowDown, ArrowLeft, Info, Loader2, Phone, Pin, Video } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import type { Socket } from 'socket.io-client'
@@ -38,6 +39,11 @@ export function Thread({
   onLeft: () => void
 }) {
   const toast = useToast()
+  // While this conversation is on screen, its messages need no pop-up alert.
+  useEffect(() => {
+    setOpenConversation(convId)
+    return () => setOpenConversation(null)
+  }, [convId])
   const navigate = useNavigate()
   const [calling, setCalling] = useState(false)
   const [conv, setConv] = useState<Conversation | null>(null)

@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { Check, CheckCircle2, ChevronDown, Clock, Copy, Terminal, XCircle } from 'lucide-react'
 import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui'
 import { judgeOf, sourceLabel } from '@/lib/sources'
+import './results.css'
 import { engineLabel, type JudgeResponse, type RunResult, type XpReport } from './types'
 
 const norm = (s: string) => s.replace(/\r/g, '').split('\n').map((l) => l.trimEnd())
@@ -285,16 +286,7 @@ export function JudgeResults({ result, onExplain }: { result: JudgeResponse; /**
               </span>
             </span>
           </div>
-          <div className="flex h-1.5 gap-0.5 overflow-hidden rounded-full">
-            {result.results.map((r, i) => (
-              <button
-                key={i}
-                onClick={() => setOpen(open === i ? null : i)}
-                title={`${r.label || `Case ${i + 1}`}: ${r.verdict}`}
-                className={cn('flex-1 cursor-pointer transition-opacity hover:opacity-80', r.passed ? 'bg-success' : 'bg-destructive')}
-              />
-            ))}
-          </div>
+          <TestReel results={result.results} open={open} onPick={(i) => setOpen(open === i ? null : i)} />
         </div>
       )}
       <ul className="rp-cases space-y-1.5" aria-label="Testcase results">
@@ -349,6 +341,79 @@ export function JudgeResults({ result, onExplain }: { result: JudgeResponse; /**
           <Terminal className="size-3.5" aria-hidden="true" /> No testcases were judged — add tests first.
         </p>
       )}
+    </div>
+  )
+}
+
+/**
+ * The tests as a row of cells that fill in one after another when a verdict
+ * arrives: green with a tick, red with a cross, with a count that climbs
+ * along. The judge runs every test before it answers, so this is the
+ * result shown in order (not a live feed); still motion is skipped.
+ */
+export function TestReel({ results, open, onPick }: { results: JudgeResponse['results']; open: number | null; onPick: (i: number) => void }) {
+  const still = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+  // The whole reel takes at most about 1.2 s, however many tests there are.
+  const step = results.length ? Math.min(0.09, 1.2 / results.length) : 0
+  const [shown, setShown] = useState(still ? results.length : 0)
+  useEffect(() => {
+    if (still) return
+    let n = 0
+    const t = window.setInterval(() => {
+      n++
+      setShown(n)
+      if (n >= results.length) window.clearInterval(t)
+    }, step * 1000)
+    return () => window.clearInterval(t)
+  }, [results, still, step])
+  const passed = results.slice(0, shown).filter((r) => r.passed).length
+  const done = shown >= results.length
+  const all = done && results.every((r) => r.passed)
+  return (
+    <div className="rp-reel" data-all={all || undefined}>
+      <div className="rp-reel-cells" role="list" aria-label="Tests, in order">
+        {results.map((r, i) => (
+          <button
+            key={i}
+            type="button"
+            role="listitem"
+            onClick={() => onPick(i)}
+            aria-label={`${r.label || `Test ${i + 1}`}: ${r.passed ? 'passed' : r.verdict}`}
+            aria-pressed={open === i}
+            className={cn('rp-cell', i < shown && (r.passed ? 'is-pass' : 'is-fail'), open === i && 'is-open')}
+          >
+            {i < shown && (r.passed ? <Check className="size-3" aria-hidden="true" /> : <XCircle className="size-3" aria-hidden="true" />)}
+          </button>
+        ))}
+      </div>
+      <p className="rp-reel-count" aria-live="polite">
+        <span className="font-mono tabular-nums">{passed}</span>
+        <span className="text-foreground-faint"> / {results.length} passed</span>
+        {all && <span className="rp-reel-all"> · all clear</span>}
+      </p>
+    </div>
+  )
+}
+
+/** While the judge works: the tests waiting in a row, a calm scan across them, and the time so far. */
+export function JudgingCard({ count, label }: { count: number; label: string }) {
+  const [t0] = useState(() => Date.now())
+  const [now, setNow] = useState(t0)
+  useEffect(() => {
+    const i = window.setInterval(() => setNow(Date.now()), 200)
+    return () => window.clearInterval(i)
+  }, [])
+  const n = Math.max(3, Math.min(count || 10, 40))
+  return (
+    <div className="rp-judging" role="status" aria-live="polite">
+      <div className="rp-reel-cells is-waiting" aria-hidden="true">
+        {Array.from({ length: n }, (_, i) => (
+          <span key={i} className="rp-cell" style={{ animationDelay: `${(i % 20) * 70}ms` }} />
+        ))}
+      </div>
+      <p className="m-0 text-[12.5px] text-foreground-dim">
+        {label} <span className="font-mono text-foreground-faint tabular-nums">{((now - t0) / 1000).toFixed(1)} s</span>
+      </p>
     </div>
   )
 }

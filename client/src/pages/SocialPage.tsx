@@ -1,13 +1,14 @@
 import { useSite } from '@/context/SiteContext'
-import { useCallback, useEffect, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { DoorOpen, PlugZap, Rss } from 'lucide-react'
-import { Card, EmptyState, PageHeader, Tabs } from '@/components/ui'
+import { useCallback, useState } from 'react'
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
+import { DoorOpen, PenSquare, Radio, Rss } from 'lucide-react'
+import { Avatar, Button, Card, EmptyState, PageHeader } from '@/components/ui'
+import { cn } from '@/lib/utils'
+import './social-page.css'
 import { useAuth } from '@/context/AuthContext'
 import { useSocket } from '@/lib/socket'
 import { api } from '@/lib/api'
 import { FriendsTab } from '@/components/social/FriendsTab'
-import { MessagesTab } from '@/components/social/MessagesTab'
 import { RoomsTab } from '@/components/social/RoomsTab'
 import { LeaderboardTab } from '@/components/social/LeaderboardTab'
 import { FeedTab } from '@/components/social/FeedTab'
@@ -16,34 +17,9 @@ import { FeedEmpty, PostList, usePostList } from '@/components/social/feed/PostL
 import { FollowButton, SocialSearch, UserRow } from '@/components/social/feed/People'
 import type { FeedPage, SocialUser } from '@/components/social/feed/types'
 import { Icon } from '@/components/icon/Icon'
+import { useChatUnread } from '@/components/social/useChatUnread'
 
 const TAB_IDS = new Set(['feed', 'notifications', 'friends', 'messages', 'rooms', 'leaderboard', 'search'])
-
-/** Unread messages and requests, for the Messages tab's badge. */
-function useChatUnread(me: string, socket: ReturnType<typeof useSocket>) {
-  const [n, setN] = useState(0)
-  useEffect(() => {
-    if (!me) return
-    let live = true
-    const load = () =>
-      api
-        .get<{ total: number; requests: number }>('/api/chat/unread')
-        .then((r) => live && setN(r.total + r.requests))
-        .catch(() => {})
-    const t = setTimeout(load, 0)
-    socket?.on('chat:message', load)
-    socket?.on('chat:read', load)
-    socket?.on('chat:conversation', load)
-    return () => {
-      live = false
-      clearTimeout(t)
-      socket?.off('chat:message', load)
-      socket?.off('chat:read', load)
-      socket?.off('chat:conversation', load)
-    }
-  }, [me, socket])
-  return n
-}
 
 export default function SocialPage() {
   const { user } = useAuth()
@@ -59,19 +35,30 @@ export default function SocialPage() {
   const chatUnread = useChatUnread(me, socket)
 
   const TABS = [
-    { id: 'feed', label: 'Feed', icon: <Rss className="size-3.5" /> },
-    { id: 'notifications', label: 'Notifications', icon: <Icon name="bell" className="size-3.5" />, badge: unread > 0 ? (unread > 99 ? '99+' : unread) : undefined },
-    { id: 'friends', label: 'Friends', icon: <Icon name="users" className="size-3.5" /> },
-    { id: 'messages', label: 'Messages', icon: <Icon name="messages" className="size-3.5" />, badge: chatUnread > 0 ? (chatUnread > 99 ? '99+' : chatUnread) : undefined },
-    { id: 'rooms', label: 'Solve Rooms', icon: <DoorOpen className="size-3.5" /> },
-    { id: 'leaderboard', label: 'Leaderboard', icon: <Icon name="trophy" className="size-3.5" /> },
+    { id: 'feed', label: 'Feed', icon: <Rss className="size-4" aria-hidden="true" /> },
+    { id: 'notifications', label: 'Notifications', icon: <Icon name="bell" className="size-4" />, badge: unread > 0 ? (unread > 99 ? '99+' : unread) : undefined },
+    { id: 'messages', label: 'Messages', icon: <Icon name="messages" className="size-4" />, badge: chatUnread > 0 ? (chatUnread > 99 ? '99+' : chatUnread) : undefined },
+    { id: 'friends', label: 'Friends', icon: <Icon name="users" className="size-4" /> },
+    { id: 'rooms', label: 'Solve rooms', icon: <DoorOpen className="size-4" aria-hidden="true" /> },
+    { id: 'leaderboard', label: 'Leaderboard', icon: <Icon name="trophy" className="size-4" /> },
   ]
 
+  const navigate = useNavigate()
   function selectTab(id: string) {
+    // Messages have their own full-window page.
+    if (id === 'messages') return navigate('/messages')
     const next = new URLSearchParams(params)
     next.set('tab', id)
     next.delete('q')
     setParams(next, { replace: true })
+  }
+
+  // Old links (?tab=messages&c=…) open the Messages page.
+  if (requested === 'messages') {
+    const rest = new URLSearchParams(params)
+    rest.delete('tab')
+    const q = rest.toString()
+    return <Navigate to={`/messages${q ? `?${q}` : ''}`} replace />
   }
 
   if (!me) {
@@ -85,36 +72,82 @@ export default function SocialPage() {
     )
   }
 
+  const displayName = typeof user?.display_name === 'string' && user.display_name ? user.display_name : me
+  const current = TABS.find((t) => t.id === (tab === 'search' ? 'feed' : tab)) ?? TABS[0]
+  const LINES: Record<string, string> = {
+    feed: 'What people you follow are learning and sharing.',
+    notifications: 'Likes, replies, follows and mentions.',
+    friends: 'Your friends, who is online, and requests.',
+    rooms: 'Solve a problem together, live.',
+    leaderboard: 'This week’s most active learners.',
+  }
+  const newPost = () => {
+    if (tab !== 'feed') selectTab('feed')
+    // The composer opens from its box at the top of the feed.
+    window.setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      document.getElementById('composer-text')?.focus()
+    }, tab === 'feed' ? 0 : 250)
+  }
+
   return (
-    <div>
-      <PageHeader
-        icon="social"
-        title="Community"
-        subtitle="Share what you learned, follow other learners and solve problems together."
-        actions={
-          <span
-            className={
-              socket?.connected
-                ? 'so-live inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-text-secondary [&_svg]:text-state-success'
-                : 'so-live inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-1 text-[11px] font-semibold text-text-secondary [&_svg]:text-state-warning'
-            }
-            role="status"
-          >
-            <PlugZap className="size-3.5" />
-            {socket?.connected ? 'Live' : 'Offline'}
+    <div className="soc">
+      <aside className="soc-rail" aria-label="Community sections">
+        <Link to="/profile" className="soc-me">
+          <Avatar src={typeof user?.avatar_url === 'string' ? user.avatar_url : undefined} avatar={user?.avatar} name={displayName} seed={me} size="lg" />
+          <span className="soc-me-text">
+            <span className="soc-me-name">{displayName}</span>
+            <span className="soc-me-handle">@{me}</span>
           </span>
-        }
-      />
+        </Link>
+        <nav className="soc-nav">
+          {TABS.filter((t) => tabOn(t.id)).map((t) => (
+            <button key={t.id} type="button" className={cn('soc-nav-item', t.id === current.id && 'is-on')} aria-current={t.id === current.id ? 'page' : undefined} onClick={() => selectTab(t.id)}>
+              {t.icon}
+              <span>{t.label}</span>
+              {t.badge !== undefined && <span className="soc-badge">{t.badge}</span>}
+            </button>
+          ))}
+          <Link to="/live" className="soc-nav-item">
+            <Radio className="size-4" aria-hidden="true" />
+            <span>Live rooms</span>
+          </Link>
+        </nav>
+        <Button className="soc-post" onClick={newPost}>
+          <PenSquare aria-hidden="true" /> New post
+        </Button>
+        <p className={cn('soc-conn', socket?.connected ? 'is-on' : 'is-off')} role="status">
+          <span aria-hidden="true" /> {socket?.connected ? 'Connected — updates arrive live' : 'Reconnecting…'}
+        </p>
+      </aside>
 
-      <Tabs items={TABS.filter((t) => tabOn(t.id))} active={tab === 'search' ? 'feed' : tab} onChange={selectTab} className="mb-5" />
+      <div className="soc-main">
+        <header className="soc-head">
+          <p className="soc-eyebrow">Community</p>
+          <h1 className="soc-title">{tab === 'search' ? 'Search' : current.label}</h1>
+          <p className="soc-line">{tab === 'search' ? 'People and posts that match.' : LINES[current.id] ?? ''}</p>
+        </header>
+        {/* Phone: the sections as a row of chips under the title. */}
+        <div className="soc-chips" role="tablist" aria-label="Community sections">
+          {TABS.filter((t) => tabOn(t.id)).map((t) => (
+            <button key={t.id} type="button" role="tab" aria-selected={t.id === current.id} className={cn('soc-chip', t.id === current.id && 'is-on')} onClick={() => selectTab(t.id)}>
+              {t.icon}
+              {t.label}
+              {t.badge !== undefined && <span className="soc-badge">{t.badge}</span>}
+            </button>
+          ))}
+          <Link to="/live" className="soc-chip">
+            <Radio className="size-3.5" aria-hidden="true" /> Live
+          </Link>
+        </div>
 
-      {tab === 'feed' && <FeedTab me={me} />}
-      {tab === 'search' && <SearchResults q={params.get('q') ?? ''} />}
-      {tab === 'notifications' && <NotificationsTab onSeen={clear} />}
-      {tab === 'friends' && <FriendsTab me={me} socket={socket} />}
-      {tab === 'messages' && <MessagesTab me={me} socket={socket} />}
-      {tab === 'rooms' && <RoomsTab me={me} socket={socket} />}
-      {tab === 'leaderboard' && <LeaderboardTab me={me} />}
+        {tab === 'feed' && <FeedTab me={me} />}
+        {tab === 'search' && <SearchResults q={params.get('q') ?? ''} />}
+        {tab === 'notifications' && <NotificationsTab onSeen={clear} />}
+        {tab === 'friends' && <FriendsTab me={me} socket={socket} />}
+        {tab === 'rooms' && <RoomsTab me={me} socket={socket} />}
+        {tab === 'leaderboard' && <LeaderboardTab me={me} />}
+      </div>
     </div>
   )
 }

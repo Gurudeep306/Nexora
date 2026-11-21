@@ -38,7 +38,9 @@ export function AppLayout() {
   // The theme's drawn scene sits behind every page except reading and solving,
   // which keep a calm, plain paper.
   const { shown } = useTheme()
-  const scene = wide ? null : shown.pattern
+  // Community and Messages are app screens (side menu, chat): plain paper too.
+  const appScreen = location.pathname.startsWith('/social') || location.pathname.startsWith('/messages')
+  const scene = wide || appScreen ? null : shown.pattern
 
   // Start every page at the top.
   useEffect(() => {

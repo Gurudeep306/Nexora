@@ -5418,6 +5418,7 @@ app.use(adminApi.router);
 /* ── Social network + public profiles: /api/social/*, /api/profiles/* ── */
 app.use(createSocialRouter({ all, get, run, realtime, isTrustedOrigin, calcLevel, calcStreak }).router);
 // Messages: direct and group conversations (src/chat.js, src/routes/chat.js).
+app.use(require("./push").createPushRouter({ requireAuthenticatedUser, isTrustedOrigin }));
 app.use(require("./routes/chat").createChatRouter({ realtime, isTrustedOrigin, catalog: require("./problem-catalog"), gate: require("./routes/gate") }));
 // Hosted contests: made from anywhere on the site, coding and GATE questions, marks and analysis.
 app.use(require("./routes/hosted-contests").createHostedContestsRouter({ gate: require("./routes/gate"), hashPassword, verifyPassword }));
@@ -6297,6 +6298,7 @@ function sharesSolveRoom(socket, targetId) {
 
 liveRooms.signal = require("./live/signal").createLiveSignal({ io, getSessionUser, socketAccess, realtime });
 realtime.online = () => Object.keys(userSockets);
+require("./push").setOnline(realtime.online);
 realtime.emitToUser = (username, event, payload) => emitToUser(username, event, payload);
 realtime.broadcast = (event, payload) => io.emit(event, payload);
 realtime.disconnectUser = (username) => {

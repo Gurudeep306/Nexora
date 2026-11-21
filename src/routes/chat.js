@@ -51,6 +51,25 @@ function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
     return Promise.all(names.map(async (n) => realtime?.emitToUser?.(n, event, await personal(n, payload)))).catch((e) => console.error("[chat] emit", e.message));
   };
   const toMembers = async (convId, event, payload) => emit(await chat.memberNames(convId), event, payload);
+  /* Alerts for members with no tab open (src/push.js): not to the sender, not
+     in a muted conversation unless they were @mentioned, never a request. */
+  const alertOffline = async (message, members) => {
+    const push = require("../push");
+    const rest = members.filter((n) => n !== message.username);
+    if (!rest.length) return;
+    const rows = await chat.listMembersState?.(message.conversationId).catch(() => null);
+    const state = new Map((rows || []).map((r) => [r.username, r]));
+    const conv = await chat.conversationInfo?.(message.conversationId).catch(() => null);
+    const names = await push.namesOf([message.username]);
+    const from = { username: message.username, name: names.get(message.username) || message.username };
+    const body = message.attachment ? (message.attachment.kind === "image" ? "Photo" : message.attachment.kind === "audio" ? "Voice note" : "File") : message.share ? `Shared: ${message.share.title || message.share.type}` : message.body;
+    for (const n of rest) {
+      const st = state.get(n);
+      if (st && (!st.accepted || (st.muted && !message.mentions.includes(n)))) continue;
+      const title = conv?.kind === "group" && conv.title ? `${from.name} · ${conv.title}` : from.name;
+      push.notifyMessage(n, { from: { ...from, name: title }, body, url: `/messages?c=${message.conversationId}`, tag: `chat-${message.conversationId}` }).catch(() => {});
+    }
+  };
   const h = (fn) => async (req, res) => {
     try {
       await fn(req, res);
@@ -226,6 +245,7 @@ function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
     // @mentions reach people even in a muted conversation.
     emit(message.mentions.filter((n) => n !== message.username && members.includes(n)), "chat:mention", { conversationId: message.conversationId, messageId: message.id, from: message.username });
     res.json({ ok: true, ...(await personal(me(req), { message })) });
+    alertOffline(message, members).catch(() => {});
   }));
 
   router.put("/api/chat/conversations/:id/read", h(async (req, res) => {

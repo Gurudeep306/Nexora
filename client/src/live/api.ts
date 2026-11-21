@@ -9,6 +9,9 @@ export type LiveMode = 'video' | 'voice'
 export type Visibility = 'public' | 'link' | 'invite'
 export type Face = { username: string; name: string; avatar: string | null; avatarUrl: string | null }
 
+/** Someone you could invite: friends first, then people you message. */
+export type Invitee = Face & { online: boolean; inRoom: boolean; invited: boolean; friend: boolean }
+
 export interface LiveRoom {
   code: string
   title: string
@@ -105,6 +108,8 @@ export const liveApi = {
   call: (to: string[], mode: LiveMode) => api.post<{ ok: true; room: LiveRoom }>('/api/live/call', { to, mode }).then((r) => r.room),
   decline: (code: string) => api.post<{ ok: true }>(`/api/live/rooms/${enc(code)}/decline`),
   cancel: (code: string) => api.post<{ ok: true }>(`/api/live/rooms/${enc(code)}/cancel`),
+  invitable: (code: string) => api.get<{ ok: true; people: Invitee[] }>(`/api/live/rooms/${enc(code)}/invitable`).then((r) => r.people),
+  invite: (code: string, to: string[]) => api.post<{ ok: true; invited: { username: string; rang: boolean; messaged: boolean }[]; link: string }>(`/api/live/rooms/${enc(code)}/invite`, { to }),
 }
 
 export const REACTIONS = ['👍', '👏', '😂', '🎉', '🤔', '❤️', '✅', '❓'] as const

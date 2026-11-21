@@ -23,6 +23,7 @@ import {
   Settings,
   Smile,
   Tablet,
+  UserPlus,
   Users,
   Video,
   VideoOff,
@@ -38,6 +39,7 @@ import type { LiveSession, LiveState } from '../session'
 import { canShareScreen } from '../devices'
 import { Stage, type Layout } from './Stage'
 import { ChatPanel, PeoplePanel, SettingsPanel, TabletPanel } from './Panels'
+import { InvitePanel } from './Invite'
 import { PollCard, QuestionPanel, TimerPill, ToolsPanel } from './Tools'
 import { Board, type BoardHandle } from './Board'
 import { LogoMark } from '@/components/brand/Logo'
@@ -47,7 +49,7 @@ import { ChevronUp } from 'lucide-react'
 // The shared code pad brings Monaco: loaded only when someone opens it.
 const CodePad = lazy(() => import('./CodePad'))
 
-type Panel = 'chat' | 'people' | 'question' | 'tools' | 'tablet' | 'settings' | null
+type Panel = 'chat' | 'people' | 'invite' | 'question' | 'tools' | 'tablet' | 'settings' | null
 
 /** Every remote mic, playing (hidden). */
 function AudioSinks({ session, s }: { session: LiveSession; s: LiveState }) {
@@ -198,6 +200,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
       else if (k === 'h') session.hand(!myHand)
       else if (k === 'c') toggle('chat')
       else if (k === 'p') toggle('people')
+      else if (k === 'i') toggle('invite')
       else return
       e.preventDefault()
     }
@@ -218,6 +221,12 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
     setBoard(null)
   }
 
+  // "Invite friends" on the waiting card opens the Invite panel.
+  useEffect(() => {
+    const open = () => setPanel('invite')
+    window.addEventListener('lv:invite', open)
+    return () => window.removeEventListener('lv:invite', open)
+  }, [])
   const copyLink = () => void navigator.clipboard?.writeText(`${window.location.origin}/live/${session.code}`).then(() => toast.success('Link copied', 'Anyone signed in with the link can ask to join.'))
   const leave = () => {
     session.leave()
@@ -263,9 +272,8 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
               {s.room.about.title}
             </Link>
           )}
-          <button type="button" className="lv-chip-btn lv-code-chip" onClick={copyLink} title="Copy the room link" aria-label={`Copy the room link (${session.code})`}>
-            <Link2 className="size-3.5" aria-hidden="true" /> <span className="max-sm:hidden">{session.code}</span>
-            <span className="sm:hidden">Link</span>
+          <button type="button" className="lv-chip-btn lv-code-chip" onClick={() => setPanel('invite')} title="Invite people or share the link (I)" aria-label="Invite people (I)">
+            <UserPlus className="size-3.5" aria-hidden="true" /> Invite
           </button>
         </div>
       </header>
@@ -352,6 +360,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
                   [
                     ['chat', 'Chat', s.unread],
                     ['people', 'People', host ? s.waiting.length : 0],
+                    ['invite', 'Invite', 0],
                     ...(s.room?.about ? ([['question', 'Question', 0]] as const) : []),
                     ['tools', 'Tools', s.codeNew ? 1 : 0],
                     ...(panel === 'tablet' ? ([['tablet', 'Tablet', 0]] as const) : []),
@@ -370,6 +379,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
             </div>
             {panel === 'chat' && <ChatPanel session={session} s={s} />}
             {panel === 'people' && <PeoplePanel session={session} s={s} />}
+            {panel === 'invite' && <InvitePanel session={session} s={s} />}
             {panel === 'tablet' && <TabletPanel session={session} s={s} />}
             {panel === 'question' && s.room?.about && <QuestionPanel id={s.room.about.target} />}
             {panel === 'tools' && (

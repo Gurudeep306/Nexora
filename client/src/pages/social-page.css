@@ -1,0 +1,201 @@
+/* Community (SocialPage.tsx): a side menu like a social app on wide screens,
+   section chips on a phone. Tokens only; no glow, no gradient. */
+@layer components {
+  .soc {
+    display: grid;
+    gap: 28px;
+    align-items: start;
+  }
+  @media (min-width: 1024px) {
+    .soc {
+      grid-template-columns: 15rem minmax(0, 1fr);
+    }
+  }
+  .soc-rail {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .soc-rail {
+      position: sticky;
+      top: 4.75rem;
+      display: grid;
+      gap: 14px;
+    }
+  }
+  .soc-me {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.875rem);
+    background: var(--color-bg-surface);
+    color: inherit;
+    text-decoration: none;
+  }
+  .soc-me:hover {
+    border-color: var(--color-border-strong, var(--color-border));
+  }
+  .soc-me-text {
+    display: grid;
+    min-width: 0;
+  }
+  .soc-me-name,
+  .soc-me-handle {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .soc-me-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .soc-me-handle {
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+  }
+  .soc-nav {
+    display: grid;
+    gap: 2px;
+  }
+  .soc-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 14.5px;
+    font-weight: 500;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .soc-nav-item:hover {
+    background: color-mix(in oklab, var(--color-text-primary) 5%, transparent);
+    color: var(--color-text-primary);
+  }
+  .soc-nav-item.is-on {
+    background: color-mix(in oklab, var(--color-accent-brand) 10%, transparent);
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+  .soc-nav-item.is-on svg {
+    color: var(--color-accent-brand);
+  }
+  .soc-nav-item > span:first-of-type {
+    flex: 1;
+  }
+  .soc-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--color-state-error);
+    color: var(--color-bg-app);
+    font-size: 11px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .soc-post {
+    width: 100%;
+    justify-content: center;
+  }
+  .soc-conn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0 4px;
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+  .soc-conn > span {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--color-state-success);
+  }
+  .soc-conn.is-off > span {
+    background: var(--color-state-warning);
+  }
+
+  .soc-main {
+    min-width: 0;
+  }
+  .soc-head {
+    margin-bottom: 18px;
+  }
+  .soc-eyebrow {
+    margin: 0 0 4px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .soc-title {
+    margin: 0;
+    font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.1rem);
+    line-height: 1.15;
+  }
+  .soc-line {
+    margin: 6px 0 0;
+    font-size: 14px;
+    color: var(--color-text-secondary);
+  }
+  .soc-chips {
+    position: sticky;
+    top: 3.6rem;
+    z-index: 5;
+    display: flex;
+    gap: 6px;
+    margin: 0 -16px 16px;
+    padding: 8px 16px;
+    overflow-x: auto;
+    background: var(--color-bg-app);
+    scrollbar-width: none;
+  }
+  .soc-chips::-webkit-scrollbar {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .soc-chips {
+      display: none;
+    }
+  }
+  .soc-chip {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-bg-surface);
+    color: var(--color-text-secondary);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .soc-chip.is-on {
+    border-color: transparent;
+    background: var(--color-text-primary);
+    color: var(--color-bg-app);
+  }
+  .soc-chip .soc-badge {
+    min-width: 18px;
+    height: 18px;
+    font-size: 10.5px;
+  }
+}
