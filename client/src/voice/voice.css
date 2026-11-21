@@ -186,3 +186,12 @@
 @media (prefers-reduced-motion: reduce) {
   .vc-dot.is-live { animation: none; }
 }
+
+/* Code by voice: the lines an edit touched, outlined for a moment. */
+.vc-code-flash {
+  background: color-mix(in oklab, var(--color-accent-brand) 16%, transparent);
+  transition: background 0.4s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vc-code-flash { transition: none; }
+}

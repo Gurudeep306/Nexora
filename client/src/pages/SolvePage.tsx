@@ -57,6 +57,7 @@ import {
 } from '@/components/solve/types'
 
 import { DEFAULT_CODE } from '@/lib/templates'
+import { useVoiceAction } from '@/voice/actions/useVoiceAction'
 import { LanguagePicker } from '@/components/solve/LanguagePicker'
 import { Workspace } from '@/components/solve/workspace/Workspace'
 import { useWorkspace } from '@/components/solve/workspace/useWorkspace'
@@ -529,6 +530,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
   runRef.current = handleRun
   const submitRef = useRef(handleSubmit)
   submitRef.current = handleSubmit
+  // Voice and the ⌘K palette: run on the samples, submit after a confirm.
+  useVoiceAction({ id: 'solve.run', title: 'Run the code', group: 'Code', hint: 'Ctrl+Enter', say: { en: ['run', 'run the code', 'run my code', 'code chalao', 'run karo', 'chalao'], hi: ['कोड चलाओ', 'रन करो'] }, risk: 'safe', keys: ['Ctrl', 'Enter'], run: () => void runRef.current() })
+  useVoiceAction({ id: 'solve.submit', title: 'Submit to the judge', group: 'Code', hint: 'Ctrl+Shift+Enter', say: { en: ['submit', 'submit the code', 'submit my code', 'submit karo', 'judge pe bhejo'], hi: ['सबमिट करो'] }, risk: 'irreversible', keys: ['Ctrl', 'Shift', 'Enter'], run: () => void submitRef.current() })
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {

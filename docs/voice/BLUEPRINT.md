@@ -6,7 +6,8 @@
 > what-if, why, value, speed, predict — answers come from the trace) **and the
 > Guru tutor live** (Phase 2: spoken doubts answered with the hint ladder,
 > Leak Guard, off-topic and exam rules, free providers only with failover,
-> `src/voice/guru.js`). Next: code by voice and Mirror Run (Phase 3). Plan written 2026-11-21 from two research rounds
+> `src/voice/guru.js`) **and code by voice, lane C, live** (spoken edits in the
+> editor, `client/src/voice/code/`). Next: Mirror Run (Phase 3, lane D). Plan written 2026-11-21 from two research rounds
 > (`docs/voice/research/`). Every licence, price and limit below must be
 > re-checked on the official page before it is relied on: the research could
 > not open some sites and marks those facts as unverified.

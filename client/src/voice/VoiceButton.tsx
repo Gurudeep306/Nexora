@@ -22,6 +22,9 @@ import { useVoicePrefs, type VoicePrefs } from './prefs'
 import { activeScene, type SceneHandle } from './scene/active'
 import { parseScene, type SceneCommand } from './scene/parse'
 import { resolveScene } from './scene/resolve'
+import { activeCode, type CodeHandle } from './code/active'
+import { applyCode } from './code/apply'
+import { parseCode, type CodeCommand } from './code/parse'
 import { speak, stopSpeaking } from './speak'
 import './voice.css'
 
@@ -30,6 +33,7 @@ type Phase =
   | { kind: 'listening'; text: string }
   | { kind: 'done'; heard: string; said: string }
   | { kind: 'scene'; heard: string; title: string; say: string }
+  | { kind: 'code'; heard: string; say: string; ok: boolean; undo?: () => void }
   | { kind: 'thinking'; heard: string }
   | { kind: 'guru'; heard: string; say: string; step: number }
   | { kind: 'choose'; heard: string; options: { action: VoiceAction; match: Match }[] }
@@ -127,6 +131,22 @@ export function VoiceButton() {
     [hideSoon, prefs.speak, prefs.lang],
   )
 
+  /** Carry out a code-by-voice edit in the editor in use (lane C, no AI). */
+  const runCode = useCallback(
+    (code: CodeHandle, cmd: CodeCommand, heard: string) => {
+      const r = applyCode(cmd, code)
+      const ok = 'say' in r
+      const say = ok ? r.say : r.error
+      const changed = ok && ['rename', 'insert', 'delete', 'duplicate', 'comment', 'format'].includes(cmd.verb)
+      const undo = changed ? () => applyCode({ verb: 'undo' }, code) : undefined
+      setPhase({ kind: 'code', heard, say, ok, undo })
+      // Reading code and problems are worth hearing; "Line 12." is not.
+      if (prefs.speak && (!ok || cmd.verb === 'read' || cmd.verb === 'summary')) speak(say, prefs.lang === 'hi-IN' ? 'hi-IN' : 'en-IN')
+      hideSoon(cmd.verb === 'summary' || cmd.verb === 'read' ? 9000 : changed ? 5000 : 2600)
+    },
+    [hideSoon, prefs.speak, prefs.lang],
+  )
+
   /** Anything that isn't a command is a doubt for Guru, with the page attached. */
   const askGuru = useCallback(
     async (heard: string) => {
@@ -168,6 +188,10 @@ export function VoiceButton() {
       }
       const cmd = scene ? parseScene(heard) : null
       if (scene && cmd) return runScene(scene, cmd, heard)
+      // A code editor in use hears edits ("line 12 pe jao", "rename i to j").
+      const code = activeCode()
+      const edit = code ? parseCode(heard) : null
+      if (code && edit) return runCode(code, edit, heard)
       const result = matchCommand(heard, actions, index)
       const byId = (m: Match) => actions.find((a) => a.id === m.id)!
       if (result.best) {
@@ -178,7 +202,7 @@ export function VoiceButton() {
       if (result.candidates.length > 1) return setPhase({ kind: 'choose', heard, options: result.candidates.map((m) => ({ action: byId(m), match: m })) })
       void askGuru(heard)
     },
-    [actions, index, phase, runAction, hideSoon, runScene, askGuru, prefs.speak, prefs.lang],
+    [actions, index, phase, runAction, hideSoon, runScene, runCode, askGuru, prefs.speak, prefs.lang],
   )
 
   const start = useCallback(async () => {
@@ -265,6 +289,7 @@ function Pill({ phase, onClose, onRun, onAsk, onHint, onListen }: { phase: Phase
           {phase.kind === 'listening' && 'Listening…'}
           {phase.kind === 'done' && phase.said}
           {phase.kind === 'scene' && phase.title}
+          {phase.kind === 'code' && (phase.ok ? 'Code' : 'Couldn’t do that')}
           {phase.kind === 'thinking' && 'Guru is thinking…'}
           {phase.kind === 'guru' && (phase.step >= 1 && phase.step <= 5 ? `Guru · hint ${phase.step}` : 'Guru')}
           {phase.kind === 'choose' && 'Which one?'}
@@ -277,9 +302,19 @@ function Pill({ phase, onClose, onRun, onAsk, onHint, onListen }: { phase: Phase
         </button>
       </div>
       {'heard' in phase && <p className="vc-heard">“{phase.heard}”</p>}
-      {phase.kind === 'listening' && <p className="vc-heard">{phase.text ? `“${phase.text}”` : activeScene() ? 'Talk to the animation: “swap pe ruko”, “why did i change?”, “what if sorted?”' : 'Say a command, like “notes kholo” or “dark mode”.'}</p>}
+      {phase.kind === 'listening' && <p className="vc-heard">{phase.text ? `“${phase.text}”` : activeScene() ? 'Talk to the animation: “swap pe ruko”, “why did i change?”, “what if sorted?”' : activeCode() ? 'Edit by voice: “line 12 pe jao”, “rename i to j”, “for loop 0 se n tak”, “read my code”.' : 'Say a command, like “notes kholo” or “dark mode”.'}</p>}
       {phase.kind === 'error' && <p className="vc-note">{ERRORS[phase.error]}</p>}
       {phase.kind === 'scene' && <p className="vc-answer">{phase.say}</p>}
+      {phase.kind === 'code' && (
+        <>
+          <p className="vc-answer vc-guru">{phase.say}</p>
+          {phase.undo && (
+            <div className="vc-actions">
+              <Button size="sm" variant="secondary" onClick={() => { phase.undo?.(); onClose() }}>Undo</Button>
+            </div>
+          )}
+        </>
+      )}
       {phase.kind === 'guru' && (
         <>
           <p className="vc-answer vc-guru">{phase.say}</p>
