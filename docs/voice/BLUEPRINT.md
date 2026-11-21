@@ -1,6 +1,6 @@
 # NexoraGuru Voice — the blueprint
 
-> Status: **plan, not built.** Written 2026-11-21 from two research rounds
+> Status: **final plan, not built.** Written 2026-11-21 from two research rounds
 > (`docs/voice/research/`). Every licence, price and limit below must be
 > re-checked on the official page before it is relied on: the research could
 > not open some sites and marks those facts as unverified.
@@ -35,6 +35,10 @@ patent and GitHub search before saying "first" in public.
 | 4 | **Bharat Code Speech** — the first spoken Hinglish code corpus | Opt-in "read this code aloud" and "explain this solution" tasks build a public test set (and, with consent, training data) for how Indian students *say* code. | No public corpus exists. It makes every later model better, and is publishable research. |
 | 5 | **Trace-grounded tutor** | The tutor's facts about a run come from the trace log, not from the model's memory. "Why 4?" → it reads the step where `i` changed and explains that line. | Same engine as Scene Voice. Removes the main way tutors give wrong explanations. |
 | 6 | **Leak Guard in code, not in the prompt** | Before a student has tried, any tutor output that is too similar to the reference solution (code tokens, AST shape) is blocked and replaced with a hint. Measured, with a target leak rate. | Harvard's CS50 Duck still leaks code ~25% of the time with prompt rules alone. We hold the reference solutions, so we can check. |
+
+Also planned, opt-in: **"My voice"** — a student's own voice reads back their
+notes and explanations (4.5.1). Voice cloning itself exists; using it for
+"revise in your own voice" was not found elsewhere.
 
 Built well but not new (do them, don't advertise them as inventions): whole-site
 voice control, a Socratic voice tutor, a voice viva after "Accepted", reading
@@ -187,6 +191,45 @@ the approach and short commands; exact code lives on screen.
 - India's IT Amendment Rules 2026 require clear labels on synthetic audio:
   the player always shows "AI voice". Add an inaudible watermark.
 - XTTS-v2 and F5-TTS base weights are **non-commercial — do not use**.
+- Students choose from **4–6 natural Indian voices** for the live tutor
+  (male/female, calm/energetic, one close to their own pitch).
+
+### 4.5.1 "My voice" — the student's own voice (opt-in, later phase)
+
+A student can record a short sample and hear chosen things **in their own
+voice**. Open models can copy a voice from a few seconds of speech (Maya 2
+Native reports 3–10 s; Chatterbox, MIT) — both run on a server GPU, not on
+phones.
+
+**Where it is used (best value, lowest cost):**
+
+| Feature | What the student hears | How it's made |
+|---|---|---|
+| **Revise in my voice** | Their own highlights, margin notes and flashcards read back before the exam | Generated **once per note** on the server, cached as audio |
+| **Explain-back replay** | Their spoken explanation played back cleaned up and fluent — "how confident me would say it" | Generated once per explanation |
+| **My reminders** | Short study reminders and streak nudges | Generated once, reused |
+
+The **live tutor stays on the chosen natural voices**: live replies in each
+student's own voice would need a GPU per reply, which is the most expensive
+voice path and not free at scale. If credits allow later, a small daily quota
+of live replies in "my voice" can be tested.
+
+**Safety rules (all required):**
+
+1. **Adults first.** 18+ only at launch; under-18s only with verifiable
+   parental consent (DPDP Act).
+2. **Live liveness check.** The student reads a random sentence on screen; an
+   uploaded or pre-recorded clip is rejected. A voice can only ever be used
+   by the account that recorded it.
+3. **Store the voice fingerprint, not the recording.** The sample is deleted
+   after the fingerprint is made. "Delete my voice" removes the fingerprint
+   and every clip made with it, at once.
+4. **No downloads** of "my voice" audio; an inaudible watermark in every clip;
+   the player always shows "AI copy of your voice".
+5. **Never used** for anything public (posts, explanations shared with others,
+   live rooms) and never for training without separate consent.
+6. **Easy off switch.** Many people dislike hearing their own voice; one tap
+   returns to the normal voices.
 
 ### 4.6 The brains and where they run
 
@@ -274,6 +317,8 @@ Measured from Indian networks before launch; nobody has published these.
 - **Children**: many users are under 18. India's DPDP Act needs verifiable
   parental consent for their personal data — needed for the corpus.
 - **Labels**: "AI voice" on every synthetic voice (IT Rules 2026).
+- **Students' own voices** ("My voice", 4.5.1): liveness check, adults first,
+  fingerprint only, delete-anytime, no downloads, watermark, never public.
 - **Untrusted text**: notes and comments written by users never steer the
   tutor (prompt-injection defence).
 - **No secrets or personal data** sent to outside services; free-tier APIs
@@ -298,6 +343,7 @@ Measured from Indian networks before launch; nobody has published these.
 | **2. Guru tutor + pre-voiced lessons** | 6–8 | Tutor lane with retrieval, hint ladder, Leak Guard; founder-voice narration for DM + DSA with word highlighting | faithfulness ≥ 90%, leak ≤ 2% |
 | **3. Code by voice + Mirror Run** | 6–8 | Lane C edits, Lane D approach → pseudocode → Mirror Run, Build mode diff + judge | pseudocode faithfulness ≥ 90% |
 | **4. Own models + languages** | 8–12 | Guru-S/M/L on device, router, Hindi, explain-back mastery, hands-free GATE console | all quality gates pass on device tiers |
+| **4b. "My voice" (opt-in)** | 3–4 | Liveness-checked voice sample, "Revise in my voice", explain-back replay, delete-anytime; adults first | consent + deletion tested; listening test ≥ 4/5 "sounds like me" |
 | **5. Research + platform** | ongoing | Bharat Code Speech release, paper, WebMCP, more languages | corpus published; study submitted |
 
 ## 9. Where it lives in the code (planned)
