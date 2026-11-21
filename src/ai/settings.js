@@ -223,6 +223,7 @@ function startRefresh() {
 }
 
 module.exports = {
+  providerKeyFor: providerKey,
   PRESETS,
   FEATURES,
   SLOTS,

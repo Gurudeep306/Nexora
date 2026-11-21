@@ -372,6 +372,8 @@ async function deleteConversation(username, conversationId) {
 
 module.exports = {
   runChat,
+  pageContext,
+  addUsage,
   normalizePage,
   describePage,
   buildChatMessages,

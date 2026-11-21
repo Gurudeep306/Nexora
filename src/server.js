@@ -49,6 +49,7 @@ const { createGateMeRouter } = require("./routes/gate-me");
 const { createGateNotesRouter, loadGateNotes } = require("./routes/gate-notes");
 const { createStudioRouter } = require("./routes/studio");
 const { createAgentRouter } = require("./routes/agent");
+const { createVoiceRouter } = require("./routes/voice");
 const { weaknessAnalysis } = require("./ai/data");
 const { createForgeRouter } = require("./routes/forge");
 const { createLiveRouter } = require("./routes/live");
@@ -6064,6 +6065,7 @@ app.get("/api/messages/:id/reactions", async (req, res) => {
 // One server-side agent behind every AI feature: streaming chat, completion,
 // fix, coach, … (src/ai/*, src/routes/agent.js).
 app.use(createAgentRouter({ getSessionUser, requireAuthenticatedUser, studioAuth }));
+app.use(createVoiceRouter({ getSessionUser, requireAuthenticatedUser }));
 
 app.use(
   createStudioRouter({
