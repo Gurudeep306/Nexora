@@ -1,0 +1,84 @@
+/* The test reel (ResultsPanel.tsx): cells that fill in order, and the
+   waiting row while the judge works. Tokens only; still for reduced motion. */
+@layer components {
+  .rp-reel,
+  .rp-judging {
+    display: grid;
+    gap: 8px;
+  }
+  .rp-judging {
+    justify-items: center;
+    padding: 28px 12px;
+  }
+  .rp-reel-cells {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .rp-cell {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    background: var(--color-bg-surface);
+    color: var(--color-bg-app);
+    cursor: pointer;
+    transition:
+      background-color 0.18s ease,
+      border-color 0.18s ease,
+      transform 0.18s ease;
+  }
+  .rp-cell.is-pass {
+    border-color: transparent;
+    background: var(--color-state-success);
+  }
+  .rp-cell.is-fail {
+    border-color: transparent;
+    background: var(--color-state-error);
+  }
+  .rp-cell.is-open {
+    outline: 2px solid var(--color-text-primary);
+    outline-offset: 1px;
+  }
+  .rp-reel-count {
+    margin: 0;
+    font-size: 13px;
+    color: var(--color-text-primary);
+  }
+  .rp-reel-all {
+    font-weight: 600;
+    color: var(--color-state-success);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .rp-cell.is-pass,
+    .rp-cell.is-fail {
+      animation: rp-pop 0.22s ease-out;
+    }
+    .rp-reel-cells.is-waiting .rp-cell {
+      cursor: default;
+      animation: rp-scan 1.4s ease-in-out infinite;
+    }
+  }
+  @keyframes rp-pop {
+    from {
+      transform: scale(0.6);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  /* A slow wave across the waiting tests: the judge is working, nothing is decided yet. */
+  @keyframes rp-scan {
+    0%,
+    100% {
+      background: var(--color-bg-surface);
+    }
+    50% {
+      background: color-mix(in oklab, var(--color-accent-brand) 22%, var(--color-bg-surface));
+    }
+  }
+}

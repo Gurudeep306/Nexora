@@ -38,7 +38,7 @@ import { setFaviconMode, celebrateFavicon } from '@/lib/faviconFx'
 import { CodeEditor } from '@/components/solve/CodeEditor'
 import { ProblemPanel } from '@/components/solve/ProblemPanel'
 import { TestcaseDeck } from '@/components/solve/TestcaseDeck'
-import { JudgeResults, RunOutput } from '@/components/solve/ResultsPanel'
+import { JudgeResults, JudgingCard, RunOutput } from '@/components/solve/ResultsPanel'
 import { VerdictBanner } from '@/components/solve/VerdictBanner'
 import { agentTask, aiErrorText, plainAiText } from '@/lib/agent'
 import { useAgentContext, useAgentPageContext } from '@/context/AgentContext'
@@ -1101,10 +1101,14 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
 
   const resultBody =
     running || submitting ? (
-      <div className="flex h-full flex-col items-center justify-center gap-2 py-6 text-xs text-foreground-faint">
-        <Loader2 className="size-5 animate-spin text-primary-bright" aria-hidden="true" />
-        {submitting ? `Judging on ${testcases.length || 'all'} tests…` : 'Running your code…'}
-      </div>
+      submitting ? (
+        <JudgingCard count={testcases.length} label={`Judging on ${testcases.length ? `${testcases.length}+` : 'all'} tests…`} />
+      ) : (
+        <div className="flex h-full flex-col items-center justify-center gap-2 py-6 text-xs text-foreground-faint">
+          <Loader2 className="size-5 animate-spin text-primary-bright" aria-hidden="true" />
+          Running your code…
+        </div>
+      )
     ) : judgeResult ? (
       <JudgeResults result={judgeResult} onExplain={customProp ? undefined : () => setExplainOpen(true)} />
     ) : runResult ? (
