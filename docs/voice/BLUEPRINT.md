@@ -244,9 +244,12 @@ of live replies in "my voice" can be tested.
   crash history. Download only after the student agrees (Wi-Fi), keep in
   OPFS/Cache, run in a Web Worker, unload when idle. Never touch the page's
   main thread.
-- Server brain: Guru models on the free Oracle ARM server (llama.cpp, ~10 tok/s
-  for 3B) plus free API tiers (one account each, official limits only) for
-  overflow; hard questions escalate to a larger open model.
+- Server brain (no Oracle — its free servers are rarely available): Cloudflare
+  Workers AI free daily allowance (open models; LoRA add-ons on supported
+  bases), plus free API tiers (Groq, Gemini, Cerebras, OpenRouter — one
+  account each, official limits only); a small always-on CPU model server on
+  Hugging Face Spaces (free CPU, sleeps when idle) if needed. Never run heavy
+  models on the Azure VM that serves the live site.
 - Code generation: Qwen2.5-Coder 0.5B/1.5B (Apache-2.0); **not the 3B
   (Qwen-Research licence)**. Prefer 5–8-bit for models ≤ 2B (4-bit loses
   facts on small models).
@@ -330,9 +333,16 @@ Measured from Indian networks before launch; nobody has published these.
 
 | Stage | Monthly cost | How |
 |---|---|---|
-| Build + pilot (≤ 200 daily users) | ₹0 | free GPU hours, Oracle free server, free API tiers, on-device models, pre-voiced lessons |
+| Build + pilot (≤ 200 daily users) | ₹0 | free GPU hours (Kaggle/Colab), Cloudflare free tiers (Workers, Workers AI, R2 for audio with free downloads, Realtime), Azure Speech free tier for the best Indian voices, free API tiers, on-device models, pre-voiced lessons |
 | 1,000 daily users | ₹0–small | most traffic is commands (no AI), pre-voiced clips and on-device models; live tutor turns capped per student per day |
 | 1,000 students talking at the same moment | real money (paid APIs ≈ ₹90k–2.1 lakh/hour) | startup credits + own GPU inference before this point |
+
+### Zero-spend rule
+
+The feature never calls a paid service. A test fails if a paid key is added to
+it. When free limits run out it falls back (text hints, browser voices, the
+verified solution) instead of charging. Upgrades with startup credits are an
+explicit admin choice.
 
 ## 8. Phases
 
@@ -355,7 +365,7 @@ Measured from Indian networks before launch; nobody has published these.
 | `client/src/viz/voice/` | Scene Voice verbs on the animation player |
 | `client/src/voice/code/` | tree-sitter + Monaco edits, pseudocode panel, Mirror Run view |
 | `src/voice/` | server ears, tutor, Leak Guard, TTS streaming, corpus storage (own store, never in the core DB) |
-| `deploy/voice/` | ASR/TTS/LLM server configs (Oracle, GPU farm) |
+| `deploy/voice/` | ASR/TTS/LLM server configs (Cloudflare Workers / Workers AI, Hugging Face Space, GPU farm when available) |
 | `docs/voice/` | this blueprint, the Guru Spec, test sets, research |
 
 ## 10. Biggest risks
