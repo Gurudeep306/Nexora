@@ -310,6 +310,13 @@ Hive is the staff-only multi-agent workspace at `/hive`. The full guide is
   Hive with the Copilot, Dispatcher, Judge, pipelines, automations, Drive,
   health checks, budgets, subscriptions (Claude Code, Codex, Vibe), per-project
   chat and the model farm.
+- **Voice tutor (planned, not built):** "NexoraGuru Voice" — talk to the
+  whole site in English, Hindi and Hinglish, Scene Voice (talk to the
+  animations), Mirror Run (your spoken algorithm animated, bugs included), the
+  Guru tutor with a code-level Leak Guard, and the founder's AI voice on
+  lessons. The blueprint, defaults and phases are in `docs/voice/BLUEPRINT.md`,
+  with the research in `docs/voice/research/`. Training data must not come
+  from closed models' outputs (their terms forbid it).
 - **AI courses (planned, not built):** the plan, agent rules, notation, the
   200-topic curriculum and the verified sources are in `docs/ai-courses/`
   (start with its README). Any agent working on AI content follows
