@@ -41,6 +41,10 @@
     border-radius: 999px;
     background: var(--color-text-muted);
   }
+  .vc-pill-in:has(.vc-guru) .vc-dot,
+  .vc-dot.is-think {
+    background: var(--color-accent-brand);
+  }
   .vc-dot.is-live {
     background: var(--color-accent-brand);
     animation: vc-breathe 1.2s ease-in-out infinite;
@@ -71,6 +75,11 @@
     font-size: 0.875rem;
     line-height: 1.5;
     color: var(--color-text-primary);
+  }
+  .vc-guru {
+    max-height: 14rem;
+    overflow-y: auto;
+    white-space: pre-line;
   }
   .vc-note {
     margin: 0;

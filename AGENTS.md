@@ -271,8 +271,16 @@ from a range, since test files run in parallel and a clash fails the run.
   never a model (test set `docs/voice/tests/scene.json`). Name steps with the
   event words (`swap`, `cmp`, `found`, `push`, `pop`…) so students can jump to
   them. Keep every control's accessible name containing
-  its visible text (`npm run voice:names`). The voice feature never calls a
-  paid service (`tests/voice-zero-spend.test.js`).
+  its visible text (`npm run voice:names`). **Guru** (`src/voice/guru.js`,
+  `POST /api/voice/guru`): a spoken sentence that is not a command goes to
+  the tutor, which follows `docs/voice/GURU_SPEC.md` — hints climb a ladder
+  (1–6) while a question is unsolved, the Leak Guard blocks option letters,
+  final numbers and code (one stricter retry, then a safe canned hint),
+  off-topic and live-exam turns get a rule reply. It walks only free
+  providers (Admin → AI models, `features.tutor` first) and fails over; if
+  all fail it answers from the verified solution or says it can't, never
+  guesses. The voice feature never calls a paid service
+  (`tests/voice-zero-spend.test.js`).
 - **AI models** are chosen in Admin → AI models (`src/ai/settings.js`): any
   OpenAI-compatible provider, keys sealed at rest, a model per slot and per
   feature. The GROQ_* environment applies when nothing is chosen.
@@ -326,7 +334,7 @@ Hive is the staff-only multi-agent workspace at `/hive`. The full guide is
   Hive with the Copilot, Dispatcher, Judge, pipelines, automations, Drive,
   health checks, budgets, subscriptions (Claude Code, Codex, Vibe), per-project
   chat and the model farm.
-- **Voice tutor (planned, not built):** "NexoraGuru Voice" — talk to the
+- **Voice tutor (built through Phase 2; Phases 3–6 planned):** "NexoraGuru Voice" — talk to the
   whole site in English, Hindi and Hinglish, Scene Voice (talk to the
   animations), Mirror Run (your spoken algorithm animated, bugs included), the
   Guru tutor with a code-level Leak Guard, and the founder's AI voice on

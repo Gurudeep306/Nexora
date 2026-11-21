@@ -11,7 +11,8 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Mic, X } from 'lucide-react'
 import { Button, Modal, Tooltip } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
-import { openAssistantEvent } from '@/context/AgentContext'
+import { openAssistantEvent, useAgentContext } from '@/context/AgentContext'
+import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { useActionList } from './actions/useVoiceAction'
 import { expand, matchCommand, normalize, type Match } from './actions/match'
@@ -21,7 +22,7 @@ import { useVoicePrefs, type VoicePrefs } from './prefs'
 import { activeScene, type SceneHandle } from './scene/active'
 import { parseScene, type SceneCommand } from './scene/parse'
 import { resolveScene } from './scene/resolve'
-import { speak } from './speak'
+import { speak, stopSpeaking } from './speak'
 import './voice.css'
 
 type Phase =
@@ -29,6 +30,8 @@ type Phase =
   | { kind: 'listening'; text: string }
   | { kind: 'done'; heard: string; said: string }
   | { kind: 'scene'; heard: string; title: string; say: string }
+  | { kind: 'thinking'; heard: string }
+  | { kind: 'guru'; heard: string; say: string; step: number }
   | { kind: 'choose'; heard: string; options: { action: VoiceAction; match: Match }[] }
   | { kind: 'confirm'; heard: string; action: VoiceAction; match: Match }
   | { kind: 'miss'; heard: string }
@@ -45,6 +48,9 @@ const ERRORS: Record<SpeechError, string> = {
   other: 'Something went wrong with the microphone. Try again.',
 }
 
+/** Hints Guru has given per question / problem / page this session (the hint ladder). */
+const hintsGiven = new Map<string, number>()
+
 /** What was done, in words: "Open Notes", "Switch to dark mode". */
 function describe(action: VoiceAction, match: Match) {
   const slot = Object.keys(match.args)[0]
@@ -59,6 +65,7 @@ export function VoiceButton() {
   const { user } = useAuth()
   const [prefs, setPrefs] = useVoicePrefs(user?.username)
   const actions = useActionList()
+  const { pageContext, shareContext } = useAgentContext()
   const [phase, setPhase] = useState<Phase>({ kind: 'idle' })
   const [consentOpen, setConsentOpen] = useState(false)
   const handle = useRef<ListenHandle | null>(null)
@@ -120,6 +127,25 @@ export function VoiceButton() {
     [hideSoon, prefs.speak, prefs.lang],
   )
 
+  /** Anything that isn't a command is a doubt for Guru, with the page attached. */
+  const askGuru = useCallback(
+    async (heard: string) => {
+      setPhase({ kind: 'thinking', heard })
+      const full = pageContext()
+      const page = shareContext ? full : { path: full.path }
+      const item = String(page.gateQuestionId || page.problemId || page.path || '')
+      try {
+        const r = await api.post<{ ok: boolean; say: string; step: number }>('/api/voice/guru', { text: heard, page, hintsGiven: hintsGiven.get(item) ?? 0, lang: prefs.lang })
+        if (r.step >= 1 && r.step <= 5) hintsGiven.set(item, r.step)
+        setPhase({ kind: 'guru', heard, say: r.say, step: r.step })
+        if (prefs.speak) speak(r.say, prefs.lang)
+      } catch (e) {
+        setPhase({ kind: 'guru', heard, say: e instanceof Error && e.message ? e.message : 'Guru couldn’t answer just now. Try again in a moment.', step: 0 })
+      }
+    },
+    [pageContext, shareContext, prefs.lang, prefs.speak],
+  )
+
   const decide = useCallback(
     (heard: string) => {
       const pending = phase
@@ -150,9 +176,9 @@ export function VoiceButton() {
         return runAction(action, result.best, heard)
       }
       if (result.candidates.length > 1) return setPhase({ kind: 'choose', heard, options: result.candidates.map((m) => ({ action: byId(m), match: m })) })
-      setPhase({ kind: 'miss', heard })
+      void askGuru(heard)
     },
-    [actions, index, phase, runAction, hideSoon, runScene, prefs.speak, prefs.lang],
+    [actions, index, phase, runAction, hideSoon, runScene, askGuru, prefs.speak, prefs.lang],
   )
 
   const start = useCallback(async () => {
@@ -211,7 +237,7 @@ export function VoiceButton() {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.16 }}
           >
-            <Pill phase={phase} onClose={() => { handle.current?.cancel(); setPhase({ kind: 'idle' }) }} onRun={runAction} onAsk={(t) => { setPhase({ kind: 'idle' }); openAssistantEvent(t) }} onListen={() => void start()} />
+            <Pill phase={phase} onClose={() => { handle.current?.cancel(); stopSpeaking(); setPhase({ kind: 'idle' }) }} onRun={runAction} onAsk={(t) => { setPhase({ kind: 'idle' }); openAssistantEvent(t) }} onHint={() => void askGuru('next hint please')} onListen={() => void start()} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -230,7 +256,7 @@ export function VoiceButton() {
   )
 }
 
-function Pill({ phase, onClose, onRun, onAsk, onListen }: { phase: Phase; onClose: () => void; onRun: (a: VoiceAction, m: Match, heard: string) => void; onAsk: (t: string) => void; onListen: () => void }) {
+function Pill({ phase, onClose, onRun, onAsk, onHint, onListen }: { phase: Phase; onClose: () => void; onRun: (a: VoiceAction, m: Match, heard: string) => void; onAsk: (t: string) => void; onHint: () => void; onListen: () => void }) {
   return (
     <div className="vc-pill-in">
       <div className="vc-pill-head">
@@ -239,6 +265,8 @@ function Pill({ phase, onClose, onRun, onAsk, onListen }: { phase: Phase; onClos
           {phase.kind === 'listening' && 'Listening…'}
           {phase.kind === 'done' && phase.said}
           {phase.kind === 'scene' && phase.title}
+          {phase.kind === 'thinking' && 'Guru is thinking…'}
+          {phase.kind === 'guru' && (phase.step >= 1 && phase.step <= 5 ? `Guru · hint ${phase.step}` : 'Guru')}
           {phase.kind === 'choose' && 'Which one?'}
           {phase.kind === 'confirm' && `${phase.action.title}?`}
           {phase.kind === 'miss' && 'That isn’t a command I know'}
@@ -252,6 +280,20 @@ function Pill({ phase, onClose, onRun, onAsk, onListen }: { phase: Phase; onClos
       {phase.kind === 'listening' && <p className="vc-heard">{phase.text ? `“${phase.text}”` : activeScene() ? 'Talk to the animation: “swap pe ruko”, “why did i change?”, “what if sorted?”' : 'Say a command, like “notes kholo” or “dark mode”.'}</p>}
       {phase.kind === 'error' && <p className="vc-note">{ERRORS[phase.error]}</p>}
       {phase.kind === 'scene' && <p className="vc-answer">{phase.say}</p>}
+      {phase.kind === 'guru' && (
+        <>
+          <p className="vc-answer vc-guru">{phase.say}</p>
+          <div className="vc-actions">
+            {phase.step >= 1 && phase.step <= 4 && (
+              <Button size="sm" variant="secondary" onClick={onHint}>Another hint</Button>
+            )}
+            <Button size="sm" variant="ghost" onClick={onListen}>
+              <Mic aria-hidden="true" /> Reply
+            </Button>
+            <Button size="sm" variant="ghost" onClick={() => onAsk(phase.heard)}>Open in chat</Button>
+          </div>
+        </>
+      )}
       {phase.kind === 'choose' && (
         <ol className="vc-options">
           {phase.options.map((o, i) => (
