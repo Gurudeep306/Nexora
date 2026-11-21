@@ -158,7 +158,7 @@ export interface JudgeResponse {
    * only the examples and your own tests did. `pending` = those tests are
    * being fetched now (submit again shortly).
    */
-  coverage?: { full: boolean; official: number; judge: string; url: string | null; pending?: boolean; failed?: boolean }
+  coverage?: { full: boolean; official: number; judge: string; url: string | null; pending?: boolean; failed?: boolean; /** Checked on the NexoraGuru benchmark (examples, corner cases, verified AI tests): its size. */ benchmark?: number }
   /** Sent with contest_id: whether this run counted in that hosted contest. */
   contest?: { counted: boolean; reason?: string; contestId?: number; item?: number }
 }

@@ -4,6 +4,7 @@ import { Popover, PopoverContent, PopoverTrigger, Tooltip } from '@/components/u
 import { api } from '@/lib/api'
 import { aiErrorText } from '@/lib/agent'
 import { cn } from '@/lib/utils'
+import { shown } from './translationMemory'
 
 export interface LangInfo {
   code: string
@@ -46,6 +47,7 @@ const store = {
  * Google → AI), translates into 40 languages incl. 20 Indian ones with a fast
  * engine or a context-aware AI engine, and can auto-translate every problem.
  */
+
 export function TranslateBar({
   html,
   onResult,
@@ -61,7 +63,10 @@ export function TranslateBar({
   const [auto, setAuto] = useState(() => store.get('nexora:translate:auto') === '1')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [showing, setShowing] = useState<{ lang: string; engine: string } | null>(null)
+  const [showing, setShowing] = useState<{ lang: string; engine: string } | null>(() => {
+    const prev = shown.get(html)
+    return prev ? { lang: prev.lang, engine: prev.engine } : null
+  })
   const [open, setOpen] = useState(false)
   const [q, setQ] = useState('')
   const reqId = useRef(0)
@@ -79,8 +84,10 @@ export function TranslateBar({
     let alive = true
     setDetecting(true)
     setDetected(null)
-    setShowing(null)
-    onResult(null)
+    // Back after a layout change: keep showing the translation already made.
+    const prev = shown.get(html)
+    setShowing(prev ? { lang: prev.lang, engine: prev.engine } : null)
+    onResult(prev ?? null)
     api
       .post<{ detected: Detected }>('/api/translate/detect', { html: html.slice(0, 8000) })
       .then((r) => alive && setDetected(r.detected))
@@ -95,6 +102,7 @@ export function TranslateBar({
   const run = async (lang: string, eng = engine) => {
     setError(null)
     if (!lang) {
+      shown.delete(html)
       setShowing(null)
       onResult(null)
       return
@@ -109,12 +117,14 @@ export function TranslateBar({
       )
       if (id !== reqId.current) return
       if (res.sameLanguage) {
+        shown.delete(html)
         setShowing(null)
         onResult(null)
         setError(`Already in ${langs.find((l) => l.code === lang)?.name ?? lang}`)
         return
       }
       setShowing({ lang, engine: res.engine })
+      shown.set(html, { lang, html: res.translated, engine: res.engine })
       onResult({ lang, html: res.translated, engine: res.engine })
     } catch (err) {
       if (id === reqId.current) setError(aiErrorText(err))
@@ -126,6 +136,7 @@ export function TranslateBar({
   // Auto-translate into the preferred language when the statement is in another one.
   useEffect(() => {
     if (!auto || !target || !detected) return
+    if (shown.get(html)?.lang === target) return
     if (detected.code.split('-')[0] === target.split('-')[0]) return
     void run(target)
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -43,6 +43,8 @@ function adminSettings() {
 }
 const isConfigured = () => !!String(process.env.GROQ_API_KEY || "").trim() || !!adminSettings()?.configuredInAdmin();
 const supportsReasoning = (model) => /gpt-oss/i.test(String(model || ""));
+/** Qwen3-family models think before answering; on Groq that can be hidden or turned off. */
+const qwenThinks = (model) => /qwen[-_/ ]?3/i.test(String(model || ""));
 const RETRYABLE = new Set([429, 500, 502, 503, 504]);
 
 function retryDelay(res, attempt, baseMs) {
@@ -85,6 +87,9 @@ function createGroqClient({
 } = {}) {
   const url = `${String(baseUrl).replace(/\/+$/, "")}/chat/completions`;
   const breaker = { strikes: 0, openUntil: 0 };
+  const onGroq = /api\.groq\.com/i.test(url);
+  // Models that turned down Groq's reasoning settings: asked again without them.
+  const plainOnly = new Set();
 
   function buildBody(opts, model, stream) {
     const body = {
@@ -101,6 +106,16 @@ function createGroqClient({
       body.parallel_tool_calls = true;
     }
     if (supportsReasoning(model)) body.reasoning_effort = opts.reasoningEffort || "low";
+    // Qwen3 on Groq: thinking stays out of the reply. It runs only where quality
+    // needs it (opts.think: code, tests, grading), with room added for it;
+    // quick replies (spoken answers, hints) skip it to stay fast.
+    if (onGroq && qwenThinks(model) && !plainOnly.has(model)) {
+      body.reasoning_format = "hidden";
+      if (opts.think) {
+        body.reasoning_effort = "default";
+        body.max_tokens = Math.min(16000, body.max_tokens + 6000);
+      } else body.reasoning_effort = "none";
+    }
     if (stream) {
       body.stream = true;
       body.stream_options = { include_usage: true };
@@ -153,6 +168,12 @@ function createGroqClient({
         }
         lastStatus = res.status;
         lastMsg = await upstreamMessage(res);
+        // The model doesn't take the reasoning settings: once more without them.
+        if (res.status === 400 && onGroq && qwenThinks(model) && !plainOnly.has(model) && /reasoning/i.test(lastMsg)) {
+          plainOnly.add(model);
+          attempt--;
+          continue;
+        }
         if (res.status === 401 || res.status === 403) {
           throw new AiError("AI is misconfigured (the server's API key was rejected)", 503, "bad_key");
         }
@@ -364,4 +385,4 @@ function thinkFilter() {
   return push;
 }
 
-module.exports = { thinkFilter, stripThinking, createGroqClient, groq, clientFor, models, AiError, isConfigured, supportsReasoning, NOT_CONFIGURED, DEFAULT_BASE_URL };
+module.exports = { qwenThinks, thinkFilter, stripThinking, createGroqClient, groq, clientFor, models, AiError, isConfigured, supportsReasoning, NOT_CONFIGURED, DEFAULT_BASE_URL };

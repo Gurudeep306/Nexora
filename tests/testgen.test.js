@@ -80,12 +80,17 @@ test("correct references: tests of every size, all verified or reference-checked
     assert.equal(a.length, n);
     const s = [...a].sort((x, y) => x - y);
     assert.equal(t.expected.trim(), String(s[n - 1] + s[n - 2]), t.label);
-    assert.ok(["verified", "reference"].includes(t.confidence));
-    if (t.size !== "large") assert.equal(t.confidence, "verified", "small inputs are checked by both references");
+    assert.ok(["official", "verified", "reference"].includes(t.confidence));
+    if (t.confidence === "official") assert.equal(t.size, "sample");
+    else if (t.size !== "large") assert.equal(t.confidence, "verified", "small inputs are checked by both references");
   }
   assert.ok(r.tests.some((t) => t.size === "large" && t.confidence === "reference"));
   assert.ok(r.tests.some((t) => t.size === "edge"));
-  assert.match(r.tests[0].label, /^AI · edge 1$/);
+  // The problem's own examples come first, with their official answers.
+  const examples = r.tests.filter((t) => t.confidence === "official");
+  assert.equal(examples.length, problem.samples.length);
+  assert.match(r.tests[0].label, /^Example 1$/);
+  assert.match(r.tests[examples.length].label, /^AI · edge 1$/);
 });
 
 test("a reference that fails the official samples is never trusted", { skip: !hasPython }, async () => {
@@ -165,4 +170,18 @@ test("a reply with no code at all fails the step instead of passing junk on", ()
   assert.equal(MODES.testgen_solution.post("```python\nprint(1)\n```").program, "print(1)");
   assert.ok(manyAnswers("If there are several answers, print any of them."));
   assert.ok(!manyAnswers("Print the maximum sum."));
+});
+
+test("too few tests after the first round: more are made, to at least 10 with the examples", { skip: !hasPython }, async () => {
+  // A generator whose small inputs repeat a lot: the first round keeps only a few.
+  const repetitive = `
+def gen(rng, size):
+    a, b = rng.randint(1, 4), rng.randint(1, 4)
+    return f"2\\n{a} {b}\\n"
+`;
+  const steps = [];
+  const r = await generateTests(problem, { count: 4, plan: plan({ generator: repetitive, edgeCases: [] }), onProgress: (s) => steps.push(s) });
+  assert.ok(steps.some((s) => /making more/.test(s)), "a top-up round ran");
+  assert.ok(r.tests.length >= 10, `got ${r.tests.length}`);
+  assert.equal(r.stats.examples, 2);
 });

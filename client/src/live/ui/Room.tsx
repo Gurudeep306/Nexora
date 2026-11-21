@@ -281,9 +281,15 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
         </button>
       )}
       {s.mutedTalking && (
-        <button type="button" className="lv-banner is-hint" onClick={() => session.setMic(true)}>
-          <MicOff className="size-4" aria-hidden="true" /> You are muted. Press M or tap here to talk.
-        </button>
+        <div className="lv-banner is-hint" role="status">
+          <MicOff className="size-4" aria-hidden="true" /> You are muted.
+          <button type="button" className="lv-banner-act" onClick={() => session.setMic(true)}>
+            Unmute (M)
+          </button>
+          <button type="button" className="lv-banner-x" onClick={() => session.dismissMutedHint()} aria-label="Close">
+            <X className="size-3.5" aria-hidden="true" />
+          </button>
+        </div>
       )}
 
       <main className="lv-body">

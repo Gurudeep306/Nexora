@@ -117,7 +117,7 @@ async function buildCode({ user, db, mode, problem, code, language, target, inst
   const messages = messagesFor({ mode, code: src, language, target, instruction: String(instruction || "").slice(0, 600), failing, previous });
   for (const t of guru.chain()) {
     try {
-      const out = await t.client.chat({ model: t.model, messages, maxTokens: 2500, temperature: 0, timeoutMs: 45000 });
+      const out = await t.client.chat({ model: t.model, messages, maxTokens: 2500, temperature: 0, timeoutMs: 90000, think: true });
       if (out.usage) agent.addUsage(username, out.usage).catch(() => {});
       if (mode === "change" && /^\s*NONE\b/.test(out.content || "")) return { ok: false, say: "That doesn’t sound like a change to this code. Try “make it iterative” or “use a hash map”." };
       const next = extractCode(out.content);

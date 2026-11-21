@@ -218,7 +218,7 @@ async function gradeExplain({ db, user, token, transcript, answer }) {
   let graded = null;
   for (const t of guru.chain()) {
     try {
-      const out = await t.client.chat({ model: t.model, messages, maxTokens: 700, temperature: 0, timeoutMs: 30000 });
+      const out = await t.client.chat({ model: t.model, messages, maxTokens: 700, temperature: 0, timeoutMs: 60000, think: true });
       if (out.usage) agent.addUsage(username, out.usage).catch(() => {});
       graded = checkScores(out.content, said);
       if (graded) break;

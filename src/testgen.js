@@ -18,6 +18,8 @@ const { runLang, normalizeOut } = require("./judge");
 
 const SIZES = ["tiny", "small", "medium", "large"];
 const MAX_TESTS = 60;
+/** At least this many tests in a set, the problem's own examples included. */
+const MIN_TOTAL = 10;
 const MAX_INPUT_BYTES = 160 * 1024; // per input
 const MAX_TOTAL_BYTES = 900 * 1024; // all inputs together (the judge takes 1 MB per run)
 const JOB_BUDGET_S = 7; // one sandbox run stays well under the 10 s Python limit
@@ -179,11 +181,11 @@ async function checkOnSamples(program, samples) {
 }
 
 /** How many inputs of each size to ask for, given a requested count. */
-function makePlan(count) {
+function makePlan(count, seedBase = 1009) {
   const n = Math.max(4, Math.min(MAX_TESTS, Number(count) || 24));
   const share = { tiny: 0.3, small: 0.35, medium: 0.2, large: 0.15 };
   const plan = [];
-  let seed = 1009;
+  let seed = seedBase;
   for (const size of SIZES) {
     const k = Math.max(1, Math.round(n * share[size]));
     for (let i = 0; i < k; i++) plan.push([size, (seed += 7919)]);
@@ -203,19 +205,25 @@ async function generateTests(problem, { count = 24, plan: planFn, repair = null,
   if (!plan.generator.trim() && !plan.edgeCases.length) throw Object.assign(new Error("The AI didn't produce a generator — try again"), { status: 502 });
 
   onProgress("Generating inputs");
-  const gen = await runPython(generatorHarness(plan.generator, plan.validator, makePlan(count), plan.edgeCases));
-  if (gen.fatal) throw Object.assign(new Error(`The generated generator didn't run (${gen.fatal}) — try again`), { status: 502 });
   // De-duplicate, drop the official samples, keep the total size bounded.
   const seen = new Set(samples.map((s) => normalizeOut(s.input)));
-  const inputs = [];
   let total = 0;
-  for (const t of gen.tests || []) {
-    const k = normalizeOut(t.input);
-    if (seen.has(k) || total + t.input.length > MAX_TOTAL_BYTES) continue;
-    seen.add(k);
-    total += t.input.length;
-    inputs.push(t);
-  }
+  let genStats = { generated: 0, rejected: 0, validated: false, errors: [] };
+  const generate = async (n, seedBase) => {
+    const gen = await runPython(generatorHarness(plan.generator, plan.validator, makePlan(n, seedBase), seedBase === 1009 ? plan.edgeCases : []));
+    if (gen.fatal) throw Object.assign(new Error(`The generated generator didn't run (${gen.fatal}) — try again`), { status: 502 });
+    genStats = { generated: genStats.generated + (gen.tests || []).length, rejected: genStats.rejected + (gen.rejected || 0), validated: genStats.validated || !!gen.validated, errors: [...genStats.errors, ...(gen.errors || [])].slice(0, 8) };
+    const fresh = [];
+    for (const t of gen.tests || []) {
+      const k = normalizeOut(t.input);
+      if (seen.has(k) || total + t.input.length > MAX_TOTAL_BYTES) continue;
+      seen.add(k);
+      total += t.input.length;
+      fresh.push(t);
+    }
+    return fresh;
+  };
+  const inputs = await generate(count, 1009);
   if (!inputs.length) throw Object.assign(new Error("No valid inputs came out of the generator — try again"), { status: 502 });
 
   onProgress("Checking both reference solutions on the official samples");
@@ -248,41 +256,51 @@ async function generateTests(problem, { count = 24, plan: planFn, repair = null,
   }
 
   onProgress("Computing expected outputs");
-  const [bruteRes, solRes] = await Promise.all([
-    // The brute force only gets inputs it can finish; large ones are left to the efficient reference.
-    useBrute ? runReference(plan.brute, inputs.filter((t) => t.size !== "large").map((t) => t.input), { perInputS: 2 }) : Promise.resolve(null),
-    useSol ? runReference(plan.solution, inputs.map((t) => t.input), { perInputS: 4 }) : Promise.resolve(null),
-  ]);
-
   const tests = [];
   let disagreements = 0;
   let unresolved = 0;
-  let bi = 0;
-  inputs.forEach((t, i) => {
-    const b = bruteRes && t.size !== "large" ? bruteRes[bi++] : null;
-    const s = solRes ? solRes[i] : null;
-    const bOk = b && b.ok;
-    const sOk = s && s.ok;
-    let expected = null;
-    let confidence = null;
-    if (bOk && sOk) {
-      if (same(b.out, s.out)) {
-        expected = s.out;
-        confidence = "verified";
-      } else if (plan.multipleAnswers) {
-        // Several answers are accepted: either is right, but a plain diff can't judge them.
-        expected = s.out;
+  const expectedFor = async (batch) => {
+    const [bruteRes, solRes] = await Promise.all([
+      // The brute force only gets inputs it can finish; large ones are left to the efficient reference.
+      useBrute ? runReference(plan.brute, batch.filter((t) => t.size !== "large").map((t) => t.input), { perInputS: 2 }) : Promise.resolve(null),
+      useSol ? runReference(plan.solution, batch.map((t) => t.input), { perInputS: 4 }) : Promise.resolve(null),
+    ]);
+    let bi = 0;
+    batch.forEach((t, i) => {
+      const b = bruteRes && t.size !== "large" ? bruteRes[bi++] : null;
+      const s = solRes ? solRes[i] : null;
+      const bOk = b && b.ok;
+      const sOk = s && s.ok;
+      let expected = null;
+      let confidence = null;
+      if (bOk && sOk) {
+        if (same(b.out, s.out)) {
+          expected = s.out;
+          confidence = "verified";
+        } else if (plan.multipleAnswers) {
+          // Several answers are accepted: either is right, but a plain diff can't judge them.
+          expected = s.out;
+          confidence = "reference";
+        } else disagreements++;
+      } else if (sOk) {
+        expected = s.out; // brute force skipped (too large) or timed out
         confidence = "reference";
-      } else disagreements++;
-    } else if (sOk) {
-      expected = s.out; // brute force skipped (too large) or timed out
-      confidence = "reference";
-    } else if (bOk) {
-      expected = b.out;
-      confidence = "reference";
-    } else unresolved++;
-    if (expected != null) tests.push({ size: t.size, input: t.input, expected, confidence });
-  });
+      } else if (bOk) {
+        expected = b.out;
+        confidence = "reference";
+      } else unresolved++;
+      if (expected != null) tests.push({ size: t.size, input: t.input, expected, confidence });
+    });
+  };
+  await expectedFor(inputs);
+  // Too few kept (duplicates, disagreements): more inputs with new seeds, small ones first.
+  const want = Math.max(MIN_TOTAL - samples.length, 0);
+  for (let round = 1; round <= 2 && tests.length < want; round++) {
+    onProgress(`Only ${samples.length + tests.length} tests so far: making more`);
+    const more = await generate(Math.max(8, (want - tests.length) * 2), 1009 + round * 104729).catch(() => []);
+    if (!more.length) break;
+    await expectedFor(more);
+  }
 
   const order = { edge: 0, tiny: 1, small: 2, medium: 3, large: 4 };
   tests.sort((a, b) => order[a.size] - order[b.size]);
@@ -291,23 +309,26 @@ async function generateTests(problem, { count = 24, plan: planFn, repair = null,
     counters[t.size] = (counters[t.size] || 0) + 1;
     t.label = `AI · ${t.size} ${counters[t.size]}`;
   }
+  // The official examples come first: they are tests too, with the problem's own answers.
+  const official = samples.map((x, i) => ({ size: "sample", input: String(x.input).endsWith("\n") ? String(x.input) : `${x.input}\n`, expected: String(x.output), confidence: "official", label: `Example ${i + 1}` }));
   return {
-    tests,
+    tests: [...official, ...tests],
     format: plan.format,
     notes: plan.notes,
     multipleAnswers: plan.multipleAnswers,
     stats: {
-      generated: (gen.tests || []).length,
-      rejectedByValidator: gen.rejected || 0,
-      validated: !!gen.validated,
+      generated: genStats.generated,
+      rejectedByValidator: genStats.rejected,
+      validated: genStats.validated,
       kept: tests.length,
+      examples: official.length,
       verified: tests.filter((t) => t.confidence === "verified").length,
       disagreements,
       unresolved,
       references: { brute: bruteCheck, solution: solCheck },
-      generatorErrors: gen.errors || [],
+      generatorErrors: genStats.errors,
     },
   };
 }
 
-module.exports = { generateTests, generatorHarness, referenceHarness, makePlan, checkOnSamples, runReference };
+module.exports = { MIN_TOTAL, generateTests, generatorHarness, referenceHarness, makePlan, checkOnSamples, runReference };

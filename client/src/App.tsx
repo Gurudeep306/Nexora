@@ -7,6 +7,7 @@ import { useAuth } from '@/context/AuthContext'
 import { idlePrefetchCommonRoutes, pageLoaders } from '@/routes'
 import { SiteGate } from '@/components/site/SiteGate'
 import { CallRinger } from '@/components/live/CallRinger'
+import { OngoingCall } from '@/components/live/OngoingCall'
 import { AdminRoute, AuthorRoute, HiveRoute } from '@/components/admin/AdminRoute'
 
 const PadPage = lazy(() => import('@/pages/hand/PadPage'))
@@ -111,6 +112,8 @@ export default function App() {
       <SiteGate>
       {/* Incoming Live calls ring on any page. */}
       <CallRinger />
+      {/* A call still going while you look at another page. */}
+      <OngoingCall />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/auth" element={<AuthPage />} />

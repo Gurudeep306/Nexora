@@ -13,6 +13,7 @@ import { LiveSession, useLive } from '@/live/session'
 import { PreJoin } from '@/live/ui/PreJoin'
 import { Room } from '@/live/ui/Room'
 import { ringback } from '@/live/ring'
+import { getActiveCall, setActiveCall } from '@/live/activeCall'
 import '@/live/live.css'
 
 export default function LiveRoomPage() {
@@ -22,7 +23,11 @@ export default function LiveRoomPage() {
   const caller = params.get('call') === '1'
   const [room, setRoom] = useState<LiveRoom | null>(null)
   const [loadError, setLoadError] = useState<string | null>(null)
-  const session = useMemo(() => new LiveSession(code), [code])
+  // Back from another page mid-call: the same session, still connected.
+  const session = useMemo(() => {
+    const a = getActiveCall()
+    return a && a.code === code ? a.session : new LiveSession(code)
+  }, [code])
   const s = useLive(session)
   const navigate = useNavigate()
   const started = useRef(false)
@@ -39,17 +44,27 @@ export default function LiveRoomPage() {
   }, [code])
 
   useEffect(() => {
+    const a = getActiveCall()
+    if (a?.session === session) setActiveCall(null)
+    else if (a) {
+      // Opening another room ends the call going on elsewhere.
+      a.session.leave()
+      setActiveCall(null)
+    }
     const bye = () => session.dispose()
     window.addEventListener('pagehide', bye)
     return () => {
       window.removeEventListener('pagehide', bye)
-      session.dispose()
+      // Leaving the page mid-call keeps the call: a bar on every page brings you back.
+      const st = session.get()
+      if (st.phase === 'in' || st.phase === 'reconnecting') setActiveCall({ session, code, title: st.room?.title || 'Live' })
+      else session.dispose()
     }
-  }, [session])
+  }, [session, code])
 
   // Calls skip the pre-join screen.
   useEffect(() => {
-    if (!autoJoin || !room || started.current || room.endedAt) return
+    if (!autoJoin || !room || started.current || room.endedAt || session.get().phase !== 'idle') return
     started.current = true
     void session.join({ mic: true, cam: room.mode === 'video' })
   }, [autoJoin, room, session])

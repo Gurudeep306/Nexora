@@ -1,0 +1,100 @@
+/* The ongoing-call bar (OngoingCall.tsx). Tokens only; no glow; no blinking. */
+@layer components {
+  .oc {
+    position: fixed;
+    left: 50%;
+    top: 4.25rem;
+    transform: translateX(-50%);
+    z-index: 65;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: max-content;
+    max-width: calc(100vw - 32px);
+    padding: 6px 6px 6px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+    box-shadow: var(--elev-2);
+  }
+  .oc-dot {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    border-radius: 999px;
+    background: var(--color-state-success);
+  }
+  .oc-dot.is-warn {
+    background: var(--color-state-warning);
+  }
+  .oc-main {
+    display: grid;
+    min-width: 0;
+    padding: 0 4px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .oc-title {
+    overflow: hidden;
+    max-width: 16rem;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .oc-sub {
+    font-size: 11.5px;
+    color: var(--color-text-secondary);
+    font-variant-numeric: tabular-nums;
+  }
+  .oc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-text-primary);
+    cursor: pointer;
+  }
+  .oc-btn:hover {
+    background: color-mix(in oklab, var(--color-text-primary) 7%, transparent);
+  }
+  .oc-btn.is-off {
+    color: var(--color-state-error);
+  }
+  .oc-btn.is-end {
+    border-color: transparent;
+    background: var(--color-state-error);
+    color: var(--color-bg-app);
+  }
+  .oc-back {
+    height: 34px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--color-accent-brand);
+    color: var(--color-on-accent-brand, #fff);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  @media (max-width: 520px) {
+    /* Under the top bar, clear of the AI button and the Dock at the bottom. */
+    .oc {
+      top: 3.6rem;
+      gap: 6px;
+    }
+    .oc-title {
+      max-width: 7.5rem;
+    }
+  }
+}
