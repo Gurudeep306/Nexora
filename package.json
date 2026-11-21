@@ -1,7 +1,7 @@
 {
   "name": "nexora",
   "version": "2.0.0",
-  "description": "Nexora \u2013 Multi-Domain CS Learning Platform",
+  "description": "Nexora – Multi-Domain CS Learning Platform",
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
