@@ -229,6 +229,12 @@ export function JudgeResults({ result, onExplain }: { result: JudgeResponse; /**
   const examplesOnly = result.verdict === 'AC' && !!cov && !cov.full
   return (
     <div className="space-y-3 p-3">
+      {cov?.benchmark && (
+        <p className="m-0 rounded-lg border border-border px-3 py-2 text-[12.5px] text-foreground-dim" role="note">
+          <span className="font-medium text-foreground">Checked on the NexoraGuru benchmark:</span> {cov.benchmark} tests — the examples, corner cases and AI tests that two separate solutions agreed on.{' '}
+          {result.verdict === 'AC' ? 'All passed: solved.' : 'Pass them all to count it as solved; until then you earn the share you pass.'}
+        </p>
+      )}
       {examplesOnly && cov && (
         <div className="rounded-lg border border-border bg-surface-2 p-3 text-[12.5px] text-foreground-dim" role="note">
           <p className="m-0 font-semibold text-foreground">Passed the examples, not {judgeOf(cov.judge)} full tests</p>

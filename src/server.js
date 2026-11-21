@@ -1631,6 +1631,7 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
     // What the verdict rests on: a judge's own full tests, or only the examples.
     let coverage = null;
     let trustedKeys = null; // keys of the cases points may count (platform problems)
+    const benchKeys = new Set(); // the NexoraGuru benchmark's tests, when it is used
     if (problem_id) {
       const prob = await get("SELECT id, platform, problem_id, category, url FROM problems WHERE id=?", [problem_id]);
       if (!prob || (prob.category === "__hidden" && !can(req, "problems.manage"))) return res.status(404).json({ ok: false, error: "Problem not found" });
@@ -1663,7 +1664,30 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
             });
           }
         }
-        coverage = { full, official, judge: prob.platform, url: prob.url || null };
+        // No full official tests here: the NexoraGuru benchmark (examples, corner
+        // cases, verified AI tests; src/testgen-benchmark.js), once one is made.
+        let benchmark = 0;
+        if (!full) {
+          const bm = await require("./testgen-benchmark").benchmarkFor(get, prob.id);
+          if (bm) {
+            const ran = new Set(cases.map((c) => tcKey(c.input, c.expected_output)));
+            let bytes = cases.reduce((n, c) => n + Buffer.byteLength(c.input), 0);
+            for (const t of bm) {
+              const c = toCase(t, { id: undefined, label: t.label });
+              const k = tcKey(c.input, c.expected_output);
+              benchKeys.add(k);
+              // Within the judge's limits whatever the student added themselves.
+              if (!ran.has(k) && cases.length < MAX_JUDGE_TESTCASES && bytes + Buffer.byteLength(c.input) <= MAX_JUDGE_INPUT_BYTES) {
+                bytes += Buffer.byteLength(c.input);
+                ran.add(k);
+                cases.push(c);
+              }
+            }
+            full = [...benchKeys].every((k) => ran.has(k));
+            benchmark = bm.length;
+          }
+        }
+        coverage = { full, official, judge: prob.platform, url: prob.url || null, ...(benchmark ? { benchmark } : {}) };
         if (!full && prob.platform === "codeforces" && !(cached && cached.length)) {
           const ds = require("./sources/cf-dataset");
           // "Being fetched" only while a download really runs; a failed one says so.
@@ -1684,6 +1708,7 @@ app.post("/api/judge", judgeLimiter, async (req, res) => {
             return tcKey(c.input, c.expected_output);
           }),
           ...cases.filter((c) => c.hidden).map((c) => tcKey(c.input, c.expected_output)),
+          ...benchKeys,
         ]);
         // An official test the solver also typed in is still an official test.
         if (prob.platform === "codeforces") {

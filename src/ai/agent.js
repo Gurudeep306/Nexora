@@ -102,6 +102,7 @@ async function runTask(mode, input = {}, { user, signal, client } = {}) {
     maxTokens: def.maxTokens,
     temperature: def.temperature,
     reasoningEffort: def.reasoning,
+    think: !!def.think,
     stop: def.stop,
     timeoutMs: def.timeoutMs,
     signal,

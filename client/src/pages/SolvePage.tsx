@@ -62,6 +62,7 @@ import { registerBuilder } from '@/voice/code/build'
 import { activeCode } from '@/voice/code/active'
 import { BuildSheet, type BuildRequest } from '@/voice/code/BuildSheet'
 import { ExplainBack } from '@/voice/explain/ExplainBack'
+import { useAutoTests } from '@/components/solve/useAutoTests'
 import { LanguagePicker } from '@/components/solve/LanguagePicker'
 import { Workspace } from '@/components/solve/workspace/Workspace'
 import { useWorkspace } from '@/components/solve/workspace/useWorkspace'
@@ -735,6 +736,17 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     [testcases, custom, id, toast, problemApi],
   )
 
+  /* ── Automatic AI tests: a problem with fewer than 10 tests gets a checked set ── */
+  const autoTests = useAutoTests({
+    key: storageId,
+    ready: !!problemApi.data && !problemApi.loading && !!statementApi.data && !statementApi.loading,
+    have: testcases.length,
+    request: problem || adapted
+      ? { problem_id: custom ? undefined : Number(id), custom_problem_id: custom && !learn ? Number(id) : undefined, title: problem?.title ?? '', statement: coachStatement, samples: samples.map((x) => ({ input: x.input ?? '', output: x.output ?? '' })), count: 24 }
+      : null,
+    add: addManyTestcases,
+  })
+
   /** The largest inputs on hand, to time the code on. */
   const biggestInputs = useMemo(
     () =>
@@ -1114,6 +1126,21 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
             { id: 'ai', label: 'Generate with AI' },
           ]}
         />
+        {subView.tests === 'cases' && autoTests.kind !== 'idle' && (
+          <p className={cn('m-0 flex items-center gap-2 border-b border-border/70 px-3 py-1.5 text-[12px]', autoTests.kind === 'error' ? 'text-state-warning' : 'text-foreground-dim')} role="status">
+            {autoTests.kind === 'working' && <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />}
+            {autoTests.kind === 'working' && `Making more tests with AI — ${autoTests.step.replace(/^Only \d+ tests so far: /, '')}…`}
+            {autoTests.kind === 'done' && (autoTests.added ? `Added ${autoTests.added} AI-checked tests, corner cases included.` : 'AI tests are ready.')}
+            {autoTests.kind === 'error' && (
+              <>
+                Couldn’t make AI tests: {autoTests.message}{' '}
+                <button type="button" className="cursor-pointer underline underline-offset-2" onClick={() => setSubView((v) => ({ ...v, tests: 'ai' }))}>
+                  Try in Generate with AI
+                </button>
+              </>
+            )}
+          </p>
+        )}
         {subView.tests === 'cases' ? (
           <TestcaseDeck
             testcases={testcases}

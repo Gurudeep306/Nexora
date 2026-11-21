@@ -1,20 +1,12 @@
 import { useMemo, useRef, useState } from 'react'
 import { Check, CircleAlert, Loader2, Play, Plus, ShieldCheck, Sparkles, X } from 'lucide-react'
 import { Button, useToast } from '@/components/ui'
-import { api, apiUrl, ApiError } from '@/lib/api'
+import { api, ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import type { JudgeResponse } from './types'
 
-export type AiTest = { label: string; size: 'edge' | 'tiny' | 'small' | 'medium' | 'large'; input: string; expected: string; confidence: 'verified' | 'reference' }
-type RefCheck = { ok: boolean; passed: number; total: number; reason?: string | null }
-type Result = {
-  tests: AiTest[]
-  format?: string
-  notes?: string
-  multipleAnswers?: boolean
-  // A set made earlier for this problem (shared, ready at once) carries only kept / verified.
-  stats: { generated?: number; rejectedByValidator?: number; validated?: boolean; kept: number; verified: number; disagreements?: number; unresolved?: number; references?: { brute: RefCheck; solution: RefCheck }; cached?: boolean; cachedAt?: number }
-}
+import { autoTestsOn, setAutoTests, streamAiTests, testLabel, type AiTest, type AiTestsResult as Result } from './aiTests'
+export type { AiTest } from './aiTests'
 
 interface Props {
   problemId?: number
@@ -27,7 +19,7 @@ interface Props {
   onAddTests: (tests: { label: string; input: string; expected_output: string }[]) => Promise<number>
 }
 
-const STEPS = ['Reading the problem and writing a generator', 'Generating inputs', 'Checking both reference solutions on the official samples', 'A reference got a sample wrong: asking the AI to fix it', 'Computing expected outputs']
+const STEPS = ['Reading the problem and writing a generator', 'Generating inputs', 'Checking both reference solutions on the official samples', 'A reference got a sample wrong: asking the AI to fix it', 'Computing expected outputs', 'Making more tests']
 const COUNTS = [12, 24, 40, 60]
 
 const preview = (s: string, n = 90) => {
@@ -38,6 +30,7 @@ const preview = (s: string, n = 90) => {
 export function AiTestsPanel({ problemId, customProblemId, title, statement, samples, code, language, onAddTests }: Props) {
   const toast = useToast()
   const [count, setCount] = useState(24)
+  const [auto, setAuto] = useState(autoTestsOn)
   const [step, setStep] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [result, setResult] = useState<Result | null>(null)
@@ -57,39 +50,12 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
     setResult(null)
     setCheck(null)
     try {
-      const res = await fetch(apiUrl('/api/ai/testgen'), {
-        method: 'POST',
-        credentials: 'include',
-        signal: ctrl.signal,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ problem_id: problemId || undefined, custom_problem_id: customProblemId || undefined, title, statement: statement.slice(0, 12000), samples: samples.slice(0, 10), count, fresh: fresh || undefined }),
-      })
-      if (!res.ok || !res.body) {
-        const j = (await res.json().catch(() => null)) as { error?: string } | null
-        throw new Error(j?.error || `Request failed (${res.status})`)
-      }
-      const reader = res.body.getReader()
-      const dec = new TextDecoder()
-      let buf = ''
-      for (;;) {
-        const { value, done } = await reader.read()
-        if (done) break
-        buf += dec.decode(value, { stream: true })
-        let i
-        while ((i = buf.indexOf('\n')) >= 0) {
-          const line = buf.slice(0, i).trim()
-          buf = buf.slice(i + 1)
-          if (!line) continue
-          const ev = JSON.parse(line) as { type: string; step?: string; error?: string } & Partial<Result>
-          if (ev.type === 'progress' && ev.step) setStep(ev.step)
-          if (ev.type === 'error') throw new Error(ev.error || 'Test generation failed')
-          if (ev.type === 'done') {
-            const r = ev as unknown as Result
-            setResult(r)
-            setPicked(new Set(r.tests.map((_, k) => k)))
-          }
-        }
-      }
+      const r = await streamAiTests(
+        { problem_id: problemId || undefined, custom_problem_id: customProblemId || undefined, title, statement, samples, count, fresh },
+        { signal: ctrl.signal, onStep: (x) => setStep(/^Only \d+ tests/.test(x) ? STEPS[5] : x) },
+      )
+      setResult(r)
+      setPicked(new Set(r.tests.map((_, k) => k)))
     } catch (e) {
       if ((e as Error).name !== 'AbortError') setError((e as Error).message || 'Test generation failed')
     } finally {
@@ -103,7 +69,7 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
     if (!chosen.length) return
     setAdding(true)
     try {
-      const n = await onAddTests(chosen.map((t) => ({ label: t.label, input: t.input, expected_output: t.expected })))
+      const n = await onAddTests(chosen.map((t) => ({ label: testLabel(t), input: t.input, expected_output: t.expected })))
       toast.success(`Added ${n} test${n === 1 ? '' : 's'}`, n < chosen.length ? `${chosen.length - n} were already there.` : 'They run with every submit.')
     } finally {
       setAdding(false)
@@ -139,6 +105,18 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
             </button>
           ))}
         </div>
+        <label className="inline-flex cursor-pointer items-center gap-1.5 text-[12.5px] text-foreground-dim">
+          <input
+            type="checkbox"
+            className="size-3.5 cursor-pointer accent-[var(--color-primary)]"
+            checked={auto}
+            onChange={(e) => {
+              setAuto(e.target.checked)
+              setAutoTests(e.target.checked)
+            }}
+          />
+          Make tests by themselves
+        </label>
         <div className="ml-auto flex items-center gap-2">
           {step ? (
             <Button size="sm" variant="ghost" onClick={() => abortRef.current?.abort()}>
@@ -155,7 +133,7 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
       <div className="min-h-0 flex-1 overflow-y-auto">
         {step && (
           <ol className="space-y-2 px-4 py-4" aria-live="polite">
-            {STEPS.filter((label) => label !== STEPS[3] || step === STEPS[3] || STEPS.indexOf(step) > 3).map((label, i, shown) => {
+            {STEPS.filter((_, k) => (k !== 3 && k !== 5) || STEPS.indexOf(step) >= k).map((label, i, shown) => {
               const at = shown.indexOf(step)
               const state = i < at ? 'done' : i === at ? 'now' : 'todo'
               return (
@@ -193,6 +171,7 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
                 <ShieldCheck className="size-3.5 text-state-success" /> {s.verified} verified by two solutions
               </span>
               <span>{s.kept - s.verified} by one solution that passed every example</span>
+              {!!s.examples && <span>{s.examples} official example{s.examples === 1 ? '' : 's'} included</span>}
               {!!s.disagreements && <span className="text-state-warning">{s.disagreements} dropped: the solutions disagreed</span>}
               {!!s.rejectedByValidator && <span>{s.rejectedByValidator} invalid inputs thrown out</span>}
               {s.references && (
@@ -233,8 +212,8 @@ export function AiTestsPanel({ problemId, customProblemId, title, statement, sam
                       <button type="button" onClick={() => setOpen(open === i ? null : i)} className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5 text-left">
                         <span className="w-24 shrink-0 text-[12.5px] text-foreground">{t.label.replace(/^AI · /, '')}</span>
                         <span className="min-w-0 flex-1 truncate font-mono text-[12px] text-foreground-faint">{preview(t.input)}</span>
-                        <span className={cn('shrink-0 text-[11.5px]', t.confidence === 'verified' ? 'text-state-success' : 'text-foreground-faint')} title={t.confidence === 'verified' ? 'Both solutions gave this answer' : "One solution's answer (it passed every example; the other couldn't run this input)"}>
-                          {t.confidence === 'verified' ? 'Verified' : 'Reference'}
+                        <span className={cn('shrink-0 text-[11.5px]', t.confidence === 'reference' ? 'text-foreground-faint' : 'text-state-success')} title={t.confidence === 'official' ? "The problem's own example and answer" : t.confidence === 'verified' ? 'Both solutions gave this answer' : "One solution's answer (it passed every example; the other couldn't run this input)"}>
+                          {t.confidence === 'official' ? 'Official' : t.confidence === 'verified' ? 'Verified' : 'Reference'}
                         </span>
                         {r && (r.passed ? <Check className="size-4 shrink-0 text-state-success" aria-label="Passed" /> : <X className="size-4 shrink-0 text-state-error" aria-label={r.verdict} />)}
                       </button>

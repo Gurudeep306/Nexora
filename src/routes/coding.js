@@ -5,7 +5,7 @@ const express = require("express");
 const cheerio = require("cheerio");
 const { runTask } = require("../ai/agent");
 const { sendError } = require("./agent");
-const { generateTests } = require("../testgen");
+const { generateTests, MIN_TOTAL } = require("../testgen");
 const metrics = require("../code-metrics");
 const { quickRun, LANG_CONFIG } = require("../judge");
 
@@ -110,8 +110,14 @@ function createCodingRouter({ get, run = null, me, aiLimiter, judgeLimiter }) {
       if (key && run && !req.body?.fresh) {
         await cacheInit();
         const hit = await get("SELECT tests, stats, created_at FROM ai_test_sets WHERE problem_key=?", [key]).catch(() => null);
-        if (hit) {
-          const tests = JSON.parse(hit.tests || "[]");
+        let tests = hit ? JSON.parse(hit.tests || "[]") : [];
+        // Sets saved before the examples were included get them in front.
+        if (hit && !tests.some((t) => t.confidence === "official")) {
+          const ex = ctx.samples.map((x, i) => ({ size: "sample", input: String(x.input).endsWith("\n") ? String(x.input) : `${x.input}\n`, expected: String(x.output), confidence: "official", label: `Example ${i + 1}` }));
+          tests = [...ex, ...tests];
+        }
+        // A saved set that is too small is made again rather than handed on.
+        if (hit && tests.length >= MIN_TOTAL) {
           send({ type: "done", ok: true, tests, stats: { ...JSON.parse(hit.stats || "{}"), cached: true, cachedAt: hit.created_at }, multipleAnswers: manyAnswers(ctx.statement) });
           return res.end();
         }
@@ -123,8 +129,8 @@ function createCodingRouter({ get, run = null, me, aiLimiter, judgeLimiter }) {
         repair: async ({ program, failure }) => (await ask("testgen_fix", { title: ctx.title, statement: ctx.statement, samples: ctx.samples, program, failure })).program,
         onProgress: (step) => send({ type: "progress", step }),
       });
-      // Keep a set worth sharing (a few tests at least), for everyone after.
-      if (key && run && result.tests.length >= 4) {
+      // Keep a set worth sharing (at least MIN_TOTAL tests, examples included), for everyone after.
+      if (key && run && result.tests.length >= MIN_TOTAL) {
         await cacheInit();
         const stats = { kept: result.stats.kept, verified: result.stats.verified };
         await run("INSERT OR REPLACE INTO ai_test_sets(problem_key, tests, stats, created_by, created_at) VALUES(?,?,?,?,?)", [key, JSON.stringify(result.tests), JSON.stringify(stats), me() || null, Date.now()]).catch(() => {});

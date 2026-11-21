@@ -105,6 +105,7 @@ const MODES = {
   },
 
   fix: {
+    think: true,
     model: "main",
     maxTokens: 2048,
     temperature: 0,
@@ -206,6 +207,7 @@ Keep every string short. An empty list beats a weak entry.`,
   },
 
   coach_tests: {
+    think: true,
     model: "main",
     json: true,
     maxTokens: 1600,
@@ -285,6 +287,7 @@ Explain this verdict so the student can fix it themselves. Use exactly this mark
      The server runs them; an expected output is kept only when the
      references pass the official samples and agree (see src/testgen.js). */
   testgen_plan: {
+    think: true,
     model: "main",
     json: true,
     maxTokens: 7000,
@@ -335,6 +338,7 @@ Reply with JSON only:
      not). The three steps run at the same time; see routes/coding.js. */
   testgen_cases: {
     model: "main",
+    think: true,
     maxTokens: 1600,
     temperature: 0.2,
     timeoutMs: 120000,
@@ -358,6 +362,7 @@ ${samplesBlock(i)}
   },
   testgen_brute: {
     model: "main",
+    think: true,
     maxTokens: 1200,
     temperature: 0.1,
     timeoutMs: 120000,
@@ -369,6 +374,7 @@ ${samplesBlock(i)}
   },
   testgen_solution: {
     model: "main",
+    think: true,
     maxTokens: 1400,
     temperature: 0.1,
     timeoutMs: 120000,
@@ -380,6 +386,7 @@ ${samplesBlock(i)}
   },
   testgen_fix: {
     model: "main",
+    think: true,
     maxTokens: 1200,
     temperature: 0.1,
     timeoutMs: 120000,
@@ -395,6 +402,7 @@ ${samplesBlock(i)}
 
   /* ── Code analysis: everything about the student's code ── */
   code_analysis: {
+    think: true,
     model: "main",
     json: true,
     maxTokens: 3500,

@@ -6,6 +6,7 @@ import { sanitizeHtml } from '@/lib/sanitize'
 import { prepareMathHtml, renderMathIn } from '@/lib/math'
 import { useStatementMedia } from './StatementMedia'
 import { TranslateBar } from './TranslateBar'
+import { shownTranslation } from './translationMemory'
 import { ThinkingPad } from './ThinkingPad'
 import { SolutionTab } from './SolutionTab'
 import type { Lang } from '@/learn/engine/types'
@@ -153,8 +154,10 @@ export function ProblemPanel({
   onDryRunSample,
 }: Props) {
   const [tab, setTab] = useState('statement')
-  const [translated, setTranslated] = useState<{ lang: string; html: string } | null>(null)
-  const [translating, setTranslating] = useState(false)
+  // A translation made before a layout change is shown again at once.
+  const stmtHtml = statement ? [statement.statement, statement.inputSpec, statement.outputSpec, statement.note].filter(Boolean).join('') : ''
+  const [translated, setTranslated] = useState<{ lang: string; html: string } | null>(() => shownTranslation(stmtHtml))
+  const [translating, setTranslating] = useState(() => !!shownTranslation(stmtHtml))
   const [showTopics, setShowTopics] = useState(false)
   // Every section (statement, input, output, note) lives inside this one root,
   // so formulas render everywhere — not only in the first block.
@@ -292,7 +295,7 @@ export function ProblemPanel({
                 {translating && !custom && (
                   <div className="mb-5">
                     <TranslateBar
-                      html={[statement.statement, statement.inputSpec, statement.outputSpec, statement.note].filter(Boolean).join('')}
+                      html={stmtHtml}
                       onResult={(r) => setTranslated(r ? { lang: r.lang, html: r.html } : null)}
                     />
                   </div>
