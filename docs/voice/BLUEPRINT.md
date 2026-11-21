@@ -412,7 +412,7 @@ working even if every free service disappeared — just simpler.
 | `client/src/voice/code/` | tree-sitter + Monaco edits, pseudocode panel, Mirror Run view |
 | `src/voice/` | server ears, tutor, Leak Guard, TTS streaming, corpus storage (own store, never in the core DB) |
 | `deploy/voice/` | ASR/TTS/LLM server configs (Cloudflare Workers / Workers AI, Hugging Face Space, GPU farm when available) |
-| `docs/voice/` | this blueprint, the Guru Spec, test sets, research |
+| `docs/voice/` | this blueprint, the Guru Spec (`GURU_SPEC.md`), test sets (`tests/commands.json`, `scene.json`, `tutor.json`), research |
 
 ## 10. Biggest risks
 
