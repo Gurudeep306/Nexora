@@ -344,6 +344,52 @@ it. When free limits run out it falls back (text hints, browser voices, the
 verified solution) instead of charging. Upgrades with startup credits are an
 explicit admin choice.
 
+### Never stuck on a limit: automatic switching
+
+Every job has a **chain** of free options. When one is full, slow or down, the
+next takes over by itself, and the student never sees an error. The last link
+in every chain runs on the student's own device or needs no AI at all, so it
+cannot run out.
+
+| Job | Chain, in order (first that has room wins) |
+|---|---|
+| Ears (speech → text) | on-device browser recognition → Groq Whisper (free) → Cloudflare Workers AI Whisper → Azure Speech free tier → small Whisper in the browser → typed input |
+| Brain (tutor answers) | Guru on the student's device → cached answer for the same doubt → Cloudflare Workers AI → Groq → Gemini → Cerebras → OpenRouter free models → verified solution + hint text (no AI) |
+| Mouth (voice) | pre-voiced clip (founder's voice, from R2) → Azure Speech free tier (best Indian voices) → open Indian TTS on a free host → Kokoro / Piper in the browser → the browser's built-in voice |
+| Commands, Scene Voice | always on the device, no limit |
+
+How it works (reuses Hive's existing provider router and key handling,
+Admin → AI models):
+
+- **Quota tracking**: count each provider's use against its published daily
+  and per-minute limits; switch *before* hitting the limit, not after errors.
+- **Health checks and circuit breakers**: a provider that fails or slows down
+  is skipped for a few minutes, then retried.
+- **Daily reset**: free quotas refill each day; the chain returns to the best
+  option automatically.
+- **Fair share**: a soft per-student daily budget for live AI turns so a few
+  heavy users can't use up the day for everyone; beyond it, the device and
+  no-AI links still answer.
+- **Admin view**: today's usage per provider, how often each link answered,
+  and alerts when a chain is close to its last link.
+
+Ways to need fewer free calls in the first place:
+
+1. **Answer cache**: the same doubt asked again (in other words) reuses a
+   stored answer — most doubts repeat.
+2. **Pre-generate**: lesson narration, solution walkthroughs and the top
+   doubts per question are made once on free GPU time and served from R2.
+3. **On-device first**: commands, Scene Voice and Guru on capable devices use
+   no server at all; every new student brings their own compute.
+4. **Short answers**: spoken replies are kept brief; long text only on request.
+5. **Startup credits**: when granted, added as extra links at the front of
+   the chain — never required.
+
+Honest limit: free services can change their terms or close. One account
+per provider, official limits only (several accounts at one provider breaks
+their terms). Because the last links run on the device, the feature keeps
+working even if every free service disappeared — just simpler.
+
 ## 8. Phases
 
 | Phase | Weeks | Ships | Done when |
