@@ -18,6 +18,15 @@
 //    TTL. SESSION_CACHE_TTL_MS=0 disables the cache (the default in tests,
 //    which edit the database file directly and expect the next request to
 //    see it).
+//  • A read waits for any write to the same session still in flight.
+//    express-session sends the response headers (with the new cookie) before
+//    the store's write has finished, so a client that acts on the headers
+//    alone (a fetch() that never reads the body, or a page firing its next
+//    request at once) could otherwise reach the server before the session
+//    row exists and be treated as signed out. express-session calls set()
+//    synchronously before it writes anything, so the write is always
+//    registered here first. One process holds the sessions (ecosystem
+//    config: one instance), so waiting in-process is enough.
 const session = require("express-session");
 const { run, get, onWrite } = require("./db");
 const { ACCESS_COLUMNS } = require("./authz/permissions");
@@ -63,6 +72,7 @@ class DbSessionStore extends session.Store {
     this.userRows = new Map(); // sid -> { username, row, at } (see takeUserRow)
     this.stats = { hits: 0, misses: 0, writes: 0, touchesSkipped: 0 };
     this.gen = 0; // bumped by every invalidation: a read that raced one is not cached
+    this.pending = new Map(); // sid -> promise of the write in flight (see track)
     stores.add(this);
     this.ready = run(
       `CREATE TABLE IF NOT EXISTS sessions (
@@ -75,6 +85,19 @@ class DbSessionStore extends session.Store {
       .catch((e) => console.error("[sessions] table init failed:", e.message));
     this.pruneTimer = setInterval(() => this.prune(), PRUNE_INTERVAL_MS);
     this.pruneTimer.unref?.();
+  }
+
+  /** Remember a write to `sid` until it settles, so get() can wait for it. */
+  track(sid, p) {
+    const done = p.then(
+      () => {},
+      () => {},
+    );
+    this.pending.set(sid, done);
+    done.then(() => {
+      if (this.pending.get(sid) === done) this.pending.delete(sid);
+    });
+    return p;
   }
 
   clearCache() {
@@ -109,6 +132,9 @@ class DbSessionStore extends session.Store {
   }
 
   get(sid, cb) {
+    // A write to this session still in flight: read after it lands.
+    const pending = this.pending.get(sid);
+    if (pending) return void pending.then(() => this.get(sid, cb));
     const hit = this.cached(sid);
     if (hit !== null) this.stats.hits++;
     const gen = this.gen;
@@ -171,7 +197,7 @@ class DbSessionStore extends session.Store {
     this.gen++;
     this.cache.delete(sid);
     this.stats.writes++;
-    this.ready
+    const write = this.ready
       .then(() =>
         run(
           `INSERT INTO sessions(sid, sess, expires) VALUES(?,?,?)
@@ -182,9 +208,8 @@ class DbSessionStore extends session.Store {
       .then(() => {
         this.storedExpiry.set(sid, expires);
         this.cache.delete(sid); // a read that raced the write may have cached the old row
-        cb(null);
-      })
-      .catch((e) => cb(e));
+      });
+    this.track(sid, write).then(() => cb(null), (e) => cb(e));
   }
 
   touch(sid, sess, cb = () => {}) {
@@ -213,13 +238,12 @@ class DbSessionStore extends session.Store {
     this.storedExpiry.delete(sid);
     this.gen++;
     this.cache.delete(sid);
-    this.ready
+    const write = this.ready
       .then(() => run("DELETE FROM sessions WHERE sid=?", [sid]))
       .then(() => {
         this.cache.delete(sid);
-        cb(null);
-      })
-      .catch((e) => cb(e));
+      });
+    this.track(sid, write).then(() => cb(null), (e) => cb(e));
   }
 
   prune() {
