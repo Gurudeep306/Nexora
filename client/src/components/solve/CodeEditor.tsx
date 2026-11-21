@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { registerCode, touchCode } from '@/voice/code/active'
 import { APP_EDITOR_THEME, useMonacoAppTheme } from '@/theme/useMonacoAppTheme'
 import '@/lib/monaco'
 import Editor, { type BeforeMount, type OnMount } from '@monaco-editor/react'
@@ -590,6 +591,8 @@ export function CodeEditor({
   explainRef.current = onExplain
   const disposers = useRef<{ dispose: () => void }[]>([])
   const editorRef = useRef<Parameters<OnMount>[0] | null>(null)
+  const voiceId = useId()
+  const formatRef = useRef<() => void>(() => {})
   useEffect(() => {
     const ed = editorRef.current
     if (!reveal || !ed) return
@@ -750,6 +753,11 @@ export function CodeEditor({
     editorRef.current = editor
     monacoRef.current = monaco
     decorationsRef.current = editor.createDecorationsCollection()
+    // Code by voice (voice/code): the mic's edits go to the editor in use.
+    disposers.current.push(
+      { dispose: registerCode({ id: voiceId, editor: () => editorRef.current, language: () => langRef.current, format: () => (formatRef.current(), true) }) },
+      editor.onDidFocusEditorText(() => touchCode(voiceId)),
+    )
     monaco.editor.setTheme(theme)
     // On touch screens Monaco adds a "show the keyboard" field with no name;
     // it appears after mount, so name it whenever it does.
@@ -952,6 +960,7 @@ export function CodeEditor({
     }
     setTimeout(() => setFormatNote(''), 2500)
   }
+  formatRef.current = format
 
   const insertTemplate = () => {
     const tpl = TEMPLATES[language]

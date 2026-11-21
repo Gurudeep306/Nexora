@@ -279,7 +279,12 @@ from a range, since test files run in parallel and a clash fails the run.
   off-topic and live-exam turns get a rule reply. It walks only free
   providers (Admin → AI models, `features.tutor` first) and fails over; if
   all fail it answers from the verified solution or says it can't, never
-  guesses. The voice feature never calls a paid service
+  guesses. **Code by voice** (`voice/code/`, lane C, no AI): with a code
+  editor in use the mic edits it — "line 12 pe jao", "rename i to j" (skips
+  strings, comments and fields), "for loop 0 se n tak" (written in the
+  editor's language), "read line 5", "read my code", "undo"; each edit is one
+  undo step and is outlined. Test set `docs/voice/tests/code.json`. On the
+  Solve page "run" runs and "submit" asks to confirm. The voice feature never calls a paid service
   (`tests/voice-zero-spend.test.js`).
 - **AI models** are chosen in Admin → AI models (`src/ai/settings.js`): any
   OpenAI-compatible provider, keys sealed at rest, a model per slot and per
