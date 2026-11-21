@@ -2,7 +2,9 @@
 
 > Status: **Phase 0 done** (Action Graph, voice-ready names, Guru Spec, test
 > sets, zero-spend guard, consent) **and voice commands live** (browser speech +
-> rule matcher). Next: Scene Voice. Plan written 2026-11-21 from two research rounds
+> rule matcher) **and Scene Voice live** (talk to the animations: jump, rewind,
+> what-if, why, value, speed, predict — answers come from the trace). Next:
+> the Guru tutor (Phase 2). Plan written 2026-11-21 from two research rounds
 > (`docs/voice/research/`). Every licence, price and limit below must be
 > re-checked on the official page before it is relied on: the research could
 > not open some sites and marks those facts as unverified.

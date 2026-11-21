@@ -264,7 +264,13 @@ from a range, since test files run in parallel and a clash fails the run.
   The mic (top bar) uses the browser's free speech recognition plus the
   rule matcher (`voice/actions/match.ts`, test set
   `docs/voice/tests/commands.json`, ≥ 95%); irreversible actions need a
-  spoken or tapped confirm. Keep every control's accessible name containing
+  spoken or tapped confirm. **Scene Voice** (`voice/scene/`): with an animation
+  on screen, the mic drives it — "swap pe ruko", "go to when low equals high",
+  "what if sorted", "why did i become 4", "mid kya hai", predict mode. Every
+  answer comes from the recorded frames (step ids, notes, vars, pointers),
+  never a model (test set `docs/voice/tests/scene.json`). Name steps with the
+  event words (`swap`, `cmp`, `found`, `push`, `pop`…) so students can jump to
+  them. Keep every control's accessible name containing
   its visible text (`npm run voice:names`). The voice feature never calls a
   paid service (`tests/voice-zero-spend.test.js`).
 - **AI models** are chosen in Admin → AI models (`src/ai/settings.js`): any

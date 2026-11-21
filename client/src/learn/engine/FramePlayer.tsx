@@ -11,6 +11,11 @@ import { GridView, MeterView, OutputView, QueueView, StackView, VarsView } from 
 import { GraphView, HashView, ListView, TreeView } from './views/Linked'
 import { CallsView, MapView } from './views/MapCalls'
 import { ROLE_LABEL, StageContext, rolesIn, type StageInfo } from './views/stage'
+import { registerScene, touchScene } from '@/voice/scene/active'
+import type { WhatIf } from '@/voice/scene/parse'
+import { normalize, sameWord } from '@/voice/actions/match'
+import { EVENTS } from '@/voice/scene/parse'
+import { ALIASES } from '@/voice/scene/resolve'
 
 /*
  * The one animation player on the site. The DSA chapters (VizPlayer: an
@@ -163,15 +168,39 @@ export interface FramePlayerProps {
   /** Under the stage: a banner such as "showing the first 3000 steps". */
   footnote?: ReactNode
   className?: string
+  /** Scene Voice "what if…": re-run on a changed input (VizPlayer supplies it). */
+  onWhatIf?: (input: WhatIf) => { say: string } | { error: string }
 }
 
-export function FramePlayer({ id, kicker = 'Visualizer', title, blurb, frames, error, header, code, codeTabs, legend, resetKey, syncTo, autoplay = true, marks, footnote, className }: FramePlayerProps) {
+const GUESS_STOP = new Set(['the', 'a', 'an', 'is', 'it', 'will', 'to', 'of', 'and', 'then', 'so', 'now', 'next', 'hoga', 'hogi', 'ho', 'ga', 'ki', 'ka', 'ke', 'se', 'aur', 'phir', 'woh', 'yeh', 'i', 'think', 'we', 'karenge', 'karega', 'karegi', 'jayega', 'jayegi', 'wala', 'wali', 'with', 'at', 'in', 'on'])
+
+/**
+ * How close a spoken guess is to what the next step actually does (0–1):
+ * the share of the student's meaningful words found in the step, counting
+ * the step's event words ("cmp" → compare, check…) and name aliases (mid ↔ middle).
+ */
+function guessScore(guess: string, frame: Frame): number {
+  const said = [...new Set(normalize(guess).split(' ').filter((w) => w && !GUESS_STOP.has(w)))]
+  if (!said.length) return 0
+  const truth = new Set(normalize(`${frame.step} ${frame.note}`).split(' ').filter((w) => w && !GUESS_STOP.has(w)))
+  for (const words of Object.values(EVENTS)) if (words.some((w) => truth.has(w) || frame.step.toLowerCase() === w)) words.forEach((w) => truth.add(w))
+  for (const w of [...truth]) for (const alt of ALIASES[w] ?? []) truth.add(alt)
+  let hit = 0
+  for (const w of said) if (truth.has(w) || [...truth].some((t) => sameWord(t, w))) hit++
+  return hit / said.length
+}
+
+export function FramePlayer({ id, kicker = 'Visualizer', title, blurb, frames, error, header, code, codeTabs, legend, resetKey, syncTo, autoplay = true, marks, footnote, className, onWhatIf }: FramePlayerProps) {
   const [idx, setIdx] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(1)
   const [focus, setFocus] = useState(false)
   const [log, setLog] = useState(false)
   const [stageW, setStageW] = useState(760)
+  // Scene Voice: predict mode stops before each step and asks for a guess.
+  const [predict, setPredict] = useState(false)
+  const [waiting, setWaiting] = useState(false)
+  const [voiceHit, setVoiceHit] = useState(0)
   const stageRef = useRef<HTMLDivElement>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   // Figures play by themselves once they are in view, and hold still while the
@@ -215,10 +244,15 @@ export function FramePlayer({ id, kicker = 'Visualizer', title, blurb, frames, e
   }
 
   useEffect(() => {
-    if (!running) return
-    const t = window.setTimeout(() => setIdx((i) => Math.min(i + 1, last)), 1000 / speed)
+    if (!running || waiting) return
+    const t = window.setTimeout(() => {
+      if (predict) {
+        setPlaying(false)
+        setWaiting(true)
+      } else setIdx((i) => Math.min(i + 1, last))
+    }, 1000 / speed)
     return () => window.clearTimeout(t)
-  }, [running, at, last, speed])
+  }, [running, at, last, speed, predict, waiting])
 
   // Arrays size their cells to the stage, so a long array still fits a phone.
   useLayoutEffect(() => {
@@ -245,9 +279,84 @@ export function FramePlayer({ id, kicker = 'Visualizer', title, blurb, frames, e
 
   const go = (i: number) => {
     setTouched(true)
+    setWaiting(false)
     setIdx(Math.max(0, Math.min(last, i)))
     setPlaying(false)
   }
+  const reveal = () => {
+    setWaiting(false)
+    setIdx((i) => Math.min(i + 1, last))
+  }
+
+  // Scene Voice: the mic can drive this player (voice/scene/active.ts).
+  const live = useRef({ frames, at, last, waiting, onWhatIf, title })
+  useLayoutEffect(() => {
+    live.current = { frames, at, last, waiting, onWhatIf, title }
+  })
+  useEffect(() => {
+    const flash = () => setVoiceHit((n) => n + 1)
+    return registerScene({
+      id,
+      title,
+      el: () => rootRef.current,
+      frames: () => live.current.frames,
+      at: () => live.current.at,
+      go: (i) => {
+        flash()
+        go(i)
+      },
+      play: () => {
+        flash()
+        setTouched(true)
+        setHold(false)
+        if (live.current.at >= live.current.last) setIdx(0)
+        setPlaying(true)
+      },
+      pause: () => {
+        flash()
+        setTouched(true)
+        setPlaying(false)
+      },
+      replay: () => {
+        flash()
+        setTouched(true)
+        setHold(false)
+        setWaiting(false)
+        setIdx(0)
+        setPlaying(true)
+      },
+      speed: (to) => {
+        flash()
+        setSpeed((s) => {
+          const k = SPEEDS.indexOf(s)
+          return to === 'normal' ? 1 : SPEEDS[Math.max(0, Math.min(SPEEDS.length - 1, k + (to === 'faster' ? 1 : -1)))]
+        })
+      },
+      whatIf: (input) => {
+        const fn = live.current.onWhatIf
+        if (!fn) return { error: 'This animation doesn’t take an input to change.' }
+        flash()
+        return fn(input)
+      },
+      predict: (on) => {
+        flash()
+        setPredict(on)
+        setWaiting(false)
+      },
+      awaitingGuess: () => live.current.waiting,
+      guess: (text) => {
+        const { frames: fs, at: i } = live.current
+        const next = fs[i + 1]
+        if (!next) return 'That was the last step.'
+        const good = guessScore(text, next) >= 0.34
+        setWaiting(false)
+        setIdx(i + 1)
+        return good ? `Yes! ${next.note}` : `Not quite — here’s what happens: ${next.note}`
+      },
+    })
+    // go/setters are stable for this player's life; handle reads live state via the ref.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
   const toggle = () => {
     setTouched(true)
     setHold(false)
@@ -294,11 +403,14 @@ export function FramePlayer({ id, kicker = 'Visualizer', title, blurb, frames, e
       ref={rootRef}
       tabIndex={0}
       onKeyDown={onKey}
+      onPointerDown={() => touchScene(id)}
+      onFocusCapture={() => touchScene(id)}
       onMouseEnter={() => setHold(true)}
       onMouseLeave={() => setHold(false)}
       onFocus={() => setHold(true)}
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setHold(false)}
       className={cn('viz-player card overflow-hidden p-0 outline-none', focus && 'viz-focus', className)}
+      data-voice-hit={voiceHit % 2 ? 'a' : voiceHit ? 'b' : undefined}
       aria-label={`Animation: ${title}`}
     >
       <div className="viz-head border-b border-border px-4 pt-3 pb-3">
@@ -309,7 +421,7 @@ export function FramePlayer({ id, kicker = 'Visualizer', title, blurb, frames, e
           <div className="min-w-0 flex-1">
             <p className="mb-0 text-[10.5px] font-semibold tracking-[0.14em] text-accent-brand uppercase">{kicker}</p>
             <p className="mb-0 font-display text-[15.5px] leading-snug font-semibold text-text-primary">{title}</p>
-            {blurb && <div className="mt-0.5 mb-0 text-[12.5px] text-text-muted">{blurb}</div>}
+            {blurb && <div className="viz-blurb mt-0.5 mb-0 text-[12.5px] text-text-muted">{blurb}</div>}
           </div>
           <button type="button" onClick={() => setFocus((f) => !f)} className="viz-icon-btn" aria-label={focus ? 'Exit full screen' : 'Full screen'} title={focus ? 'Exit full screen (Esc)' : 'Full screen (F)'}>
             {focus ? <Minimize2 /> : <Maximize2 />}
@@ -350,6 +462,15 @@ export function FramePlayer({ id, kicker = 'Visualizer', title, blurb, frames, e
                   ))}
                 </div>
               )}
+            </div>
+          )}
+          {waiting && frame && at < last && (
+            <div className="viz-predict border-t border-border px-4 py-3" role="status">
+              <p className="mb-2 text-[13.5px] font-medium text-text-primary">What happens next? Say your guess — or tap to see.</p>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" className="btn-primary !px-3 !py-1.5 !text-[12.5px]" onClick={reveal}>Show next step</button>
+                <button type="button" className="btn-secondary !px-3 !py-1.5 !text-[12.5px]" onClick={() => { setPredict(false); reveal() }}>Stop asking</button>
+              </div>
             </div>
           )}
           {footnote && <div className="viz-footnote border-t border-border px-4 py-2 text-[12px] text-text-muted">{footnote}</div>}
