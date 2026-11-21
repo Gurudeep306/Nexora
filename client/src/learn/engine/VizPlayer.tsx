@@ -7,6 +7,7 @@ import { CodeLines, FramePlayer, StructureView } from './FramePlayer'
 import { LANGS, type Algorithm, type Frame, type Inputs, type Lang } from './types'
 import { whatIfInputs } from '@/voice/scene/resolve'
 import type { WhatIf } from '@/voice/scene/parse'
+import { MirrorRun } from '@/voice/mirror/MirrorRun'
 
 const LANG_KEY = 'nexora:learn-lang'
 
@@ -75,6 +76,7 @@ export function VizPlayer({
   const [applied, setApplied] = useState<Record<string, string>>(defaults)
   const [lang, setLangState] = useState<Lang>(readLang)
 
+  const parsedInputs = useMemo(() => parseInputs(algo, applied).inputs ?? null, [algo, applied])
   const { frames, error } = useMemo((): { frames: Frame[]; error?: string } => {
     const p = parseInputs(algo, applied)
     if (!p.inputs) return { frames: [], error: p.error }
@@ -168,6 +170,7 @@ export function VizPlayer({
       resetKey={applied}
       syncTo={syncTo}
       className={className}
+      after={frames.length ? <MirrorRun sceneId={algo.id} title={algo.title} inputs={parsedInputs} frames={frames} /> : undefined}
       onWhatIf={(input: WhatIf) => {
         const r = whatIfInputs(algo.inputs, applied, input)
         if ('error' in r) return r

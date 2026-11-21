@@ -288,4 +288,4 @@ async function askGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN" }
   return { say: `${base} ${hasTask ? (hinglish ? "Tab tak question ko chhote examples pe try karo." : "तब तक छोटे उदाहरणों पर कोशिश करो।") : ""}`.trim(), step, source: "none" };
 }
 
-module.exports = { askGuru, leaks, ladderStep, buildMessages, freeTargets, offTopic, spoken, FREE_KINDS };
+module.exports = { askGuru, leaks, ladderStep, buildMessages, freeTargets, offTopic, spoken, chain, FREE_KINDS };
