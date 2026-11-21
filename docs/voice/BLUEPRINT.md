@@ -9,7 +9,7 @@
 > `src/voice/guru.js`) **and code by voice, lane C, live** (spoken edits in the
 > editor, `client/src/voice/code/`) **and Mirror Run live** (say an approach,
 > watch it run beside the lesson, first difference + one question,
-> `client/src/voice/mirror/`). Next: Phase 4 (own models: data and training). Plan written 2026-11-21 from two research rounds
+> `client/src/voice/mirror/`) **and Build mode live** (translate any time, other changes after Accepted; run on the examples, diff, 3 retries) **and numerical answers by voice** in the exam console **and Explain-back live** (Phase 4 item: trace checked exactly, rubric points must quote the student, unaided passes count towards the DSA Nexus). Next: Phase 4 (own models: data and training). Plan written 2026-11-21 from two research rounds
 > (`docs/voice/research/`). Every licence, price and limit below must be
 > re-checked on the official page before it is relied on: the research could
 > not open some sites and marks those facts as unverified.

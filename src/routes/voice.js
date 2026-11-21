@@ -5,6 +5,10 @@ const rateLimit = require("express-rate-limit");
 const { logError } = require("../http-error");
 const { askGuru } = require("../voice/guru");
 const { approachToPseudo } = require("../voice/pseudo");
+const { buildCode } = require("../voice/build");
+const explain = require("../voice/explain");
+const db = require("../db");
+const { invalidateNexusUser } = require("../nexus/user-cache");
 
 function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
   const router = express.Router();
@@ -17,8 +21,16 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
     message: { ok: false, error: "That's a lot of questions in a minute — take a breath and try again." },
   });
 
+  explain.ensureTables(db).catch((e) => logError("voice.explain.tables", e));
+
   router.post("/api/voice/guru", requireAuthenticatedUser, limiter, async (req, res) => {
     const { text, page, hintsGiven, lang } = req.body || {};
+    const username = req.sessionUser?.username || "";
+    const problemId = page && typeof page === "object" ? page.problemId : null;
+    // Explain-back is a viva: no hints until it ends.
+    if (problemId && explain.explaining(username, problemId)) {
+      return res.json({ ok: true, say: lang === "hi-IN" ? "अभी Explain-back चल रहा है — अपने शब्दों में समझाओ, हिंट बाद में।" : "Explain-back is on — tell it in your own words. Hints after.", step: 0, source: "rule" });
+    }
     try {
       const out = await askGuru({
         user: req.sessionUser,
@@ -27,6 +39,8 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
         hintsGiven: Math.max(0, Math.min(10, Number(hintsGiven) || 0)),
         lang: lang === "hi-IN" ? "hi-IN" : "en-IN",
       });
+      // Any help on a problem makes a later explain-back of it "aided" for a day.
+      if (problemId && out.source !== "rule" && out.source !== "none") explain.logHint(db, username, problemId).catch(() => {});
       res.json({ ok: true, ...out });
     } catch (e) {
       if (e?.name === "AiError") return res.status(e.status || 502).json({ ok: false, error: e.message });
@@ -50,6 +64,60 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
       logError("voice.pseudo", e);
       res.status(500).json({ ok: false, error: "Couldn’t write the steps — type them instead." });
     }
+  });
+
+  // Build mode: translate the student's code, or (after Accepted) change it.
+  router.post("/api/voice/build", requireAuthenticatedUser, limiter, async (req, res) => {
+    const b = req.body || {};
+    const problem = b.problem && typeof b.problem === "object" ? { kind: String(b.problem.kind || ""), id: String(b.problem.id ?? "") } : null;
+    const failing = b.failing && typeof b.failing === "object" ? b.failing : null;
+    try {
+      // eslint-disable-next-line global-require
+      const db = require("../db");
+      const out = await buildCode({
+        user: req.sessionUser,
+        db,
+        mode: b.mode === "translate" ? "translate" : b.mode === "change" ? "change" : "",
+        problem,
+        code: typeof b.code === "string" ? b.code : "",
+        language: String(b.language || ""),
+        target: String(b.target || ""),
+        instruction: typeof b.instruction === "string" ? b.instruction : "",
+        failing,
+        previous: typeof b.previous === "string" ? b.previous : null,
+      });
+      res.json(out);
+    } catch (e) {
+      logError("voice.build", e);
+      res.status(500).json({ ok: false, say: "Build mode ran into a problem — try again." });
+    }
+  });
+
+  // Explain-back: after Accepted, explain the solution; graded, and counted when unaided.
+  const problemOf = (b) => (b?.problem && typeof b.problem === "object" ? { kind: String(b.problem.kind || ""), id: String(b.problem.id ?? "").slice(0, 100) } : null);
+  router.post("/api/voice/explain/start", requireAuthenticatedUser, limiter, async (req, res) => {
+    const b = req.body || {};
+    try {
+      res.json(await explain.startExplain({ db, user: req.sessionUser, problem: problemOf(b), code: typeof b.code === "string" ? b.code : "", language: String(b.language || "") }));
+    } catch (e) {
+      logError("voice.explain.start", e);
+      res.status(500).json({ ok: false, say: "Explain-back couldn’t start — try again." });
+    }
+  });
+  router.post("/api/voice/explain/grade", requireAuthenticatedUser, limiter, async (req, res) => {
+    const b = req.body || {};
+    try {
+      const out = await explain.gradeExplain({ db, user: req.sessionUser, token: b.token, transcript: typeof b.transcript === "string" ? b.transcript : "", answer: typeof b.answer === "string" ? b.answer : "" });
+      if (out.counted) invalidateNexusUser(req.sessionUser.username);
+      res.json(out);
+    } catch (e) {
+      logError("voice.explain.grade", e);
+      res.status(500).json({ ok: false, say: "Grading ran into a problem — your words are still there, try again." });
+    }
+  });
+  router.post("/api/voice/explain/cancel", requireAuthenticatedUser, (req, res) => {
+    explain.cancelExplain(req.sessionUser?.username || "");
+    res.json({ ok: true });
   });
 
   return router;

@@ -284,7 +284,20 @@ from a range, since test files run in parallel and a clash fails the run.
   strings, comments and fields), "for loop 0 se n tak" (written in the
   editor's language), "read line 5", "read my code", "undo"; each edit is one
   undo step and is outlined. Test set `docs/voice/tests/code.json`. On the
-  Solve page "run" runs and "submit" asks to confirm. **Mirror Run**
+  Solve page "run" runs and "submit" asks to confirm. **Build mode**
+  (`voice/code/build.ts`, `BuildSheet.tsx`, `src/voice/build.js`): "translate
+  to python" rewrites the student's own code line for line (bugs kept) any
+  time; any other change ("make it iterative") only after the server sees
+  Accepted. The result is run on the examples (a translation must print what
+  the original prints), retried with the failing case up to 3 times, and
+  shown as a diff; nothing enters the editor until "Use this code" (one undo
+  step). **Explain-back** (`voice/explain/`, `src/voice/explain.js`, tables
+  `voice_explain`, `voice_hint_log`): after Accepted, explain the solution
+  aloud or typed and trace one random small test by hand. The trace is
+  checked exactly; a free model scores a five-part rubric and every point must
+  quote the student's words. Guru stays quiet during it; a pass counts towards
+  the DSA Nexus (like one more solve in the problem's skills, once per
+  problem) only when no Guru help on that problem in the day before. **Mirror Run**
   (`voice/mirror/`, under every lesson animation, or say "mirror run"): the
   student says an approach, `POST /api/voice/pseudo` writes it as pseudocode
   exactly as said (never fixed), and `pseudo.ts` (a small interpreter, no
@@ -293,8 +306,8 @@ from a range, since test files run in parallel and a clash fails the run.
   difference. Typing the steps needs no AI. **Listen** (`components/reader/ReadAloud.tsx`)
   follows the voice word by word (`wordTrack.ts`, CSS highlight `nr-word`)
   and answers "padh ke sunao" / "stop reading". **The exam console** has its
-  own mic (`VoiceButton layer="top"`) and voice actions ("B chuno", "save and
-  next", "question 12", "mark for review"; Guru gives no hints in a test).
+  own mic (`VoiceButton layer="top"`) and voice actions ("B chuno", "answer 42.5" or "minus do point paanch"
+  on numerical questions (`voice/actions/number.ts`), "save and next", "question 12", "mark for review"; Guru gives no hints in a test).
   Alt+M opens the top mic anywhere. **Training data** rules are in
   `docs/voice/TRAINING.md`: our solutions and lessons were drafted with AI
   agents, so they are lookup material only, never training data; the

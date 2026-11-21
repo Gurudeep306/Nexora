@@ -25,6 +25,7 @@ import { resolveScene } from './scene/resolve'
 import { activeCode, type CodeHandle } from './code/active'
 import { applyCode } from './code/apply'
 import { parseCode, type CodeCommand } from './code/parse'
+import { activeBuilder, parseBuild } from './code/build'
 import { speak, stopSpeaking } from './speak'
 import './voice.css'
 
@@ -199,6 +200,14 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
       const code = activeCode()
       const edit = code ? parseCode(heard) : null
       if (code && edit) return runCode(code, edit, heard)
+      // Build mode: "translate to python", "make it iterative" (opens a review sheet).
+      const build = code ? parseBuild(heard) : null
+      const builder = build ? activeBuilder() : null
+      if (build && builder) {
+        builder(build)
+        setPhase({ kind: 'done', heard, said: build.verb === 'translate' ? 'Build mode: translating' : 'Build mode' })
+        return hideSoon(1800)
+      }
       const result = matchCommand(heard, actions, index)
       const byId = (m: Match) => actions.find((a) => a.id === m.id)!
       if (result.best) {
@@ -329,7 +338,7 @@ function Pill({ phase, onClose, onRun, onAsk, onHint, onListen }: { phase: Phase
         </button>
       </div>
       {'heard' in phase && <p className="vc-heard">“{phase.heard}”</p>}
-      {phase.kind === 'listening' && <p className="vc-heard">{phase.text ? `“${phase.text}”` : activeScene() ? 'Talk to the animation: “swap pe ruko”, “why did i change?”, “what if sorted?”' : activeCode() ? 'Edit by voice: “line 12 pe jao”, “rename i to j”, “for loop 0 se n tak”, “read my code”.' : 'Say a command, like “notes kholo” or “dark mode”.'}</p>}
+      {phase.kind === 'listening' && <p className="vc-heard">{phase.text ? `“${phase.text}”` : activeScene() ? 'Talk to the animation: “swap pe ruko”, “why did i change?”, “what if sorted?”' : activeCode() ? 'Edit by voice: “line 12 pe jao”, “rename i to j”, “for loop 0 se n tak”, “translate to python”.' : 'Say a command, like “notes kholo” or “dark mode”.'}</p>}
       {phase.kind === 'error' && <p className="vc-note">{ERRORS[phase.error]}</p>}
       {phase.kind === 'scene' && <p className="vc-answer">{phase.say}</p>}
       {phase.kind === 'code' && (

@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
 import { useAgentPageContext } from '@/context/AgentContext'
 import { useVoiceActions } from '@/voice/actions/useVoiceAction'
+import { spokenNumber } from '@/voice/actions/number'
 import { VoiceButton } from '@/voice/VoiceButton'
 import type { VoiceAction } from '@/voice/actions/types'
 import { useAuth } from '@/context/AuthContext'
@@ -261,6 +262,24 @@ export function CbtConsole({
     const group = 'Exam'
     return [
       ...(opts.length ? [{ id: 'exam.choose', title: 'Choose an option', group, say: { en: ['option {opt}', 'choose {opt}', 'choose option {opt}', '{opt} choose', 'answer {opt}', 'select {opt}'] }, args: { opt: opts }, risk: 'reversible' as const, run: (a: Record<string, string>) => selectOption(a.opt) }] : []),
+      // A numerical answer: "answer 42.5", "minus do point paanch". Typed into the box, not saved.
+      ...(currentQuestion?.type === 'NAT'
+        ? [{
+            id: 'exam.number',
+            title: 'Type the answer',
+            group,
+            say: { en: ['type the answer', 'answer likho'] },
+            parse: (u: string) => {
+              const v = spokenNumber(u)
+              return v == null ? null : { value: v }
+            },
+            risk: 'reversible' as const,
+            run: (a: Record<string, string>) => {
+              if (a.value) setDraft(a.value)
+              else document.getElementById('nat-input')?.focus()
+            },
+          }]
+        : []),
       { id: 'exam.next', title: 'Save & next', group, say: { en: ['save and next', 'next question', 'save next', 'agla question', 'aage', 'next'] }, risk: 'reversible', run: () => commit(false) },
       { id: 'exam.review', title: 'Mark for review & next', group, say: { en: ['mark for review', 'review later', 'review ke liye', 'mark for review and next'] }, risk: 'reversible', run: () => commit(true) },
       { id: 'exam.clear', title: 'Clear response', group, say: { en: ['clear response', 'clear answer', 'clear my answer', 'answer hatao'] }, risk: 'reversible', run: () => clearResponse() },

@@ -67,7 +67,7 @@ export interface ListenHandle {
  * Listen for one utterance. `onText` gets the running transcript; `onDone`
  * gets the final text ('' if nothing was heard) exactly once.
  */
-export async function listenOnce(opts: { lang: string; onText: (t: string) => void; onDone: (text: string, error?: SpeechError) => void }): Promise<ListenHandle> {
+export async function listenOnce(opts: { lang: string; onText: (t: string) => void; onDone: (text: string, error?: SpeechError) => void; /** Keep listening through pauses (a long explanation) until stopped. */ continuous?: boolean }): Promise<ListenHandle> {
   const C = ctor()
   if (!C) {
     opts.onDone('', 'unsupported')
@@ -77,7 +77,7 @@ export async function listenOnce(opts: { lang: string; onText: (t: string) => vo
   const rec = new C()
   rec.lang = opts.lang
   rec.interimResults = true
-  rec.continuous = false
+  rec.continuous = !!opts.continuous
   rec.maxAlternatives = 1
   if (local && 'processLocally' in rec) rec.processLocally = true
   let finalText = ''
@@ -92,7 +92,7 @@ export async function listenOnce(opts: { lang: string; onText: (t: string) => vo
     let interim = ''
     for (let i = e.resultIndex; i < e.results.length; i++) {
       const r = e.results[i]
-      if (r.isFinal) finalText += r[0].transcript
+      if (r.isFinal) finalText += (finalText && !/\s$/.test(finalText) ? ' ' : '') + r[0].transcript.trim()
       else interim += r[0].transcript
     }
     opts.onText((finalText + interim).trim())

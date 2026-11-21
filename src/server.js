@@ -3687,11 +3687,14 @@ function nexusNotesVisible(req, notes) {
 async function nexusState(req, fresh) {
   const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
   // Totals, overrides, solved tags and GATE state are independent: one parallel round trip.
-  const [totals, solvedProblems, gateState] = await Promise.all([
+  const [totals, solvedRows, explained, gateState] = await Promise.all([
     myTotals(),
     all(solvedTagsSql()),
+    // Passed, unaided explain-backs count like one more solve in their skills.
+    require("./voice/explain").countedTagRows({ all }, me()),
     nexusGateState(fresh),
   ]);
+  const solvedProblems = [...solvedRows, ...explained];
   const dsa = buildDsaNexus(totals, solvedProblems);
   const notes = loadGateNotes();
   const computed = nexusSubjects.computeSubjects(reg, dsa.nodes, { ...gateState, notesVisible: nexusNotesVisible(req, notes) }, loadGateBank(), notes);
