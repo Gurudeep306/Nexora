@@ -42,6 +42,8 @@ async function approachToPseudo({ user, text, inputs = [], lessonTitle = "" }) {
     try {
       const out = await t.client.chat({ model: t.model, messages, maxTokens: 500, temperature: 0, timeoutMs: 20000 });
       if (out.usage) agent.addUsage(user?.username || "", out.usage).catch(() => {});
+      // An empty answer (all thinking, or cut off): try the next free provider.
+      if (!String(out.content || "").trim()) continue;
       const pseudo = clean(out.content);
       if (!pseudo) return { pseudo: "", source: t.label, say: "That didn’t sound like steps yet. Say what you do first, then what repeats, then when you stop." };
       return { pseudo, source: t.label, say: "Here are your steps, written as you said them. Check them, then run." };

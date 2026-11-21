@@ -177,6 +177,7 @@ function createGroqClient({
     throw new AiError("AI is unavailable right now — try again shortly.", 503, "unavailable");
   }
 
+  /** Reasoning models (Qwen3, DeepSeek-R1…) may put their thinking first: keep only the answer. */
   async function chat(opts) {
     const res = await post(opts, false);
     let data;
@@ -188,7 +189,7 @@ function createGroqClient({
     }
     const msg = data?.choices?.[0]?.message || {};
     return {
-      content: msg.content || "",
+      content: stripThinking(msg.content || ""),
       toolCalls: Array.isArray(msg.tool_calls) ? msg.tool_calls : [],
       usage: data?.usage || data?.x_groq?.usage || null,
       model: res._model,
@@ -206,6 +207,7 @@ function createGroqClient({
     let finishReason = null;
     const calls = []; // index → { id, type, function: { name, arguments } }
     let finished = false;
+    const visible = thinkFilter();
 
     const handle = (payload) => {
       let j;
@@ -229,7 +231,8 @@ function createGroqClient({
       }
       if (d.content) {
         content += d.content;
-        return d.content;
+        // A reasoning model's <think>…</think> never reaches the reader.
+        return visible(d.content) || null;
       }
       return null;
     };
@@ -264,9 +267,11 @@ function createGroqClient({
       throw e instanceof AiError ? e : new AiError("The AI stream was interrupted", 502);
     }
 
+    const tail = visible.flush();
+    if (tail) yield { type: "delta", content: tail };
     yield {
       type: "done",
-      content,
+      content: stripThinking(content),
       toolCalls: calls.filter(Boolean),
       usage,
       model: res._model,
@@ -307,4 +312,56 @@ function clientFor({ mode, slot = "main" } = {}) {
   return { client: groq(), model: slot === "fast" ? m.fast : m.main, fallbackModel: undefined, source: "env" };
 }
 
-module.exports = { createGroqClient, groq, clientFor, models, AiError, isConfigured, supportsReasoning, NOT_CONFIGURED, DEFAULT_BASE_URL };
+/** Drop a reasoning model's <think>…</think> block (an unclosed one means it ran out of room: nothing usable). */
+function stripThinking(text) {
+  const s = String(text || "");
+  if (!/<think>/i.test(s)) return s;
+  const out = s.replace(/<think>[\s\S]*?<\/think>/gi, "");
+  return /<think>/i.test(out) ? out.replace(/<think>[\s\S]*$/i, "").trim() : out.trim();
+}
+
+/** For streams: a filter that drops <think>…</think> even when tags are split across pieces. */
+function thinkFilter() {
+  let inside = false;
+  let hold = "";
+  let started = false;
+  const push = (piece) => {
+    let s = hold + String(piece || "");
+    hold = "";
+    let out = "";
+    while (s) {
+      const tag = inside ? "</think>" : "<think>";
+      const i = s.toLowerCase().indexOf(tag);
+      if (i >= 0) {
+        if (!inside) out += s.slice(0, i);
+        s = s.slice(i + tag.length);
+        inside = !inside;
+        continue;
+      }
+      // Keep back the end of the piece if it may be the start of a tag.
+      let k = 0;
+      for (let n = Math.min(tag.length - 1, s.length); n > 0; n--) {
+        if (tag.startsWith(s.slice(-n).toLowerCase())) {
+          k = n;
+          break;
+        }
+      }
+      if (!inside) out += s.slice(0, s.length - k);
+      hold = s.slice(s.length - k);
+      s = "";
+    }
+    if (!started) {
+      out = out.replace(/^\s+/, "");
+      if (out) started = true;
+    }
+    return out;
+  };
+  push.flush = () => {
+    const rest = inside ? "" : hold;
+    hold = "";
+    return rest;
+  };
+  return push;
+}
+
+module.exports = { thinkFilter, stripThinking, createGroqClient, groq, clientFor, models, AiError, isConfigured, supportsReasoning, NOT_CONFIGURED, DEFAULT_BASE_URL };

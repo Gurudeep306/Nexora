@@ -260,6 +260,11 @@ async function askGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN" }
       const out = await t.client.chat({ model: t.model, messages, maxTokens: 320, temperature: 0.4, timeoutMs: 20000 });
       if (out.usage) agent.addUsage(username, out.usage).catch(() => {});
       let say = spoken(out.content);
+      // An empty answer (all thinking, or cut off): try the next free provider.
+      if (!say.trim()) {
+        lastErr = new Error("empty reply");
+        continue;
+      }
       if (unsolved && leaks({ reply: say, answerKey, options }).leak) {
         // One stricter retry, then a safe hint written here.
         const again = await t.client.chat({
