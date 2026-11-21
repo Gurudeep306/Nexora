@@ -179,6 +179,11 @@ const MARGIN = 0.06
 export function matchCommand(utterance: string, specs: ActionSpec[], expanded?: Map<string, Variant[]>): MatchResult {
   const heard = normalize(utterance).split(' ').filter(Boolean)
   if (!heard.length) return { best: null, candidates: [] }
+  // An action that reads its own value ("answer 42.5") and finds one wins.
+  for (const spec of specs) {
+    const args = spec.parse?.(utterance)
+    if (args) return { best: { id: spec.id, args, score: 1 }, candidates: [] }
+  }
   const ranked: Match[] = []
   for (const spec of specs) {
     const variants = expanded?.get(spec.id) ?? expand(spec)

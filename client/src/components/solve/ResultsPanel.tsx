@@ -3,6 +3,7 @@ import { motion } from 'motion/react'
 import { Check, CheckCircle2, ChevronDown, Clock, Copy, Terminal, XCircle } from 'lucide-react'
 import { VerdictBadge } from '@/components/shared/PlatformBadge'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui'
 import { judgeOf, sourceLabel } from '@/lib/sources'
 import { engineLabel, type JudgeResponse, type RunResult, type XpReport } from './types'
 
@@ -216,7 +217,7 @@ export function XpGain({ x }: { x: XpReport }) {
   )
 }
 
-export function JudgeResults({ result }: { result: JudgeResponse }) {
+export function JudgeResults({ result, onExplain }: { result: JudgeResponse; /** After Accepted: open Explain-back. */ onExplain?: () => void }) {
   const passedCount = result.results.filter((r) => r.passed).length
   const total = result.results.length
   const maxMs = Math.max(0, ...result.results.map((r) => r.timeMs ?? 0))
@@ -246,6 +247,16 @@ export function JudgeResults({ result }: { result: JudgeResponse }) {
         </div>
       )}
       {result.xp && <XpGain x={result.xp} />}
+      {result.verdict === 'AC' && onExplain && (
+        <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border px-3 py-2.5">
+          <p className="m-0 text-[12.5px] text-foreground-dim">
+            <span className="font-medium text-foreground">Can you explain it?</span> Explain it back in your own words — a pass counts towards your Nexus mastery.
+          </p>
+          <Button size="sm" variant="secondary" onClick={onExplain}>
+            Explain it back
+          </Button>
+        </div>
+      )}
       {result.compileError && (
         <div>
           <p className="mb-1 text-[12px] font-semibold text-info">Compilation error</p>

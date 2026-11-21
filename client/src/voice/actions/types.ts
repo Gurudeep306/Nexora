@@ -43,10 +43,15 @@ export interface VoiceAction {
   keys?: string[]
   /** Hide from the palette (voice-only actions such as "scroll down"). */
   palette?: boolean
+  /**
+   * For a value no list can hold (a number answer): read it from the whole
+   * utterance. Returning args wins over phrase matching.
+   */
+  parse?: (utterance: string) => Args | null
   /** Only offered while this returns true. */
   when?: () => boolean
   run: (args: Args) => unknown
 }
 
 /** The data part of an action, without functions: what tests and the matcher need. */
-export type ActionSpec = Pick<VoiceAction, 'id' | 'say' | 'args' | 'risk'>
+export type ActionSpec = Pick<VoiceAction, 'id' | 'say' | 'args' | 'risk' | 'parse'>

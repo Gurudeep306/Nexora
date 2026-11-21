@@ -58,6 +58,10 @@ import {
 
 import { DEFAULT_CODE } from '@/lib/templates'
 import { useVoiceAction } from '@/voice/actions/useVoiceAction'
+import { registerBuilder } from '@/voice/code/build'
+import { activeCode } from '@/voice/code/active'
+import { BuildSheet, type BuildRequest } from '@/voice/code/BuildSheet'
+import { ExplainBack } from '@/voice/explain/ExplainBack'
 import { LanguagePicker } from '@/components/solve/LanguagePicker'
 import { Workspace } from '@/components/solve/workspace/Workspace'
 import { useWorkspace } from '@/components/solve/workspace/useWorkspace'
@@ -69,7 +73,7 @@ import { AnalysisPanel } from '@/components/solve/AnalysisPanel'
 import { JourneyPanel } from '@/components/solve/journey/JourneyPanel'
 import { DryRunPanel } from '@/components/solve/dryrun/DryRunPanel'
 import { Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrigger } from '@/components/ui'
-import { Building2, ListChecks, ListPlus, Trophy } from 'lucide-react'
+import { Building2, GraduationCap, ListChecks, ListPlus, Trophy } from 'lucide-react'
 import { AddToSetDialog, AskedAtDialog } from '@/components/problems/sets/SetDialogs'
 
 type BottomTab = 'tests' | 'output' | 'dryrun' | 'aitests' | 'analysis' | 'journey' | 'coach' | 'issues'
@@ -533,6 +537,39 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
   // Voice and the ⌘K palette: run on the samples, submit after a confirm.
   useVoiceAction({ id: 'solve.run', title: 'Run the code', group: 'Code', hint: 'Ctrl+Enter', say: { en: ['run', 'run the code', 'run my code', 'code chalao', 'run karo', 'chalao'], hi: ['कोड चलाओ', 'रन करो'] }, risk: 'safe', keys: ['Ctrl', 'Enter'], run: () => void runRef.current() })
   useVoiceAction({ id: 'solve.submit', title: 'Submit to the judge', group: 'Code', hint: 'Ctrl+Shift+Enter', say: { en: ['submit', 'submit the code', 'submit my code', 'submit karo', 'judge pe bhejo'], hi: ['सबमिट करो'] }, risk: 'irreversible', keys: ['Ctrl', 'Shift', 'Enter'], run: () => void submitRef.current() })
+  /* ── Explain-back: after Accepted, explain the solution (graded; counts towards mastery) ── */
+  const [explainOpen, setExplainOpen] = useState(false)
+  useVoiceAction(customProp ? null : { id: 'solve.explain', title: 'Explain it back', group: 'Code', say: { en: ['explain it back', 'explain back', 'explain my solution', 'let me explain', 'viva', 'main samjhata hoon', 'apna solution samjhao'] }, risk: 'safe', run: () => setExplainOpen(true) })
+  /* ── Build mode by voice: "translate to python", "make it iterative" ── */
+  const [buildReq, setBuildReq] = useState<BuildRequest | null>(null)
+  useEffect(() => registerBuilder((cmd) => setBuildReq({ cmd, key: Date.now() })), [])
+  const buildProblem = useMemo(() => (id ? { kind: learn ? ('learn' as const) : custom ? ('custom' as const) : ('platform' as const), id: String(id) } : null), [id, learn, custom])
+  const buildSamples = useMemo(() => {
+    const fromStatement = samples.map((x) => ({ input: x.input ?? '', output: x.output ?? '' }))
+    return fromStatement.length ? fromStatement : testcases.filter((t) => t.expected_output != null).map((t) => ({ input: t.input, output: t.expected_output ?? '' }))
+  }, [samples, testcases])
+  const labelOf = useCallback((lid: string) => languages.find((l) => l.id === lid)?.label ?? lid, [languages])
+  const applyBuilt = useCallback(
+    (next: string, lang: string) => {
+      if (lang !== language) {
+        // A translation: keep the original under its own language and switch.
+        storeCode(storageId, lang, next)
+        setLanguage(lang)
+        toast.success(`Now in ${labelOf(lang)}`, `Your ${labelOf(language)} code is still saved — switch back any time.`)
+        return
+      }
+      // Same language: one edit, so Ctrl+Z brings the old code back.
+      const ed = activeCode()?.editor()
+      const model = ed?.getModel()
+      if (ed && model) {
+        ed.pushUndoStop()
+        ed.executeEdits('voice-build', [{ range: model.getFullModelRange(), text: next }])
+        ed.pushUndoStop()
+      } else persistCode(next)
+      toast.success('Change applied', 'Ctrl+Z puts your old code back.')
+    },
+    [language, storageId, labelOf, persistCode, toast],
+  )
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -845,6 +882,11 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         <MenuItem icon={<Wand2 />} onSelect={() => void handleAiFix()} disabled={fixing || !code.trim()}>
           Fix my code
         </MenuItem>
+        {!customProp && (
+          <MenuItem icon={<GraduationCap />} onSelect={() => setExplainOpen(true)}>
+            Explain it back
+          </MenuItem>
+        )}
         <MenuItem icon={<Bot />} onSelect={() => openAssistant()} shortcut="⌘J">
           Ask the tutor
         </MenuItem>
@@ -1052,7 +1094,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
         {submitting ? `Judging on ${testcases.length || 'all'} tests…` : 'Running your code…'}
       </div>
     ) : judgeResult ? (
-      <JudgeResults result={judgeResult} />
+      <JudgeResults result={judgeResult} onExplain={customProp ? undefined : () => setExplainOpen(true)} />
     ) : runResult ? (
       <RunOutput result={runResult} expected={runCase?.expected} caseLabel={runCase?.label} />
     ) : allDiagnostics.length ? null : (
@@ -1227,6 +1269,8 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       {!learn && <AddToContest open={addToContest} onClose={() => setAddToContest(false)} kind={custom ? 'workshop' : 'problem'} refId={id} title={problem?.title || 'This problem'} />}
       {!custom && addToSet && <AddToSetDialog problemId={Number(id)} title={problem?.title || `Problem ${id}`} onClose={() => setAddToSet(false)} />}
       {!custom && askedAt && <AskedAtDialog problemId={Number(id)} title={problem?.title || `Problem ${id}`} onClose={() => setAskedAt(false)} />}
+      {!customProp && <ExplainBack open={explainOpen} problem={buildProblem} code={code} language={language} onClose={() => setExplainOpen(false)} />}
+      <BuildSheet request={buildReq} code={code} language={language} labelOf={labelOf} problem={buildProblem} samples={buildSamples} onClose={() => setBuildReq(null)} onUse={applyBuilt} />
 
       {arena ? (
         <>
