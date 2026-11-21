@@ -6,7 +6,7 @@
 
   First press shows the consent screen. Nothing is recorded by NexoraGuru.
 */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Mic, X } from 'lucide-react'
 import { Button, Modal, Tooltip } from '@/components/ui'
@@ -65,7 +65,14 @@ function describe(action: VoiceAction, match: Match) {
   return action.id === 'nav.open' ? `Open ${label}` : `${action.title}: ${label}`
 }
 
-export function VoiceButton() {
+/** Mics on screen, newest last: Alt+M goes to the top one (the exam console's over the top bar's). */
+const mics: symbol[] = []
+
+/**
+ * The mic. `layer="top"` puts its answers above full-screen screens such as
+ * the exam console, which renders its own mic.
+ */
+export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
   const { user } = useAuth()
   const [prefs, setPrefs] = useVoicePrefs(user?.username)
   const actions = useActionList()
@@ -232,12 +239,32 @@ export function VoiceButton() {
     void start()
   }
 
+  // Alt+M: talk without reaching for the mouse (hands-free exam, coding).
+  const onMicRef = useRef(onMic)
+  useLayoutEffect(() => {
+    onMicRef.current = onMic
+  })
+  useEffect(() => {
+    const me = Symbol('mic')
+    mics.push(me)
+    const onKey = (e: KeyboardEvent) => {
+      if (!e.altKey || e.ctrlKey || e.metaKey || e.code !== 'KeyM' || mics[mics.length - 1] !== me) return
+      e.preventDefault()
+      onMicRef.current()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      mics.splice(mics.indexOf(me), 1)
+    }
+  }, [])
+
   if (!user || !supported) return null
   const listening = phase.kind === 'listening'
 
   return (
     <>
-      <Tooltip label={listening ? 'Listening… press to stop' : 'Speak a command'} side="bottom">
+      <Tooltip label={listening ? 'Listening… press to stop' : 'Speak a command (Alt+M)'} side="bottom">
         <button
           type="button"
           onClick={onMic}
@@ -255,7 +282,7 @@ export function VoiceButton() {
             key="pill"
             role="status"
             aria-live="polite"
-            className="vc-pill"
+            className={cn('vc-pill', layer === 'top' && 'vc-pill--top')}
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}

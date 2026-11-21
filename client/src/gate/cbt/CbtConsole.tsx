@@ -4,6 +4,9 @@ import { ChevronLeft, ChevronRight, FileText, LayoutGrid, Maximize, Minimize, Se
 import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
 import { useAgentPageContext } from '@/context/AgentContext'
+import { useVoiceActions } from '@/voice/actions/useVoiceAction'
+import { VoiceButton } from '@/voice/VoiceButton'
+import type { VoiceAction } from '@/voice/actions/types'
 import { useAuth } from '@/context/AuthContext'
 import { ConfirmDialog, Modal } from '@/components/ui'
 import { Icon } from '@/components/icon/Icon'
@@ -249,6 +252,28 @@ export function CbtConsole({
     } else setDraft(l)
   }
 
+  /* ── Hands-free: the console by voice ("B chuno", "save and next", "question 12") ── */
+  const NUM_WORDS = ['', 'one|ek', 'two|do', 'three|teen', 'four|char|chaar', 'five|paanch', 'six|chhe', 'seven|saat', 'eight|aath', 'nine|nau', 'ten|das']
+  const examVoice = useMemo((): VoiceAction[] => {
+    if (!running) return []
+    const opts = (currentQuestion?.options ?? []).map((o) => `${o.l}|${o.l}|${o.l.toLowerCase()}|${({ A: 'ay|ए', B: 'bee|बी', C: 'see|सी', D: 'dee|डी' } as Record<string, string>)[o.l] ?? o.l}`)
+    const nums = questions.map((_, i) => [String(i + 1), String(i + 1), NUM_WORDS[i + 1]].filter(Boolean).join('|'))
+    const group = 'Exam'
+    return [
+      ...(opts.length ? [{ id: 'exam.choose', title: 'Choose an option', group, say: { en: ['option {opt}', 'choose {opt}', 'choose option {opt}', '{opt} choose', 'answer {opt}', 'select {opt}'] }, args: { opt: opts }, risk: 'reversible' as const, run: (a: Record<string, string>) => selectOption(a.opt) }] : []),
+      { id: 'exam.next', title: 'Save & next', group, say: { en: ['save and next', 'next question', 'save next', 'agla question', 'aage', 'next'] }, risk: 'reversible', run: () => commit(false) },
+      { id: 'exam.review', title: 'Mark for review & next', group, say: { en: ['mark for review', 'review later', 'review ke liye', 'mark for review and next'] }, risk: 'reversible', run: () => commit(true) },
+      { id: 'exam.clear', title: 'Clear response', group, say: { en: ['clear response', 'clear answer', 'clear my answer', 'answer hatao'] }, risk: 'reversible', run: () => clearResponse() },
+      { id: 'exam.prev', title: 'Previous question', group, say: { en: ['previous question', 'go back', 'pichla question', 'peeche'] }, risk: 'safe', run: () => jumpToQuestion(currentIndex - 1) },
+      { id: 'exam.goto', title: 'Go to a question', group, say: { en: ['question {n}', 'go to question {n}', 'question number {n}', 'question {n} pe jao'] }, args: { n: nums }, risk: 'safe', run: (a: Record<string, string>) => jumpToQuestion(Number(a.n) - 1) },
+      { id: 'exam.calculator', title: 'Calculator', group, say: { en: ['calculator', 'open calculator', 'calculator kholo'] }, risk: 'safe', run: () => setShowCalc((x) => !x) },
+      // Opens the summary; submitting itself still needs the on-screen button.
+      { id: 'exam.submit', title: 'Submit the test…', group, say: { en: ['submit the test', 'submit exam', 'finish the test', 'test submit karo'] }, risk: 'safe', run: () => setShowSubmit(true) },
+    ] as VoiceAction[]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [running, currentQuestion?.id, questions.length, currentIndex, draft, responses])
+  useVoiceActions(examVoice)
+
   /* ── Submit ── */
 
   const handleSubmitExam = async () => {
@@ -439,6 +464,7 @@ export function CbtConsole({
         </button>
         <h1 className="hidden min-w-0 truncate text-[14px] font-semibold md:block">{title}</h1>
         <div className="ml-auto flex items-center gap-1.5">
+          <VoiceButton layer="top" />
           <button type="button" onClick={() => setShowCalc((s) => !s)} className={toolBtn} aria-pressed={showCalc} title="Calculator">
             <Icon name="calculator" className="size-4" />
             <span className="hidden sm:inline">Calculator</span>

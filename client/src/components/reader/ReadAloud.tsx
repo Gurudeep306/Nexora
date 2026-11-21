@@ -4,6 +4,9 @@ import { useReducedMotion } from 'motion/react'
 import { Icon } from '@/components/icon/Icon'
 import { cn } from '@/lib/utils'
 import { symbolsToSpeech, texToSpeech } from './speech'
+import { nextWord, rangeOf, textMap, wordAt } from './wordTrack'
+import { useVoiceAction } from '@/voice/actions/useVoiceAction'
+import './highlights.css'
 
 /*
   Listen: the lesson read aloud by the browser's own voice (Web Speech API:
@@ -17,6 +20,19 @@ const READABLE = 'p, li, h2, h3, h4, .nb-title, figcaption'
 // Parts that are not prose: their text would be read as noise.
 const SKIP = 'pre, code, table, .nb-viz, .nxv-slot, .np, .nr-check, .notes-pre, svg, canvas, button, .katex-display .katex-html, .sr-only, [aria-hidden="true"]'
 const SPEEDS = [0.85, 1, 1.2, 1.4] as const
+const WORD = 'nr-word'
+
+type HighlightRegistry = Map<string, unknown>
+const highlights = (): HighlightRegistry | null => {
+  const c = (globalThis as { CSS?: { highlights?: HighlightRegistry } }).CSS
+  return c?.highlights && typeof (globalThis as { Highlight?: unknown }).Highlight === 'function' ? c.highlights : null
+}
+const paintWord = (r: Range | null) => {
+  const reg = highlights()
+  if (!reg) return
+  if (r) reg.set(WORD, new (globalThis as unknown as { Highlight: new (...r: Range[]) => unknown }).Highlight(r))
+  else reg.delete(WORD)
+}
 const RATE_KEY = 'nexora:listen-rate'
 
 function blockText(el: Element): string {
@@ -74,6 +90,7 @@ export function ReadAloud({ target, label = 'Listen' }: { target: RefObject<HTML
 
   const stop = useCallback(() => {
     run.current++
+    paintWord(null)
     if (supported) window.speechSynthesis.cancel()
     blocks.current.forEach((b) => b.classList.remove('is-reading'))
     setState('idle')
@@ -97,6 +114,17 @@ export function ReadAloud({ target, label = 'Listen' }: { target: RefObject<HTML
         u.lang = voice.lang
       }
       u.rate = rateRef.current
+      // Word by word: find each spoken word again in the paragraph's own text.
+      const map = textMap(list[i], SKIP)
+      let cursor = 0
+      u.onboundary = (e) => {
+        if (run.current !== id || e.name === 'sentence') return
+        const w = wordAt(u.text, e.charIndex)
+        const pos = nextWord(map.text, w, cursor)
+        if (pos < 0) return
+        cursor = pos + w.length
+        paintWord(rangeOf(map, pos, w.length))
+      }
       u.onend = () => {
         if (run.current === id) speakFrom(i + 1)
       }
@@ -154,6 +182,18 @@ export function ReadAloud({ target, label = 'Listen' }: { target: RefObject<HTML
       skip(0)
     }
   }
+
+  // Voice: "read this lesson", "padh ke sunao", "stop reading".
+  useVoiceAction(
+    supported
+      ? { id: 'reader.listen', title: 'Read this lesson aloud', group: 'Lesson', say: { en: ['read this lesson', 'read aloud', 'read it to me', 'padh ke sunao', 'lesson sunao', 'sunao', 'listen to this lesson'], hi: ['पढ़ के सुनाओ', 'सुनाओ'] }, risk: 'safe', when: () => state === 'idle', run: () => start() }
+      : null,
+  )
+  useVoiceAction(
+    supported
+      ? { id: 'reader.stop', title: 'Stop reading aloud', group: 'Lesson', say: { en: ['stop reading', 'stop listening', 'padhna band karo', 'chup', 'bas karo'] }, risk: 'safe', when: () => state !== 'idle', run: () => stop() }
+      : null,
+  )
 
   // Leaving the lesson (or the page) stops the voice.
   useEffect(() => stop, [pathname, stop])

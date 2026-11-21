@@ -290,7 +290,15 @@ from a range, since test files run in parallel and a clash fails the run.
   exactly as said (never fixed), and `pseudo.ts` (a small interpreter, no
   eval) runs it on the lesson's input; `compare.ts` lines it up with the
   lesson's frames by variable values and asks one question at the first
-  difference. Typing the steps needs no AI. The voice feature never calls a paid service
+  difference. Typing the steps needs no AI. **Listen** (`components/reader/ReadAloud.tsx`)
+  follows the voice word by word (`wordTrack.ts`, CSS highlight `nr-word`)
+  and answers "padh ke sunao" / "stop reading". **The exam console** has its
+  own mic (`VoiceButton layer="top"`) and voice actions ("B chuno", "save and
+  next", "question 12", "mark for review"; Guru gives no hints in a test).
+  Alt+M opens the top mic anywhere. **Training data** rules are in
+  `docs/voice/TRAINING.md`: our solutions and lessons were drafted with AI
+  agents, so they are lookup material only, never training data; the
+  data script accepts only open-licence teacher models. The voice feature never calls a paid service
   (`tests/voice-zero-spend.test.js`).
 - **AI models** are chosen in Admin → AI models (`src/ai/settings.js`): any
   OpenAI-compatible provider, keys sealed at rest, a model per slot and per
