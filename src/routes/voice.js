@@ -4,6 +4,7 @@ const express = require("express");
 const rateLimit = require("express-rate-limit");
 const { logError } = require("../http-error");
 const { askGuru } = require("../voice/guru");
+const { approachToPseudo } = require("../voice/pseudo");
 
 function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
   const router = express.Router();
@@ -31,6 +32,23 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
       if (e?.name === "AiError") return res.status(e.status || 502).json({ ok: false, error: e.message });
       logError("voice.guru", e);
       res.status(500).json({ ok: false, error: "Guru ran into a problem — try again." });
+    }
+  });
+
+  // Mirror Run: a spoken approach → pseudocode written exactly as said.
+  router.post("/api/voice/pseudo", requireAuthenticatedUser, limiter, async (req, res) => {
+    const { text, inputs, lessonTitle } = req.body || {};
+    try {
+      const out = await approachToPseudo({
+        user: req.sessionUser,
+        text,
+        inputs: Array.isArray(inputs) ? inputs.map(String) : [],
+        lessonTitle: typeof lessonTitle === "string" ? lessonTitle : "",
+      });
+      res.json({ ok: true, ...out });
+    } catch (e) {
+      logError("voice.pseudo", e);
+      res.status(500).json({ ok: false, error: "Couldn’t write the steps — type them instead." });
     }
   });
 

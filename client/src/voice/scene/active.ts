@@ -62,3 +62,8 @@ export function activeScene(): SceneHandle | null {
   }
   return best?.h ?? null
 }
+
+/** The animation with this id, if it is on the page (Mirror Run jumps it to a step). */
+export function sceneById(id: string): SceneHandle | null {
+  return handles.get(id)?.h ?? null
+}

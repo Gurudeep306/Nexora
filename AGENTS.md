@@ -284,7 +284,13 @@ from a range, since test files run in parallel and a clash fails the run.
   strings, comments and fields), "for loop 0 se n tak" (written in the
   editor's language), "read line 5", "read my code", "undo"; each edit is one
   undo step and is outlined. Test set `docs/voice/tests/code.json`. On the
-  Solve page "run" runs and "submit" asks to confirm. The voice feature never calls a paid service
+  Solve page "run" runs and "submit" asks to confirm. **Mirror Run**
+  (`voice/mirror/`, under every lesson animation, or say "mirror run"): the
+  student says an approach, `POST /api/voice/pseudo` writes it as pseudocode
+  exactly as said (never fixed), and `pseudo.ts` (a small interpreter, no
+  eval) runs it on the lesson's input; `compare.ts` lines it up with the
+  lesson's frames by variable values and asks one question at the first
+  difference. Typing the steps needs no AI. The voice feature never calls a paid service
   (`tests/voice-zero-spend.test.js`).
 - **AI models** are chosen in Admin → AI models (`src/ai/settings.js`): any
   OpenAI-compatible provider, keys sealed at rest, a model per slot and per
@@ -339,7 +345,7 @@ Hive is the staff-only multi-agent workspace at `/hive`. The full guide is
   Hive with the Copilot, Dispatcher, Judge, pipelines, automations, Drive,
   health checks, budgets, subscriptions (Claude Code, Codex, Vibe), per-project
   chat and the model farm.
-- **Voice tutor (built through Phase 2; Phases 3–6 planned):** "NexoraGuru Voice" — talk to the
+- **Voice tutor (built through Phase 3; Phases 4–6 planned):** "NexoraGuru Voice" — talk to the
   whole site in English, Hindi and Hinglish, Scene Voice (talk to the
   animations), Mirror Run (your spoken algorithm animated, bugs included), the
   Guru tutor with a code-level Leak Guard, and the founder's AI voice on

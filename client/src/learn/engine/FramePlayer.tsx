@@ -167,6 +167,8 @@ export interface FramePlayerProps {
   marks?: TimelineMark[]
   /** Under the stage: a banner such as "showing the first 3000 steps". */
   footnote?: ReactNode
+  /** Full-width panel under the controls (Mirror Run). */
+  after?: ReactNode
   className?: string
   /** Scene Voice "what if…": re-run on a changed input (VizPlayer supplies it). */
   onWhatIf?: (input: WhatIf) => { say: string } | { error: string }
@@ -190,7 +192,7 @@ function guessScore(guess: string, frame: Frame): number {
   return hit / said.length
 }
 
-export function FramePlayer({ id, kicker = 'Visualizer', title, blurb, frames, error, header, code, codeTabs, legend, resetKey, syncTo, autoplay = true, marks, footnote, className, onWhatIf }: FramePlayerProps) {
+export function FramePlayer({ id, kicker = 'Visualizer', title, blurb, frames, error, header, code, codeTabs, legend, resetKey, syncTo, autoplay = true, marks, footnote, after, className, onWhatIf }: FramePlayerProps) {
   const [idx, setIdx] = useState(0)
   const [playing, setPlaying] = useState(false)
   const [speed, setSpeed] = useState(1)
@@ -532,6 +534,7 @@ export function FramePlayer({ id, kicker = 'Visualizer', title, blurb, frames, e
           </div>
         </div>
       </div>
+      {after && <div className="viz-after border-t border-border px-3 py-3 sm:px-4">{after}</div>}
     </div>
   )
 
