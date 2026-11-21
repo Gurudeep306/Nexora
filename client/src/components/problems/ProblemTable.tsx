@@ -85,7 +85,6 @@ export function ProblemTable({ problems, bookmarkedIds, onToggleBookmark, busyBo
                 }}
                 tabIndex={0}
                 role="link"
-                aria-label={`Open ${p.title}`}
                 className={cn(
                   'cursor-pointer border-b border-border/60 transition-colors duration-150 last:border-0 hover:bg-surface-2/60 focus-visible:bg-surface-2',
                   p.solve_status === 'solved' && 'bg-success/[0.03]',

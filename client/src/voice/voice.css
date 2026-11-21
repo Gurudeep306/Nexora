@@ -1,0 +1,173 @@
+/* Voice: the mic in the top bar, its status pill and the consent sheet
+   (VoiceButton.tsx). Tokens only; no glows; motion off for reduced motion. */
+@layer components {
+  .vc-mic.is-on {
+    color: var(--color-accent-brand);
+    background: color-mix(in oklab, var(--color-accent-brand) 12%, transparent);
+  }
+
+  .vc-pill {
+    position: fixed;
+    top: 3.75rem;
+    right: 1rem;
+    z-index: 60;
+    width: min(22rem, calc(100vw - 2rem));
+  }
+  .vc-pill-in {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.75rem 0.875rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.875rem);
+    background: var(--color-bg-surface);
+    box-shadow: var(--elev-2);
+  }
+  .vc-pill-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .vc-pill-title {
+    flex: 1;
+    min-width: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .vc-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    flex: none;
+    border-radius: 999px;
+    background: var(--color-text-muted);
+  }
+  .vc-dot.is-live {
+    background: var(--color-accent-brand);
+    animation: vc-breathe 1.2s ease-in-out infinite;
+  }
+  .vc-x {
+    display: grid;
+    place-items: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 0.375rem;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+  .vc-x:hover {
+    color: var(--color-text-primary);
+    background: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
+  }
+  .vc-heard {
+    margin: 0;
+    font-family: var(--kit-read, inherit);
+    font-style: italic;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    overflow-wrap: anywhere;
+  }
+  .vc-note {
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+  }
+  .vc-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.375rem;
+  }
+  .vc-actions .vc-note {
+    flex-basis: 100%;
+  }
+  .vc-options {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .vc-options button {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text-primary);
+    text-align: left;
+    cursor: pointer;
+  }
+  .vc-options button:hover,
+  .vc-options button:focus-visible {
+    background: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
+  }
+  .vc-num {
+    display: inline-grid;
+    place-items: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 999px;
+    font-size: 0.6875rem;
+    color: var(--color-text-secondary);
+  }
+
+  .vc-consent {
+    display: grid;
+    gap: 1rem;
+  }
+  .vc-points {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding-left: 1.1rem;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+  .vc-points strong {
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+  .vc-field {
+    display: grid;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+  }
+  .vc-field legend {
+    margin-bottom: 0.25rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .vc-field label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+  .vc-field input {
+    margin-top: 0.2rem;
+    accent-color: var(--color-accent-brand);
+  }
+  .vc-consent-foot {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+}
+
+@keyframes vc-breathe {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.8); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vc-dot.is-live { animation: none; }
+}

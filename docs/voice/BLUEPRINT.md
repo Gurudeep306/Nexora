@@ -1,6 +1,8 @@
 # NexoraGuru Voice — the blueprint
 
-> Status: **final plan, not built.** Written 2026-11-21 from two research rounds
+> Status: **Phase 0 done** (Action Graph, voice-ready names, Guru Spec, test
+> sets, zero-spend guard, consent) **and voice commands live** (browser speech +
+> rule matcher). Next: Scene Voice. Plan written 2026-11-21 from two research rounds
 > (`docs/voice/research/`). Every licence, price and limit below must be
 > re-checked on the official page before it is relied on: the research could
 > not open some sites and marks those facts as unverified.
@@ -412,7 +414,7 @@ working even if every free service disappeared — just simpler.
 | `client/src/voice/code/` | tree-sitter + Monaco edits, pseudocode panel, Mirror Run view |
 | `src/voice/` | server ears, tutor, Leak Guard, TTS streaming, corpus storage (own store, never in the core DB) |
 | `deploy/voice/` | ASR/TTS/LLM server configs (Cloudflare Workers / Workers AI, Hugging Face Space, GPU farm when available) |
-| `docs/voice/` | this blueprint, the Guru Spec, test sets, research |
+| `docs/voice/` | this blueprint, the Guru Spec (`GURU_SPEC.md`), test sets (`tests/commands.json`, `scene.json`, `tutor.json`), research |
 
 ## 10. Biggest risks
 

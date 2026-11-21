@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { VoiceButton } from '@/voice/VoiceButton'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ChevronRight, SearchX } from 'lucide-react'
 import { Icon } from '@/components/icon/Icon'
@@ -248,6 +249,7 @@ export function Topbar() {
             </button>
           </Tooltip>
         )}
+        <VoiceButton />
         {user && <FocusTimer />}
         <LookPopover />
         <Notifications />

@@ -36,7 +36,7 @@ export function Pagination({
           onClick={() => onPageChange((page - 2) * limit)}
           aria-label="Previous page"
         >
-          <ChevronLeft aria-hidden="true" /> Prev
+          <ChevronLeft aria-hidden="true" /> Previous
         </Button>
         <ol className="pg-pages m-0 flex list-none items-center gap-0.5 p-0" aria-label="Pages">
           {pageList(page, pages).map((n, i) =>

@@ -84,7 +84,6 @@ export function AiProblemResults({ data, bookmarkedIds, onToggleBookmark, busyBo
                 }}
                 tabIndex={0}
                 role="link"
-                aria-label={`Open ${p.title}`}
                 className={cn(
                   'flex cursor-pointer items-start gap-3 p-3 transition-colors duration-150 hover:bg-surface-2/60 focus-visible:bg-surface-2',
                   p.solve_status === 'solved' && 'bg-success/[0.03]',

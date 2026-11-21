@@ -11,6 +11,7 @@ import { isReaderRoute } from '@/components/reader/panels'
 import { RouteProgress } from './RouteProgress'
 import { LookSync } from '../look/LookSync'
 import { DockSync } from './DockSync'
+import { GlobalActions } from '@/voice/actions/GlobalActions'
 import { AgentPanel } from './AgentPanel'
 import { AgentProvider } from '@/context/AgentContext'
 import { cn } from '@/lib/utils'
@@ -55,6 +56,7 @@ export function AppLayout() {
       </a>
       <LookSync />
       <DockSync />
+      <GlobalActions />
       {scene && scene !== 'none' && <ThemeScene page scene={scene} />}
 
       <RouteProgress />

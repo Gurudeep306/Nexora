@@ -229,8 +229,11 @@ function PostCardImpl({ post, repostedBy, onChange, onRemove, onCreated, onHideA
         </div>
       )}
       <div className="flex gap-3">
-        <Link to={profilePath(post.author.username)} className="shrink-0" aria-label={`${displayName(post.author)}'s profile`}>
-          <Avatar seed={post.author.username} avatar={post.author.avatar} src={post.author.avatar_url} name={displayName(post.author)} size="md" />
+        <Link to={profilePath(post.author.username)} className="shrink-0">
+          <span className="sr-only">{`${displayName(post.author)}'s profile`}</span>
+          <span aria-hidden="true">
+            <Avatar seed={post.author.username} avatar={post.author.avatar} src={post.author.avatar_url} name={displayName(post.author)} size="md" />
+          </span>
         </Link>
         <div className="min-w-0 flex-1">
           <header className="flex items-start gap-2">

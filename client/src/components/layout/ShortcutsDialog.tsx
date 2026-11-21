@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Kbd, Modal } from '@/components/ui'
 import { GO_SHORTCUTS } from '@/config/nav'
-import { openCommandPalette } from './CommandPalette'
-import { openAssistantEvent } from '@/context/AgentContext'
+import { useActionList } from '@/voice/actions/useVoiceAction'
 
 export const openShortcuts = () => window.dispatchEvent(new Event('nexora:shortcuts'))
 
@@ -29,6 +28,8 @@ function isTyping(el: EventTarget | null) {
 export function ShortcutsDialog() {
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
+  // Actions with a key, from the Action Graph (the same list as ⌘K and voice).
+  const keyed = useActionList().filter((a) => a.keys?.length)
   const pendingG = useRef<number | null>(null)
 
   useEffect(() => {
@@ -66,10 +67,10 @@ export function ShortcutsDialog() {
         <section>
           <h3 className="mb-2 text-[11px] font-semibold tracking-[0.1em] text-text-secondary uppercase">General</h3>
           <ul className="space-y-1.5 text-sm">
-            <Row label="Search / command palette" keys={['⌘', 'K']} onClick={() => { setOpen(false); openCommandPalette() }} />
+            {keyed.map((a) => (
+              <Row key={a.id} label={a.id === 'shortcuts.open' ? 'This cheat-sheet' : a.title} keys={a.keys!} onClick={a.id === 'shortcuts.open' ? undefined : () => { setOpen(false); void a.run({}) }} />
+            ))}
             <Row label="Quick search" keys={['/']} />
-            <Row label="AI assistant" keys={['⌘', 'J']} onClick={() => { setOpen(false); openAssistantEvent() }} />
-            <Row label="This cheat-sheet" keys={['?']} />
             <Row label="Close dialogs" keys={['Esc']} />
           </ul>
         </section>

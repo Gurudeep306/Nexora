@@ -162,12 +162,12 @@ export function GateFocusDeck({ questions, subjectName, topicName, index, onInde
                 data-i={k}
                 onClick={() => onIndex(k)}
                 aria-current={k === i ? 'true' : undefined}
-                aria-label={`Question ${(page - 1) * pageSize + k + 1}`}
                 className={cn(
                   'relative flex h-8 min-w-8 shrink-0 items-center justify-center rounded-lg border px-1.5 font-mono text-[12px] transition-colors',
                   k === i ? 'border-accent-brand bg-accent-brand text-on-accent-brand' : 'border-border bg-bg-surface text-text-secondary',
                 )}
               >
+                <span className="sr-only">Question </span>
                 {(page - 1) * pageSize + k + 1}
                 {o && k !== i && <OutcomeDot outcome={o} className="absolute -top-0.5 -right-0.5 ring-2 ring-bg-app" />}
               </button>

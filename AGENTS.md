@@ -257,6 +257,16 @@ from a range, since test files run in parallel and a clash fails the run.
   the GATE notes or DSA chapters, each one click from the reader, never locked);
   Skills, Skill tree, Plan and Leaderboard are tabs. Link to a subject's home,
   not to `/gate/notes/<id>` or `/learn?tab=dsa` (that one redirects).
+- **Voice and the Action Graph** (`client/src/voice/`, plan in
+  `docs/voice/BLUEPRINT.md`): every site action lives in one registry. A page
+  offers its own with `useVoiceAction({ id, title, say: { en, hi }, args, risk,
+  run })`; the ⌘K palette, the shortcut sheet and voice commands all read it.
+  The mic (top bar) uses the browser's free speech recognition plus the
+  rule matcher (`voice/actions/match.ts`, test set
+  `docs/voice/tests/commands.json`, ≥ 95%); irreversible actions need a
+  spoken or tapped confirm. Keep every control's accessible name containing
+  its visible text (`npm run voice:names`). The voice feature never calls a
+  paid service (`tests/voice-zero-spend.test.js`).
 - **AI models** are chosen in Admin → AI models (`src/ai/settings.js`): any
   OpenAI-compatible provider, keys sealed at rest, a model per slot and per
   feature. The GROQ_* environment applies when nothing is chosen.
