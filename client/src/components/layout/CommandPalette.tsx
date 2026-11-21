@@ -5,14 +5,12 @@ import { AnimatePresence, motion } from 'motion/react'
 import { CornerDownLeft, Loader2, Search, SearchX } from 'lucide-react'
 import { iconComponent } from '@/components/icon/iconComponent'
 import { Highlight, Kbd } from '@/components/ui'
-import { openShortcuts } from './ShortcutsDialog'
 import { openAssistantEvent } from '@/context/AgentContext'
-import { api } from '@/lib/api'
+import { useActionList } from '@/voice/actions/useVoiceAction'
 import { cn } from '@/lib/utils'
 import { fadeInOut, popIn } from '@/lib/motion'
-import { useAuth } from '@/context/AuthContext'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
-import type { Problem, ProblemsResponse } from '@/components/problems/types'
+import type { Problem } from '@/components/problems/types'
 import { useProblemSearch } from '@/lib/problemSearch'
 import { pushRecentSearch, useRecentSearches } from '@/lib/recentSearches'
 import { describeRecent, pageMatches, usePageEntries } from './searchSources'
@@ -50,8 +48,7 @@ export function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
-  const { logout } = useAuth()
-  const { mode, setAppearance, setLook } = useTheme()
+  const { setLook } = useTheme()
   const pages = usePageEntries()
   const recents = useRecentSearches()
   const q = query.trim()
@@ -108,63 +105,25 @@ export function CommandPalette() {
     [q, lower],
   )
 
+  // Quick actions come from the Action Graph (voice/actions): the same list
+  // voice commands and the shortcut sheet use.
+  const registry = useActionList()
   const actions = useMemo<Item[]>(
-    () => [
-      {
-        id: 'act:random',
-        group: 'Actions',
-        label: 'Surprise me — random problem',
-        icon: iconComponent('random'),
-        run: async () => {
-          close()
-          try {
-            const first = await api.get<ProblemsResponse>('/api/problems', { query: { limit: 1 } })
-            const offset = Math.floor(Math.random() * Math.max(first.total, 1))
-            const pick = await api.get<ProblemsResponse>('/api/problems', { query: { limit: 1, offset } })
-            if (pick.problems?.[0]) navigate(`/solve/${pick.problems[0].id}`)
-          } catch {
-            navigate('/problems')
-          }
-        },
-      },
-      {
-        id: 'act:mode',
-        group: 'Actions',
-        label: mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
-        hint: 'Appearance',
-        icon: iconComponent(mode === 'dark' ? 'sun' : 'moon'),
-        run: () => {
-          close()
-          setAppearance(mode === 'dark' ? 'light' : 'dark')
-        },
-      },
-      { id: 'act:themes', group: 'Actions', label: 'Change style or theme…', hint: 'Appearance', icon: iconComponent('palette'), run: () => go('/theme') },
-      { id: 'act:profile', group: 'Actions', label: 'View my profile', icon: iconComponent('profile'), run: () => go('/profile') },
-      { id: 'act:avatar', group: 'Actions', label: 'Change my avatar', icon: iconComponent('settings'), run: () => go('/settings') },
-      {
-        id: 'act:keys',
-        group: 'Actions',
-        label: 'Keyboard shortcuts',
-        hint: '?',
-        icon: iconComponent('keyboard'),
-        run: () => {
-          close()
-          openShortcuts()
-        },
-      },
-      {
-        id: 'act:logout',
-        group: 'Actions',
-        label: 'Log out',
-        icon: iconComponent('logout'),
-        run: async () => {
-          close()
-          await logout()
-          navigate('/auth')
-        },
-      },
-    ],
-    [mode, close, go, navigate, setAppearance, logout],
+    () =>
+      registry
+        .filter((a) => a.palette !== false)
+        .map((a) => ({
+          id: `act:${a.id}`,
+          group: 'Actions' as Group,
+          label: a.title,
+          hint: a.hint,
+          icon: iconComponent((a.icon ?? 'sparkles') as Parameters<typeof iconComponent>[0]),
+          run: () => {
+            close()
+            void a.run({})
+          },
+        })),
+    [registry, close],
   )
 
   const askAi = useMemo<Item>(
