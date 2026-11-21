@@ -274,3 +274,12 @@
     display: none;
   }
 }
+
+/* Listen: the word being said (ReadAloud). Ink underline, no colour fill. */
+::highlight(nr-word) {
+  text-decoration: underline;
+  text-decoration-color: var(--color-accent-brand);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  background-color: color-mix(in oklab, var(--color-accent-brand) 14%, transparent);
+}

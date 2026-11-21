@@ -13,6 +13,10 @@
     z-index: 60;
     width: min(22rem, calc(100vw - 2rem));
   }
+  /* Above full-screen screens such as the exam console (z 100). */
+  .vc-pill.vc-pill--top {
+    z-index: 120;
+  }
   .vc-pill-in {
     display: grid;
     gap: 0.5rem;
