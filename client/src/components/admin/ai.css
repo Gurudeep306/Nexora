@@ -406,13 +406,91 @@
   flex: 1;
   min-width: 0;
 }
-/* Unsaved changes: the Save bar stays in view at the bottom of the window. */
+/* Unsaved changes: a small pill at the right stays in view at the bottom of
+   the window, above the Dock, without covering the fields it floats over. */
 .vstt-save.is-dirty {
   position: sticky;
   bottom: calc(var(--dock-room, 0px) + 12px);
   z-index: 5;
-  padding: 10px 12px;
+  width: fit-content;
+  margin-left: auto;
+  padding: 6px 6px 6px 14px;
   border: 1px solid var(--color-border-strong, var(--color-border));
-  border-radius: var(--radius-card);
+  border-radius: 999px;
   background: var(--color-bg-surface);
+}
+/* More keys for one service (ExtraKeys). */
+.vstt-extra {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 8px;
+}
+.vstt-extra-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.vstt-extra-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 6px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+}
+.vstt-extra-owner {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.vstt-extra-state {
+  margin-right: auto;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.vstt-extra-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 10px;
+  padding: 12px;
+  border: 1px dashed var(--color-border-strong, var(--color-border));
+  border-radius: var(--radius-card);
+}
+.vstt-extra-form .vstt-consent,
+.vstt-extra-form .vstt-warn,
+.vstt-extra-form .vstt-actions {
+  grid-column: 1 / -1;
+}
+.vstt-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--color-text-primary);
+}
+.vstt-consent input {
+  margin-top: 3px;
+}
+.vstt-warn {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--color-state-warning);
+}
+.vstt-extra-add {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.vstt-extra-add:hover {
+  color: var(--color-text-primary);
 }

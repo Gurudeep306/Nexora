@@ -380,8 +380,10 @@ from a range, since test files run in parallel and a clash fails the run.
   charged. "Arrange the order automatically" (on by default) starts from the
   published accuracy order and moves services by real results (answers vs
   failures, reported confidence, speed; `voice_stt_stats`). One entry per
-  service: several keys at one provider to get more free use breaks its terms
-  (the server drops duplicates). Keys sealed, audio never stored, a fair daily
+  service; more keys go inside it ("Add another person's key", `extraKeys`),
+  each from a different person's own account with their agreement (owner name
+  required, unique per service; consent ticked), used in turn by each
+  account's own limits. One person's several accounts break the terms. Keys sealed, audio never stored, a fair daily
   share per student.
   The only voice file allowed to reach paid-capable hosts, behind free caps
   (`tests/voice-zero-spend.test.js`). Design: `docs/voice/STEP1_EARS_DESIGN.md`.

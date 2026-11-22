@@ -149,6 +149,15 @@ function sanitizeProvider(p) {
     region: String(p.region || "").replace(/[^a-z0-9-]/gi, "").slice(0, 40),
     url: String(p.url || "").slice(0, 300),
     key: typeof p.key === "string" ? p.key : "", // sealed
+    // More keys for the same service, each from a different person's own
+    // account (AGENTS.md: one person's several free accounts break the terms;
+    // each staff member may add their own key).
+    extraKeys: Array.isArray(p.extraKeys)
+      ? p.extraKeys
+          .slice(0, 10)
+          .map((k) => ({ id: /^[a-z0-9]{1,12}$/.test(String(k?.id || "")) ? String(k.id) : "", owner: String(k?.owner || "").replace(/\s+/g, " ").trim().slice(0, 40), key: typeof k?.key === "string" ? k.key : "" }))
+          .filter((k) => k.id && k.owner)
+      : [],
     limits: clampLimits(kind, p.limits),
   };
 }
@@ -483,6 +492,23 @@ function wavSeconds(buf) {
 
 /* ── the chain ── */
 
+/** A service's keys: the main one (its usage under the service's own id), then each person's. */
+async function slotsOf(p) {
+  let main = keyOf(p);
+  if (!main && p.kind === "groq") main = await groqFallbackKey();
+  const out = [{ id: p.id, owner: "", key: main }];
+  for (const k of p.extraKeys || []) {
+    let key = "";
+    try {
+      key = k.key ? open(k.key) : "";
+    } catch {
+      key = "";
+    }
+    out.push({ id: `${p.id}~${k.id}`, owner: k.owner, key });
+  }
+  return out;
+}
+
 /**
  * Transcribe one clip. Walks the chain; returns { ok, text, confidence,
  * provider, tried } or { ok: false, fallback: 'browser', tried }.
@@ -504,38 +530,42 @@ async function transcribe({ audio, lang = "en-IN", hints = [], username = "", fe
   const list = await ordered(cfg, now);
   for (const p of list) {
     if (!p.enabled) continue;
-    const cool = cooling.get(p.id);
-    if (cool && cool.until > Date.now()) {
-      tried.push({ id: p.id, skipped: cool.why });
-      continue;
-    }
-    let key = keyOf(p);
-    if (!key && p.kind === "groq") key = await groqFallbackKey();
-    if (!key && p.kind !== "openai_compatible") {
+    // The service's keys in turn: the main key, then each person's own key.
+    const slots = await slotsOf(p);
+    if (!slots.some((x) => x.key) && p.kind !== "openai_compatible") {
       tried.push({ id: p.id, skipped: "no key" });
       continue;
     }
-    const why = overLimit(p.limits, await usageOf(p.id, now), seconds);
-    if (why) {
-      tried.push({ id: p.id, skipped: why });
-      continue;
-    }
-    const t0 = Date.now();
-    try {
-      const r = await ADAPTERS[p.kind](p, key, { audio, lang, phrases, prompt });
-      await addUsage(p.id, seconds, now);
-      if (username) await addUsage(`user:${username}`, seconds, now);
-      tried.push({ id: p.id, ms: Date.now() - t0 });
-      await addStat(p.id, { ok: true, ms: Date.now() - t0, confidence: r.confidence ?? null }, now).catch(() => {});
-      return { ok: true, text: String(r.text || "").trim(), confidence: r.confidence ?? null, provider: p.id, ms: Date.now() - t0, tried };
-    } catch (e) {
-      const s = e.status || 0;
-      // Out of credit or a bad key: rest a day. Rate-limited: rest as told. Down or slow: 3 minutes.
-      if (s === 401 || s === 402 || s === 403) rest(p.id, 24 * 3600e3, s === 402 ? "out of credit" : "key refused");
-      else if (s === 429) rest(p.id, Math.max(60e3, (e.retryAfter || 0) * 1000), "rate limited");
-      else rest(p.id, 3 * 60e3, s ? `error ${s}` : "no answer");
-      tried.push({ id: p.id, error: s || "timeout" });
-      await addStat(p.id, { ok: false }, now).catch(() => {});
+    for (const slot of slots) {
+      if (!slot.key && p.kind !== "openai_compatible") continue;
+      const cool = cooling.get(slot.id);
+      if (cool && cool.until > Date.now()) {
+        tried.push({ id: slot.id, skipped: cool.why });
+        continue;
+      }
+      // Each person's account has its own free limits.
+      const why = overLimit(p.limits, await usageOf(slot.id, now), seconds);
+      if (why) {
+        tried.push({ id: slot.id, skipped: why });
+        continue;
+      }
+      const t0 = Date.now();
+      try {
+        const r = await ADAPTERS[p.kind](p, slot.key, { audio, lang, phrases, prompt });
+        await addUsage(slot.id, seconds, now);
+        if (username) await addUsage(`user:${username}`, seconds, now);
+        tried.push({ id: slot.id, ms: Date.now() - t0 });
+        await addStat(p.id, { ok: true, ms: Date.now() - t0, confidence: r.confidence ?? null }, now).catch(() => {});
+        return { ok: true, text: String(r.text || "").trim(), confidence: r.confidence ?? null, provider: p.id, ms: Date.now() - t0, tried };
+      } catch (e) {
+        const s = e.status || 0;
+        // Out of credit or a bad key: rest a day. Rate-limited: rest as told. Down or slow: 3 minutes.
+        if (s === 401 || s === 402 || s === 403) rest(slot.id, 24 * 3600e3, s === 402 ? "out of credit" : "key refused");
+        else if (s === 429) rest(slot.id, Math.max(60e3, (e.retryAfter || 0) * 1000), "rate limited");
+        else rest(slot.id, 3 * 60e3, s ? `error ${s}` : "no answer");
+        tried.push({ id: slot.id, error: s || "timeout" });
+        await addStat(p.id, { ok: false }, now).catch(() => {});
+      }
     }
   }
   return { ok: false, fallback: "browser", tried };
@@ -556,6 +586,14 @@ async function adminView() {
       keyFromAi: !p.key && p.kind === "groq",
       cooling: cool && cool.until > Date.now() ? cool.why : null,
       usage: use && { minute: use.minute, hour: use.hour, day: use.day, month: use.month, ever: use.ever },
+      extraKeys: await Promise.all(
+        (p.extraKeys || []).map(async (k) => {
+          const sid = `${p.id}~${k.id}`;
+          const u = await usageOf(sid).catch(() => null);
+          const c = cooling.get(sid);
+          return { id: k.id, owner: k.owner, hasKey: !!k.key, cooling: c && c.until > Date.now() ? c.why : null, usage: u && { day: u.day, month: u.month, ever: u.ever } };
+        }),
+      ),
     });
   }
   const stats = await statsOf(cfg.providers.map((p) => p.id)).catch(() => new Map());
@@ -584,8 +622,8 @@ async function adminSave(body, by) {
   for (const raw of incoming) {
     const p = sanitizeProvider({ ...raw, key: "" });
     if (!p || seen.has(p.id)) continue;
-    // One entry per service: several keys or accounts at one provider to get
-    // more free use breaks its terms (AGENTS.md). Different servers of the
+    // One entry per service; more keys go inside it (extraKeys), each from a
+    // different person's own account. Different servers of the
     // Whisper-compatible kind are different services, so that kind may repeat.
     if (p.kind !== "openai_compatible" && providers.some((x) => x.kind === p.kind)) continue;
     seen.add(p.id);
@@ -593,6 +631,23 @@ async function adminSave(body, by) {
     if (typeof raw.newKey === "string" && raw.newKey.trim()) p.key = seal(raw.newKey.trim());
     else if (raw.removeKey) p.key = "";
     else p.key = old?.key || "";
+    // Each extra key: a different person's own account, with their agreement.
+    const extras = [];
+    const owners = new Set();
+    for (const k of Array.isArray(raw.extraKeys) ? raw.extraKeys.slice(0, 10) : []) {
+      const owner = String(k?.owner || "").replace(/\s+/g, " ").trim().slice(0, 40);
+      const prev = (old?.extraKeys || []).find((x) => x.id === k?.id);
+      const fresh = typeof k?.newKey === "string" && k.newKey.trim();
+      if (!owner) throw Object.assign(new Error("Each extra key needs the name of the person whose account it is."), { status: 400 });
+      const norm = owner.toLowerCase();
+      if (owners.has(norm)) throw Object.assign(new Error(`Two keys for ${p.label} are marked as ${owner}'s. Each key must be from a different person's own account.`), { status: 400 });
+      owners.add(norm);
+      if (!prev && !fresh) continue;
+      if (fresh && !prev && k.consent !== true) throw Object.assign(new Error(`Confirm that ${owner}'s key is from their own account and they agreed.`), { status: 400 });
+      const id = prev?.id || (/^[a-z0-9]{1,12}$/.test(String(k?.id || "")) ? String(k.id) : Math.random().toString(36).slice(2, 10));
+      extras.push({ id, owner, key: fresh ? seal(fresh) : prev.key });
+    }
+    p.extraKeys = extras;
     if (p.kind === "openai_compatible" && p.url && !/^https:\/\//.test(p.url)) {
       const e = new Error("The server address must start with https://");
       e.status = 400;
@@ -603,7 +658,10 @@ async function adminSave(body, by) {
   const studentDailySeconds = Math.max(60, Math.min(24 * 3600, Number(body?.studentDailySeconds) || cur.studentDailySeconds));
   const autoOrder = typeof body?.autoOrder === "boolean" ? body.autoOrder : cur.autoOrder;
   await saveConfig({ providers, studentDailySeconds, autoOrder }, by);
-  for (const p of providers) cooling.delete(p.id);
+  for (const p of providers) {
+    cooling.delete(p.id);
+    for (const k of p.extraKeys) cooling.delete(`${p.id}~${k.id}`);
+  }
   return adminView();
 }
 
@@ -629,18 +687,19 @@ function testClip() {
   return buf;
 }
 
-async function adminTest(id) {
+async function adminTest(id, keyId) {
   const cfg = await loadConfig();
   const p = cfg.providers.find((x) => x.id === id);
   if (!p) return { ok: false, error: "No such service." };
-  let key = keyOf(p);
-  if (!key && p.kind === "groq") key = await groqFallbackKey();
-  if (!key && p.kind !== "openai_compatible") return { ok: false, error: "Add a key first." };
+  const slots = await slotsOf(p);
+  const slot = keyId ? slots.find((x) => x.id === `${p.id}~${keyId}`) : slots[0];
+  if (!slot) return { ok: false, error: "No such key." };
+  if (!slot.key && p.kind !== "openai_compatible") return { ok: false, error: "Add a key first." };
   const t0 = Date.now();
   try {
-    await ADAPTERS[p.kind](p, key, { audio: testClip(), lang: "en-IN", phrases: [], prompt: "" });
-    await addUsage(p.id, 1);
-    cooling.delete(p.id);
+    await ADAPTERS[p.kind](p, slot.key, { audio: testClip(), lang: "en-IN", phrases: [], prompt: "" });
+    await addUsage(slot.id, 1);
+    cooling.delete(slot.id);
     return { ok: true, ms: Date.now() - t0 };
   } catch (e) {
     return { ok: false, error: e.status === 401 || e.status === 403 ? "The key was refused." : e.status === 402 ? "Out of credit." : e.status === 429 ? "Rate limited right now; try in a minute." : `It didn't answer (${e.status || "timeout"}).` };
@@ -695,7 +754,7 @@ function createSttRouter({ requireAuthenticatedUser, isTrustedOrigin }) {
     }
   });
   router.post("/api/admin/voice-stt/test", trusted, requirePerm("ai.manage"), express.json({ limit: "4kb" }), async (req, res) => {
-    res.json(await adminTest(String(req.body?.id || "")));
+    res.json(await adminTest(String(req.body?.id || ""), req.body?.keyId ? String(req.body.keyId) : undefined));
   });
   return router;
 }

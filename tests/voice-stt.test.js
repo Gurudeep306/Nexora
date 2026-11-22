@@ -155,3 +155,25 @@ test('one entry per service: a second key for the same provider is not kept', as
   ] }, 'owner');
   assert.deepEqual(view.providers.map((p) => p.id), ['groq', 'mine', 'mine-2']);
 });
+
+test('more keys for one service: each from a different person, used in turn by its own limits', async (t) => {
+  stt._cooling.clear();
+  await db.run('CREATE TABLE IF NOT EXISTS site_settings (key TEXT PRIMARY KEY, value TEXT, updated_by TEXT, updated_at TEXT)');
+  // A second key needs a name and the account owner's agreement; two keys under one name are refused.
+  await assert.rejects(() => stt.adminSave({ providers: [{ id: 'deepgram', kind: 'deepgram', extraKeys: [{ owner: 'Ravi', newKey: 'k2' }] }] }, 'o'), /Confirm/);
+  await assert.rejects(() => stt.adminSave({ providers: [{ id: 'deepgram', kind: 'deepgram', extraKeys: [{ owner: 'Ravi', newKey: 'k2', consent: true }, { owner: 'ravi ', newKey: 'k3', consent: true }] }] }, 'o'), /different person/);
+  const view = await stt.adminSave({ providers: [{ id: 'deepgram', kind: 'deepgram', newKey: 'main', limits: { perMinute: 100, creditSeconds: 10 }, extraKeys: [{ owner: 'Ravi', newKey: 'k2', consent: true }] }] }, 'o');
+  const dg = view.providers[0];
+  assert.equal(dg.extraKeys.length, 1);
+  assert.equal(dg.extraKeys[0].owner, 'Ravi');
+  assert.ok(!JSON.stringify(view).includes('k2'), 'keys never come back');
+  // The main key's credit runs low (85% of 10 s), then Ravi's key answers.
+  const used = [];
+  t.mock.method(globalThis, 'fetch', async (_u, init) => {
+    used.push(init.headers.Authorization);
+    return new Response(JSON.stringify({ results: { channels: [{ alternatives: [{ transcript: 'ok', confidence: 0.9 }] }] } }), { status: 200 });
+  });
+  const cfg = await stt.loadConfig();
+  for (let i = 0; i < 6; i++) await stt.transcribe({ audio: clip(2), fetchConfig: async () => cfg });
+  assert.deepEqual(used, ['Token main', 'Token main', 'Token main', 'Token main', 'Token k2', 'Token k2']);
+});
