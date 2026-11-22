@@ -137,7 +137,7 @@ export function MessageAlerts() {
   // On the Messages screen the list itself shows what is new.
   if (!me || onMessagesScreen(location)) return null
   return (
-    <div className="ma" aria-live="polite" aria-label="New messages">
+    <div className="ma" role="log" aria-live="polite" aria-label="New messages">
       <AnimatePresence initial={false}>
         {alerts.map((a) => (
           <motion.div key={a.key} layout initial={{ opacity: 0, y: -10, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, x: 24 }} transition={{ duration: 0.18 }}>

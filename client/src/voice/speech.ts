@@ -9,6 +9,7 @@
   are in capture.ts and src/voice/stt.js.
 */
 
+import { useEffect, useState } from 'react'
 import { serverEars, startCapture, transcribe, type Capture } from './capture'
 
 // The Web Speech API is not in TypeScript's DOM lib; this is the part we use.
@@ -44,8 +45,30 @@ function ctor(): RecognitionCtor | null {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null
 }
 
+/** The browser has its own recogniser (Chrome, Edge, Safari). */
 export function speechSupported(): boolean {
   return ctor() != null
+}
+
+/**
+ * Can this page listen at all? True at once where the browser has its own
+ * recogniser; elsewhere (Firefox, some in-app browsers) it becomes true when
+ * the server ears are set up (Admin → Voice recognition) and the mic can be
+ * recorded. Use this, not speechSupported(), to decide whether to show a mic.
+ */
+export function useVoiceSupport(): boolean {
+  const [ok, setOk] = useState(speechSupported)
+  useEffect(() => {
+    if (ok) return
+    let live = true
+    void serverEars().then((yes) => {
+      if (live && yes) setOk(true)
+    })
+    return () => {
+      live = false
+    }
+  }, [ok])
+  return ok
 }
 
 /** Whether this browser can recognise `lang` without sending audio anywhere. */
