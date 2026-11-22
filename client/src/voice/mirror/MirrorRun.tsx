@@ -74,6 +74,7 @@ export function MirrorRun({ sceneId, title, inputs, frames }: { sceneId: string;
     setListening('')
     handle.current = await listenOnce({
       lang: prefs.lang,
+      mode: 'text',
       onText: (t) => setListening(t),
       onDone: async (text) => {
         handle.current = null

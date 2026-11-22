@@ -194,17 +194,42 @@ export async function startCapture(opts: { onPause?: () => void } = {}): Promise
   }
 }
 
-export type ServerText = { ok: true; text: string; confidence: number | null; provider: string | null } | { ok: false }
+/** What the site is listening for: plain words, a command, or code (src/voice/normalise.js). */
+export type EarsMode = 'text' | 'command' | 'code'
+
+export type ServerText =
+  | {
+      ok: true
+      /** Cleaned, with names fixed (what to act on). */
+      text: string
+      /** What the service heard, before the normaliser. */
+      raw: string
+      /** Code pages: the speech written as code ("i++"). */
+      code?: string
+      /** Code pages: words that could not be placed. */
+      unplaced?: string[]
+      confidence: number | null
+      provider: string | null
+    }
+  | { ok: false }
 
 /** Send a clip to the chain. */
-export async function transcribe(clip: Blob, lang: string, hints: string[] = []): Promise<ServerText> {
+export async function transcribe(clip: Blob, lang: string, hints: string[] = [], mode: EarsMode = 'text'): Promise<ServerText> {
   try {
-    const q = new URLSearchParams({ lang })
+    const q = new URLSearchParams({ lang, mode })
     if (hints.length) q.set('hints', hints.slice(0, 60).join(','))
     const r = await fetch(`${API_BASE}/api/voice/stt?${q}`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'audio/wav' }, body: clip })
     if (!r.ok) return { ok: false }
     const j = await r.json()
-    return j?.ok ? { ok: true, text: String(j.text || ''), confidence: typeof j.confidence === 'number' ? j.confidence : null, provider: j.provider ?? null } : { ok: false }
+    if (!j?.ok) return { ok: false }
+    return {
+      ok: true,
+      text: String(j.text || ''),
+      raw: String(j.raw ?? j.text ?? ''),
+      ...(typeof j.code === 'string' ? { code: j.code, unplaced: Array.isArray(j.unplaced) ? j.unplaced.map(String) : [] } : {}),
+      confidence: typeof j.confidence === 'number' ? j.confidence : null,
+      provider: j.provider ?? null,
+    }
   } catch {
     return { ok: false }
   }
