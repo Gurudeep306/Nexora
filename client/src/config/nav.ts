@@ -46,6 +46,10 @@ export const NAV_SECTIONS: NavSection[] = [
     ],
   },
   {
+    title: 'Discover',
+    items: [{ to: '/explore', label: 'Explore', icon: 'compass' }],
+  },
+  {
     title: 'Library',
     items: [
       { to: '/submissions', label: 'Submissions', icon: 'submissions' },

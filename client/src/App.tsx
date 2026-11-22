@@ -59,6 +59,7 @@ const NotesLessonPage = lazy(pageLoaders.NotesLessonPage)
 const NotesFontsPage = lazy(pageLoaders.NotesFontsPage)
 const SocialPage = lazy(pageLoaders.SocialPage)
 const MessagesPage = lazy(pageLoaders.MessagesPage)
+const ExplorePage = lazy(pageLoaders.ExplorePage)
 const SocialPostPage = lazy(pageLoaders.SocialPostPage)
 const SocialTagPage = lazy(pageLoaders.SocialTagPage)
 const SubmissionsPage = lazy(pageLoaders.SubmissionsPage)
@@ -187,6 +188,7 @@ export default function App() {
             <Route path="/gate/cbt/:paperId" element={<GateCbtPage />} />
             <Route path="/social" element={<SocialPage />} />
             <Route path="/messages" element={<MessagesPage />} />
+            <Route path="/explore" element={<ExplorePage />} />
             <Route path="/live" element={<LiveLobbyPage />} />
             <Route path="/social/post/:id" element={<SocialPostPage />} />
             <Route path="/social/tag/:tag" element={<SocialTagPage />} />
