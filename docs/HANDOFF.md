@@ -55,7 +55,64 @@ Contents:
 - `git add -A` also picks up helper worktrees under `.claude/worktrees/`.
   Add that folder to `.git/info/exclude` first.
 
-## 3. Where it stands (2026-11-17, session 9)
+## 3. Where it stands (latest first)
+
+### Session 11 (2026-11-22): voice, coding, Live, Messages — read this first
+
+Merging: the owner authorised "push all, merge all" for this work: PR →
+green CI → squash-merge → check the "Deploy site" run (Azure VM, not Render).
+Live site last deployed at `6c04b8fe` (PR #226).
+
+**Merged and live (PRs, newest first):**
+
+| PR | What |
+|---|---|
+| #226 | Dock: Messages removed (it is a Community section). Dock settings v3 drop it from older saves once. |
+| #225 | Live: the **iPad teaching board** opens straight from the QR (pages, PDF/photos opened as pages with pdf.js, pen, highlighter, eraser, laser). Fixed a real bug: a tablet opening its board while joining left both sides stuck ("RTP extension ID reassignment"); `mesh.ts` now rebuilds a stuck link. You see your own share ("You're presenting", Stop). `live/blank.ts` warns when a share is black. The stage fits a screen's real shape. The control bar is centred. Tablet panel v3. Test: `tests/live-blank.test.js`. |
+| #224 | Messages moved into Community (`/messages` redirects); the chat fits the window so only it scrolls; Back walks through sections and chats; **quick chat** panel from the top bar with "Send this page"; whole-screen sharing by QR for laptops; Android no longer offered a share that always fails. |
+| #223 | **Explore** page (`/explore`): every feature in one place. |
+| #222 | **Live lectures**: one teaches, many watch (viewers), "Let speak", the tablet board opens by itself. |
+| #221 | Solve page: AI explanations on Dry run and How it runs, grounded in the real run. |
+| #220 | Messages page (later merged into Community), WhatsApp-style alerts, free **Web Push**, call invites (ring online friends, link to the rest), share sheet, Community redesign, Submit reel animation. |
+| #218 | Solve page: **10+ AI tests made automatically** (official examples first), a **benchmark of 10–12 tests per problem** (100% only when all pass), Qwen thinking control, translation kept when the layout changes, stay in calls across pages, no blinking mute dot. |
+| #217 | Reasoning models' "thinking" stripped before students see it. |
+| #216 | Voice: **Build mode** (translate any time; changes only after Accepted), numbers spoken in the exam console, **Explain-back**. |
+| #212–#215 | Voice Phases 2–3: Guru tutor, code by voice, Mirror Run, word-by-word Listen, exam console by voice. |
+
+**What is left, in order:**
+
+1. **Voice, next (owner chose 2026-11-22): ears + natural voice**, then the
+   **virtual teacher**. The full plan, the honest limits and the research
+   answer for the owner's new brief (moving teacher with lip sync, every
+   language, about 1 s replies, "my voice") are in
+   [`docs/voice/VIRTUAL_TEACHER.md`](voice/VIRTUAL_TEACHER.md). Nothing of it
+   is built yet.
+2. **Owner reported "some problems are not fetched (an error)"**: still
+   waiting for the problem link or a screenshot. Fix it on its own PR.
+3. **The owner's own steps:**
+   - Add a free Groq key (Admin → AI models → Add provider → Groq), set
+     Main model and "AI tutor chat" to Qwen, and press Try.
+   - Test on a real iPad and Mac: Live → tablet QR → board → open a PDF.
+   - Turn on notifications in Community → Messages.
+4. Paused older work:
+   - GATE notes (waiting for the owner's "DM is ready" message and the
+     Materials folder name);
+   - DM Ch3–8, COA, TOC and CD notes.
+5. A flaky test (the agent budget test once returned 401 in CI) was offered
+   as a separate task; it is not fixed yet.
+
+**How to check Live and Messages locally** (what this session used):
+- Start the server with a scratch database:
+  `PORT=3100 DB_PATH=<scratch>/site.db SESSION_SECRET=<32+ chars> JUDGE_MODE=local DISABLE_PUPPETEER=1 node src/server.js`.
+- Run a mock AI on :3199 and set `GROQ_BASE_URL=http://localhost:3199`.
+- Use Playwright with `--use-fake-device-for-media-stream` and
+  `--use-fake-ui-for-media-stream`; for screen sharing add
+  `--auto-select-desktop-capture-source=Entire screen`.
+- Emulate an iPad with `devices['iPad Pro 11']`.
+- To debug the mesh, patch `RTCPeerConnection` in an init script and read
+  `signalingState` on both sides.
+
+### Older: 3. Where it stands (2026-11-17, session 9)
 
 - **Session 10 (owner, 2026-11-17): XP rule, avatar in Edit profile, staff
   permissions, site map.** Tracked in its own file:

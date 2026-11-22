@@ -12,9 +12,11 @@ must be honest about anything that is not possible.
 
 STEP 0 — Read first, in this order:
   1. AGENTS.md and CLAUDE.md (the project rules).
-  2. docs/HANDOFF.md section 3 "Where it stands" (session 8: everything up to
-     #145 is merged, no PR is open) and section 6 "What is left".
-  3. docs/ui/field-journal.md and docs/ui/premium.md (the look).
+  2. docs/HANDOFF.md section 3 "Where it stands" — the Session 11 block at
+     the top (everything up to #226 is merged and live, no PR is open).
+  3. docs/voice/BLUEPRINT.md and docs/voice/VIRTUAL_TEACHER.md (the voice
+     plan and my newest brief).
+  4. docs/ui/field-journal.md and docs/ui/premium.md (the look).
 
 BRANCH: work only on your session's own branch. Never commit to main.
 
@@ -30,13 +32,14 @@ yourself once CI is green, there are no conflicts, and all of these pass:
 After a merge, restart your branch from the new main.
 
 WORK, in order (one finished, tested PR each, with a HANDOFF section 3 update):
-  1. Dry run: a "first k of N" label when a vector or list is capped, so it
-     is clear that only part of it is drawn (HANDOFF section 6, item 4).
-     Every traced language, light/dark/phone, with tests.
-  2. Then go through the whole site page by page as a student would (Learn,
-     GATE, Practice/Solve, Contests, Messages, Profile, Settings) and fix
-     anything broken, confusing or off-style. Report what you found.
+  1. Voice: ears + natural voice (docs/voice/VIRTUAL_TEACHER.md §7 step 1):
+     Groq Whisper server link with the free-chain switching, the code-word
+     normaliser with tests, natural voice links, and measured speed.
+  2. Voice: the virtual teacher (§3): optional, small, flies to named
+     places only, points, speaks with lip sync, bubble text, reduced motion,
+     light/dark/phone, axe 0.
   3. Then stop and ask me what to build next, with 3 short suggestions.
+  If I send the problem that gave an error on loading, fix that first.
 
 RULES (never break):
   - Field Journal look: design tokens only, clay is never text, no glows or
