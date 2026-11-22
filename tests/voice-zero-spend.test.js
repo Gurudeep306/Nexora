@@ -6,6 +6,11 @@
      provider's key. Free tiers (Groq, Gemini, Cerebras, OpenRouter free
      models, Cloudflare Workers AI, Azure Speech free tier) are allowed; paid
      upgrades are an explicit admin choice outside this code.
+     One exception (owner, 2026-11-22): the speech-to-text chain
+     (src/voice/stt.js) may use the free allowance or one-time free credit of
+     services that also sell paid use (Sarvam, Google, ElevenLabs, Deepgram),
+     and only there: every such service keeps a free cap (day, month or
+     credit), checked below, and the chain stops at 85% of it.
   2. The Scene Voice and tutor test sets stay well-formed and never shrink.
 */
 const test = require('node:test');
@@ -32,9 +37,13 @@ const PAID = [
   /\b(OPENAI|ANTHROPIC|ELEVENLABS|SARVAM|DEEPGRAM|ASSEMBLYAI|CARTESIA|PLAYHT|ULTRAVOX)_API_KEY\b/,
 ];
 
+// The one file allowed to reach those hosts, behind its free caps (tested below).
+const CAPPED = new Set([path.join(ROOT, 'src/voice/stt.js')]);
+
 test('zero-spend: the voice feature never calls a paid AI service', () => {
   const hits = [];
   for (const f of VOICE_DIRS.flatMap(files)) {
+    if (CAPPED.has(f)) continue;
     const text = fs.readFileSync(f, 'utf8');
     for (const re of PAID) if (re.test(text)) hits.push(`${path.relative(ROOT, f)} matches ${re}`);
   }
@@ -63,4 +72,19 @@ test('voice test sets are well-formed and keep growing', () => {
     assert.ok(c.say && c.context && Array.isArray(c.must) && Array.isArray(c.mustNot), `case ${c.id} is incomplete`);
   }
   for (const kind of ['hint', 'refusal', 'explain', 'action', 'honest']) assert.ok(tutor.cases.some((c) => c.kind === kind), `covers ${kind}`);
+});
+
+test('zero-spend: every speech service with paid use keeps a free cap that cannot be removed', () => {
+  const stt = require('../src/voice/stt');
+  const caps = ['perDaySeconds', 'perMonthSeconds', 'creditSeconds'];
+  for (const [kind, k] of Object.entries(stt.KINDS)) {
+    if (kind === 'openai_compatible') continue;
+    assert.ok(caps.some((c) => k.limits[c] > 0), `${kind} has a free cap`);
+    // An admin clearing every cap gets the free cap back.
+    const p = stt.sanitizeProvider({ kind, limits: { perDaySeconds: '', perMonthSeconds: '', creditSeconds: '' } });
+    assert.ok(caps.some((c) => p.limits[c] > 0), `${kind} keeps a cap when cleared`);
+  }
+  // No API keys from the environment for paid services.
+  const text = fs.readFileSync(path.join(ROOT, 'src/voice/stt.js'), 'utf8');
+  assert.doesNotMatch(text, /\b(SARVAM|DEEPGRAM|ELEVENLABS|OPENAI|ANTHROPIC)_API_KEY\b/);
 });

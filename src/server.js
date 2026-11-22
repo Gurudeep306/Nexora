@@ -5419,6 +5419,8 @@ app.use(adminApi.router);
 app.use(createSocialRouter({ all, get, run, realtime, isTrustedOrigin, calcLevel, calcStreak }).router);
 // Messages: direct and group conversations (src/chat.js, src/routes/chat.js).
 app.use(require("./push").createPushRouter({ requireAuthenticatedUser, isTrustedOrigin }));
+// Voice: speech to text through a chain of services (Admin → AI models → Voice recognition).
+app.use(require("./voice/stt").createSttRouter({ requireAuthenticatedUser, isTrustedOrigin }));
 app.use(require("./routes/chat").createChatRouter({ realtime, isTrustedOrigin, catalog: require("./problem-catalog"), gate: require("./routes/gate") }));
 // Hosted contests: made from anywhere on the site, coding and GATE questions, marks and analysis.
 app.use(require("./routes/hosted-contests").createHostedContestsRouter({ gate: require("./routes/gate"), hashPassword, verifyPassword }));

@@ -263,3 +263,107 @@
   font-size: 12px;
   color: var(--color-text-muted);
 }
+
+/* Admin → Voice recognition (VoiceSttSection.tsx). */
+.vstt-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.vstt-item {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-bg-surface);
+}
+.vstt-item.is-off {
+  opacity: 0.72;
+}
+.vstt-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+}
+.vstt-rank {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+}
+.vstt-name {
+  margin: 0;
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.vstt-why {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.vstt-fields,
+.vstt-limit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: 10px;
+}
+.vstt-use {
+  display: grid;
+  gap: 6px;
+}
+.vstt-use-text {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.vstt-limits > summary {
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.vstt-limits[open] > summary {
+  margin-bottom: 10px;
+}
+.vstt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.vstt-add {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: 24rem;
+  margin-top: 14px;
+}
+.vstt-add .ai-field {
+  flex: 1;
+}
+.vstt-daily {
+  max-width: 16rem;
+}
+.vstt-save {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+@media (max-width: 640px) {
+  .vstt-head {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  .vstt-head .nx-chip {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
