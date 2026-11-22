@@ -15,6 +15,8 @@ export const DOCK_ICONS: Record<string, IconOrBrand> = {
   analytics: 'analytics',
   social: 'social',
   live: 'live',
+  messages: 'messages',
+  explore: 'compass',
   workshop: 'workshop',
   achievements: 'achievements',
   submissions: 'submissions',

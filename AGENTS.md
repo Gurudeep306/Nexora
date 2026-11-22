@@ -232,6 +232,12 @@ from a range, since test files run in parallel and a clash fails the run.
   what devices report; over the monthly limit new rooms go direct. In the direct mode the
   newcomer always starts each connection; keep that, or two offers clash and
   Chrome's ICE stalls. `routes/live.js` is the older LiveClass API, unrelated.
+- **Explore** (`/explore`, `pages/explore/`): every feature on one page —
+  grouped, one plain line each, where it lives and a link straight there,
+  with a search box. The list is `pages/explore/features.ts`: when you add a
+  feature people should find, add it there too (true names and addresses
+  only). It is in the Dock (new default pins: Messages and Explore), at the
+  top of the Dock's "…" menu, and in the nav ("Discover").
 - **Live lectures** (Live → Start a room or lecture → Live lecture; rooms
   with `kind = 'lecture'`): the host and co-hosts teach; everyone else joins
   as a `viewer` ("Watch the lecture": no camera or mic setup) and can chat,

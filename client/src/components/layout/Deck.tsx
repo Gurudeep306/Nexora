@@ -383,6 +383,14 @@ export function Deck() {
                     position === 'right' && 'right-full bottom-0 mr-4 origin-bottom-right',
                   )}
                 >
+                  <NavLink
+                    to="/explore"
+                    onClick={() => setMoreOpen(false)}
+                    className="mb-1.5 flex items-center gap-2 rounded-lg border-b border-border px-2 pt-1.5 pb-2.5 text-[13px] font-semibold text-text-primary transition-colors hover:!scale-100 hover:text-accent-brand"
+                  >
+                    <Icon name="compass" className="size-4" />
+                    See everything NexoraGuru can do
+                  </NavLink>
                   {rest.length > 0 ? (
                     <div className="grid grid-cols-3 gap-1">
                       {rest.map((item) => (
