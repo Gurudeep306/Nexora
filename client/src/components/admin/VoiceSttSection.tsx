@@ -76,7 +76,80 @@ export function VoiceSttSection() {
   if (error) return <Failed message={error} onRetry={refetch} />
   if (loading || !data) return <Skeleton className="h-64" />
   // A fresh editor for each saved version, started from it.
-  return <Editor key={JSON.stringify([data.providers, data.studentDailySeconds, data.autoOrder])} data={data} refetch={refetch} />
+  return (
+    <div className="space-y-5">
+      <Editor key={JSON.stringify([data.providers, data.studentDailySeconds, data.autoOrder])} data={data} refetch={refetch} />
+      <NaturalVoice />
+    </div>
+  )
+}
+
+type TtsView = { enabled: boolean; monthlyChars: number; studentDailyChars: number; freeMonthlyChars: number; stopAt: number; usedThisMonth: number; linked: boolean }
+
+/*
+  Natural voice for spoken answers (src/voice/tts.js): the Azure Speech entry
+  above also speaks, on its free tier only. It stops at 85% of the free month;
+  the caps here can only be lowered.
+*/
+function NaturalVoice() {
+  const { data, error, loading, refetch } = useApi(() => api.get<TtsView>('/api/admin/voice-tts'), [], { cacheKey: 'admin:voice-tts' })
+  const toast = useToast()
+  const [draft, setDraft] = useState<{ enabled: boolean; daily: number; monthly: number } | null>(null)
+  const [saving, setSaving] = useState(false)
+  if (error) return <Failed message={error} onRetry={refetch} />
+  if (loading || !data) return <Skeleton className="h-40" />
+  const d = draft ?? { enabled: data.enabled, daily: data.studentDailyChars, monthly: data.monthlyChars }
+  const changed = draft !== null && (d.enabled !== data.enabled || d.daily !== data.studentDailyChars || d.monthly !== data.monthlyChars)
+  const save = async () => {
+    setSaving(true)
+    try {
+      await api.put('/api/admin/voice-tts', { enabled: d.enabled, studentDailyChars: d.daily, monthlyChars: d.monthly })
+      setDraft(null)
+      refetch()
+      toast.success('Saved')
+    } catch (e) {
+      toast.error(e instanceof ApiError ? e.message : 'Couldn’t save.')
+    } finally {
+      setSaving(false)
+    }
+  }
+  const pct = data.stopAt ? Math.min(100, Math.round((data.usedThisMonth / data.stopAt) * 100)) : 0
+  return (
+    <Panel
+      title="Natural voice"
+      icon="volume"
+      description="Spoken answers in a natural Indian voice (Neerja, Prabhat, Swara, Madhur), made from the answer text only. It uses the Microsoft Azure Speech entry above (key and region). Use a Free (F0) resource: it can’t be billed. The site stops at 85% of the free 500,000 characters a month; after that, students hear their own device’s voice."
+    >
+      <div className="vstt-auto">
+        <Toggle checked={d.enabled} onChange={(v) => setDraft({ ...d, enabled: v })} label="Use the natural voice" />
+        <div>
+          <p className="vstt-auto-title">
+            Use the natural voice <Chip tone={data.linked && data.enabled ? 'success' : 'warning'}>{!data.enabled ? 'Off' : data.linked ? 'Ready' : 'Needs Azure Speech above'}</Chip>
+          </p>
+          <p className="vstt-auto-line">
+            {data.usedThisMonth.toLocaleString('en-IN')} of {data.stopAt.toLocaleString('en-IN')} characters used this month ({pct}%).
+          </p>
+        </div>
+      </div>
+      <div className="vstt-fields">
+        <label className="ai-field">
+          <span>Each student, characters a day</span>
+          <input className="ai-input" type="number" min={200} max={50000} step={100} value={d.daily} onChange={(e) => setDraft({ ...d, daily: Number(e.target.value) || 0 })} />
+        </label>
+        <label className="ai-field">
+          <span>Monthly cap (at most {data.freeMonthlyChars.toLocaleString('en-IN')})</span>
+          <input className="ai-input" type="number" min={1000} max={data.freeMonthlyChars} step={1000} value={d.monthly} onChange={(e) => setDraft({ ...d, monthly: Math.min(data.freeMonthlyChars, Number(e.target.value) || 0) })} />
+        </label>
+      </div>
+      {changed && (
+        <div className="flex justify-end">
+          <Button size="sm" onClick={() => void save()} loading={saving}>
+            Save
+          </Button>
+        </div>
+      )}
+    </Panel>
+  )
 }
 
 function Editor({ data, refetch }: { data: View; refetch: () => void }) {

@@ -29,6 +29,7 @@ import { parseCode, type CodeCommand } from './code/parse'
 import { activeBuilder, parseBuild } from './code/build'
 import { speak, stopSpeaking } from './speak'
 import { pageHints } from './hints'
+import { SpeakingChip } from './SpeakingChip'
 import './voice.css'
 
 type Phase =
@@ -340,6 +341,7 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
         )}
       </AnimatePresence>
 
+      <SpeakingChip />
       <ConsentSheet
         open={consentOpen}
         prefs={prefs}

@@ -349,7 +349,8 @@ app.use(
         // Problem statements may embed videos / audio from the source sites.
         mediaSrc: ["'self'", "https:", "blob:", "data:"],
         // The AI course lessons run Python in the browser (Pyodide, from jsDelivr, pinned in client/src/learn/python/runtime.ts).
-        connectSrc: ["'self'", "wss:", "ws:", "https://cdn.jsdelivr.net"],
+        // Kokoro (Settings → Voice, opt-in): its model files come from Hugging Face and its CDN.
+        connectSrc: ["'self'", "wss:", "ws:", "https://cdn.jsdelivr.net", "https://huggingface.co", "https://*.huggingface.co", "https://*.hf.co"],
         workerSrc: ["'self'", "blob:"],
         frameSrc: ["'self'", "https://www.youtube.com", "https://www.youtube-nocookie.com", "https://player.vimeo.com"],
         objectSrc: ["'none'"],
@@ -5421,6 +5422,8 @@ app.use(createSocialRouter({ all, get, run, realtime, isTrustedOrigin, calcLevel
 app.use(require("./push").createPushRouter({ requireAuthenticatedUser, isTrustedOrigin }));
 // Voice: speech to text through a chain of services (Admin → AI models → Voice recognition).
 app.use(require("./voice/stt").createSttRouter({ requireAuthenticatedUser, isTrustedOrigin }));
+// Natural voice for spoken answers (Azure Speech free tier, capped): docs/voice/STEP1_EARS_DESIGN.md §S8.
+app.use(require("./voice/tts").createTtsRouter({ requireAuthenticatedUser, isTrustedOrigin }));
 app.use(require("./routes/chat").createChatRouter({ realtime, isTrustedOrigin, catalog: require("./problem-catalog"), gate: require("./routes/gate") }));
 // Hosted contests: made from anywhere on the site, coding and GATE questions, marks and analysis.
 app.use(require("./routes/hosted-contests").createHostedContestsRouter({ gate: require("./routes/gate"), hashPassword, verifyPassword }));
