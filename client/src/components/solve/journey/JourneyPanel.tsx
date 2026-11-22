@@ -3,6 +3,8 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
 import { ArrowRight, ChevronLeft, ChevronRight, Loader2, Maximize2, Minimize2, Pause, Play, RotateCcw, Cpu } from 'lucide-react'
 import { api, ApiError } from '@/lib/api'
+import { agentTask } from '@/lib/agent'
+import { Markdown } from '@/learn/md'
 import { MONACO_LANG } from '@/lib/monacoLang'
 import { parseDiagnostics } from '@/lib/diagnostics'
 import { engineLabel, type RunResult } from '../types'
@@ -455,6 +457,51 @@ function CheckStop({ tr, loading, error, name, onRetry, onJumpToLine }: { tr: Tr
   )
 }
 
+/** "Explain these instructions": the AI reads only the real listing for this line (when an AI is set up). */
+function AsmExplain({ language, target, source, line, instructions }: { language: string; target: string; source: string; line: number; instructions: string[] }) {
+  const [ready, setReady] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [text, setText] = useState<string | null>(null)
+  const [err, setErr] = useState<string | null>(null)
+  useEffect(() => {
+    let live = true
+    api
+      .get<{ configured: boolean }>('/api/agent/status')
+      .then((r) => live && setReady(!!r.configured))
+      .catch(() => {})
+    return () => {
+      live = false
+    }
+  }, [])
+  if (!ready || !instructions.length) return null
+  const ask = async () => {
+    setBusy(true)
+    setErr(null)
+    try {
+      setText(await agentTask<string>('asm_explain', { language, target, source, line, instructions: instructions.slice(0, 40).join('\n') }))
+    } catch (e) {
+      setErr(e instanceof Error && e.message ? e.message : 'The AI could not explain this just now.')
+    } finally {
+      setBusy(false)
+    }
+  }
+  return (
+    <div className="grid gap-1.5">
+      {!text && (
+        <button type="button" className="jr-btn justify-self-start" onClick={() => void ask()} disabled={busy}>
+          {busy ? 'Explaining…' : 'Explain these instructions in plain words'}
+        </button>
+      )}
+      {err && <p className="m-0 text-[12.5px] text-state-error">{err}</p>}
+      {text && (
+        <div className="jr-note m-0" aria-live="polite">
+          <Markdown md={text} />
+        </div>
+      )}
+    </div>
+  )
+}
+
 /* ── 4 Translate ── */
 function TranslateStop({
   tr,
@@ -669,6 +716,7 @@ function TranslateStop({
             </dl>
           )}
           {usesRegisters && <p className="jr-note m-0">{REGISTER_NOTE}</p>}
+          <AsmExplain key={`${step.line}:${at}`} language={language} target={p.target ?? p.runner} source={(lines[step.line - 1] ?? '').trim()} line={step.line} instructions={current.map((l) => l.text)} />
           {!machine && at === 0 && (language === 'java' || language === 'kotlin' || language === 'python' || language === 'ruby') && <p className="jr-note m-0">{STACK_NOTE}</p>}
         </div>
       )}

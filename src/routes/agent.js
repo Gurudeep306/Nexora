@@ -24,6 +24,8 @@ const PUBLIC_MODES = new Set([
   "coach_tests",
   "coach_explain",
   "coach_ask",
+  "dry_explain",
+  "asm_explain",
   "animate",
   "gate_narrative",
   "studio_author",

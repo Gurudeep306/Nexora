@@ -35,7 +35,7 @@ const PRESET_BY_KIND = new Map(PRESETS.map((p) => [p.kind, p]));
 /** The site's AI features, each mapped from the task modes in modes.js. */
 const FEATURES = [
   { id: "tutor", name: "AI tutor chat", hint: "The assistant on every page, and one-shot explanations.", modes: ["chat", "tutor", "animate"] },
-  { id: "coach", name: "Code coach, AI tests and analysis", hint: "Coach hints, AI-written tests, complexity and bug analysis.", modes: ["coach_insight", "coach_tests", "coach_explain", "coach_ask", "testgen_plan", "testgen_cases", "testgen_brute", "testgen_solution", "testgen_fix", "code_analysis"] },
+  { id: "coach", name: "Code coach, AI tests and analysis", hint: "Coach hints, AI-written tests, complexity and bug analysis.", modes: ["coach_insight", "coach_tests", "coach_explain", "coach_ask", "testgen_plan", "testgen_cases", "testgen_brute", "testgen_solution", "testgen_fix", "code_analysis", "dry_explain", "asm_explain"] },
   { id: "editor", name: "Editor help", hint: "Ghost completions and quick fixes in the code editor.", modes: ["complete", "fix"] },
   { id: "translate", name: "Translate", hint: "Problem statements in other languages.", modes: ["translate", "detect_lang"] },
   { id: "finder", name: "Problem finder", hint: "Natural-language problem search.", modes: ["find_problems_intent", "find_problems_rank"] },

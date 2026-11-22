@@ -265,6 +265,46 @@ Explain this verdict so the student can fix it themselves. Use exactly this mark
     post: (raw) => String(raw).trim(),
   },
 
+  /* Dry run, "Explain this step": the student's own run, recorded by the
+     tracer (src/dryrun). The model only puts into words what the trace
+     shows — the line that ran, the values that changed, what was printed —
+     and never invents steps or gives a fix. */
+  dry_explain: {
+    model: "main",
+    maxTokens: 420,
+    temperature: 0.2,
+    build: (i) => [
+      {
+        role: "system",
+        content: `${P.COACH_RULES}${replyLang(i.uiLang)} You explain ONE step of the student's own program as it actually ran. Use only the facts given (the line, the values before and after, the output so far, the steps just before). Never invent values or steps. Do not give corrected code. Plain markdown, at most 90 words: first what this line just did with the real numbers, then why the values changed, then (if useful) what will happen next.`,
+      },
+      {
+        role: "user",
+        content: `${P.data("student-code", `${str(i.language, 20)} (line numbers added):\n${str(i.code, 10000)}`, 12000)}
+${P.data("this-step", `Step ${Number(i.step) || 0} of ${Number(i.total) || 0}. Line ${Number(i.line) || 0} just ran: ${str(i.lineText, 300)}\nWhat the tracer noted: ${str(i.note, 300)}\nValues now: ${str(i.vars, 1200)}\nValues just before: ${str(i.prev, 1200)}\nPrinted so far: ${str(i.output, 600)}`, 4000)}
+${P.data("steps-before", str(i.recent, 1500), 1600)}
+Explain this step.`,
+      },
+    ],
+    post: (raw) => String(raw).trim(),
+  },
+
+  /* How it runs → Translate: the real instructions the compiler made for one
+     line, put into plain words. Only the listing given is described. */
+  asm_explain: {
+    model: "main",
+    maxTokens: 380,
+    temperature: 0.2,
+    build: (i) => [
+      {
+        role: "system",
+        content: `You explain to a first-year student what the compiler made from one line of their ${str(i.language, 20)} code (${str(i.target, 60)}). Describe only the instructions given, in order, in plain words, as small jobs for the machine (load a value, add, compare, jump back to the loop). Name registers only to say what they hold. No new code. At most 100 words, plain markdown.${replyLang(i.uiLang)}`,
+      },
+      { role: "user", content: `Line ${Number(i.line) || 0}: ${str(i.source, 300)}\n${P.data("instructions", str(i.instructions, 3000), 3200)}` },
+    ],
+    post: (raw) => String(raw).trim(),
+  },
+
   coach_ask: {
     model: "main",
     maxTokens: 800,

@@ -7,6 +7,7 @@ import type { Lang } from '@/learn/engine/types'
 import { engineLabel } from '../types'
 import { replay, setLanguage, type TraceEvent } from './replay'
 import { toFrames, type DryFrame } from './toFrames'
+import { StepExplain } from './StepExplain'
 
 /*
  * Dry run: the student's own program, run once on a sample, drawn step by
@@ -186,6 +187,7 @@ export function DryRunPanel({ code, language, cases, initialCase = 0, onJumpToLi
         autoplay={false}
         marks={marks}
         footnote={res?.capped || (res?.ok && res.stderr) ? footnote : undefined}
+        after={res?.ok && frames.length ? <StepExplain frames={frames} code={done?.code ?? code} language={language} stdout={res.stdout} /> : undefined}
       />
       {status.state === 'running' && !frames.length && (
         <p className="mt-3 flex items-center justify-center gap-2 text-[13px] text-text-muted">
