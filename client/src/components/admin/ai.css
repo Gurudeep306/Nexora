@@ -397,3 +397,22 @@
 .vstt-note {
   margin-top: 10px;
 }
+.vstt-key {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.vstt-key .ai-input {
+  flex: 1;
+  min-width: 0;
+}
+/* Unsaved changes: the Save bar stays in view at the bottom of the window. */
+.vstt-save.is-dirty {
+  position: sticky;
+  bottom: calc(var(--dock-room, 0px) + 12px);
+  z-index: 5;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border-strong, var(--color-border));
+  border-radius: var(--radius-card);
+  background: var(--color-bg-surface);
+}

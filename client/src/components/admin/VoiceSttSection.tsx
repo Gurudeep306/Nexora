@@ -108,6 +108,7 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
     for (const k of data.defaultOrder) if (!have.has(k)) next.splice(data.defaultOrder.indexOf(k), 0, { id: k, kind: k, label: kinds[k].label, enabled: false, model: kinds[k].defaultModel, region: kinds[k].needsRegion ? 'centralindia' : '', url: '', limits: { ...kinds[k].limits }, hasKey: false, cooling: null, usage: null })
     setList(next)
   }
+  const unsaved = list.some((p) => !data.providers.find((x) => x.id === p.id))
   const save = async () => {
     setBusy('save')
     try {
@@ -120,13 +121,24 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
       setBusy(null)
     }
   }
+  /**
+   * Save first when anything changed (a new key, a switch), then test one
+   * service. A pasted key also switches its service on: one tap does all.
+   */
   const test = async (id: string) => {
     setBusy(`test:${id}`)
     try {
+      if (dirty || unsaved) {
+        const next = list.map((p) => (p.id === id && p.newKey?.trim() ? { ...p, enabled: true } : p))
+        setList(next)
+        await api.put('/api/admin/voice-stt', { providers: next, studentDailySeconds: daily * 60, autoOrder: auto })
+      }
       const r = await api.post<{ ok: boolean; ms?: number; error?: string }>('/api/admin/voice-stt/test', { id })
       if (r.ok) toast.success('It works', `Answered in ${((r.ms ?? 0) / 1000).toFixed(1)} s.`)
       else toast.error('It didn’t work', r.error)
       refetch()
+    } catch (e) {
+      toast.error(e instanceof ApiError ? e.message : 'Couldn’t save')
     } finally {
       setBusy(null)
     }
@@ -137,7 +149,6 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
     const r = data.effectiveOrder.indexOf(p.id)
     return r < 0 ? 999 + list.indexOf(p) : r
   }
-  const unsaved = list.some((p) => !data.providers.find((x) => x.id === p.id))
   return (
     <div className="space-y-5">
       <Panel
@@ -215,7 +226,14 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
                   )}
                   <label className="ai-field">
                     <span>{p.hasKey ? (p.keyFromAi ? 'Key (uses the Groq key from AI models)' : 'Key (saved; type to replace)') : 'Key'}</span>
-                    <input className="ai-input" type="password" autoComplete="off" value={p.newKey ?? ''} onChange={(e) => set(i, { newKey: e.target.value, removeKey: false })} placeholder={p.hasKey ? '••••••••' : 'Paste the key'} />
+                    <span className="vstt-key">
+                      <input className="ai-input" type="password" autoComplete="off" value={p.newKey ?? ''} onChange={(e) => set(i, { newKey: e.target.value, removeKey: false })} onKeyDown={(e) => e.key === 'Enter' && p.newKey?.trim() && void test(p.id)} placeholder={p.hasKey ? '••••••••' : 'Paste the key'} />
+                      {p.newKey?.trim() && (
+                        <Button size="sm" onClick={() => void test(p.id)} loading={busy === `test:${p.id}`} disabled={busy !== null && busy !== `test:${p.id}`}>
+                          Save and test
+                        </Button>
+                      )}
+                    </span>
                   </label>
                 </div>
 
@@ -277,7 +295,7 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
                   </button>
                   </>
                   )}
-                  <button type="button" className="ai-btn" onClick={() => void test(p.id)} disabled={isNew || dirty || busy !== null} title={isNew || dirty ? 'Save first' : undefined}>
+                  <button type="button" className="ai-btn" onClick={() => void test(p.id)} disabled={busy !== null} title={dirty || isNew ? 'Saves your changes, then tests' : undefined}>
                     {busy === `test:${p.id}` ? <Loader2 className="size-3.5 animate-spin" aria-hidden="true" /> : <Play className="size-3.5" aria-hidden="true" />} Test
                   </button>
                   {k?.signup && (
@@ -322,7 +340,7 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
         </label>
       </Panel>
 
-      <div className="vstt-save">
+      <div className={cn('vstt-save', (dirty || unsaved) && 'is-dirty')}>
         {(dirty || unsaved) && <span className="text-[13px] text-text-secondary">Unsaved changes</span>}
         <Button onClick={() => void save()} disabled={!dirty} loading={busy === 'save'}>
           Save
