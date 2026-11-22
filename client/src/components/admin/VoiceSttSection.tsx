@@ -29,11 +29,13 @@ type Provider = {
   keyFromAi?: boolean
   cooling: string | null
   usage: { minute: Use; hour: Use; day: Use; month: Use; ever: Use } | null
+  stats?: { answers: number; failures: number; avgMs: number | null; confidence: number | null } | null
+  score?: number
   newKey?: string
   removeKey?: boolean
 }
 type Kind = { label: string; why: string; models: string[]; defaultModel: string; limits: Limits; needsRegion: boolean; needsUrl: boolean; signup: string | null }
-type View = { ok: true; providers: Provider[]; studentDailySeconds: number; kinds: Record<string, Kind>; defaultOrder: string[] }
+type View = { ok: true; providers: Provider[]; autoOrder: boolean; effectiveOrder: string[]; studentDailySeconds: number; kinds: Record<string, Kind>; defaultOrder: string[] }
 
 const LIMIT_FIELDS: { k: keyof Limits; label: string; unit: string; minutes?: boolean }[] = [
   { k: 'perMinute', label: 'Requests a minute', unit: 'requests' },
@@ -71,18 +73,19 @@ export function VoiceSttSection() {
   if (error) return <Failed message={error} onRetry={refetch} />
   if (loading || !data) return <Skeleton className="h-64" />
   // A fresh editor for each saved version, started from it.
-  return <Editor key={JSON.stringify([data.providers, data.studentDailySeconds])} data={data} refetch={refetch} />
+  return <Editor key={JSON.stringify([data.providers, data.studentDailySeconds, data.autoOrder])} data={data} refetch={refetch} />
 }
 
 function Editor({ data, refetch }: { data: View; refetch: () => void }) {
   const toast = useToast()
   const [list, setList] = useState<Provider[]>(() => data.providers.map((p) => ({ ...p })))
   const [daily, setDaily] = useState(() => Math.round(data.studentDailySeconds / 60))
+  const [auto, setAuto] = useState(data.autoOrder)
   const [busy, setBusy] = useState<string | null>(null)
   const [adding, setAdding] = useState('')
 
   const kinds = data.kinds
-  const dirty = JSON.stringify(list.map(strip)) !== JSON.stringify(data.providers.map(strip)) || daily * 60 !== data.studentDailySeconds
+  const dirty = JSON.stringify(list.map(strip)) !== JSON.stringify(data.providers.map(strip)) || daily * 60 !== data.studentDailySeconds || auto !== data.autoOrder
   const set = (i: number, patch: Partial<Provider>) => setList(list.map((p, j) => (j === i ? { ...p, ...patch } : p)))
   const move = (i: number, d: -1 | 1) => {
     const j = i + d
@@ -108,7 +111,7 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
   const save = async () => {
     setBusy('save')
     try {
-      await api.put('/api/admin/voice-stt', { providers: list, studentDailySeconds: daily * 60 })
+      await api.put('/api/admin/voice-stt', { providers: list, studentDailySeconds: daily * 60, autoOrder: auto })
       toast.success('Saved', 'The new order is used from the next spoken sentence.')
       refetch()
     } catch (e) {
@@ -129,6 +132,11 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
     }
   }
 
+  // In auto mode the list is shown in the order the site will really use.
+  const rankOf = (p: Provider) => {
+    const r = data.effectiveOrder.indexOf(p.id)
+    return r < 0 ? 999 + list.indexOf(p) : r
+  }
   const unsaved = list.some((p) => !data.providers.find((x) => x.id === p.id))
   return (
     <div className="space-y-5">
@@ -138,13 +146,25 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
         description="The site uses the first service that is on, has a key and has free room left. Near 85% of any free limit, or after an error, it moves to the next one by itself. When every one is full, the student’s own browser listens, so the mic never stops and nothing is charged."
         actions={
           <button type="button" className="ai-btn" onClick={recommended}>
-            Use the recommended order
+            Add the recommended services
           </button>
         }
       >
+        <div className="vstt-auto">
+          <Toggle checked={auto} onChange={setAuto} label="Arrange the order automatically" />
+          <div>
+            <p className="vstt-auto-title">Arrange the order automatically</p>
+            <p className="vstt-auto-line">
+              {auto
+                ? 'Starts from the most accurate for Indian speech, then moves services up or down by how they really do here: answers without errors, the confidence they report, and speed. A service needs about 20 answers before its own results count fully.'
+                : 'Off: the site follows your order exactly. Use the arrows to change it.'}
+            </p>
+          </div>
+        </div>
         {list.length === 0 && <p className="m-0 text-[13.5px] text-text-secondary">No services yet. Press “Use the recommended order” to list the best ones for Indian speech, then add a key to each.</p>}
         <ol className="vstt-list">
-          {list.map((p, i) => {
+          {(auto ? [...list].sort((a, b) => rankOf(a) - rankOf(b)) : list).map((p) => {
+            const i = list.indexOf(p)
             const k = kinds[p.kind]
             const st = state(p)
             const t = tightest(p)
@@ -152,8 +172,8 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
             return (
               <li key={p.id} className={cn('vstt-item', !p.enabled && 'is-off')}>
                 <div className="vstt-head">
-                  <span className="vstt-rank" aria-label={`Number ${i + 1}`}>
-                    {i + 1}
+                  <span className="vstt-rank" aria-label={`Number ${auto && data.effectiveOrder.includes(p.id) ? data.effectiveOrder.indexOf(p.id) + 1 : i + 1}`}>
+                    {auto && data.effectiveOrder.includes(p.id) ? data.effectiveOrder.indexOf(p.id) + 1 : i + 1}
                   </span>
                   <div className="vstt-title">
                     <p className="vstt-name">{p.label}</p>
@@ -210,6 +230,15 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
                   </div>
                 )}
 
+                {p.stats && (p.stats.answers > 0 || p.stats.failures > 0) && (
+                  <p className="vstt-stats">
+                    Last 14 days: {p.stats.answers} answers, {p.stats.failures} failures
+                    {p.stats.avgMs !== null && ` · ${(p.stats.avgMs / 1000).toFixed(2)} s on average`}
+                    {p.stats.confidence !== null && ` · confidence ${Math.round(p.stats.confidence * 100)}%`}
+                    {auto && p.score !== undefined && ` · score ${p.score}`}
+                  </p>
+                )}
+
                 <details className="vstt-limits">
                   <summary>Free limits (check the provider’s console; plans change)</summary>
                   <div className="vstt-limit-grid">
@@ -238,12 +267,16 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
                 </details>
 
                 <div className="vstt-actions">
+                  {!auto && (
+                  <>
                   <button type="button" className="ai-btn" onClick={() => move(i, -1)} disabled={i === 0} aria-label={`Move ${p.label} up`}>
                     <ArrowUp className="size-3.5" aria-hidden="true" />
                   </button>
                   <button type="button" className="ai-btn" onClick={() => move(i, 1)} disabled={i === list.length - 1} aria-label={`Move ${p.label} down`}>
                     <ArrowDown className="size-3.5" aria-hidden="true" />
                   </button>
+                  </>
+                  )}
                   <button type="button" className="ai-btn" onClick={() => void test(p.id)} disabled={isNew || dirty || busy !== null} title={isNew || dirty ? 'Save first' : undefined}>
                     {busy === `test:${p.id}` ? <Loader2 className="size-3.5 animate-spin" aria-hidden="true" /> : <Play className="size-3.5" aria-hidden="true" />} Test
                   </button>
@@ -266,7 +299,9 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
             <span>Add a service</span>
             <select className="ai-input" value={adding} onChange={(e) => add(e.target.value)}>
               <option value="">Choose…</option>
-              {Object.entries(kinds).map(([id, k]) => (
+              {Object.entries(kinds)
+                .filter(([id]) => id === 'openai_compatible' || !list.some((p) => p.kind === id))
+                .map(([id, k]) => (
                 <option key={id} value={id}>
                   {k.label}
                 </option>
@@ -275,6 +310,9 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
           </label>
           <Plus className="size-4 text-text-muted" aria-hidden="true" />
         </div>
+        <p className="vstt-note">
+          One key per service. Several free keys or accounts at the same company to get more free use breaks their terms and can get the account blocked, so each service is listed once. More free minutes come from adding more services, or a paid plan with its own limit.
+        </p>
       </Panel>
 
       <Panel title="Fair share" icon="users" description="Each student’s server listening a day. Beyond it their own browser listens, so a few heavy users can’t use up the free limits for everyone.">

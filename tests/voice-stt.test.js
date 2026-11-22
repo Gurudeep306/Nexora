@@ -123,3 +123,35 @@ test('vocabulary hints: the CS glossary plus the page, inside Whisper\'s prompt 
   assert.ok(p.length <= 800 && /mid ko update karo/.test(p));
   assert.equal(stt.DEFAULT_ORDER[0], 'sarvam');
 });
+
+test('auto order: the accuracy order first, then real results move a service down', async (t) => {
+  stt._cooling.clear();
+  const providers = [
+    { id: 'groq', kind: 'groq', key: seal('k') },
+    { id: 'sarvam', kind: 'sarvam', key: seal('k') },
+  ].map(stt.sanitizeProvider);
+  const auto = async () => ({ providers, studentDailySeconds: 600, autoOrder: true });
+  assert.deepEqual((await stt.ordered(await auto())).map((p) => p.id), ['sarvam', 'groq'], 'no results yet: Sarvam (best for Indian speech) first');
+  // Sarvam keeps failing; Groq answers well and fast.
+  for (let i = 0; i < 30; i++) {
+    await db.run("INSERT INTO voice_stt_stats(provider, day, ok, fail, ms, conf, conf_n) VALUES('sarvam', ?, 0, 1, 0, 0, 0) ON CONFLICT(provider, day) DO UPDATE SET fail=fail+1", [new Date().toISOString().slice(0, 10)]).catch(async () => {
+      await stt.ordered(await auto());
+    });
+  }
+  t.mock.method(globalThis, 'fetch', async () => new Response(JSON.stringify({ text: 'ok', segments: [{ avg_logprob: -0.05, no_speech_prob: 0, compression_ratio: 1 }] }), { status: 200 }));
+  for (let i = 0; i < 25; i++) await stt.transcribe({ audio: clip(1), fetchConfig: async () => ({ providers: [providers[0]], studentDailySeconds: 9999 }) });
+  assert.deepEqual((await stt.ordered(await auto())).map((p) => p.id), ['groq', 'sarvam'], 'measured results now lead');
+  // Manual order is kept exactly when auto is off.
+  assert.deepEqual((await stt.ordered({ providers, autoOrder: false })).map((p) => p.id), ['groq', 'sarvam']);
+});
+
+test('one entry per service: a second key for the same provider is not kept', async () => {
+  await db.run('CREATE TABLE IF NOT EXISTS site_settings (key TEXT PRIMARY KEY, value TEXT, updated_by TEXT, updated_at TEXT)');
+  const view = await stt.adminSave({ providers: [
+    { id: 'groq', kind: 'groq' },
+    { id: 'groq-2', kind: 'groq', newKey: 'second' },
+    { id: 'mine', kind: 'openai_compatible', url: 'https://a.example/v1' },
+    { id: 'mine-2', kind: 'openai_compatible', url: 'https://b.example/v1' },
+  ] }, 'owner');
+  assert.deepEqual(view.providers.map((p) => p.id), ['groq', 'mine', 'mine-2']);
+});
