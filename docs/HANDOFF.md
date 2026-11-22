@@ -81,7 +81,9 @@ Live site last deployed at `6c04b8fe` (PR #226).
 
 **What is left, in order:**
 
-1. **Voice, next (owner chose 2026-11-22): ears + natural voice**, then the
+1. **Voice, next (owner chose 2026-11-22): ears + natural voice** (precise
+   design: [`docs/voice/STEP1_EARS_DESIGN.md`](voice/STEP1_EARS_DESIGN.md); the owner
+   has added a Groq key), then the
    **virtual teacher**. The full plan, the honest limits and the research
    answer for the owner's new brief (moving teacher with lip sync, every
    language, about 1 s replies, "my voice") are in
