@@ -33,7 +33,10 @@ type Provider = {
   score?: number
   newKey?: string
   removeKey?: boolean
+  extraKeys?: ExtraKey[]
 }
+/** Another person's own key for the same service. */
+type ExtraKey = { id: string; owner: string; hasKey?: boolean; cooling?: string | null; usage?: { day: Use; month: Use; ever: Use } | null; newKey?: string; consent?: boolean }
 type Kind = { label: string; why: string; models: string[]; defaultModel: string; limits: Limits; needsRegion: boolean; needsUrl: boolean; signup: string | null }
 type View = { ok: true; providers: Provider[]; autoOrder: boolean; effectiveOrder: string[]; studentDailySeconds: number; kinds: Record<string, Kind>; defaultOrder: string[] }
 
@@ -61,7 +64,7 @@ function tightest(p: Provider): { used: number; max: number; what: string } | nu
 
 function state(p: Provider): { tone: string; text: string } {
   if (!p.enabled) return { tone: '', text: 'Off' }
-  if (!p.hasKey && p.kind !== 'openai_compatible') return { tone: 'warning', text: 'No key' }
+  if (!p.hasKey && !(p.extraKeys ?? []).some((k) => k.hasKey) && p.kind !== 'openai_compatible') return { tone: 'warning', text: 'No key' }
   if (p.cooling) return { tone: 'warning', text: `Resting: ${p.cooling}` }
   const t = tightest(p)
   if (t && t.used >= t.max * 0.85) return { tone: 'warning', text: `Free limit reached ${t.what}` }
@@ -125,15 +128,15 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
    * Save first when anything changed (a new key, a switch), then test one
    * service. A pasted key also switches its service on: one tap does all.
    */
-  const test = async (id: string) => {
-    setBusy(`test:${id}`)
+  const test = async (id: string, keyId?: string) => {
+    setBusy(`test:${id}${keyId ? `~${keyId}` : ''}`)
     try {
       if (dirty || unsaved) {
         const next = list.map((p) => (p.id === id && p.newKey?.trim() ? { ...p, enabled: true } : p))
         setList(next)
         await api.put('/api/admin/voice-stt', { providers: next, studentDailySeconds: daily * 60, autoOrder: auto })
       }
-      const r = await api.post<{ ok: boolean; ms?: number; error?: string }>('/api/admin/voice-stt/test', { id })
+      const r = await api.post<{ ok: boolean; ms?: number; error?: string }>('/api/admin/voice-stt/test', { id, keyId })
       if (r.ok) toast.success('It works', `Answered in ${((r.ms ?? 0) / 1000).toFixed(1)} s.`)
       else toast.error('It didn’t work', r.error)
       refetch()
@@ -235,6 +238,7 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
                       )}
                     </span>
                   </label>
+                  {k && !k.needsUrl && <ExtraKeys p={p} busy={busy} onChange={(extraKeys) => set(i, { extraKeys })} onTest={(keyId) => void test(p.id, keyId)} />}
                 </div>
 
                 {t && (
@@ -329,7 +333,7 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
           <Plus className="size-4 text-text-muted" aria-hidden="true" />
         </div>
         <p className="vstt-note">
-          One key per service. Several free keys or accounts at the same company to get more free use breaks their terms and can get the account blocked, so each service is listed once. More free minutes come from adding more services, or a paid plan with its own limit.
+          Each service is listed once. To give it more free minutes, add teammates’ keys inside it (“Add another person’s key”): each must be from that person’s own account, with their agreement. Several accounts of the same person break the provider’s terms and can get every one of them blocked.
         </p>
       </Panel>
 
@@ -352,5 +356,80 @@ function Editor({ data, refetch }: { data: View; refetch: () => void }) {
 
 /** The parts the server saves (to tell whether anything changed). */
 function strip(p: Provider) {
-  return { id: p.id, kind: p.kind, enabled: p.enabled, model: p.model, region: p.region, url: p.url, limits: p.limits, newKey: p.newKey || '', removeKey: !!p.removeKey }
+  return { id: p.id, kind: p.kind, enabled: p.enabled, model: p.model, region: p.region, url: p.url, limits: p.limits, newKey: p.newKey || '', removeKey: !!p.removeKey, extraKeys: (p.extraKeys ?? []).map((k) => ({ id: k.id, owner: k.owner, newKey: k.newKey || '' })) }
+}
+
+/**
+ * More keys for one service, each from a different person's own account (a
+ * teammate who agreed). One person's several free accounts break the
+ * provider's terms, so each key names its owner and needs their agreement;
+ * the server refuses two keys under one name.
+ */
+function ExtraKeys({ p, busy, onChange, onTest }: { p: Provider; busy: string | null; onChange: (k: ExtraKey[]) => void; onTest: (keyId: string) => void }) {
+  const keys = p.extraKeys ?? []
+  const [adding, setAdding] = useState(false)
+  const [owner, setOwner] = useState('')
+  const [key, setKey] = useState('')
+  const [consent, setConsent] = useState(false)
+  const taken = owner.trim() && keys.some((k) => k.owner.trim().toLowerCase() === owner.trim().toLowerCase())
+  const add = () => {
+    onChange([...keys, { id: Math.random().toString(36).slice(2, 10), owner: owner.trim(), newKey: key.trim(), consent: true }])
+    setAdding(false)
+    setOwner('')
+    setKey('')
+    setConsent(false)
+  }
+  return (
+    <div className="vstt-extra">
+      {keys.length > 0 && (
+        <ul className="vstt-extra-list" aria-label={`More keys for ${p.label}`}>
+          {keys.map((k) => (
+            <li key={k.id}>
+              <span className="vstt-extra-owner">{k.owner}’s key</span>
+              <span className="vstt-extra-state">{k.newKey ? 'New: save to use' : k.cooling ? `Resting: ${k.cooling}` : k.hasKey ? 'Saved' : 'No key'}</span>
+              {k.hasKey && !k.newKey && (
+                <button type="button" className="ai-btn" onClick={() => onTest(k.id)} disabled={busy !== null}>
+                  {busy === `test:${p.id}~${k.id}` ? <Loader2 className="size-3.5 animate-spin" aria-hidden="true" /> : <Play className="size-3.5" aria-hidden="true" />} Test
+                </button>
+              )}
+              <button type="button" className="ai-btn" onClick={() => onChange(keys.filter((x) => x.id !== k.id))} aria-label={`Remove ${k.owner}’s key`}>
+                <Trash2 className="size-3.5" aria-hidden="true" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      {adding ? (
+        <div className="vstt-extra-form">
+          <label className="ai-field">
+            <span>Whose account is it?</span>
+            <input className="ai-input" value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="Their name" maxLength={40} />
+          </label>
+          <label className="ai-field">
+            <span>Their key</span>
+            <input className="ai-input" type="password" autoComplete="off" value={key} onChange={(e) => setKey(e.target.value)} placeholder="Paste the key" />
+          </label>
+          <label className="vstt-consent">
+            <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+            <span>This key is from {owner.trim() || 'this person'}’s own account, and they agreed to share it. (Not a second account of someone already listed.)</span>
+          </label>
+          {taken && <p className="vstt-warn">{owner.trim()} already has a key here. Each key must be from a different person.</p>}
+          <div className="vstt-actions">
+            <button type="button" className="ai-btn" onClick={() => setAdding(false)}>
+              Cancel
+            </button>
+            <Button size="sm" onClick={add} disabled={!owner.trim() || !key.trim() || !consent || !!taken}>
+              Add the key
+            </Button>
+          </div>
+        </div>
+      ) : (
+        keys.length < 10 && (
+          <button type="button" className="vstt-extra-add" onClick={() => setAdding(true)}>
+            <Plus className="size-3.5" aria-hidden="true" /> Add another person’s key
+          </button>
+        )
+      )}
+    </div>
+  )
 }
