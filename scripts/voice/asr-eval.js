@@ -66,7 +66,6 @@ function args(argv) {
 async function main() {
   const opt = args(process.argv.slice(2));
   const stt = require("../../src/voice/stt");
-  const { normalise } = require("../../src/voice/normalise");
   const { matchCommand, expand } = await actions("match.ts");
   const specs = await commandSpecs();
   const expanded = new Map(specs.map((s) => [s.id, expand(s)]));

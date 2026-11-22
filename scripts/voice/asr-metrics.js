@@ -28,7 +28,7 @@ function words(s) {
 function align(ref, hyp) {
   const n = ref.length;
   const m = hyp.length;
-  const d = Array.from({ length: n + 1 }, (_, i) => [i, ...new Array(m).fill(0)]);
+  const d = Array.from({ length: n + 1 }, (_, i) => [i, ...Array.from({ length: m }, () => 0)]);
   for (let j = 1; j <= m; j++) d[0][j] = j;
   for (let i = 1; i <= n; i++) {
     for (let j = 1; j <= m; j++) {
