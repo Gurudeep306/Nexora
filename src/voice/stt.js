@@ -162,7 +162,7 @@ async function loadConfig() {
     v = null;
   }
   const providers = Array.isArray(v?.providers) ? v.providers.map(sanitizeProvider).filter(Boolean) : [];
-  return { providers, studentDailySeconds: Number(v?.studentDailySeconds) > 0 ? Number(v.studentDailySeconds) : 600 };
+  return { providers, studentDailySeconds: Number(v?.studentDailySeconds) > 0 ? Number(v.studentDailySeconds) : 600, autoOrder: v?.autoOrder !== false };
 }
 
 async function saveConfig(cfg, by) {
@@ -192,6 +192,80 @@ function keyOf(p) {
   } catch {
     return "";
   }
+}
+
+/* ── auto order: how each service has really done (docs §S7) ── */
+
+let statsReady = null;
+function statsTable() {
+  if (!statsReady) {
+    statsReady = run(`CREATE TABLE IF NOT EXISTS voice_stt_stats (
+      provider TEXT NOT NULL,
+      day TEXT NOT NULL,
+      ok INTEGER NOT NULL DEFAULT 0,
+      fail INTEGER NOT NULL DEFAULT 0,
+      ms REAL NOT NULL DEFAULT 0,
+      conf REAL NOT NULL DEFAULT 0,
+      conf_n INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (provider, day)
+    )`).catch((e) => {
+      statsReady = null;
+      throw e;
+    });
+  }
+  return statsReady;
+}
+
+async function addStat(id, { ok, ms = 0, confidence = null }, now = new Date()) {
+  await statsTable();
+  const day = now.toISOString().slice(0, 10);
+  const c = typeof confidence === "number" && confidence >= 0 && confidence <= 1 ? confidence : null;
+  await run(
+    `INSERT INTO voice_stt_stats(provider, day, ok, fail, ms, conf, conf_n) VALUES(?,?,?,?,?,?,?)
+     ON CONFLICT(provider, day) DO UPDATE SET ok=ok+excluded.ok, fail=fail+excluded.fail, ms=ms+excluded.ms, conf=conf+excluded.conf, conf_n=conf_n+excluded.conf_n`,
+    [id, day, ok ? 1 : 0, ok ? 0 : 1, ok ? ms : 0, c ?? 0, c === null ? 0 : 1],
+  );
+}
+
+/** The last 14 days for each service: answers, failures, speed, confidence. */
+async function statsOf(ids, now = new Date()) {
+  await statsTable();
+  const since = new Date(now.getTime() - 14 * 86400e3).toISOString().slice(0, 10);
+  const rows = ids.length
+    ? await all(`SELECT provider, SUM(ok) ok, SUM(fail) fail, SUM(ms) ms, SUM(conf) conf, SUM(conf_n) conf_n FROM voice_stt_stats WHERE day >= ? AND provider IN (${ids.map(() => "?").join(",")}) GROUP BY provider`, [since, ...ids]).catch(() => [])
+    : [];
+  return new Map(rows.map((r) => [r.provider, { ok: Number(r.ok) || 0, fail: Number(r.fail) || 0, ms: Number(r.ms) || 0, conf: Number(r.conf) || 0, confN: Number(r.conf_n) || 0 }]));
+}
+
+/*
+  The auto order. Accuracy can't be measured live (we don't know what was
+  really said), so it starts from the published accuracy order for Indian
+  speech and then lets real results move services: how often each answered
+  without an error, the confidence it reports, and its speed. A service needs
+  20 answers before its own results count fully; until then the prior holds.
+  Our own accuracy test clips (§S9) will replace the prior when recorded.
+*/
+function autoScore(p, st) {
+  const rank = DEFAULT_ORDER.indexOf(p.kind);
+  const prior = rank < 0 ? 0.55 : 1 - rank * 0.07;
+  if (!st || st.ok + st.fail === 0) return prior;
+  const n = st.ok + st.fail;
+  const weight = Math.min(1, n / 20);
+  const reliability = (st.ok + 1) / (n + 2);
+  const conf = st.confN ? st.conf / st.confN : 0.85;
+  const avgMs = st.ok ? st.ms / st.ok : 3000;
+  const speed = avgMs <= 800 ? 1 : Math.max(0.4, 800 / avgMs);
+  const measured = reliability * 0.5 + conf * 0.35 + speed * 0.15;
+  return prior * (1 - weight * 0.5) + measured * (weight * 0.5);
+}
+
+async function ordered(cfg, now = new Date()) {
+  if (!cfg.autoOrder) return cfg.providers;
+  const stats = await statsOf(cfg.providers.map((p) => p.id), now);
+  return [...cfg.providers]
+    .map((p, i) => ({ p, i, s: autoScore(p, stats.get(p.id)) }))
+    .sort((a, b) => b.s - a.s || a.i - b.i)
+    .map((x) => x.p);
 }
 
 /* ── usage and limits ── */
@@ -427,7 +501,7 @@ async function transcribe({ audio, lang = "en-IN", hints = [], username = "", fe
   const phrases = hintsFrom(hints);
   const prompt = promptFrom(phrases, lang);
   const tried = [];
-  const list = cfg.providers.length ? cfg.providers : [];
+  const list = await ordered(cfg, now);
   for (const p of list) {
     if (!p.enabled) continue;
     const cool = cooling.get(p.id);
@@ -452,6 +526,7 @@ async function transcribe({ audio, lang = "en-IN", hints = [], username = "", fe
       await addUsage(p.id, seconds, now);
       if (username) await addUsage(`user:${username}`, seconds, now);
       tried.push({ id: p.id, ms: Date.now() - t0 });
+      await addStat(p.id, { ok: true, ms: Date.now() - t0, confidence: r.confidence ?? null }, now).catch(() => {});
       return { ok: true, text: String(r.text || "").trim(), confidence: r.confidence ?? null, provider: p.id, ms: Date.now() - t0, tried };
     } catch (e) {
       const s = e.status || 0;
@@ -460,6 +535,7 @@ async function transcribe({ audio, lang = "en-IN", hints = [], username = "", fe
       else if (s === 429) rest(p.id, Math.max(60e3, (e.retryAfter || 0) * 1000), "rate limited");
       else rest(p.id, 3 * 60e3, s ? `error ${s}` : "no answer");
       tried.push({ id: p.id, error: s || "timeout" });
+      await addStat(p.id, { ok: false }, now).catch(() => {});
     }
   }
   return { ok: false, fallback: "browser", tried };
@@ -482,8 +558,17 @@ async function adminView() {
       usage: use && { minute: use.minute, hour: use.hour, day: use.day, month: use.month, ever: use.ever },
     });
   }
+  const stats = await statsOf(cfg.providers.map((p) => p.id)).catch(() => new Map());
+  for (const p of providers) {
+    const st = stats.get(p.id);
+    p.stats = st ? { answers: st.ok, failures: st.fail, avgMs: st.ok ? Math.round(st.ms / st.ok) : null, confidence: st.confN ? Math.round((st.conf / st.confN) * 100) / 100 : null } : null;
+    p.score = Math.round(autoScore(p, st) * 100);
+  }
+  const effective = (await ordered(cfg)).map((p) => p.id);
   return {
     providers,
+    autoOrder: cfg.autoOrder,
+    effectiveOrder: effective,
     studentDailySeconds: cfg.studentDailySeconds,
     kinds: Object.fromEntries(Object.entries(KINDS).map(([k, v]) => [k, { label: v.label, why: v.why, models: v.models, defaultModel: v.defaultModel, limits: v.limits, needsRegion: !!v.needsRegion, needsUrl: !!v.needsUrl, signup: v.signup || null }])),
     defaultOrder: DEFAULT_ORDER,
@@ -499,6 +584,10 @@ async function adminSave(body, by) {
   for (const raw of incoming) {
     const p = sanitizeProvider({ ...raw, key: "" });
     if (!p || seen.has(p.id)) continue;
+    // One entry per service: several keys or accounts at one provider to get
+    // more free use breaks its terms (AGENTS.md). Different servers of the
+    // Whisper-compatible kind are different services, so that kind may repeat.
+    if (p.kind !== "openai_compatible" && providers.some((x) => x.kind === p.kind)) continue;
     seen.add(p.id);
     const old = cur.providers.find((x) => x.id === p.id);
     if (typeof raw.newKey === "string" && raw.newKey.trim()) p.key = seal(raw.newKey.trim());
@@ -512,7 +601,8 @@ async function adminSave(body, by) {
     providers.push(p);
   }
   const studentDailySeconds = Math.max(60, Math.min(24 * 3600, Number(body?.studentDailySeconds) || cur.studentDailySeconds));
-  await saveConfig({ providers, studentDailySeconds }, by);
+  const autoOrder = typeof body?.autoOrder === "boolean" ? body.autoOrder : cur.autoOrder;
+  await saveConfig({ providers, studentDailySeconds, autoOrder }, by);
   for (const p of providers) cooling.delete(p.id);
   return adminView();
 }
@@ -610,4 +700,4 @@ function createSttRouter({ requireAuthenticatedUser, isTrustedOrigin }) {
   return router;
 }
 
-module.exports = { createSttRouter, transcribe, overLimit, wavSeconds, hintsFrom, promptFrom, sanitizeProvider, KINDS, DEFAULT_ORDER, ADAPTERS, adminSave, adminView, loadConfig, testClip, _cooling: cooling };
+module.exports = { createSttRouter, transcribe, autoScore, ordered, overLimit, wavSeconds, hintsFrom, promptFrom, sanitizeProvider, KINDS, DEFAULT_ORDER, ADAPTERS, adminSave, adminView, loadConfig, testClip, _cooling: cooling };

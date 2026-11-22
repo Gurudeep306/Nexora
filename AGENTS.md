@@ -377,7 +377,12 @@ from a range, since test files run in parallel and a clash fails the run.
   Deepgram, Azure, plus any Whisper-compatible server), each with its free
   limits; the chain moves on at 85% of any limit, after an error (rests) or a
   refused key, and falls back to the browser's own recognition, so nothing is
-  charged. Keys sealed, audio never stored, a fair daily share per student.
+  charged. "Arrange the order automatically" (on by default) starts from the
+  published accuracy order and moves services by real results (answers vs
+  failures, reported confidence, speed; `voice_stt_stats`). One entry per
+  service: several keys at one provider to get more free use breaks its terms
+  (the server drops duplicates). Keys sealed, audio never stored, a fair daily
+  share per student.
   The only voice file allowed to reach paid-capable hosts, behind free caps
   (`tests/voice-zero-spend.test.js`). Design: `docs/voice/STEP1_EARS_DESIGN.md`.
 - **AI models** are chosen in Admin → AI models (`src/ai/settings.js`): any

@@ -367,3 +367,33 @@
     justify-self: start;
   }
 }
+.vstt-auto {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+}
+.vstt-auto-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+.vstt-auto-line,
+.vstt-stats,
+.vstt-note {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--color-text-secondary);
+}
+.vstt-stats {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.vstt-note {
+  margin-top: 10px;
+}
