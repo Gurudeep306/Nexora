@@ -127,11 +127,15 @@ function editDistance(a: string, b: string, max: number): number {
   return prev[b.length]
 }
 
-/** Same word, allowing small recognition slips on longer words ("problms"). */
+/**
+ * Same word, allowing small recognition slips on longer words ("problms").
+ * The first letter must match: slips rarely change it, and without this
+ * "light" and "night" (light mode / night mode) were the same word.
+ */
 export function sameWord(a: string, b: string): boolean {
   if (a === b) return true
   const n = Math.min(a.length, b.length)
-  if (n < 4) return false
+  if (n < 4 || a[0] !== b[0]) return false
   return editDistance(a, b, n >= 7 ? 2 : 1) <= (n >= 7 ? 2 : 1)
 }
 

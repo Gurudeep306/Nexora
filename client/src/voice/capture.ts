@@ -210,6 +210,10 @@ export type ServerText =
       unplaced?: string[]
       confidence: number | null
       provider: string | null
+      /** S6: the service doubted it, or (code pages) words couldn't be placed. */
+      unsure: boolean
+      /** S6: two services heard different words; let the student pick. */
+      alternatives?: string[]
     }
   | { ok: false }
 
@@ -229,6 +233,8 @@ export async function transcribe(clip: Blob, lang: string, hints: string[] = [],
       ...(typeof j.code === 'string' ? { code: j.code, unplaced: Array.isArray(j.unplaced) ? j.unplaced.map(String) : [] } : {}),
       confidence: typeof j.confidence === 'number' ? j.confidence : null,
       provider: j.provider ?? null,
+      unsure: j.unsure === true,
+      ...(Array.isArray(j.alternatives) && j.alternatives.length > 1 ? { alternatives: j.alternatives.map(String).slice(0, 3) } : {}),
     }
   } catch {
     return { ok: false }
