@@ -37,6 +37,52 @@
   }
 }
 
+/* Community → Messages: MessagesTab sets the exact height (useFitHeight), so
+   the page itself never scrolls; only the list and the conversation do. */
+:root[data-chat-fit] #main-content {
+  padding-bottom: 0 !important;
+}
+@media (max-width: 899px) {
+  /* A conversation open on a phone takes the screen, like a chat app. */
+  :root[data-chat-open] .tabbar {
+    display: none;
+  }
+  :root[data-chat-fit][data-chat-open] #main-content {
+    padding-top: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+}
+
+/* The quick chat (QuickChat.tsx): one column inside its floating panel. */
+.chat-app.is-compact {
+  height: 100%;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr);
+  border: 0;
+  border-radius: 0;
+}
+.chat-app.is-compact.has-open .chat-side,
+.chat-app.is-compact:not(.has-open) .chat-main {
+  display: none;
+}
+.chat-app.is-compact .chat-side {
+  border-right: 0;
+}
+.chat-app.is-compact .chat-back {
+  display: inline-grid !important;
+}
+/* The page or panel above already says "Messages": the list's heading is for
+   screen readers only. */
+.chat-side-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* ── the list ── */
 .chat-side {
   display: flex;

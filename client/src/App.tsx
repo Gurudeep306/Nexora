@@ -9,6 +9,7 @@ import { SiteGate } from '@/components/site/SiteGate'
 import { CallRinger } from '@/components/live/CallRinger'
 import { OngoingCall } from '@/components/live/OngoingCall'
 import { MessageAlerts } from '@/components/social/MessageAlerts'
+import { QuickChat } from '@/components/social/chat/QuickChat'
 import { AdminRoute, AuthorRoute, HiveRoute } from '@/components/admin/AdminRoute'
 
 const PadPage = lazy(() => import('@/pages/hand/PadPage'))
@@ -119,6 +120,8 @@ export default function App() {
       <OngoingCall />
       {/* New messages, like a phone's chat app, on any page. */}
       <MessageAlerts />
+      {/* The quick chat panel from the top bar, beside any page. */}
+      <QuickChat />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/auth" element={<AuthPage />} />

@@ -107,9 +107,10 @@ export function Thread({
         stickToBottom.current = !focus && !firstUnread
         setLoading(false)
         requestAnimationFrame(() => {
-          const target = focus ? document.getElementById(`msg-${focus.id}`) : firstUnread ? document.getElementById('chat-unread-line') : null
+          const box = scroller.current
+          const target = focus ? box?.querySelector<HTMLElement>(`#msg-${focus.id}`) : firstUnread ? box?.querySelector<HTMLElement>('#chat-unread-line') : null
           if (target) {
-            target.scrollIntoView({ block: 'center' })
+            centreIn(box, target, focus ? 'center' : 'start')
             if (focus) {
               setHighlight(focus.id)
               setTimeout(() => setHighlight(null), 2500)
@@ -353,9 +354,9 @@ export function Thread({
     vote: (m, options) => void call(async () => replace((await api.post<{ message: Message }>(`/api/chat/messages/${m.id}/vote`, { options })).message), 'Could not vote'),
     closePoll: (m) => void call(async () => replace((await api.post<{ message: Message }>(`/api/chat/messages/${m.id}/close`)).message), 'Could not close it'),
     jump: (id) => {
-      const el = document.getElementById(`msg-${id}`)
+      const el = scroller.current?.querySelector<HTMLElement>(`#msg-${id}`)
       if (el) {
-        el.scrollIntoView({ block: 'center', behavior: 'smooth' })
+        centreIn(scroller.current, el, 'center', true)
         setHighlight(id)
         setTimeout(() => setHighlight(null), 2500)
         return
@@ -366,7 +367,9 @@ export function Thread({
         setMessages(page.messages)
         setMore(page.more)
         requestAnimationFrame(() => {
-          document.getElementById(`msg-${id}`)?.scrollIntoView({ block: 'center' })
+          const box = scroller.current
+          const el = box?.querySelector<HTMLElement>(`#msg-${id}`)
+          if (el) centreIn(box, el, 'center')
           setHighlight(id)
           setTimeout(() => setHighlight(null), 2500)
         })
@@ -605,4 +608,18 @@ function FragmentRow({ day, unread, children }: { day: string | null; unread: bo
       {children}
     </>
   )
+}
+
+/**
+ * Scroll the message list (never the page) so a message is in view: in the
+ * middle, or the unread line near the top so the new messages follow it.
+ */
+function centreIn(box: HTMLElement | null, el: HTMLElement, where: 'center' | 'start', smooth = false) {
+  if (!box) return
+  const b = box.getBoundingClientRect()
+  const r = el.getBoundingClientRect()
+  const offset = r.top - b.top + box.scrollTop
+  const top = where === 'center' ? offset - (box.clientHeight - r.height) / 2 : offset - 12
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  box.scrollTo({ top: Math.max(0, top), behavior: smooth && !still ? 'smooth' : 'auto' })
 }

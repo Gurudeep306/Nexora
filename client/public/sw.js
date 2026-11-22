@@ -22,7 +22,7 @@ self.addEventListener('push', (event) => {
     renotify: !!d.tag,
     requireInteraction: !!d.call,
     vibrate: d.call ? [300, 200, 300, 200, 300] : [120],
-    data: { url: d.url || '/messages' },
+    data: { url: d.url || '/social?tab=messages' },
     actions: d.call ? [{ action: 'open', title: 'Answer' }] : [{ action: 'open', title: 'Open' }],
   }
   event.waitUntil(
@@ -36,7 +36,7 @@ self.addEventListener('push', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close()
-  const url = new URL((event.notification.data && event.notification.data.url) || '/messages', self.location.origin).href
+  const url = new URL((event.notification.data && event.notification.data.url) || '/social?tab=messages', self.location.origin).href
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((tabs) => {
       const tab = tabs.find((t) => t.url.startsWith(self.location.origin))

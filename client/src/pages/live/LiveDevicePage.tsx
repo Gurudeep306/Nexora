@@ -4,15 +4,18 @@
   hours. It sends no sound (the owner's computer has the mic), only what it
   shows: a whiteboard written with a stylus, its camera pointed at paper, or
   its screen where the browser allows it. It keeps the screen awake.
+  From the "Whole screen" QR (?share=screen) it opens on one big button:
+  one tap shares the whole screen (browsers need that tap). iPad and Android
+  browsers can't share a screen, so they are told how to mirror instead.
 */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { Camera, MonitorUp, PenLine, RefreshCw, Square, Users } from 'lucide-react'
 import { MarkLoader } from '@/components/brand/Logo'
 import { cn } from '@/lib/utils'
 import { liveApi } from '@/live/api'
 import { LiveSession, useLive } from '@/live/session'
-import { cameraTrack, canShareScreen, loadPrefs } from '@/live/devices'
+import { cameraTrack, canShareScreen, loadPrefs, tabletKind } from '@/live/devices'
 import { Board, type BoardHandle } from '@/live/ui/Board'
 import '@/live/live.css'
 
@@ -43,6 +46,8 @@ function Device({ token, info }: { token: string; info: Info }) {
   const [facing, setFacing] = useState<'environment' | 'user'>('environment')
   const board = useRef<BoardHandle>(null)
   const preview = useRef<HTMLVideoElement>(null)
+  const [params] = useSearchParams()
+  const [wantScreen, setWantScreen] = useState(params.get('share') === 'screen')
 
   useEffect(() => {
     void session.join({ mic: false, cam: false })
@@ -91,12 +96,12 @@ function Device({ token, info }: { token: string; info: Info }) {
   // A lecture's tablet is the teacher's board: it opens by itself, nothing to choose.
   const autoBoard = useRef(false)
   useEffect(() => {
-    if (!info.lecture || s.phase !== 'in' || mode || autoBoard.current) return
+    if (!info.lecture || wantScreen || s.phase !== 'in' || mode || autoBoard.current) return
     autoBoard.current = true
     const t = window.setTimeout(startBoard, 0)
     return () => window.clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [info.lecture, s.phase, mode])
+  }, [info.lecture, wantScreen, s.phase, mode])
   const startCamera = async (f = facing) => {
     try {
       const t = await cameraTrack(loadPrefs(), f)
@@ -170,6 +175,12 @@ function Device({ token, info }: { token: string; info: Info }) {
           <div className="lv-device-pick">
             <p className="lv-end-text">Your screen is being shared. Switch to any app; come back here to stop.</p>
           </div>
+        ) : wantScreen ? (
+          <WholeScreen
+            name={info.name}
+            onShare={() => void session.shareScreen()}
+            onOther={() => setWantScreen(false)}
+          />
         ) : (
           <div className="lv-device-pick">
             <p className="ed-label m-0">Connected as {info.name}</p>
@@ -188,7 +199,7 @@ function Device({ token, info }: { token: string; info: Info }) {
               <button type="button" className={cn('lv-device-choice', !canShareScreen() && 'is-off')} disabled={!canShareScreen()} onClick={() => void session.shareScreen()}>
                 <MonitorUp className="size-7" aria-hidden="true" />
                 <strong>This screen</strong>
-                <span>{canShareScreen() ? 'Share any app on this device.' : 'iPad and iPhone browsers cannot share their screen. Use the whiteboard.'}</span>
+                <span>{canShareScreen() ? 'Share any app on this device.' : 'Tablet browsers can’t share their screen. Mirror it to the computer instead (Tablet → Whole screen there).'}</span>
               </button>
             </div>
           </div>
@@ -200,6 +211,54 @@ function Device({ token, info }: { token: string; info: Info }) {
             {n.text}
           </p>
         ))}
+      </div>
+    </div>
+  )
+}
+
+/** The whole-screen QR: one tap, or (iPad, Android) how to mirror instead. */
+function WholeScreen({ name, onShare, onOther }: { name: string; onShare: () => void; onOther: () => void }) {
+  const kind = tabletKind()
+  if (canShareScreen())
+    return (
+      <div className="lv-device-pick">
+        <div className="lv-device-one">
+          <p className="ed-label m-0">Connected as {name}</p>
+          <h2 className="lv-pre-title">Share this whole screen</h2>
+          <p className="lv-end-text">One tap, then choose “Entire screen” and Share. Everyone in the room sees whatever you open.</p>
+          <button type="button" className="lv-device-big" onClick={onShare} autoFocus>
+            <MonitorUp className="size-5" aria-hidden="true" /> Share this whole screen
+          </button>
+          <button type="button" className="lv-link-btn" onClick={onOther}>
+            Use the whiteboard or camera instead
+          </button>
+        </div>
+      </div>
+    )
+  return (
+    <div className="lv-device-pick">
+      <div className="lv-device-one">
+        <p className="ed-label m-0">Connected as {name}</p>
+        <h2 className="lv-pre-title">{kind === 'ipad' ? 'Mirror this iPad to the computer' : 'Mirror this tablet to the computer'}</h2>
+        <p className="lv-end-text">
+          {kind === 'ipad' ? 'iPad' : 'Android'} browsers can’t share the whole screen — {kind === 'ipad' ? 'Apple' : 'Google'} allows that only in installed apps. Mirroring is free and shows everything:
+        </p>
+        <ol className="lv-steps" style={{ textAlign: 'left' }}>
+          {kind === 'ipad' ? (
+            <>
+              <li>Open Control Centre → <strong>Screen Mirroring</strong> → choose the Mac that’s in the room (same Wi-Fi).</li>
+              <li>On the Mac, in the room: Tablet → Whole screen → <strong>Share the iPad’s window</strong>.</li>
+            </>
+          ) : (
+            <>
+              <li>Swipe down → <strong>Smart View</strong>, <strong>Cast</strong> or <strong>Screen mirroring</strong> → choose the Windows PC that’s in the room (its Connect app open).</li>
+              <li>On the PC, in the room: Tablet → Whole screen → <strong>Share the tablet’s window</strong>.</li>
+            </>
+          )}
+        </ol>
+        <button type="button" className="lv-device-big" onClick={onOther}>
+          Use the whiteboard instead
+        </button>
       </div>
     </div>
   )

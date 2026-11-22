@@ -2395,3 +2395,82 @@
     opacity: 0.6;
   }
 }
+
+/* Tablet panel (Panels.tsx TabletPanel): whole screen, or board/camera. */
+@layer components {
+  .lv-seg-btn {
+    flex: 1;
+    min-width: 0;
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 9px;
+    color: var(--ed-muted);
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .lv-seg-btn:hover {
+    color: var(--ed-ink);
+  }
+  .lv-seg-btn.is-on {
+    background: var(--ed-card);
+    color: var(--ed-ink);
+    box-shadow: inset 0 0 0 1px var(--ed-line);
+  }
+  .lv-tablet-sec {
+    display: grid;
+    gap: 10px;
+    padding-top: 14px;
+    border-top: 1px solid var(--ed-line);
+  }
+  .lv-tablet-h {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ed-ink);
+  }
+  .lv-tablet-note {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--ed-muted);
+  }
+  .lv-tablet-go {
+    justify-self: start;
+    height: 36px;
+    padding: 0 14px;
+  }
+  .lv-device-one {
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    max-width: 30rem;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .lv-device-big {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 56px;
+    padding: 0 26px;
+    border-radius: 999px;
+    background: var(--color-accent-brand);
+    color: var(--color-on-accent-brand, #fff);
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .lv-device-big:focus-visible {
+    outline: 2px solid var(--color-accent-brand);
+    outline-offset: 3px;
+  }
+  .lv-link-btn {
+    color: var(--ed-ink);
+    font-size: 13.5px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+}

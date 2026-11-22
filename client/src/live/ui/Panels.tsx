@@ -3,7 +3,7 @@
   and the host's controls), Tablet (join a tablet by QR) and Settings.
 */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, Code2, Copy, Crown, Hand, Mic, MicOff, MoreHorizontal, Send, Star, UserMinus, Video, VideoOff, X } from 'lucide-react'
+import { Check, Code2, Copy, Crown, MonitorUp, Hand, Mic, MicOff, MoreHorizontal, Send, Star, UserMinus, Video, VideoOff, X } from 'lucide-react'
 import { Avatar, Menu, MenuContent, MenuItem, MenuSeparator, MenuTrigger, useToast } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { handQrCard, themeQrColors } from '@/components/hand/qrCard'
@@ -266,12 +266,27 @@ export function PeoplePanel({ session, s }: { session: LiveSession; s: LiveState
 }
 
 /* ── Tablet (QR) ── */
+type TabletWay = 'screen' | 'board'
+type MirrorFrom = 'ipad' | 'android'
+
+/**
+ * Teach from a tablet. Two ways:
+ * - Whole screen: everything on the tablet. A laptop, Chromebook or Windows
+ *   tablet shares it in one tap from the QR. An iPad or Android tablet can't
+ *   from a browser (Apple and Google allow it only in installed apps), so it
+ *   mirrors to this computer for free (AirPlay, a cable, or Windows' Wireless
+ *   Display) and this computer shares that window, named for the tablet.
+ * - Whiteboard or camera: the QR opens a board or the camera on the tablet.
+ */
 export function TabletPanel({ session, s }: { session: LiveSession; s: LiveState }) {
+  const [way, setWay] = useState<TabletWay>('screen')
+  const [from, setFrom] = useState<MirrorFrom>('ipad')
   const [link, setLink] = useState<{ url: string; expiresAt: number } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const toast = useToast()
   const colors = useMemo(() => themeQrColors(), [])
   const myTablet = Object.values(s.peers).find((p) => p.username === s.self?.username && p.device === 'tablet')
+  const mirrored = s.screens.find((x) => x.kind === 'screen' && /screen$/i.test(x.label) && /iPad|tablet/i.test(x.label))
 
   useEffect(() => {
     let live = true
@@ -284,18 +299,15 @@ export function TabletPanel({ session, s }: { session: LiveSession; s: LiveState
     }
   }, [session.code])
 
+  // The whole-screen QR opens straight on "Share this whole screen".
+  const url = link ? (way === 'screen' ? `${link.url}?share=screen` : link.url) : null
   const card = useMemo(
-    () => (link ? handQrCard(link.url, { title: 'Scan with your tablet', sub: `Works for 6 hours · ${s.room?.title ?? ''}`.slice(0, 48), colors }) : null),
-    [link, colors, s.room?.title],
+    () => (url ? handQrCard(url, { title: way === 'screen' ? 'Scan to share its screen' : 'Scan with your tablet', sub: `Works for 6 hours · ${s.room?.title ?? ''}`.slice(0, 48), colors }) : null),
+    [url, way, colors, s.room?.title],
   )
 
-  return (
-    <div className="lv-panel-body lv-tablet">
-      {myTablet ? (
-        <p className="lv-status is-ok" role="status">
-          <span className="lv-dot-live" aria-hidden="true" /> Your tablet is in the room.
-        </p>
-      ) : null}
+  const qr = (
+    <>
       {error ? (
         <p className="lv-status is-bad" role="alert">
           {error}
@@ -305,18 +317,106 @@ export function TabletPanel({ session, s }: { session: LiveSession; s: LiveState
       ) : (
         <div className="lv-qr is-waiting" aria-busy="true" />
       )}
-      <ol className="lv-steps">
-        <li>Open the camera on your iPad or tablet and point it at the code.</li>
-        <li>Choose the whiteboard to teach with a stylus, or the camera to show your paper.</li>
-        <li>Everyone sees it here as a shared screen. No sign-in on the tablet.</li>
-      </ol>
-      {link && (
+      {url && (
         <div className="lv-url">
-          <input readOnly value={link.url} aria-label="Link for the tablet" onFocus={(e) => e.currentTarget.select()} />
-          <button type="button" className="lv-chip-btn" onClick={() => void navigator.clipboard?.writeText(link.url).then(() => toast.success('Link copied', 'Open it on your tablet.'))}>
+          <input readOnly value={url} aria-label="Link for the tablet" onFocus={(e) => e.currentTarget.select()} />
+          <button type="button" className="lv-chip-btn" onClick={() => void navigator.clipboard?.writeText(url).then(() => toast.success('Link copied', 'Open it on your tablet.'))}>
             <Copy className="size-3.5" aria-hidden="true" /> Copy
           </button>
         </div>
+      )}
+    </>
+  )
+
+  return (
+    <div className="lv-panel-body lv-tablet">
+      <div className="lv-seg lv-tablet-way" role="radiogroup" aria-label="What to show from the tablet">
+        {(
+          [
+            ['screen', 'Whole screen'],
+            ['board', 'Whiteboard or camera'],
+          ] as const
+        ).map(([id, label]) => (
+          <button key={id} type="button" role="radio" aria-checked={way === id} className={cn('lv-seg-btn', way === id && 'is-on')} onClick={() => setWay(id)}>
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {myTablet && (
+        <p className="lv-status is-ok" role="status">
+          <span className="lv-dot-live" aria-hidden="true" /> Your tablet is in the room.
+        </p>
+      )}
+      {mirrored && (
+        <p className="lv-status is-ok" role="status">
+          <span className="lv-dot-live" aria-hidden="true" /> {mirrored.label} is being shared.
+        </p>
+      )}
+
+      {way === 'board' ? (
+        <>
+          {qr}
+          <ol className="lv-steps">
+            <li>Open the camera on your iPad or tablet and point it at the code.</li>
+            <li>Choose the whiteboard to teach with a stylus, or the camera to show your paper.</li>
+            <li>Everyone sees it here as a shared screen. No sign-in on the tablet.</li>
+          </ol>
+        </>
+      ) : (
+        <>
+          <section className="lv-tablet-sec" aria-labelledby="lv-ts-mirror">
+            <h2 id="lv-ts-mirror" className="lv-tablet-h">iPad or Android tablet</h2>
+            <p className="lv-tablet-note">
+              Their browsers can’t share the whole screen — Apple and Google allow that only in installed apps. Mirror the tablet to this computer instead (free, nothing to install on the tablet); everything on it then shows here.
+            </p>
+            <div className="lv-seg" role="radiogroup" aria-label="Which tablet">
+              {(
+                [
+                  ['ipad', 'iPad'],
+                  ['android', 'Android'],
+                ] as const
+              ).map(([id, label]) => (
+                <button key={id} type="button" role="radio" aria-checked={from === id} className={cn('lv-seg-btn', from === id && 'is-on')} onClick={() => setFrom(id)}>
+                  {label}
+                </button>
+              ))}
+            </div>
+            {from === 'ipad' ? (
+              <ol className="lv-steps">
+                <li>
+                  <strong>Mac, wireless:</strong> on the iPad open Control Centre → <em>Screen Mirroring</em> → choose this Mac (both on the same Wi-Fi; macOS 12 or later).
+                </li>
+                <li>
+                  <strong>Mac, with a cable</strong> (smoothest): plug the iPad in, open QuickTime Player → File → <em>New Movie Recording</em> → click the arrow by the record button → choose the iPad.
+                </li>
+                <li>
+                  <strong>Windows:</strong> Windows can’t receive AirPlay by itself; use a Mac, or teach with the whiteboard instead.
+                </li>
+                <li>Press the button below and pick the mirrored window.</li>
+              </ol>
+            ) : (
+              <ol className="lv-steps">
+                <li>
+                  <strong>Windows PC:</strong> Settings → System → <em>Projecting to this PC</em> (add the free “Wireless Display” feature once), then open the <em>Connect</em> app.
+                </li>
+                <li>
+                  On the tablet: swipe down → <em>Smart View</em>, <em>Cast</em> or <em>Screen mirroring</em> → choose this PC.
+                </li>
+                <li>Press the button below and pick the Connect window.</li>
+              </ol>
+            )}
+            <button type="button" className="lv-chip-btn is-primary lv-tablet-go" onClick={() => void session.shareScreen(from === 'ipad' ? 'iPad screen' : 'Tablet screen')}>
+              <MonitorUp className="size-4" aria-hidden="true" /> Share the {from === 'ipad' ? 'iPad’s' : 'tablet’s'} window
+            </button>
+          </section>
+
+          <section className="lv-tablet-sec" aria-labelledby="lv-ts-direct">
+            <h2 id="lv-ts-direct" className="lv-tablet-h">Laptop, Chromebook or Windows tablet</h2>
+            <p className="lv-tablet-note">Scan or open the link on it, tap once, and its whole screen is shared. No sign-in.</p>
+            {qr}
+          </section>
+        </>
       )}
     </div>
   )

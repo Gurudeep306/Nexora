@@ -67,7 +67,7 @@ function createChatRouter({ realtime, isTrustedOrigin, catalog, gate }) {
       const st = state.get(n);
       if (st && (!st.accepted || (st.muted && !message.mentions.includes(n)))) continue;
       const title = conv?.kind === "group" && conv.title ? `${from.name} · ${conv.title}` : from.name;
-      push.notifyMessage(n, { from: { ...from, name: title }, body, url: `/messages?c=${message.conversationId}`, tag: `chat-${message.conversationId}` }).catch(() => {});
+      push.notifyMessage(n, { from: { ...from, name: title }, body, url: `/social?tab=messages&c=${message.conversationId}`, tag: `chat-${message.conversationId}` }).catch(() => {});
     }
   };
   const h = (fn) => async (req, res) => {

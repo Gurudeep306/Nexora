@@ -15,6 +15,7 @@ import { api } from '@/lib/api'
 import { useSocket } from '@/lib/socket'
 import { refreshPush } from '@/lib/push'
 import { openConversation } from './chat/focus'
+import { messagesHref, onMessagesScreen, openChat } from './chat/quick'
 import { alertSoundOn } from './chat/sound'
 import type { Conversation, Message, People } from './chat/types'
 import './chat/alerts.css'
@@ -67,7 +68,7 @@ export function MessageAlerts() {
   const me = user?.username ?? ''
   const socket = useSocket()
   const navigate = useNavigate()
-  const { pathname } = useLocation()
+  const location = useLocation()
   const [alerts, setAlerts] = useState<Alert[]>([])
   const convs = useRef(new Map<number, { conv: Conversation; people: People; at: number }>())
   const key = useRef(0)
@@ -114,7 +115,7 @@ export function MessageAlerts() {
         if ('Notification' in window && Notification.permission === 'granted') {
           const reg = await navigator.serviceWorker?.getRegistration('/').catch(() => undefined)
           const title = group ? `${name} · ${group}` : name
-          const opts = { body: text, icon: '/apple-touch-icon.png', tag: `chat-${message.conversationId}`, data: { url: `/messages?c=${message.conversationId}` } }
+          const opts = { body: text, icon: '/apple-touch-icon.png', tag: `chat-${message.conversationId}`, data: { url: messagesHref(message.conversationId) } }
           if (reg) void reg.showNotification(title, opts)
           else new Notification(title, opts)
         }
@@ -133,8 +134,8 @@ export function MessageAlerts() {
     }
   }, [socket, me, info])
 
-  // On the Messages page the list itself shows what is new.
-  if (!me || pathname.startsWith('/messages')) return null
+  // On the Messages screen the list itself shows what is new.
+  if (!me || onMessagesScreen(location)) return null
   return (
     <div className="ma" aria-live="polite" aria-label="New messages">
       <AnimatePresence initial={false}>
@@ -144,7 +145,7 @@ export function MessageAlerts() {
               a={a}
               onOpen={() => {
                 dismiss(a.key)
-                navigate(`/messages?c=${a.convId}`)
+                openChat(navigate, a.convId)
               }}
               onClose={() => dismiss(a.key)}
               onSent={() => dismiss(a.key)}

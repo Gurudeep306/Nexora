@@ -101,7 +101,7 @@ async function sendTo(username, payload, { evenIfOnline = false } = {}) {
 function notifyMessage(username, { from, body, url, tag }) {
   const name = from?.name || from?.username || "Someone";
   const text = String(body || "").replace(/```[\s\S]*?```/g, "[code]").replace(/\s+/g, " ").trim().slice(0, 140) || "New message";
-  return sendTo(username, { title: name, body: text, url: url || "/messages", tag: tag || `chat-${from?.username || ""}`, icon: "/apple-touch-icon.png" });
+  return sendTo(username, { title: name, body: text, url: url || "/social?tab=messages", tag: tag || `chat-${from?.username || ""}`, icon: "/apple-touch-icon.png" });
 }
 
 /** An incoming call: rings even when no tab is open. */

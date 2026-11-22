@@ -198,4 +198,61 @@
     height: 18px;
     font-size: 10.5px;
   }
+  /* Messages: a short header (title, one line, the switches on the right) so
+     the chat gets the window; the chat sets its own height (MessagesTab). */
+  .soc.is-messages .soc-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    column-gap: 12px;
+    margin-bottom: 14px;
+  }
+  .soc.is-messages .soc-head > :not(.msg-tools) {
+    grid-column: 1;
+  }
+  .soc.is-messages .soc-head .msg-tools {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: end;
+  }
+  .soc.is-messages .soc-chips {
+    margin-bottom: 10px;
+  }
+  @media (max-width: 1023px) {
+    .soc.is-messages .soc-line,
+    .soc.is-messages .soc-eyebrow {
+      display: none;
+    }
+    .soc.is-messages .soc-head {
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .soc.is-messages .soc-head .msg-tools {
+      grid-row: 1;
+    }
+    .soc.is-messages .soc-title {
+      font-size: 1.45rem;
+    }
+    /* A conversation open: only the chat, like a chat app. */
+    .soc.is-chatting .soc-head,
+    .soc.is-chatting .soc-chips {
+      display: none;
+    }
+  }
+  @media (max-width: 899px) {
+    .soc.is-messages .msg-alerts {
+      width: 34px;
+      padding: 0;
+      justify-content: center;
+    }
+    /* The words stay for screen readers and voice ("turn on notifications"). */
+    .soc.is-messages .msg-alerts-text {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
 }

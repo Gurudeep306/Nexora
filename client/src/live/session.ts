@@ -490,7 +490,8 @@ export class LiveSession {
   }
 
   /** Share a screen, a window or a tab. Several can be shared at once. */
-  async shareScreen() {
+  /** Share a screen or window; `label` names it for everyone (e.g. "iPad screen" for a mirrored tablet). */
+  async shareScreen(label?: string) {
     if (this.state.screens.filter((x) => x.kind === 'screen').length >= 3) {
       this.notice('You can share up to three screens at once.', 'warning')
       return
@@ -505,7 +506,7 @@ export class LiveSession {
     }
     const id = `screen-${Math.random().toString(36).slice(2, 8)}`
     got.track.addEventListener('ended', () => void this.stopScreen(id))
-    await this.addScreen({ id, label: got.label, kind: 'screen', track: got.track })
+    await this.addScreen({ id, label: label || got.label, kind: 'screen', track: got.track })
   }
 
   /** A whiteboard or a camera pointed at paper (a canvas or camera track). */

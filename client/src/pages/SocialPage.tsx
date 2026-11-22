@@ -1,6 +1,6 @@
 import { useSite } from '@/context/SiteContext'
 import { useCallback, useState } from 'react'
-import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { DoorOpen, PenSquare, Radio, Rss } from 'lucide-react'
 import { Avatar, Button, Card, EmptyState, PageHeader } from '@/components/ui'
 import { cn } from '@/lib/utils'
@@ -18,6 +18,8 @@ import { FollowButton, SocialSearch, UserRow } from '@/components/social/feed/Pe
 import type { FeedPage, SocialUser } from '@/components/social/feed/types'
 import { Icon } from '@/components/icon/Icon'
 import { useChatUnread } from '@/components/social/useChatUnread'
+import { MessagesTab } from '@/components/social/MessagesTab'
+import { MessageTools } from '@/components/social/chat/MessageTools'
 
 const TAB_IDS = new Set(['feed', 'notifications', 'friends', 'messages', 'rooms', 'leaderboard', 'search'])
 
@@ -43,22 +45,13 @@ export default function SocialPage() {
     { id: 'leaderboard', label: 'Leaderboard', icon: <Icon name="trophy" className="size-4" /> },
   ]
 
-  const navigate = useNavigate()
   function selectTab(id: string) {
-    // Messages have their own full-window page.
-    if (id === 'messages') return navigate('/messages')
-    const next = new URLSearchParams(params)
+    if (id === tab) return
+    const next = new URLSearchParams()
     next.set('tab', id)
-    next.delete('q')
-    setParams(next, { replace: true })
-  }
-
-  // Old links (?tab=messages&c=…) open the Messages page.
-  if (requested === 'messages') {
-    const rest = new URLSearchParams(params)
-    rest.delete('tab')
-    const q = rest.toString()
-    return <Navigate to={`/messages${q ? `?${q}` : ''}`} replace />
+    // Each section is its own step in the history, so Back returns to the
+    // section you were on (and from a chat, to the list), like an app.
+    setParams(next)
   }
 
   if (!me) {
@@ -78,6 +71,7 @@ export default function SocialPage() {
     feed: 'What people you follow are learning and sharing.',
     notifications: 'Likes, replies, follows and mentions.',
     friends: 'Your friends, who is online, and requests.',
+    messages: 'Chats and study groups. Share problems and code, and call in one tap.',
     rooms: 'Solve a problem together, live.',
     leaderboard: 'This week’s most active learners.',
   }
@@ -90,8 +84,11 @@ export default function SocialPage() {
     }, tab === 'feed' ? 0 : 250)
   }
 
+  // A conversation open on a phone takes the screen (social-page.css).
+  const chatting = tab === 'messages' && !!params.get('c')
+
   return (
-    <div className="soc">
+    <div className={cn('soc', tab === 'messages' && 'is-messages', chatting && 'is-chatting')}>
       <aside className="soc-rail" aria-label="Community sections">
         <Link to="/profile" className="soc-me">
           <Avatar src={typeof user?.avatar_url === 'string' ? user.avatar_url : undefined} avatar={user?.avatar} name={displayName} seed={me} size="lg" />
@@ -126,6 +123,7 @@ export default function SocialPage() {
           <p className="soc-eyebrow">Community</p>
           <h1 className="soc-title">{tab === 'search' ? 'Search' : current.label}</h1>
           <p className="soc-line">{tab === 'search' ? 'People and posts that match.' : LINES[current.id] ?? ''}</p>
+          {tab === 'messages' && <MessageTools />}
         </header>
         {/* Phone: the sections as a row of chips under the title. */}
         <div className="soc-chips" role="tablist" aria-label="Community sections">
@@ -144,6 +142,7 @@ export default function SocialPage() {
         {tab === 'feed' && <FeedTab me={me} />}
         {tab === 'search' && <SearchResults q={params.get('q') ?? ''} />}
         {tab === 'notifications' && <NotificationsTab onSeen={clear} />}
+        {tab === 'messages' && <MessagesTab me={me} socket={socket} />}
         {tab === 'friends' && <FriendsTab me={me} socket={socket} />}
         {tab === 'rooms' && <RoomsTab me={me} socket={socket} />}
         {tab === 'leaderboard' && <LeaderboardTab me={me} />}

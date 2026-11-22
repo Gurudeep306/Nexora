@@ -41,7 +41,7 @@ export const NAV_SECTIONS: NavSection[] = [
     title: 'Connect',
     items: [
       { to: '/social', label: 'Community', icon: 'social' },
-      { to: '/messages', label: 'Messages', icon: 'messages' },
+      { to: '/social?tab=messages', label: 'Messages', icon: 'messages' },
       { to: '/live', label: 'Live', icon: 'live' },
     ],
   },

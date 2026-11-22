@@ -75,7 +75,7 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
     title: 'Together',
     line: 'Study with friends, live or in chat.',
     items: [
-      { id: 'messages', name: 'Messages', what: 'Chats and groups; share problems, code and questions. Alerts like a phone, even with the site closed.', where: 'The chat icon in the top bar', to: '/messages', icon: 'messages', tags: 'chat dm notifications' },
+      { id: 'messages', name: 'Messages', what: 'Chats and groups; share problems, code and questions. Alerts like a phone, even with the site closed.', where: 'The chat icon in the top bar, or Community → Messages', to: '/social?tab=messages', icon: 'messages', tags: 'chat dm notifications' },
       { id: 'live-room', name: 'Study rooms and calls', what: 'Video or voice, several screens, a whiteboard, polls, a shared timer and code pad.', where: 'Live → Start a room', to: '/live', icon: 'live', tags: 'video call zoom' },
       { id: 'lecture', name: 'Live lectures', what: 'You teach — from your tablet’s board — and many watch, chat and raise a hand.', where: 'Live → Start a room or lecture → Live lecture', to: '/live', icon: 'users', tags: 'broadcast stream teach' },
       { id: 'invite', name: 'Invite to a call', what: 'Friends online get a ring; others get the link. Share by WhatsApp, Telegram or QR.', where: 'In a room → Invite', to: '/live', icon: 'user-plus' },
