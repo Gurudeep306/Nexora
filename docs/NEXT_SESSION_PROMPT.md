@@ -32,7 +32,9 @@ yourself once CI is green, there are no conflicts, and all of these pass:
 After a merge, restart your branch from the new main.
 
 WORK, in order (one finished, tested PR each, with a HANDOFF section 3 update):
-  1. Voice: ears + natural voice (docs/voice/VIRTUAL_TEACHER.md §7 step 1):
+  1. Voice: ears + natural voice — build exactly as designed in
+     docs/voice/STEP1_EARS_DESIGN.md (S1–S10, files in order, one PR each);
+     summary in docs/voice/VIRTUAL_TEACHER.md §7 step 1:
      Groq Whisper server link with the free-chain switching, the code-word
      normaliser with tests, natural voice links, and measured speed.
   2. Voice: the virtual teacher (§3): optional, small, flies to named
