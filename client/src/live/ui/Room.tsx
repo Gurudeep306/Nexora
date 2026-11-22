@@ -37,7 +37,7 @@ import { Button, Modal, Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, M
 import { cn } from '@/lib/utils'
 import { REACTIONS } from '../api'
 import type { LiveSession, LiveState } from '../session'
-import { canShareScreen } from '../devices'
+import { canShareScreen, isMac } from '../devices'
 import { Stage, type Layout } from './Stage'
 import { ChatPanel, PeoplePanel, SettingsPanel, TabletPanel } from './Panels'
 import { InvitePanel } from './Invite'
@@ -45,7 +45,7 @@ import { PollCard, QuestionPanel, TimerPill, ToolsPanel } from './Tools'
 import { Board, type BoardHandle } from './Board'
 import { LogoMark } from '@/components/brand/Logo'
 import { listDevices } from '../devices'
-import { ChevronUp } from 'lucide-react'
+import { ChevronUp, MonitorX } from 'lucide-react'
 
 // The shared code pad brings Monaco: loaded only when someone opens it.
 const CodePad = lazy(() => import('./CodePad'))
@@ -277,7 +277,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
             </Link>
           )}
           <button type="button" className="lv-chip-btn lv-code-chip" onClick={() => setPanel('invite')} title="Invite people or share the link (I)" aria-label="Invite people (I)">
-            <UserPlus className="size-3.5" aria-hidden="true" /> Invite
+            <UserPlus className="size-3.5" aria-hidden="true" /> <span>Invite</span>
           </button>
         </div>
       </header>
@@ -300,6 +300,24 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
           </button>
           <button type="button" className="lv-banner-x" onClick={() => session.dismissMutedHint()} aria-label="Close">
             <X className="size-3.5" aria-hidden="true" />
+          </button>
+        </div>
+      )}
+
+      {s.blankScreen && (
+        <div className="lv-banner is-warn lv-blank" role="alert">
+          <MonitorX className="size-4 shrink-0" aria-hidden="true" />
+          <span className="lv-blank-text">
+            <strong>Everyone sees a black screen.</strong>{' '}
+            {isMac()
+              ? 'Your Mac may be blocking it (System Settings → Privacy & Security → Screen & System Audio Recording → turn on your browser, then reopen it). A mirrored iPad also turns black on a Mac while anything shares the screen.'
+              : 'The window may be minimised or protected. Pick another window or the entire screen.'}
+          </span>
+          <button type="button" className="lv-banner-act" onClick={() => setPanel('tablet')}>
+            Teach on the iPad instead
+          </button>
+          <button type="button" className="lv-banner-act" onClick={() => void session.stopScreen(s.blankScreen!)}>
+            Stop sharing
           </button>
         </div>
       )}

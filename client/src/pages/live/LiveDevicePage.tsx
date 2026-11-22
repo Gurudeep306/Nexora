@@ -10,7 +10,7 @@
 */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams, useSearchParams } from 'react-router-dom'
-import { Camera, MonitorUp, PenLine, RefreshCw, Square, Users } from 'lucide-react'
+import { Camera, MonitorUp, PenLine, RefreshCw, Square, Users, X } from 'lucide-react'
 import { MarkLoader } from '@/components/brand/Logo'
 import { cn } from '@/lib/utils'
 import { liveApi } from '@/live/api'
@@ -47,7 +47,11 @@ function Device({ token, info }: { token: string; info: Info }) {
   const board = useRef<BoardHandle>(null)
   const preview = useRef<HTMLVideoElement>(null)
   const [params] = useSearchParams()
-  const [wantScreen, setWantScreen] = useState(params.get('share') === 'screen')
+  // An iPad or Android tablet can't share its screen from a browser: it opens
+  // straight on the teaching board (open your PDF notes there and write).
+  const tablet = tabletKind()
+  const [wantScreen, setWantScreen] = useState(params.get('share') === 'screen' && !tablet)
+  const [tip, setTip] = useState(!!tablet && params.get('share') === 'screen')
 
   useEffect(() => {
     void session.join({ mic: false, cam: false })
@@ -96,12 +100,12 @@ function Device({ token, info }: { token: string; info: Info }) {
   // A lecture's tablet is the teacher's board: it opens by itself, nothing to choose.
   const autoBoard = useRef(false)
   useEffect(() => {
-    if (!info.lecture || wantScreen || s.phase !== 'in' || mode || autoBoard.current) return
+    if (!(info.lecture || tablet) || wantScreen || s.phase !== 'in' || mode || autoBoard.current) return
     autoBoard.current = true
     const t = window.setTimeout(startBoard, 0)
     return () => window.clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [info.lecture, wantScreen, s.phase, mode])
+  }, [info.lecture, tablet, wantScreen, s.phase, mode])
   const startCamera = async (f = facing) => {
     try {
       const t = await cameraTrack(loadPrefs(), f)
@@ -132,6 +136,16 @@ function Device({ token, info }: { token: string; info: Info }) {
           <h1 className="lv-title">{info.title}</h1>
         </div>
         <div className="lv-top-meta">
+          {mode && (
+            <div className="lv-seg" role="radiogroup" aria-label="What everyone sees">
+              <button type="button" role="radio" aria-checked={mode === 'board'} className={cn('lv-seg-btn', mode === 'board' && 'is-on')} onClick={() => mode !== 'board' && void stopAll().then(startBoard)}>
+                <PenLine className="size-3.5" aria-hidden="true" /> Board
+              </button>
+              <button type="button" role="radio" aria-checked={mode === 'camera'} className={cn('lv-seg-btn', mode === 'camera' && 'is-on')} onClick={() => mode !== 'camera' && void stopAll().then(() => startCamera())}>
+                <Camera className="size-3.5" aria-hidden="true" /> Camera
+              </button>
+            </div>
+          )}
           <span className="lv-people-n">
             <Users className="size-4" aria-hidden="true" /> {people}
           </span>
@@ -151,6 +165,16 @@ function Device({ token, info }: { token: string; info: Info }) {
         </div>
       )}
 
+      {tip && mode === 'board' && (
+        <div className="lv-banner is-hint" role="status">
+          <span>
+            iPads can’t share other apps from a browser — so teach right here: <strong>Open PDF or photo</strong> brings in your notes or slides to write on.
+          </span>
+          <button type="button" className="lv-banner-x" onClick={() => setTip(false)} aria-label="Close">
+            <X className="size-3.5" aria-hidden="true" />
+          </button>
+        </div>
+      )}
       <main className="lv-device-main">
         {mode === 'board' ? (
           <Board ref={board} className="is-device" />

@@ -69,6 +69,13 @@ export function Stage({ session, s, layout, pinned, onPin }: { session: LiveSess
   const [ref, size] = useSize<HTMLDivElement>()
   const [page, setPage] = useState(0)
   const [lastSpeaker, setLastSpeaker] = useState<string | null>(null)
+  // The real shape of each video (an iPad is 4:3, a phone screen tall), so a
+  // shared screen fills the stage instead of sitting in a 16:9 box with bars.
+  const [aspects, setAspects] = useState<Record<string, number>>({})
+  const onAspect = useMemo(
+    () => (key: string, a: number) => setAspects((m) => (Math.abs((m[key] ?? 0) - a) < 0.01 ? m : { ...m, [key]: a })),
+    [],
+  )
 
   const self = s.self
   const tiles = useMemo(() => {
@@ -95,9 +102,10 @@ export function Stage({ session, s, layout, pinned, onPin }: { session: LiveSess
   const talker = Object.keys(s.speaking).find((id) => id !== self?.peerId) ?? null
   if (talker && talker !== lastSpeaker) setLastSpeaker(talker)
 
-  // Your own shared screen is not shown big to you (you are looking at it).
-  const shown = tiles.screens.filter((t) => !(t.self && t.kind === 'screen'))
-  const mine = tiles.screens.filter((t) => t.self && t.kind === 'screen')
+  // Your own screen is shown big like anyone's: you see exactly what everyone
+  // sees (a whole-screen share shows itself inside itself, as in any call app).
+  const shown = tiles.screens
+  const mine: TileItem[] = []
   const all = [...shown, ...tiles.people, ...mine]
   const spotKey = s.room?.spotlight ? all.find((t) => t.peerId === s.room?.spotlight && (t.screen || !tiles.screens.some((x) => x.peerId === t.peerId)))?.key : null
   const focusKey = pinned && all.some((t) => t.key === pinned) ? pinned : spotKey ?? null
@@ -127,21 +135,52 @@ export function Stage({ session, s, layout, pinned, onPin }: { session: LiveSess
   const pg = Math.min(page, pages - 1)
   if (mode === 'gallery') main = main.slice(pg * perPage, pg * perPage + perPage)
 
-  const side = !phone && strip.length > 0 && size.w > 900
-  const stripW = side ? Math.min(240, Math.max(180, size.w * 0.18)) : 0
-  const stripH = !side && strip.length ? (phone ? 92 : 120) : 0
+  // People go to a side column on wide screens and on a phone held sideways
+  // (there the height is too small for a strip under the screen).
+  const landscape = size.w > size.h * 1.35 && size.w >= 560
+  const side = strip.length > 0 && (size.w > 900 || landscape) && !(phone && !landscape)
+  const stripW = side ? Math.round(Math.min(240, Math.max(landscape && size.h < 500 ? 132 : 180, size.w * (size.h < 500 ? 0.2 : 0.18)))) : 0
+  const stripH = !side && strip.length ? (phone ? 92 : size.h > 900 ? 150 : 120) : 0
   const areaW = Math.max(0, size.w - stripW - (side ? 12 : 0))
   const areaH = Math.max(0, size.h - stripH - (stripH ? 10 : 0))
-  const aspect = mode === 'gallery' ? (phone && main.length <= 2 ? 4 / 5 : 16 / 9) : main.some((t) => t.screen) ? 16 / 10 : 16 / 9
-  const box = fit(Math.max(1, main.length + (alone ? 1 : 0)), areaW, areaH, aspect)
+  const one = main.length === 1 ? main[0] : null
+  const aspect =
+    mode === 'gallery'
+      ? phone && main.length <= 2
+        ? 4 / 5
+        : 16 / 9
+      : one
+        ? aspects[one.key] ?? (one.screen ? 16 / 10 : 16 / 9)
+        : main.some((t) => t.screen)
+          ? 16 / 10
+          : 16 / 9
+  let box = fit(Math.max(1, main.length + (alone ? 1 : 0)), areaW, areaH, aspect)
+  // Upright tablet or phone: a wide screen leaves empty bands above and below.
+  // The screen goes to the top at full width and the people fill the rest as
+  // a grid, so no part of the window is wasted.
+  let stripHeight = stripH
+  let mainH = areaH
+  let peopleGrid: { cols: number; tw: number; th: number } | null = null
+  if (!side && strip.length && mode !== 'gallery') {
+    const rows = Math.ceil(Math.max(1, main.length) / Math.max(1, box.cols))
+    const used = rows * box.th + (rows - 1) * 10
+    const rest = size.h - used - 10
+    if (rest > stripH + 60) {
+      mainH = used
+      stripHeight = rest
+      peopleGrid = fit(strip.length, size.w, rest, 16 / 9, 8)
+      const pr = Math.ceil(strip.length / Math.max(1, peopleGrid.cols))
+      stripHeight = pr * peopleGrid.th + (pr - 1) * 8
+    }
+  }
 
   return (
-    <div ref={ref} className={cn('lv-stage', side ? 'is-side' : 'is-bottom')} data-mode={mode}>
-      <div className="lv-main" style={{ width: areaW, height: areaH }}>
+    <div ref={ref} className={cn('lv-stage', side ? 'is-side' : 'is-bottom', peopleGrid && 'is-stacked')} data-mode={mode}>
+      <div className="lv-main" style={{ width: areaW, height: mainH }}>
         {/* Rows wrap and centre, so a last row with fewer people sits in the middle. */}
         <div className="lv-grid" style={{ width: box.cols * box.tw + (box.cols - 1) * 10, ['--tw' as string]: `${box.tw}px`, ['--th' as string]: `${box.th}px` }}>
           {main.map((t) => (
-            <Tile key={t.key} t={t} s={s} session={session} pinned={pinned === t.key} onPin={onPin} big />
+            <Tile key={t.key} t={t} s={s} session={session} pinned={pinned === t.key} onPin={onPin} onAspect={onAspect} big />
           ))}
           {alone && <Invite code={session.code} compact={box.th < 300} />}
         </div>
@@ -159,11 +198,19 @@ export function Stage({ session, s, layout, pinned, onPin }: { session: LiveSess
           </div>
         )}
       </div>
-      {strip.length > 0 && (
-        <div className="lv-strip" style={side ? { width: stripW } : { height: stripH }} aria-label="Others in the room">
+      {strip.length > 0 && peopleGrid ? (
+        <div className="lv-people-grid" style={{ height: stripHeight }} aria-label="Others in the room">
+          <div className="lv-grid" style={{ width: peopleGrid.cols * peopleGrid.tw + (peopleGrid.cols - 1) * 8, ['--tw' as string]: `${peopleGrid.tw}px`, ['--th' as string]: `${peopleGrid.th}px`, ['--lv-gap' as string]: '8px' }}>
+            {strip.map((t) => (
+              <Tile key={t.key} t={t} s={s} session={session} pinned={pinned === t.key} onPin={onPin} onAspect={onAspect} />
+            ))}
+          </div>
+        </div>
+      ) : strip.length > 0 && (
+        <div className="lv-strip" style={side ? { width: stripW } : { height: stripHeight }} aria-label="Others in the room">
           {strip.map((t) => (
-            <div key={t.key} className="lv-strip-item" style={side ? { height: Math.round(stripW * (9 / 16)) } : { width: Math.round(stripH * (16 / 9)) }}>
-              <Tile t={t} s={s} session={session} pinned={pinned === t.key} onPin={onPin} />
+            <div key={t.key} className="lv-strip-item" style={side ? { height: Math.round(stripW * (9 / 16)) } : { width: Math.round(stripHeight * (16 / 9)) }}>
+              <Tile t={t} s={s} session={session} pinned={pinned === t.key} onPin={onPin} onAspect={onAspect} />
             </div>
           ))}
         </div>
@@ -172,8 +219,22 @@ export function Stage({ session, s, layout, pinned, onPin }: { session: LiveSess
   )
 }
 
-function Video({ t, session, mirror }: { t: TileItem; session: LiveSession; mirror: boolean }) {
+function Video({ t, session, mirror, onAspect }: { t: TileItem; session: LiveSession; mirror: boolean; onAspect?: (key: string, a: number) => void }) {
   const ref = useRef<HTMLVideoElement>(null)
+  // Report the video's real shape when it is known and whenever it changes
+  // (a shared window resized, a tablet turned).
+  useEffect(() => {
+    const el = ref.current
+    if (!el || !onAspect || !t.screen) return
+    const on = () => el.videoWidth && el.videoHeight && onAspect(t.key, el.videoWidth / el.videoHeight)
+    el.addEventListener('loadedmetadata', on)
+    el.addEventListener('resize', on)
+    on()
+    return () => {
+      el.removeEventListener('loadedmetadata', on)
+      el.removeEventListener('resize', on)
+    }
+  }, [t.key, t.screen, onAspect])
   useEffect(() => {
     const el = ref.current
     if (!el || !t.track || !t.pubId) return
@@ -192,7 +253,7 @@ function Video({ t, session, mirror }: { t: TileItem; session: LiveSession; mirr
   return <video ref={ref} className={cn('lv-video', t.screen ? 'is-screen' : 'is-cam', mirror && 'is-mirror')} autoPlay playsInline muted />
 }
 
-function Tile({ t, s, session, pinned, onPin, big = false }: { t: TileItem; s: LiveState; session: LiveSession; pinned: boolean; onPin: (k: string | null) => void; big?: boolean }) {
+function Tile({ t, s, session, pinned, onPin, onAspect, big = false }: { t: TileItem; s: LiveState; session: LiveSession; pinned: boolean; onPin: (k: string | null) => void; onAspect?: (key: string, a: number) => void; big?: boolean }) {
   const p = t.person
   const speaking = !t.screen && !!s.speaking[t.peerId]
   const hand = !t.screen && s.hands[p.peerId] !== undefined
@@ -203,20 +264,12 @@ function Tile({ t, s, session, pinned, onPin, big = false }: { t: TileItem; s: L
   const who = t.self ? 'You' : p.name
   const label = t.screen ? `${who} · ${t.kind === 'board' ? 'Whiteboard' : t.kind === 'camera' ? 'Camera' : t.label}` : t.self ? `${p.name} (you)` : p.name
   const KindIcon = t.kind === 'board' ? PenLine : t.kind === 'camera' ? Camera : Monitor
-  const selfScreen = t.self && t.screen && t.kind === 'screen'
+  const selfScreen = t.self && t.screen && (t.kind === 'screen' || t.kind === undefined)
 
   return (
     <div ref={ref} className={cn('lv-tile', t.screen && 'is-screen', speaking && 'is-speaking', !t.track && 'is-empty')} data-big={big || undefined} aria-label={label}>
-      {t.track && !selfScreen ? (
-        <Video t={t} session={session} mirror={t.self && !t.screen && session.prefs.mirror} />
-      ) : selfScreen ? (
-        <div className="lv-self-screen">
-          <Monitor className="size-6" aria-hidden="true" />
-          <p>You are sharing your {t.label.toLowerCase()}.</p>
-          <button type="button" className="lv-chip-btn" onClick={() => void session.stopScreen(t.pubId!)}>
-            Stop sharing
-          </button>
-        </div>
+      {t.track ? (
+        <Video t={t} session={session} mirror={t.self && !t.screen && session.prefs.mirror} onAspect={onAspect} />
       ) : t.screen ? (
         <div className="lv-self-screen">
           <KindIcon className="size-6" aria-hidden="true" />
@@ -246,6 +299,15 @@ function Tile({ t, s, session, pinned, onPin, big = false }: { t: TileItem; s: L
           {!t.screen && p.role !== 'member' && <span className="lv-role">{p.role === 'host' ? 'Host' : 'Co-host'}</span>}
         </span>
       </div>
+      {selfScreen && (
+        <div className="lv-presenting">
+          <span className="lv-presenting-dot" aria-hidden="true" />
+          <span className="lv-presenting-text">{big ? 'You’re presenting · everyone sees this' : 'Presenting'}</span>
+          <button type="button" className="lv-presenting-stop" onClick={() => void session.stopScreen(t.pubId!)}>
+            Stop
+          </button>
+        </div>
+      )}
       {hand && (
         <span className="lv-hand" aria-label={`Hand raised, ${handN} in line`}>
           <Hand className="size-3.5" aria-hidden="true" /> {handN}
