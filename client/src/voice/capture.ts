@@ -14,15 +14,31 @@
 import { API_BASE } from '@/lib/api'
 
 let available: Promise<boolean> | null = null
-/** Is any server ear set up? (Asked once per page load.) */
+/**
+ * Is any server ear set up, and can this browser record for it? Asked once per
+ * page load; a "no" (for example before signing in) is asked again after a
+ * minute, so the mic appears without a reload once ears are set up.
+ */
 export function serverEars(): Promise<boolean> {
+  if (!canRecord()) return Promise.resolve(false)
   if (!available) {
-    available = fetch(`${API_BASE}/api/voice/stt/status`, { credentials: 'include' })
+    const p = fetch(`${API_BASE}/api/voice/stt/status`, { credentials: 'include' })
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => !!j?.available)
       .catch(() => false)
+    available = p
+    void p.then((yes) => {
+      if (!yes) window.setTimeout(() => (available === p ? (available = null) : undefined), 60_000)
+    })
   }
   return available
+}
+
+/** The browser can record the mic and process audio (every current browser on https). */
+export function canRecord(): boolean {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false
+  const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+  return !!navigator.mediaDevices?.getUserMedia && !!Ctx
 }
 
 export interface Capture {

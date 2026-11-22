@@ -5,14 +5,14 @@
 import { Mic } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
-import { speechSupported } from './speech'
+import { useVoiceSupport } from './speech'
 import { useVoicePrefs } from './prefs'
 import './voice.css'
 
 export function VoiceSettings() {
   const { user } = useAuth()
   const [prefs, setPrefs] = useVoicePrefs(user?.username)
-  const supported = speechSupported()
+  const supported = useVoiceSupport()
   return (
     <Card>
       <CardContent className="grid gap-4 px-5 py-4">
@@ -24,7 +24,7 @@ export function VoiceSettings() {
             <p className="mb-0 text-[12.5px] text-text-muted">
               {supported
                 ? 'Press the mic in the top bar and say a command — “notes kholo”, “dark mode”, “wapas jao”. It only listens while you press it; NexoraGuru keeps no recordings.'
-                : 'Voice commands need Chrome, Edge or Safari for now.'}
+                : 'This browser can’t listen yet. Voice works in Chrome, Edge and Safari, and in other browsers once your school turns on voice recognition.'}
             </p>
           </div>
           {supported && (

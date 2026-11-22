@@ -67,6 +67,13 @@ Live site last deployed at `6c04b8fe` (PR #226).
 
 | PR | What |
 |---|---|
+| (this PR) | Voice step 1a: the mic appears in browsers without their own speech recognition (Firefox, some in-app browsers) when the server ears are set up. `useVoiceSupport()` in `client/src/voice/speech.ts` replaces `speechSupported()` wherever a mic is shown (top bar, Settings → Voice, Explain-back, Mirror Run); `serverEars()` re-asks after a minute if the answer was "no". Message alerts box gets `role="log"` (axe). Checked in a browser with recognition removed: the clip is recorded, sent and acted on. |
+| #232 | Voice recognition: more keys per service, each from a **different person's own account** (owner named, consent ticked); Save pill fix. |
+| #231 | Voice recognition: "Save and test" beside each key. |
+| #230 | Voice recognition: the order is arranged automatically from real results (`voice_stt_stats`); one entry per service. |
+| #229 | Voice step 1 "ears": `src/voice/stt.js`, a speech-to-text chain for Indian speech (Sarvam, Google, ElevenLabs, Groq Whisper, Deepgram, Azure, any Whisper-compatible server) with free limits per service and key, switching at 85%, resting after errors, a fair daily share per student, and the browser's own recognition as the last link (nothing charged); Admin → Voice recognition; `client/src/voice/capture.ts` records a clean clip for `listenOnce`; the ink listening animation (`listen/InkWave.tsx`). Tests: `tests/voice-stt.test.js`, `tests/voice-zero-spend.test.js`. |
+| #228 | `docs/voice/STEP1_EARS_DESIGN.md`: the precise design of step 1. |
+| #227 | Handoff for session 11 and the virtual-teacher plan. |
 | #226 | Dock: Messages removed (it is a Community section). Dock settings v3 drop it from older saves once. |
 | #225 | Live: the **iPad teaching board** opens straight from the QR (pages, PDF/photos opened as pages with pdf.js, pen, highlighter, eraser, laser). Fixed a real bug: a tablet opening its board while joining left both sides stuck ("RTP extension ID reassignment"); `mesh.ts` now rebuilds a stuck link. You see your own share ("You're presenting", Stop). `live/blank.ts` warns when a share is black. The stage fits a screen's real shape. The control bar is centred. Tablet panel v3. Test: `tests/live-blank.test.js`. |
 | #224 | Messages moved into Community (`/messages` redirects); the chat fits the window so only it scrolls; Back walks through sections and chats; **quick chat** panel from the top bar with "Send this page"; whole-screen sharing by QR for laptops; Android no longer offered a share that always fails. |
@@ -81,7 +88,10 @@ Live site last deployed at `6c04b8fe` (PR #226).
 
 **What is left, in order:**
 
-1. **Voice, next (owner chose 2026-11-22): ears + natural voice** (precise
+1. **Voice, next (owner chose 2026-11-22): ears + natural voice**. Step 1
+   order: a) mic without browser recognition — done; b) S5 normaliser;
+   c) S6 confidence check; d) S8 natural voices; e) S9 measuring script.
+   (precise
    design: [`docs/voice/STEP1_EARS_DESIGN.md`](voice/STEP1_EARS_DESIGN.md); the owner
    has added a Groq key), then the
    **virtual teacher**. The full plan, the honest limits and the research

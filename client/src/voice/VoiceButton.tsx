@@ -18,7 +18,7 @@ import { InkWave } from './listen/InkWave'
 import { useActionList } from './actions/useVoiceAction'
 import { expand, matchCommand, normalize, type Match } from './actions/match'
 import type { VoiceAction } from './actions/types'
-import { listenOnce, speechSupported, type ListenHandle, type SpeechError } from './speech'
+import { listenOnce, useVoiceSupport, type ListenHandle, type SpeechError } from './speech'
 import { useVoicePrefs, type VoicePrefs } from './prefs'
 import { activeScene, type SceneHandle } from './scene/active'
 import { parseScene, type SceneCommand } from './scene/parse'
@@ -50,7 +50,7 @@ const ERRORS: Record<SpeechError, string> = {
   'not-allowed': 'The microphone is blocked. Allow it in the browser’s address bar, then try again.',
   'no-speech': 'I didn’t hear anything. Press the mic and speak.',
   network: 'The browser’s speech service isn’t reachable right now. Check the connection and try again.',
-  unsupported: 'Voice needs Chrome, Edge or Safari for now.',
+  unsupported: 'This browser can’t listen. Try Chrome, Edge or Safari, or type instead.',
   other: 'Something went wrong with the microphone. Try again.',
 }
 
@@ -83,7 +83,7 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
   const [consentOpen, setConsentOpen] = useState(false)
   const handle = useRef<ListenHandle | null>(null)
   const hideTimer = useRef<number | null>(null)
-  const supported = speechSupported()
+  const supported = useVoiceSupport()
 
   // Expanded phrases, rebuilt only when the action list changes.
   const index = useMemo(() => new Map(actions.map((a) => [a.id, expand(a)])), [actions])
