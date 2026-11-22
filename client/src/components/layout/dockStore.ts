@@ -53,8 +53,11 @@ export const DOCK_BY_ID = new Map(DOCK_ITEMS.map((i) => [i.id, i]))
 export const MAX_PINNED = 14
 
 export interface DockPrefs {
-  /** 2 = saved after mono became the default (older saves migrate once). */
-  v?: 2
+  /**
+   * 2 = saved after mono became the default; 3 = after Messages left the
+   * default pins (it lives in Community). Older saves migrate once.
+   */
+  v?: 2 | 3
   pinned: string[]
   /** Icons swell under the pointer, as in the macOS Dock. */
   magnify: boolean
@@ -92,7 +95,7 @@ export const DOCK_SURFACES: { id: DockSurface; label: string }[] = [
 ]
 
 export const DEFAULT_DOCK: DockPrefs = {
-  pinned: ['hub', 'problems', 'contests', 'nexus', 'learn', 'gate', 'analytics', 'social', 'messages', 'live', 'submissions', 'bookmarks', 'explore', 'search'],
+  pinned: ['hub', 'problems', 'contests', 'nexus', 'learn', 'gate', 'analytics', 'social', 'live', 'submissions', 'bookmarks', 'explore', 'search'],
   magnify: true,
   iconStyle: 'mono',
   autoHide: false,
@@ -114,15 +117,19 @@ const KEY = 'nexora:dock'
 
 export function sanitizeDock(raw: unknown): DockPrefs {
   const r = (raw && typeof raw === 'object' ? raw : {}) as Partial<DockPrefs>
-  const pinned = Array.isArray(r.pinned)
+  const v = typeof r.v === 'number' ? r.v : 1
+  let pinned = Array.isArray(r.pinned)
     ? [...new Set(r.pinned.filter((id): id is string => typeof id === 'string' && DOCK_BY_ID.has(id)))].slice(0, MAX_PINNED)
     : DEFAULT_DOCK.pinned
+  // Messages is a section of Community (Social), so it left the Dock: take it
+  // off once from older saves. It can still be pinned again from "…".
+  if (v < 3) pinned = pinned.filter((id) => id !== 'messages')
   return {
-    v: 2,
+    v: 3,
     pinned: pinned.length ? pinned : DEFAULT_DOCK.pinned,
     magnify: typeof r.magnify === 'boolean' ? r.magnify : DEFAULT_DOCK.magnify,
     // Before v2 the colour tiles were simply the default: move those to mono once.
-    iconStyle: r.v === 2 && r.iconStyle === 'colour' ? 'colour' : 'mono',
+    iconStyle: v >= 2 && r.iconStyle === 'colour' ? 'colour' : 'mono',
     autoHide: typeof r.autoHide === 'boolean' ? r.autoHide : DEFAULT_DOCK.autoHide,
     position: DOCK_POSITIONS.some((x) => x.id === r.position) ? (r.position as DockPosition) : DEFAULT_DOCK.position,
     size: DOCK_SIZES.some((x) => x.id === r.size) ? (r.size as DockSize) : DEFAULT_DOCK.size,

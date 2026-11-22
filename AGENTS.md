@@ -236,7 +236,7 @@ from a range, since test files run in parallel and a clash fails the run.
   grouped, one plain line each, where it lives and a link straight there,
   with a search box. The list is `pages/explore/features.ts`: when you add a
   feature people should find, add it there too (true names and addresses
-  only). It is in the Dock (new default pins: Messages and Explore), at the
+  only). It is in the Dock (a default pin; Messages is not pinned, it is a section of Community), at the
   top of the Dock's "…" menu, and in the nav ("Discover").
 - **Live lectures** (Live → Start a room or lecture → Live lecture; rooms
   with `kind = 'lecture'`): the host and co-hosts teach; everyone else joins
