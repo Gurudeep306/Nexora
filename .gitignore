@@ -73,3 +73,8 @@ docs/ai-courses/private/
 # GATE source materials live in the private repo Gurudeep306/Materials (clone it next to this one).
 GATE_PYQ/
 /*.pdf
+
+# Voice test recordings are people's voices: never committed (scripts/voice/asr-eval.js, ASR_CLIPS_DIR).
+docs/voice/tests/asr/*/*.wav
+docs/voice/tests/asr/*/*.flac
+docs/voice/tests/asr/results/

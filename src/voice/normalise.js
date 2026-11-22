@@ -380,6 +380,9 @@ function toCode(text) {
   s = s.replace(/[,;:!?"“”]/g, " ");
   // Keep dots between words for "node dot next"; drop sentence-final ones.
   s = s.replace(/\.(?=\s|$)/g, " ");
+  // Hindi order: "A B se chhota (hai)" means A < B ("agar a of i key se chhota hai" → a[i] < key).
+  const operand = String.raw`(?!(?:if|agar|jab|while|return|aur|and|or|to|toh|then)\b)[A-Za-z_]\w*(?: (?:of|ka|sub|index) \w+)?`;
+  s = s.replace(new RegExp(String.raw`\b(${operand}) (${operand}) se (chhota|kam|bada|zyada)(?: hai)?\b`, "gi"), (_m, a, b, w) => ` ${a} ${/chhota|kam/i.test(w) ? "less than" : "greater than"} ${b} `);
   for (const [re, to] of CODE_RULES) s = s.replace(re, to);
   let words = s.trim().split(/\s+/).filter(Boolean).map((w) => CODE_LETTERS[w.toLowerCase()] ?? w);
   // Number words are read in lower case; every other word keeps the case it was said or named in.
