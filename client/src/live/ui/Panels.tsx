@@ -140,7 +140,9 @@ export function PeoplePanel({ session, s }: { session: LiveSession; s: LiveState
   const isOwner = s.self?.role === 'host'
   const people = useMemo(() => {
     const list = [...(s.self ? [{ ...s.self, mic: s.mic, cam: s.cam }] : []), ...Object.values(s.peers)]
-    return list.sort((a, b) => (a.role === 'host' ? -1 : b.role === 'host' ? 1 : a.joinedAt - b.joinedAt))
+    // Teachers first, then speakers; in a lecture the audience comes last, raised hands at its top.
+    const rank = (p: (typeof list)[number]) => (p.role === 'host' ? 0 : p.role === 'cohost' ? 1 : p.role === 'member' ? 2 : p.hand ? 3 : 4)
+    return list.sort((a, b) => rank(a) - rank(b) || a.joinedAt - b.joinedAt)
   }, [s.self, s.peers, s.mic, s.cam])
   const hands = Object.entries(s.hands)
     .sort((a, b) => a[1] - b[1])
@@ -215,11 +217,18 @@ export function PeoplePanel({ session, s }: { session: LiveSession; s: LiveState
                 <Avatar src={p.avatarUrl} avatar={p.avatar} name={p.name} seed={p.username} size="sm" />
                 <span className="lv-row-name">
                   <span className="truncate">{me ? `${p.name} (you)` : p.name}</span>
-                  {p.role !== 'member' && <span className="lv-role">{p.role === 'host' ? 'Host' : 'Co-host'}</span>}
+                  {(p.role === 'host' || p.role === 'cohost') && <span className="lv-role">{p.role === 'host' ? 'Host' : 'Co-host'}</span>}
+                  {p.role === 'viewer' && p.hand && <span className="lv-role">Hand up</span>}
                   {s.room?.spotlight === p.peerId && <Star className="size-3.5" aria-label="In the spotlight" />}
                 </span>
-                {p.device === 'main' && (p.cam ? <Video className="size-4 text-text-muted" aria-label="Camera on" /> : <VideoOff className="size-4 text-text-muted" aria-label="Camera off" />)}
-                {p.device === 'main' && (p.mic ? <Mic className="size-4 text-text-muted" aria-label="Mic on" /> : <MicOff className="size-4 text-state-error" aria-label="Mic off" />)}
+                {/* Lecture: the teacher lets a viewer speak, or sends a speaker back to watching. */}
+                {host && !me && s.room?.kind === 'lecture' && p.device === 'main' && (p.role === 'viewer' || p.role === 'member') && (
+                  <button type="button" className={cn('lv-chip-btn', p.role === 'viewer' && p.hand && 'is-primary')} onClick={() => session.speaker(p.username, p.role === 'viewer')}>
+                    {p.role === 'viewer' ? 'Let speak' : 'Stop'}
+                  </button>
+                )}
+                {p.device === 'main' && p.role !== 'viewer' && (p.cam ? <Video className="size-4 text-text-muted" aria-label="Camera on" /> : <VideoOff className="size-4 text-text-muted" aria-label="Camera off" />)}
+                {p.device === 'main' && p.role !== 'viewer' && (p.mic ? <Mic className="size-4 text-text-muted" aria-label="Mic on" /> : <MicOff className="size-4 text-state-error" aria-label="Mic off" />)}
                 {host && !me && (
                   <Menu>
                     <MenuTrigger asChild>

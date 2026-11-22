@@ -16,7 +16,7 @@ import { cameraTrack, canShareScreen, loadPrefs } from '@/live/devices'
 import { Board, type BoardHandle } from '@/live/ui/Board'
 import '@/live/live.css'
 
-type Info = { code: string; title: string; name: string }
+type Info = { code: string; title: string; name: string; lecture?: boolean }
 
 export default function LiveDevicePage() {
   const { token = '' } = useParams()
@@ -25,7 +25,7 @@ export default function LiveDevicePage() {
   useEffect(() => {
     liveApi
       .deviceInfo(token)
-      .then((r) => setInfo({ code: r.code, title: r.title, name: r.name }))
+      .then((r) => setInfo({ code: r.code, title: r.title, name: r.name, lecture: r.kind === 'lecture' }))
       .catch((e: Error) => setError(e.message || 'This link does not work.'))
   }, [token])
   useEffect(() => {
@@ -79,11 +79,24 @@ function Device({ token, info }: { token: string; info: Info }) {
 
   const startBoard = () => {
     setMode('board')
-    requestAnimationFrame(() => {
+    // The board draws on the next frames: share it as soon as its stream exists.
+    let tries = 0
+    const go = () => {
       const t = board.current?.track()
       if (t) void session.addScreen({ id: 'board', label: 'Whiteboard', kind: 'board', track: t })
-    })
+      else if (tries++ < 60) requestAnimationFrame(go)
+    }
+    requestAnimationFrame(go)
   }
+  // A lecture's tablet is the teacher's board: it opens by itself, nothing to choose.
+  const autoBoard = useRef(false)
+  useEffect(() => {
+    if (!info.lecture || s.phase !== 'in' || mode || autoBoard.current) return
+    autoBoard.current = true
+    const t = window.setTimeout(startBoard, 0)
+    return () => window.clearTimeout(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [info.lecture, s.phase, mode])
   const startCamera = async (f = facing) => {
     try {
       const t = await cameraTrack(loadPrefs(), f)

@@ -2331,3 +2331,67 @@
     color: var(--ed-muted);
   }
 }
+
+/* Lecture viewers: the control bar says what they can do. */
+@layer components {
+  .lv-watch-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ed-muted);
+    white-space: nowrap;
+  }
+  @media (max-width: 520px) {
+    .lv-watch-note {
+      display: none;
+    }
+  }
+}
+
+/* Lecture: the audience's entry screen (LiveRoomPage). */
+@layer components {
+  .lv-watch {
+    display: grid;
+    gap: 10px;
+    justify-items: center;
+    max-width: 34rem;
+    margin: 12vh auto 0;
+    padding: 0 16px;
+    text-align: center;
+  }
+  .lv-watch-title {
+    margin: 0;
+    font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem);
+    line-height: 1.15;
+  }
+  .lv-watch-by,
+  .lv-watch-meta {
+    margin: 0;
+    color: var(--ed-muted);
+  }
+  .lv-watch-by {
+    font-size: 15px;
+    color: var(--ed-ink);
+  }
+  .lv-watch-meta {
+    font-size: 13.5px;
+  }
+  .lv-watch-go {
+    margin-top: 10px;
+    height: 44px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--color-accent-brand);
+    color: var(--color-on-accent-brand, #fff);
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .lv-watch-go:disabled {
+    opacity: 0.6;
+  }
+}

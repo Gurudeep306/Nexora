@@ -4,7 +4,7 @@
 */
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Link2, Mic, MonitorUp, PenLine, Radio, Tablet, Users, Video } from 'lucide-react'
+import { Link2, Mic, MonitorUp, PenLine, Presentation, Radio, Tablet, Users, Video } from 'lucide-react'
 import { Avatar, Modal, useToast } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { cn } from '@/lib/utils'
@@ -53,7 +53,7 @@ export default function LiveLobbyPage() {
         </div>
         <div className="lv-hero-side">
           <button type="button" className="lv-join" onClick={() => setCreating(true)}>
-            Start a room
+            Start a room or lecture
           </button>
           <form
             className="lv-code-form"
@@ -163,12 +163,12 @@ function RoomCard({ r, live = false }: { r: LiveRoom; live?: boolean }) {
       <Link to={`/live/${r.code}`} className={cn('lv-card', ended && 'is-ended')}>
         <div className="lv-card-top">
           <span className="lv-card-kind">
-            {r.mode === 'voice' ? <Mic className="size-3.5" aria-hidden="true" /> : <Video className="size-3.5" aria-hidden="true" />}
-            {r.isCall ? 'Call' : r.mode === 'voice' ? 'Voice' : 'Video'}
+            {r.kind === 'lecture' ? <Presentation className="size-3.5" aria-hidden="true" /> : r.mode === 'voice' ? <Mic className="size-3.5" aria-hidden="true" /> : <Video className="size-3.5" aria-hidden="true" />}
+            {r.kind === 'lecture' ? 'Lecture' : r.isCall ? 'Call' : r.mode === 'voice' ? 'Voice' : 'Video'}
           </span>
           {live && (r.people ?? 0) > 0 ? (
             <span className="lv-card-live">
-              <span className="lv-dot-live" aria-hidden="true" /> {r.people} in
+              <span className="lv-dot-live" aria-hidden="true" /> {r.people} {r.kind === 'lecture' ? 'watching' : 'in'}
             </span>
           ) : ended ? (
             <span className="lv-card-ended">Ended</span>
@@ -194,14 +194,16 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
   const [title, setTitle] = useState('')
   const [mode, setMode] = useState<LiveMode>('video')
   const [vis, setVis] = useState<Visibility>('link')
+  const [kind, setKind] = useState<'room' | 'lecture'>('room')
   const [busy, setBusy] = useState(false)
   const navigate = useNavigate()
   const toast = useToast()
   const create = async () => {
     setBusy(true)
     try {
-      const room = await liveApi.create({ title, mode, visibility: vis })
-      navigate(`/live/${room.code}`)
+      const room = await liveApi.create({ title, mode, visibility: vis, kind })
+      // A lecture opens with the tablet QR ready: scan it and the board is live.
+      navigate(kind === 'lecture' ? `/live/${room.code}?teach=1` : `/live/${room.code}`)
     } catch (e) {
       toast.error('Could not start the room', (e as Error).message)
       setBusy(false)
@@ -220,6 +222,36 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
           <span className="ed-label">Name</span>
           <input className="lv-input" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={80} placeholder="Graphs revision, DP doubts…" autoFocus />
         </label>
+        <fieldset className="lv-field">
+          <legend className="ed-label">What</legend>
+          <div className="lv-choice-col">
+            {(
+              [
+                ['room', 'Study room', 'Everyone can talk, share and write.'],
+                ['lecture', 'Live lecture', 'You teach — from this computer or your tablet’s board — and everyone else watches, chats and raises a hand.'],
+              ] as const
+            ).map(([id, label, hint]) => (
+              <label key={id} className={cn('lv-choice is-wide', kind === id && 'is-on')}>
+                <input
+                  type="radio"
+                  name="kind"
+                  value={id}
+                  checked={kind === id}
+                  onChange={() => {
+                    setKind(id)
+                    if (id === 'lecture') setVis('public')
+                  }}
+                  className="sr-only"
+                />
+                {id === 'lecture' ? <Presentation className="size-4 shrink-0" aria-hidden="true" /> : <Users className="size-4 shrink-0" aria-hidden="true" />}
+                <span>
+                  <strong>{label}</strong>
+                  <span className="lv-hint block">{hint}</span>
+                </span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
         <fieldset className="lv-field">
           <legend className="ed-label">Kind</legend>
           <div className="lv-choice-row">
@@ -252,7 +284,7 @@ function CreateDialog({ onClose }: { onClose: () => void }) {
           </div>
         </fieldset>
         <button type="submit" className="lv-join" disabled={busy}>
-          {busy ? 'Starting…' : 'Start the room'}
+          {busy ? 'Starting…' : kind === 'lecture' ? 'Start the lecture' : 'Start the room'}
         </button>
       </form>
     </Modal>
