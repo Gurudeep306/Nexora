@@ -60,11 +60,26 @@ export async function cameraTrack(p: Prefs, facing?: 'user' | 'environment'): Pr
   }
 }
 
-/** Can this browser share its screen? (iPhone and iPad browsers cannot.) */
-export const canShareScreen = () => typeof navigator !== 'undefined' && !!navigator.mediaDevices && 'getDisplayMedia' in navigator.mediaDevices
+/** An iPad, iPhone or Android device (iPadOS says it is a Mac, but has touch). */
+export function tabletKind(): 'ipad' | 'android' | null {
+  if (typeof navigator === 'undefined') return null
+  const ua = navigator.userAgent
+  if (/iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'ipad'
+  if (/Android/.test(ua)) return 'android'
+  return null
+}
+
+/**
+ * Can this browser share its screen? Computers, Chromebooks and Windows
+ * tablets can. iPad, iPhone and Android browsers cannot: Apple and Google
+ * allow whole-screen capture only in installed apps (Chrome on Android has
+ * the function but always refuses), so they mirror through a computer.
+ */
+export const canShareScreen = () =>
+  typeof navigator !== 'undefined' && !!navigator.mediaDevices && 'getDisplayMedia' in navigator.mediaDevices && !tabletKind()
 
 export async function screenTrack(): Promise<{ track: MediaStreamTrack; label: string }> {
-  if (!canShareScreen()) throw new Error('This browser cannot share its screen. On an iPad or phone, use the whiteboard or the camera instead.')
+  if (!canShareScreen()) throw new Error('This browser cannot share its screen. On an iPad or Android tablet, mirror it to a computer, or use the whiteboard or the camera.')
   let s: MediaStream
   try {
     s = await navigator.mediaDevices.getDisplayMedia({

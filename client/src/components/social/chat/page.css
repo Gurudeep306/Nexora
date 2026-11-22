@@ -1,22 +1,5 @@
-/* /messages: the chat fills the window under the top bar (MessagesPage.tsx). */
+/* The Messages switches (MessageTools.tsx): sound and device notifications. */
 @layer components {
-  .msg-page {
-    display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
-    gap: 10px;
-  }
-  .msg-head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .msg-title {
-    margin: 0;
-    font-size: 1.5rem;
-    line-height: 1.2;
-  }
   .msg-tools {
     display: flex;
     align-items: center;
@@ -58,14 +41,12 @@
   .msg-alerts:hover {
     background: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
   }
-  /* The chat takes the rest of the window (top bar, this header and the Dock left out). */
-  /* The Dock floats over the foot of the window: the chat ends above it. */
-  .msg-page .chat-app {
-    height: clamp(26rem, calc(100dvh - 17rem), 64rem);
+  .msg-tool.is-good {
+    color: var(--color-state-success);
   }
-  @media (max-width: 899px) {
-    .msg-page .chat-app {
-      height: calc(100dvh - 11.5rem);
-    }
+  .msg-tool:disabled,
+  .msg-alerts:disabled {
+    opacity: 0.6;
+    cursor: default;
   }
 }

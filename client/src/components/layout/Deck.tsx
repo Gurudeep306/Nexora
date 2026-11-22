@@ -27,10 +27,23 @@ const REVEAL_EDGE = 96
 /** Grace period before the Dock slips away after the cursor leaves the edge. */
 const HIDE_DELAY = 480
 
-function isActive(item: DockItem, pathname: string) {
+/** Every param in `to`'s query is in the current address. */
+function queryMatches(to: string, search: string) {
+  const want = new URLSearchParams(to.split('?')[1] ?? '')
+  const have = new URLSearchParams(search)
+  return [...want].every(([k, v]) => have.get(k) === v)
+}
+
+/**
+ * The item for this page. An item with a query (Messages is
+ * /social?tab=messages) wins over its plain page (Community), so only one lights.
+ */
+function isActive(item: DockItem, pathname: string, search = '', all: DockItem[] = []) {
   if (!item.to || item.external) return false
   const path = item.to.split('?')[0]
-  return pathname === path || pathname.startsWith(`${path}/`)
+  if (!(pathname === path || pathname.startsWith(`${path}/`))) return false
+  if (item.to.includes('?')) return pathname === path && queryMatches(item.to, search)
+  return !all.some((o) => o !== item && o.to?.startsWith(`${path}?`) && pathname === path && queryMatches(o.to, search))
 }
 
 /**
@@ -176,7 +189,8 @@ function DockIcon({
     <NavLink
       to={item.to!}
       aria-label={item.label}
-      aria-current={active ? 'page' : undefined}
+      // NavLink would mark Community current on Messages too (same path).
+      aria-current={active ? 'page' : 'false'}
       className={common}
       {...prefetchHandlers(item.to!)}
       onClick={(e) => {
@@ -217,7 +231,7 @@ export function Deck() {
   }, [vertical])
   const [moreOpen, setMoreOpen] = useState(false)
   const [editing, setEditing] = useState(false)
-  const { pathname } = useLocation()
+  const { pathname, search } = useLocation()
   const reduce = useReducedMotion()
 
   // Sections switched off by an admin (feature flags) leave the dock.
@@ -234,7 +248,7 @@ export function Deck() {
   const base = Math.max(30, Math.min(chosen.base, fit))
   const peak = Math.round(base * (chosen.peak / chosen.base))
   const mono = dock.iconStyle === 'mono'
-  const moreActive = rest.some((i) => isActive(i, pathname))
+  const moreActive = rest.some((i) => isActive(i, pathname, search, DOCK_ITEMS))
 
   const autoHide = dock.autoHide
   const [revealed, setRevealed] = useState(!autoHide)
@@ -337,7 +351,7 @@ export function Deck() {
               pointer={pointer}
               magnify={dock.magnify}
               mono={mono}
-              active={isActive(item, pathname)}
+              active={isActive(item, pathname, search, DOCK_ITEMS)}
               base={base}
               peak={peak}
               position={position}

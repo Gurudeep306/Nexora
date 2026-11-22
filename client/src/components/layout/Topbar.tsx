@@ -24,6 +24,7 @@ import { ClearRecents } from './ClearRecents'
 import { FocusTimer } from './FocusTimer'
 import { useSocket } from '@/lib/socket'
 import { cn } from '@/lib/utils'
+import { messagesHref, onMessagesScreen, quickChat, quickChatFits, useQuickChat } from '@/components/social/chat/quick'
 import { useChatUnread } from '@/components/social/useChatUnread'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
@@ -276,19 +277,31 @@ export function Topbar() {
   )
 }
 
-/** Messages, one tap from anywhere, with the unread count. */
+/**
+ * Messages, one tap from anywhere, with the unread count: the quick chat
+ * beside the page on a wide screen, Community → Messages on a phone.
+ */
 function MessagesButton({ me }: { me: string }) {
   const socket = useSocket()
   const n = useChatUnread(me, socket)
-  const { pathname } = useLocation()
-  const here = pathname.startsWith('/messages')
+  const location = useLocation()
+  const quick = useQuickChat()
+  const here = onMessagesScreen(location)
+  const label = n ? `Messages, ${n} unread` : 'Messages'
   return (
     <Tooltip label="Messages" side="bottom">
       <Link
-        to="/messages"
-        aria-label={n ? `Messages, ${n} unread` : 'Messages'}
+        to={messagesHref()}
+        aria-label={label}
         aria-current={here ? 'page' : undefined}
-        className={cn('relative flex size-9 items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-text-primary/6 hover:text-text-primary', here && 'bg-text-primary/6 text-text-primary')}
+        aria-expanded={quickChatFits() && !here ? quick.open : undefined}
+        onClick={(e) => {
+          // A wide screen: the quick chat opens beside the page instead.
+          if (here || !quickChatFits() || e.metaKey || e.ctrlKey || e.shiftKey) return
+          e.preventDefault()
+          quickChat.toggle()
+        }}
+        className={cn('relative flex size-9 items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-text-primary/6 hover:text-text-primary', (here || quick.open) && 'bg-text-primary/6 text-text-primary')}
       >
         <MessageCircle className="size-[17px]" aria-hidden="true" />
         {n > 0 && (

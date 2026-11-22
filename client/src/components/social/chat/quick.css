@@ -1,0 +1,89 @@
+/* The quick chat panel (QuickChat.tsx). Tokens only; one hairline, no glow. */
+@layer components {
+  .qchat {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 70;
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    width: min(24rem, calc(100vw - 2rem));
+    height: min(40rem, calc(100dvh - 5.5rem));
+    overflow: hidden;
+    border: 1px solid var(--color-border-strong, var(--color-border));
+    border-radius: var(--radius-card);
+    background: var(--color-bg-surface);
+  }
+  .qchat-head {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 8px 8px 14px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .qchat-title {
+    margin-right: auto;
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .qchat-head .msg-tools {
+    gap: 4px;
+  }
+  .qchat-head .msg-tool {
+    width: 30px;
+    height: 30px;
+    border-color: transparent;
+  }
+  .qchat-body {
+    grid-row: 3;
+    min-height: 0;
+  }
+  /* "Send this page": the problem or lesson under the panel, in one tap. */
+  .qchat-page {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    padding: 7px 14px;
+    border-bottom: 1px solid var(--color-border);
+    background: transparent;
+    color: var(--color-text-secondary);
+    font-size: 12.5px;
+    text-align: left;
+    cursor: pointer;
+  }
+  .qchat-page:hover {
+    background: color-mix(in oklab, var(--color-text-primary) 5%, transparent);
+    color: var(--color-text-primary);
+  }
+  .qchat-page:disabled {
+    opacity: 0.6;
+  }
+  .qchat-page-text {
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .qchat-page-text strong {
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  /* Message alerts and the panel don't stack on each other. */
+  :root[data-quick-chat] .ma {
+    right: calc(min(24rem, calc(100vw - 2rem)) + 2rem);
+  }
+}
+
+/* Outside the layer so it wins over the assistant's own styles. */
+/* The assistant's round button sits where the panel is: it steps aside (the
+   top bar's sparkle still opens the assistant). */
+:root[data-quick-chat] .ai-fab {
+  display: none;
+}
+/* Above a Dock along the bottom, never under it. */
+:root[data-dock='bottom'] .qchat {
+  bottom: calc(var(--dock-room, 80px) + 0.25rem);
+  height: min(40rem, calc(100dvh - 4.75rem - var(--dock-room, 80px)));
+}

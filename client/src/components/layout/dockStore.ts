@@ -35,7 +35,7 @@ export const DOCK_ITEMS: DockItem[] = [
   { id: 'analytics', label: 'Analytics', hue: 210, to: '/analytics' },
   { id: 'social', label: 'Social', hue: 185, to: '/social' },
   { id: 'live', label: 'Live', hue: 20, to: '/live' },
-  { id: 'messages', label: 'Messages', hue: 200, to: '/messages' },
+  { id: 'messages', label: 'Messages', hue: 200, to: '/social?tab=messages' },
   { id: 'explore', label: 'Explore', hue: 160, to: '/explore' },
   { id: 'workshop', label: 'Workshop', hue: 50, to: '/workshop' },
   { id: 'achievements', label: 'Achievements', hue: 95, to: '/achievements' },

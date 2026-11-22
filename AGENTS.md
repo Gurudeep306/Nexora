@@ -247,13 +247,25 @@ from a range, since test files run in parallel and a clash fails the run.
   and the top bar counts who is watching. A new lecture opens on the tablet
   QR (`?teach=1`); a lecture's tablet opens its board by itself, so the
   teacher only scans. iPad and Android browsers cannot share their whole
-  screen (no getDisplayMedia), so the tablet teaches with its board or
-  camera. Large audiences need the video server (Cloudflare or LiveKit,
+  screen (Apple and Google allow it only in installed apps; Chrome on
+  Android has getDisplayMedia but always refuses, so `canShareScreen()`
+  checks `tabletKind()`). Room → Tablet → **Whole screen** gives a QR that
+  shares a laptop, Chromebook or Windows tablet's screen in one tap
+  (`?share=screen`), and for an iPad or Android tablet free mirroring to the
+  computer (AirPlay or a cable + QuickTime on a Mac; Windows' Wireless
+  Display for Android), which then shares that window as "iPad screen". Large audiences need the video server (Cloudflare or LiveKit,
   Admin → Live); direct mode holds 5 devices.
-- **Messages, alerts and invites**: chats have their own full-window page,
-  `/messages` (`pages/MessagesPage.tsx`, the same `MessagesTab`), with a
-  top-bar button and unread badge; Community → Messages opens it. New
-  messages pop up on any page like a phone's chat app
+- **Messages, alerts and invites**: chats live in Community → Messages
+  (`/social?tab=messages`; `/messages` only redirects there). That view fits
+  the window exactly (`useFitHeight` in `MessagesTab.tsx`) so only the chat
+  scrolls, never the page; on a phone an open chat takes the screen. Each
+  Community section and each open chat is a history step, so Back walks back
+  through them. The top-bar button opens the **quick chat**
+  (`components/social/chat/QuickChat.tsx`, `quick.ts`): a panel beside any
+  page on wide screens that stays open while you move around, with "Send
+  this page" (the page under it, one tap). Message alerts open it too. Never
+  scroll with `scrollIntoView` inside the chat (it moves the page); scroll the
+  list itself. New messages pop up on any page like a phone's chat app
   (`components/social/MessageAlerts.tsx`: picture, name, text, quick reply,
   a soft chime; muted chats and the open one stay quiet). Notifications reach
   a device even with the site closed through free Web Push (`src/push.js`,

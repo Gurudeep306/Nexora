@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { BellOff, Bookmark, Loader2, PenSquare, Settings2 } from 'lucide-react'
 import type { Socket } from 'socket.io-client'
@@ -14,20 +14,72 @@ import './chat/chat.css'
   Messages: direct conversations and groups (src/chat.js). A list on the
   left, the open conversation on the right (one at a time on a phone).
   The URL holds the open conversation (?c=), a person to message (?peer=)
-  and an invite link to join (?join=).
+  and an invite link to join (?join=). Community → Messages fits the window
+  exactly, so only the chat scrolls, never the page around it.
+
+  `compact` is the quick chat (QuickChat.tsx): one column, its own state
+  instead of the URL, so it can stay open on any page.
 */
+
+/** Where the open conversation and links live: the URL, or the quick chat's own state. */
+export interface ChatNav {
+  get: (key: string) => string | null
+  set: (patch: Record<string, string | null>) => void
+}
 
 interface Props {
   me: string
   socket: Socket | null
+  compact?: boolean
+  nav?: ChatNav
+  /** Called with the open conversation (the quick chat remembers it). */
+  onOpenChange?: (id: number | null) => void
+}
+
+/** Make the chat exactly fill the window below where it starts, above the tab bar or Dock. */
+function useFitHeight(ref: React.RefObject<HTMLDivElement | null>, on: boolean, deps: unknown[]) {
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!on || !el) return
+    const root = document.documentElement
+    root.dataset.chatFit = ''
+    const fit = () => {
+      const top = el.getBoundingClientRect().top + window.scrollY
+      // Room for whatever is fixed along the bottom: the phone's tab bar or the Dock.
+      let reserve = 12
+      for (const sel of ['.tabbar', 'nav[aria-label="Dock"]']) {
+        const bar = document.querySelector<HTMLElement>(sel)
+        if (!bar || getComputedStyle(bar).display === 'none') continue
+        const r = bar.getBoundingClientRect()
+        if (r.height > 0 && r.top < window.innerHeight && r.bottom > window.innerHeight - 4) reserve = Math.max(reserve, window.innerHeight - r.top + 8)
+      }
+      el.style.height = `${Math.max(320, Math.round(window.innerHeight - top - reserve))}px`
+    }
+    fit()
+    const raf = requestAnimationFrame(fit)
+    const ro = new ResizeObserver(fit)
+    ro.observe(document.body)
+    window.addEventListener('resize', fit)
+    window.visualViewport?.addEventListener('resize', fit)
+    return () => {
+      cancelAnimationFrame(raf)
+      ro.disconnect()
+      window.removeEventListener('resize', fit)
+      window.visualViewport?.removeEventListener('resize', fit)
+      delete root.dataset.chatFit
+      el.style.height = ''
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [on, ...deps])
 }
 
 type Filter = 'all' | 'unread' | 'groups' | 'requests'
 type Hit = Preview & { conversationId: number }
 
-export function MessagesTab({ me, socket }: Props) {
+export function MessagesTab({ me, socket, compact = false, nav, onOpenChange }: Props) {
   const toast = useToast()
-  const [params, setParams] = useSearchParams()
+  const [urlParams, setParams] = useSearchParams()
+  const params = useMemo(() => (nav ? { get: nav.get } : urlParams), [nav, urlParams])
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [people, setPeople] = useState<People>({})
   const [loading, setLoading] = useState(true)
@@ -43,29 +95,28 @@ export function MessagesTab({ me, socket }: Props) {
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const appRef = useRef<HTMLDivElement>(null)
 
-  // Opening a conversation brings the whole messages box into view, so the
-  // box to type in is on screen without scrolling the page. On a phone the
-  // floating assistant button would sit on Send, so it steps aside.
-  useEffect(() => {
-    if (!openId) return
+  // With a conversation open on a phone, the chat takes the screen like a
+  // chat app: the tab bar and the floating assistant step aside (chat.css).
+  useLayoutEffect(() => {
+    if (!openId || compact) return
     document.documentElement.dataset.chatOpen = ''
-    // After the page above has laid out (its header loads with the list).
-    const t = window.setTimeout(() => {
-      const el = appRef.current
-      if (el && el.getBoundingClientRect().top > 80) {
-        const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        el.scrollIntoView({ block: 'start', behavior: still ? 'auto' : 'smooth' })
-      }
-    }, 120)
     return () => {
-      window.clearTimeout(t)
       delete document.documentElement.dataset.chatOpen
     }
-  }, [openId, loading])
+  }, [openId, compact])
+  useEffect(() => {
+    onOpenChange?.(openId)
+  }, [openId, onOpenChange])
+  // The page starts at the top, so the chat fits below the header exactly.
+  useEffect(() => {
+    if (!compact) window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior })
+  }, [compact, openId])
+  useFitHeight(appRef, !compact, [openId, loading])
 
   const setParam = useCallback(
     (patch: Record<string, string | null>) => {
-      const next = new URLSearchParams(params)
+      if (nav) return nav.set(patch)
+      const next = new URLSearchParams(urlParams)
       next.set('tab', 'messages')
       for (const [k, v] of Object.entries(patch)) {
         if (v == null) next.delete(k)
@@ -73,7 +124,7 @@ export function MessagesTab({ me, socket }: Props) {
       }
       setParams(next, { replace: false })
     },
-    [params, setParams],
+    [nav, urlParams, setParams],
   )
   const open = useCallback((id: number | null, at?: number) => {
     setFocus(at ? { id: at, n: Date.now() } : null)
@@ -198,6 +249,9 @@ export function MessagesTab({ me, socket }: Props) {
     })
   }, [conversations, filter, q, me, people])
 
+  // Inside the quick chat's own region the list is a section, not a page landmark.
+  const Side = compact ? 'section' : 'aside'
+
   const FILTERS: { id: Filter; label: string; n?: number }[] = [
     { id: 'all', label: 'All' },
     { id: 'unread', label: 'Unread', n: conversations.filter((c) => !c.request && c.unread).length },
@@ -206,10 +260,10 @@ export function MessagesTab({ me, socket }: Props) {
   ]
 
   return (
-    <div ref={appRef} className={cn('chat-app', openId && 'has-open')}>
-      <aside className="chat-side" aria-label="Conversations">
+    <div ref={appRef} className={cn('chat-app', openId && 'has-open', compact && 'is-compact')}>
+      <Side className="chat-side" aria-label="Conversations">
         <div className="chat-side-head">
-          <h2 className="m-0 text-[17px] font-semibold text-text-primary">Messages</h2>
+          <h2 className="chat-side-title m-0 text-[17px] font-semibold text-text-primary">Messages</h2>
           <span className="ml-auto flex items-center gap-0.5">
             <button type="button" className="chat-act" aria-label="Saved messages" onClick={() => setDialog('saved')}>
               <Bookmark className="size-4" aria-hidden="true" />
@@ -315,7 +369,7 @@ export function MessagesTab({ me, socket }: Props) {
             </>
           )}
         </div>
-      </aside>
+      </Side>
 
       <div className="chat-main">
         {openId ? (
