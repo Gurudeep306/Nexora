@@ -10,7 +10,7 @@
 */
 
 import { useEffect, useState } from 'react'
-import { serverEars, startCapture, transcribe, type Capture } from './capture'
+import { serverEars, startCapture, transcribe, type Capture, type EarsMode } from './capture'
 
 // The Web Speech API is not in TypeScript's DOM lib; this is the part we use.
 interface SpeechResultLike {
@@ -106,6 +106,8 @@ export async function listenOnce(opts: {
   continuous?: boolean
   /** Words on the page (actions, variable names) that help the server ears. */
   hints?: string[]
+  /** What is expected: a command (top-bar mic), code (an editor in use) or plain words (default). */
+  mode?: EarsMode
 }): Promise<ListenHandle> {
   const C = ctor()
   const server = await serverEars()
@@ -126,7 +128,7 @@ export async function listenOnce(opts: {
       const clip = await capture.stop().catch(() => null)
       capture = null
       if (clip) {
-        const r = await transcribe(clip, opts.lang, opts.hints)
+        const r = await transcribe(clip, opts.lang, opts.hints, opts.mode)
         if (r.ok && r.text.trim()) text = r.text.trim()
       }
     }

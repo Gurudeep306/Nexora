@@ -177,3 +177,51 @@ test('more keys for one service: each from a different person, used in turn by i
   for (let i = 0; i < 6; i++) await stt.transcribe({ audio: clip(2), fetchConfig: async () => cfg });
   assert.deepEqual(used, ['Token main', 'Token main', 'Token main', 'Token main', 'Token k2', 'Token k2']);
 });
+
+test('S5: the chain returns normalised text, the raw text, and code on code pages', async (t) => {
+  stt._cooling.clear();
+  t.mock.method(globalThis, 'fetch', async () => new Response(JSON.stringify({ text: 'mit plus plus', segments: [{ avg_logprob: -0.1, no_speech_prob: 0.01, compression_ratio: 1.2 }] }), { status: 200 }));
+  const providers = [{ id: 'groq-s5', kind: 'groq', key: seal('k2') }];
+  const r = await stt.transcribe({ audio: clip(1), lang: 'en-IN', hints: ['mid'], mode: 'code', fetchConfig: cfg(providers) });
+  assert.equal(r.ok, true);
+  assert.equal(r.raw, 'mit plus plus');
+  assert.equal(r.text, 'mid plus plus', 'a near-miss of the page name is fixed; words stay words');
+  assert.equal(r.code, 'mid++');
+  assert.deepEqual(r.unplaced, []);
+  const plain = await stt.transcribe({ audio: clip(1), lang: 'en-IN', hints: ['mid'], mode: 'text', fetchConfig: cfg(providers) });
+  assert.equal(plain.text, 'mit plus plus', 'plain text is never guessed at');
+  assert.equal(plain.code, undefined);
+});
+
+test('S5: Hindi that comes back in Urdu script is a wrong answer; the next service answers', async (t) => {
+  stt._cooling.clear();
+  t.mock.method(globalThis, 'fetch', async (url) => {
+    if (String(url).includes('groq')) return new Response(JSON.stringify({ text: 'مڈ کو اپڈیٹ کرو', segments: [{ avg_logprob: -0.1, no_speech_prob: 0.01, compression_ratio: 1.2 }] }), { status: 200 });
+    return new Response(JSON.stringify({ transcript: 'मिड को अपडेट करो', language_code: 'hi-IN' }), { status: 200 });
+  });
+  const providers = [
+    { id: 'groq-s5', kind: 'groq', key: seal('k2') },
+    { id: 'sarvam-s5', kind: 'sarvam', key: seal('k1') },
+  ];
+  const r = await stt.transcribe({ audio: clip(1), lang: 'hi-IN', fetchConfig: cfg(providers) });
+  assert.equal(r.ok, true);
+  assert.equal(r.provider, 'sarvam-s5');
+  assert.equal(r.text, 'मिड को अपडेट करो');
+  assert.equal(r.tried[0].skipped, 'answered in Urdu script');
+});
+
+test('cleaning old usage keeps the month, day and current hour (free limits never reset by accident)', async () => {
+  const now = new Date('2026-11-22T21:30:00Z');
+  const old = new Date('2026-11-18T10:05:00Z');
+  const rows = [
+    ['prune', 'm:2026-11-22T21:30'], ['prune', 'h:2026-11-22T21'], ['prune', 'd:2026-11-22'], ['prune', 'M:2026-11'], ['prune', 'ever'],
+    ['prune', `m:${old.toISOString().slice(0, 16)}`], ['prune', `h:${old.toISOString().slice(0, 13)}`],
+  ];
+  for (const [p, period] of rows) await db.run('INSERT INTO voice_stt_usage(provider, period, requests, seconds) VALUES(?,?,1,30) ON CONFLICT(provider, period) DO NOTHING', [p, period]);
+  await stt.pruneUsage(now);
+  const left = (await db.all("SELECT period FROM voice_stt_usage WHERE provider='prune' ORDER BY period")).map((r) => r.period);
+  assert.deepEqual(left.sort(), ['M:2026-11', 'd:2026-11-22', 'ever', 'h:2026-11-22T21', 'm:2026-11-22T21:30'].sort());
+  const u = await stt.usageOf('prune', now);
+  assert.equal(u.month.seconds, 30, 'the month still counts');
+  assert.equal(u.hour.seconds, 30, 'the hour still counts');
+});

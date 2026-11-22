@@ -18,6 +18,7 @@
 */
 const { all, get, run } = require("../db");
 const { seal, open } = require("../hive/vault");
+const { normalise } = require("./normalise");
 
 const KEY = "voice_stt";
 const SAFE = 0.85; // switch before a limit, not after errors
@@ -308,10 +309,20 @@ async function addUsage(id, seconds, now = new Date()) {
     );
   }
   // Old minute and hour rows are not needed after a day.
-  if (Math.random() < 0.02) {
-    const cut = new Date(now.getTime() - 2 * 86400e3).toISOString();
-    await run("DELETE FROM voice_stt_usage WHERE (period LIKE 'm:%' OR period LIKE 'h:%') AND period < ?", [`m:${cut.slice(0, 16)}`]).catch(() => {});
-  }
+  if (Math.random() < 0.02) await pruneUsage(now).catch(() => {});
+}
+
+/*
+  Drop minute and hour rows older than two days. GLOB, not LIKE: LIKE ignores
+  case, so 'm:%' would also match the monthly rows ('M:2026-11'), and each kind
+  of row is compared with a cut-off of its own kind; otherwise every hour row
+  ('h:…' sorts before 'm:…') and every month row would be deleted, silently
+  resetting the free-limit counters.
+*/
+async function pruneUsage(now = new Date()) {
+  await ready();
+  const cut = new Date(now.getTime() - 2 * 86400e3).toISOString();
+  await run("DELETE FROM voice_stt_usage WHERE (period GLOB 'm:*' AND period < ?) OR (period GLOB 'h:*' AND period < ?)", [`m:${cut.slice(0, 16)}`, `h:${cut.slice(0, 13)}`]);
 }
 
 /** Why a service can't take a clip of `seconds` now, or null when it can. */
@@ -510,10 +521,11 @@ async function slotsOf(p) {
 }
 
 /**
- * Transcribe one clip. Walks the chain; returns { ok, text, confidence,
- * provider, tried } or { ok: false, fallback: 'browser', tried }.
+ * Transcribe one clip. Walks the chain; returns { ok, text (normalised, S5),
+ * raw, code and unplaced (mode "code"), changes, confidence, provider, tried }
+ * or { ok: false, fallback: 'browser', tried }.
  */
-async function transcribe({ audio, lang = "en-IN", hints = [], username = "", fetchConfig = loadConfig, now = new Date() }) {
+async function transcribe({ audio, lang = "en-IN", hints = [], mode = "text", username = "", fetchConfig = loadConfig, now = new Date() }) {
   const seconds = wavSeconds(audio);
   if (seconds === null) return { ok: false, error: "That isn't a 16 kHz mono WAV clip.", status: 400 };
   if (seconds < 0.3) return { ok: true, text: "", provider: null, tried: [] };
@@ -554,9 +566,17 @@ async function transcribe({ audio, lang = "en-IN", hints = [], username = "", fe
         const r = await ADAPTERS[p.kind](p, slot.key, { audio, lang, phrases, prompt });
         await addUsage(slot.id, seconds, now);
         if (username) await addUsage(`user:${username}`, seconds, now);
+        const raw = String(r.text || "").trim();
+        // S5: clean the text and fix names (src/voice/normalise.js).
+        const n = normalise(raw, { mode, hints, lang });
+        // Hindi written in Urdu script: a wrong answer for us; try the next service.
+        if (n.retryHindi) {
+          tried.push({ id: slot.id, skipped: "answered in Urdu script" });
+          continue;
+        }
         tried.push({ id: slot.id, ms: Date.now() - t0 });
         await addStat(p.id, { ok: true, ms: Date.now() - t0, confidence: r.confidence ?? null }, now).catch(() => {});
-        return { ok: true, text: String(r.text || "").trim(), confidence: r.confidence ?? null, provider: p.id, ms: Date.now() - t0, tried };
+        return { ok: true, text: n.text, raw, ...(n.code !== undefined ? { code: n.code, unplaced: n.unplaced } : {}), changes: n.changes, confidence: r.confidence ?? null, provider: p.id, ms: Date.now() - t0, tried };
       } catch (e) {
         const s = e.status || 0;
         // Out of credit or a bad key: rest a day. Rate-limited: rest as told. Down or slow: 3 minutes.
@@ -736,7 +756,8 @@ function createSttRouter({ requireAuthenticatedUser, isTrustedOrigin }) {
           .map((s) => s.trim())
           .filter(Boolean)
           .slice(0, 60);
-        const r = await transcribe({ audio: req.body, lang, hints, username: req.sessionUser.username });
+        const mode = ["text", "command", "code"].includes(req.query.mode) ? req.query.mode : "text";
+        const r = await transcribe({ audio: req.body, lang, hints, mode, username: req.sessionUser.username });
         if (r.status) return res.status(r.status).json({ ok: false, error: r.error });
         res.json(r);
       } catch {
@@ -759,4 +780,4 @@ function createSttRouter({ requireAuthenticatedUser, isTrustedOrigin }) {
   return router;
 }
 
-module.exports = { createSttRouter, transcribe, autoScore, ordered, overLimit, wavSeconds, hintsFrom, promptFrom, sanitizeProvider, KINDS, DEFAULT_ORDER, ADAPTERS, adminSave, adminView, loadConfig, testClip, _cooling: cooling };
+module.exports = { createSttRouter, transcribe, pruneUsage, usageOf, autoScore, ordered, overLimit, wavSeconds, hintsFrom, promptFrom, sanitizeProvider, KINDS, DEFAULT_ORDER, ADAPTERS, adminSave, adminView, loadConfig, testClip, _cooling: cooling };

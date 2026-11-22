@@ -94,6 +94,7 @@ export function ExplainBack({ open, problem, code, language, onClose }: { open: 
     setLive('')
     handle.current = await listenOnce({
       lang: prefs.lang,
+      mode: 'text',
       continuous: true,
       onText: (t) => {
         setLive(t)

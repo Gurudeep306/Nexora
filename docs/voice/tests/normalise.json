@@ -1,0 +1,1944 @@
+{
+ "about": "S5 normaliser (src/voice/normalise.js), docs/voice/STEP1_EARS_DESIGN.md. Each spoken text and what the normaliser must return: `text` (what the site acts on), `code` (code pages), `unplaced` and `retryHindi`; only the fields given are checked. tests/voice-normalise.test.js needs 100%: these are rules.",
+ "cases": [
+  {
+   "say": "लाइन ४२ पर जाओ",
+   "mode": "text",
+   "text": "लाइन 42 पर जाओ"
+  },
+  {
+   "say": "उत्तर ७ है।",
+   "mode": "text",
+   "text": "उत्तर 7 है."
+  },
+  {
+   "say": "मिड को अपडेट करो।",
+   "mode": "text",
+   "text": "मिड को अपडेट करो."
+  },
+  {
+   "say": "i = १",
+   "mode": "code",
+   "code": "i = 1"
+  },
+  {
+   "say": "  extra   spaces   here ",
+   "mode": "text",
+   "text": "extra spaces here"
+  },
+  {
+   "say": "दो सौ पचास",
+   "mode": "text",
+   "text": "दो सौ पचास"
+  },
+  {
+   "say": "answer is ३.५",
+   "mode": "text",
+   "text": "answer is 3.5"
+  },
+  {
+   "say": "x बराबर ५",
+   "mode": "text",
+   "text": "x बराबर 5"
+  },
+  {
+   "say": "ठीक है॥",
+   "mode": "text",
+   "text": "ठीक है."
+  },
+  {
+   "say": "line १२",
+   "mode": "command",
+   "text": "line 12"
+  },
+  {
+   "say": "مڈ کو اپڈیٹ کرو",
+   "mode": "text",
+   "lang": "hi-IN",
+   "retryHindi": true
+  },
+  {
+   "say": "मिड को अपडेट करो",
+   "mode": "text",
+   "lang": "hi-IN",
+   "retryHindi": false
+  },
+  {
+   "say": "low ko update karo",
+   "mode": "command",
+   "lang": "hi-IN",
+   "retryHindi": false
+  },
+  {
+   "say": "مڈ",
+   "mode": "command",
+   "lang": "en-IN",
+   "retryHindi": false
+  },
+  {
+   "say": "run bee eff ess now",
+   "mode": "command",
+   "text": "run BFS now"
+  },
+  {
+   "say": "run b f s now",
+   "mode": "command",
+   "text": "run BFS now"
+  },
+  {
+   "say": "run B F S now",
+   "mode": "command",
+   "text": "run BFS now"
+  },
+  {
+   "say": "run b. f. s. now",
+   "mode": "command",
+   "text": "run BFS now"
+  },
+  {
+   "say": "run dee eff ess now",
+   "mode": "command",
+   "text": "run DFS now"
+  },
+  {
+   "say": "run d f s now",
+   "mode": "command",
+   "text": "run DFS now"
+  },
+  {
+   "say": "run dee pee now",
+   "mode": "command",
+   "text": "run DP now"
+  },
+  {
+   "say": "run d p now",
+   "mode": "command",
+   "text": "run DP now"
+  },
+  {
+   "say": "run el see ess now",
+   "mode": "command",
+   "text": "run LCS now"
+  },
+  {
+   "say": "run ell eye ess now",
+   "mode": "command",
+   "text": "run LIS now"
+  },
+  {
+   "say": "run em ess tee now",
+   "mode": "command",
+   "text": "run MST now"
+  },
+  {
+   "say": "run bee ess tee now",
+   "mode": "command",
+   "text": "run BST now"
+  },
+  {
+   "say": "run ay vee el now",
+   "mode": "command",
+   "text": "run AVL now"
+  },
+  {
+   "say": "run gee see dee now",
+   "mode": "command",
+   "text": "run GCD now"
+  },
+  {
+   "say": "run el see em now",
+   "mode": "command",
+   "text": "run LCM now"
+  },
+  {
+   "say": "run ess cue el now",
+   "mode": "command",
+   "text": "run SQL now"
+  },
+  {
+   "say": "run oh ess now",
+   "mode": "command",
+   "text": "run OS now"
+  },
+  {
+   "say": "run see pee you now",
+   "mode": "command",
+   "text": "run CPU now"
+  },
+  {
+   "say": "run tee see pee now",
+   "mode": "command",
+   "text": "run TCP now"
+  },
+  {
+   "say": "run you dee pee now",
+   "mode": "command",
+   "text": "run UDP now"
+  },
+  {
+   "say": "run dee en ess now",
+   "mode": "command",
+   "text": "run DNS now"
+  },
+  {
+   "say": "run ay pee eye now",
+   "mode": "command",
+   "text": "run API now"
+  },
+  {
+   "say": "run el ar you now",
+   "mode": "command",
+   "text": "run LRU now"
+  },
+  {
+   "say": "run dee ay gee now",
+   "mode": "command",
+   "text": "run DAG now"
+  },
+  {
+   "say": "run en eff ay now",
+   "mode": "command",
+   "text": "run NFA now"
+  },
+  {
+   "say": "run dee eff ay now",
+   "mode": "command",
+   "text": "run DFA now"
+  },
+  {
+   "say": "run pee dee ay now",
+   "mode": "command",
+   "text": "run PDA now"
+  },
+  {
+   "say": "run see eff gee now",
+   "mode": "command",
+   "text": "run CFG now"
+  },
+  {
+   "say": "run kay em pee now",
+   "mode": "command",
+   "text": "run KMP now"
+  },
+  {
+   "say": "run em see cue now",
+   "mode": "command",
+   "text": "run MCQ now"
+  },
+  {
+   "say": "run tee el ee now",
+   "mode": "command",
+   "text": "run TLE now"
+  },
+  {
+   "say": "run ay el you now",
+   "mode": "command",
+   "text": "run ALU now"
+  },
+  {
+   "say": "ex oh ar of a and b",
+   "mode": "text",
+   "text": "XOR of a and b"
+  },
+  {
+   "say": "b f s se graph traverse karo",
+   "mode": "command",
+   "text": "BFS se graph traverse karo"
+  },
+  {
+   "say": "bfs and dfs",
+   "mode": "text",
+   "text": "BFS and DFS"
+  },
+  {
+   "say": "use dp here",
+   "mode": "command",
+   "text": "use DP here"
+  },
+  {
+   "say": "a b c d",
+   "mode": "text",
+   "text": "a b c d"
+  },
+  {
+   "say": "i j k",
+   "mode": "text",
+   "text": "i j k"
+  },
+  {
+   "say": "x y z",
+   "mode": "command",
+   "text": "x y z"
+  },
+  {
+   "say": "pee and queue",
+   "mode": "text",
+   "text": "pee and queue"
+  },
+  {
+   "say": "the b f s tree",
+   "mode": "text",
+   "text": "the BFS tree"
+  },
+  {
+   "say": "is it dee eff ess or bee eff ess?",
+   "mode": "text",
+   "text": "is it DFS or BFS?"
+  },
+  {
+   "say": "explain beefs please",
+   "mode": "text",
+   "text": "explain BFS please"
+  },
+  {
+   "say": "explain kyu please",
+   "mode": "text",
+   "text": "explain queue please"
+  },
+  {
+   "say": "explain kyoo please",
+   "mode": "text",
+   "text": "explain queue please"
+  },
+  {
+   "say": "explain cue please",
+   "mode": "text",
+   "text": "explain queue please"
+  },
+  {
+   "say": "explain dek please",
+   "mode": "text",
+   "text": "explain deque please"
+  },
+  {
+   "say": "explain deck please",
+   "mode": "text",
+   "text": "explain deque please"
+  },
+  {
+   "say": "explain link list please",
+   "mode": "text",
+   "text": "explain linked list please"
+  },
+  {
+   "say": "explain linklist please",
+   "mode": "text",
+   "text": "explain linked list please"
+  },
+  {
+   "say": "explain hash map please",
+   "mode": "text",
+   "text": "explain hashmap please"
+  },
+  {
+   "say": "explain dykstra please",
+   "mode": "text",
+   "text": "explain Dijkstra please"
+  },
+  {
+   "say": "explain dikstra please",
+   "mode": "text",
+   "text": "explain Dijkstra please"
+  },
+  {
+   "say": "explain dextra please",
+   "mode": "text",
+   "text": "explain Dijkstra please"
+  },
+  {
+   "say": "explain kruskals please",
+   "mode": "text",
+   "text": "explain Kruskal please"
+  },
+  {
+   "say": "explain prims please",
+   "mode": "text",
+   "text": "explain Prim please"
+  },
+  {
+   "say": "explain kadanes please",
+   "mode": "text",
+   "text": "explain Kadane please"
+  },
+  {
+   "say": "explain memorization please",
+   "mode": "text",
+   "text": "explain memoization please"
+  },
+  {
+   "say": "explain memorisation please",
+   "mode": "text",
+   "text": "explain memoization please"
+  },
+  {
+   "say": "explain sub array please",
+   "mode": "text",
+   "text": "explain subarray please"
+  },
+  {
+   "say": "explain sub string please",
+   "mode": "text",
+   "text": "explain substring please"
+  },
+  {
+   "say": "explain sub sequence please",
+   "mode": "text",
+   "text": "explain subsequence please"
+  },
+  {
+   "say": "explain polindrome please",
+   "mode": "text",
+   "text": "explain palindrome please"
+  },
+  {
+   "say": "explain palin drome please",
+   "mode": "text",
+   "text": "explain palindrome please"
+  },
+  {
+   "say": "kyu mein push karo",
+   "mode": "command",
+   "text": "queue mein push karo"
+  },
+  {
+   "say": "beefs on this graph",
+   "mode": "command",
+   "text": "BFS on this graph"
+  },
+  {
+   "say": "try it again",
+   "mode": "command",
+   "text": "try it again"
+  },
+  {
+   "say": "check the deck of cards",
+   "mode": "text",
+   "text": "check the deque of cards"
+  },
+  {
+   "say": "mit ko update karo",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "mid ko update karo"
+  },
+  {
+   "say": "set low to mit plus one",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "set low to mid plus one"
+  },
+  {
+   "say": "visted array clear karo",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "visited array clear karo"
+  },
+  {
+   "say": "parant of node",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "parent of node"
+  },
+  {
+   "say": "disst of v",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "dist of v"
+  },
+  {
+   "say": "left index plus plus",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "leftIndex plus plus"
+  },
+  {
+   "say": "max val equals zero",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "max_val equals zero"
+  },
+  {
+   "say": "mit ko update karo",
+   "mode": "text",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "mit ko update karo"
+  },
+  {
+   "say": "short this array",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "short this array"
+  },
+  {
+   "say": "go to the hub",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "go to the hub"
+  },
+  {
+   "say": "make it high",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "make it high"
+  },
+  {
+   "say": "open notes",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "open notes"
+  },
+  {
+   "say": "dark mode",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "dark mode"
+  },
+  {
+   "say": "wapas jao",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "wapas jao"
+  },
+  {
+   "say": "notes kholo",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "notes kholo"
+  },
+  {
+   "say": "next hint please",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "next hint please"
+  },
+  {
+   "say": "mdi ko badlo",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "mid ko badlo"
+  },
+  {
+   "say": "hgh value",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "high value"
+  },
+  {
+   "say": "loww is zero",
+   "mode": "command",
+   "hints": [
+    "mid",
+    "low",
+    "high",
+    "leftIndex",
+    "max_val",
+    "visited",
+    "parent",
+    "dist"
+   ],
+   "text": "low is zero"
+  },
+  {
+   "say": "kyu push",
+   "mode": "command",
+   "hints": [
+    "queue"
+   ],
+   "text": "queue push"
+  },
+  {
+   "say": "stak pop",
+   "mode": "command",
+   "hints": [
+    "stack"
+   ],
+   "text": "stack pop"
+  },
+  {
+   "say": "pivit choose karo",
+   "mode": "command",
+   "hints": [
+    "pivot"
+   ],
+   "text": "pivot choose karo"
+  },
+  {
+   "say": "partision karo",
+   "mode": "command",
+   "hints": [
+    "partition"
+   ],
+   "text": "partition karo"
+  },
+  {
+   "say": "sumary dikhao",
+   "mode": "command",
+   "hints": [
+    "summary"
+   ],
+   "text": "summary dikhao"
+  },
+  {
+   "say": "mit or min",
+   "mode": "command",
+   "text": "mit or min"
+  },
+  {
+   "say": "node mode",
+   "mode": "command",
+   "hints": [
+    "node"
+   ],
+   "text": "node mode"
+  },
+  {
+   "say": "run the code",
+   "mode": "command",
+   "text": "run the code"
+  },
+  {
+   "say": "submit karo",
+   "mode": "command",
+   "text": "submit karo"
+  },
+  {
+   "say": "i plus plus",
+   "mode": "code",
+   "code": "i++"
+  },
+  {
+   "say": "i minus minus",
+   "mode": "code",
+   "code": "i--"
+  },
+  {
+   "say": "i plus equals two",
+   "mode": "code",
+   "code": "i += 2"
+  },
+  {
+   "say": "i minus equals ten",
+   "mode": "code",
+   "code": "i -= 10"
+  },
+  {
+   "say": "i times equals twenty five",
+   "mode": "code",
+   "code": "i *= 25"
+  },
+  {
+   "say": "i equals ek",
+   "mode": "code",
+   "code": "i = 1"
+  },
+  {
+   "say": "i less than do",
+   "mode": "code",
+   "code": "i < 2"
+  },
+  {
+   "say": "i less than or equal to teen",
+   "mode": "code",
+   "code": "i <= 3"
+  },
+  {
+   "say": "i greater than seven",
+   "mode": "code",
+   "code": "i > 7"
+  },
+  {
+   "say": "i greater than or equal to zero",
+   "mode": "code",
+   "code": "i >= 0"
+  },
+  {
+   "say": "i not equal to one",
+   "mode": "code",
+   "code": "i != 1"
+  },
+  {
+   "say": "i equal to two",
+   "mode": "code",
+   "code": "i == 2"
+  },
+  {
+   "say": "i equals equals ten",
+   "mode": "code",
+   "code": "i == 10"
+  },
+  {
+   "say": "j plus plus",
+   "mode": "code",
+   "code": "j++"
+  },
+  {
+   "say": "j minus minus",
+   "mode": "code",
+   "code": "j--"
+  },
+  {
+   "say": "j plus equals do",
+   "mode": "code",
+   "code": "j += 2"
+  },
+  {
+   "say": "j minus equals teen",
+   "mode": "code",
+   "code": "j -= 3"
+  },
+  {
+   "say": "j times equals seven",
+   "mode": "code",
+   "code": "j *= 7"
+  },
+  {
+   "say": "j equals zero",
+   "mode": "code",
+   "code": "j = 0"
+  },
+  {
+   "say": "j less than one",
+   "mode": "code",
+   "code": "j < 1"
+  },
+  {
+   "say": "j less than or equal to two",
+   "mode": "code",
+   "code": "j <= 2"
+  },
+  {
+   "say": "j greater than ten",
+   "mode": "code",
+   "code": "j > 10"
+  },
+  {
+   "say": "j greater than or equal to twenty five",
+   "mode": "code",
+   "code": "j >= 25"
+  },
+  {
+   "say": "j not equal to ek",
+   "mode": "code",
+   "code": "j != 1"
+  },
+  {
+   "say": "j equal to do",
+   "mode": "code",
+   "code": "j == 2"
+  },
+  {
+   "say": "j equals equals teen",
+   "mode": "code",
+   "code": "j == 3"
+  },
+  {
+   "say": "k plus plus",
+   "mode": "code",
+   "code": "k++"
+  },
+  {
+   "say": "k minus minus",
+   "mode": "code",
+   "code": "k--"
+  },
+  {
+   "say": "k plus equals one",
+   "mode": "code",
+   "code": "k += 1"
+  },
+  {
+   "say": "k minus equals two",
+   "mode": "code",
+   "code": "k -= 2"
+  },
+  {
+   "say": "k times equals ten",
+   "mode": "code",
+   "code": "k *= 10"
+  },
+  {
+   "say": "k equals twenty five",
+   "mode": "code",
+   "code": "k = 25"
+  },
+  {
+   "say": "k less than ek",
+   "mode": "code",
+   "code": "k < 1"
+  },
+  {
+   "say": "k less than or equal to do",
+   "mode": "code",
+   "code": "k <= 2"
+  },
+  {
+   "say": "k greater than teen",
+   "mode": "code",
+   "code": "k > 3"
+  },
+  {
+   "say": "k greater than or equal to seven",
+   "mode": "code",
+   "code": "k >= 7"
+  },
+  {
+   "say": "k not equal to zero",
+   "mode": "code",
+   "code": "k != 0"
+  },
+  {
+   "say": "k equal to one",
+   "mode": "code",
+   "code": "k == 1"
+  },
+  {
+   "say": "k equals equals two",
+   "mode": "code",
+   "code": "k == 2"
+  },
+  {
+   "say": "n plus plus",
+   "mode": "code",
+   "code": "n++"
+  },
+  {
+   "say": "n minus minus",
+   "mode": "code",
+   "code": "n--"
+  },
+  {
+   "say": "n plus equals ek",
+   "mode": "code",
+   "code": "n += 1"
+  },
+  {
+   "say": "n minus equals do",
+   "mode": "code",
+   "code": "n -= 2"
+  },
+  {
+   "say": "n times equals teen",
+   "mode": "code",
+   "code": "n *= 3"
+  },
+  {
+   "say": "n equals seven",
+   "mode": "code",
+   "code": "n = 7"
+  },
+  {
+   "say": "n less than zero",
+   "mode": "code",
+   "code": "n < 0"
+  },
+  {
+   "say": "n less than or equal to one",
+   "mode": "code",
+   "code": "n <= 1"
+  },
+  {
+   "say": "n greater than two",
+   "mode": "code",
+   "code": "n > 2"
+  },
+  {
+   "say": "n greater than or equal to ten",
+   "mode": "code",
+   "code": "n >= 10"
+  },
+  {
+   "say": "n not equal to twenty five",
+   "mode": "code",
+   "code": "n != 25"
+  },
+  {
+   "say": "n equal to ek",
+   "mode": "code",
+   "code": "n == 1"
+  },
+  {
+   "say": "n equals equals do",
+   "mode": "code",
+   "code": "n == 2"
+  },
+  {
+   "say": "low plus plus",
+   "mode": "code",
+   "code": "low++"
+  },
+  {
+   "say": "low minus minus",
+   "mode": "code",
+   "code": "low--"
+  },
+  {
+   "say": "low plus equals zero",
+   "mode": "code",
+   "code": "low += 0"
+  },
+  {
+   "say": "low minus equals one",
+   "mode": "code",
+   "code": "low -= 1"
+  },
+  {
+   "say": "low times equals two",
+   "mode": "code",
+   "code": "low *= 2"
+  },
+  {
+   "say": "low equals ten",
+   "mode": "code",
+   "code": "low = 10"
+  },
+  {
+   "say": "low less than twenty five",
+   "mode": "code",
+   "code": "low < 25"
+  },
+  {
+   "say": "low less than or equal to ek",
+   "mode": "code",
+   "code": "low <= 1"
+  },
+  {
+   "say": "low greater than do",
+   "mode": "code",
+   "code": "low > 2"
+  },
+  {
+   "say": "low greater than or equal to teen",
+   "mode": "code",
+   "code": "low >= 3"
+  },
+  {
+   "say": "low not equal to seven",
+   "mode": "code",
+   "code": "low != 7"
+  },
+  {
+   "say": "low equal to zero",
+   "mode": "code",
+   "code": "low == 0"
+  },
+  {
+   "say": "low equals equals one",
+   "mode": "code",
+   "code": "low == 1"
+  },
+  {
+   "say": "high plus plus",
+   "mode": "code",
+   "code": "high++"
+  },
+  {
+   "say": "high minus minus",
+   "mode": "code",
+   "code": "high--"
+  },
+  {
+   "say": "high plus equals twenty five",
+   "mode": "code",
+   "code": "high += 25"
+  },
+  {
+   "say": "high minus equals ek",
+   "mode": "code",
+   "code": "high -= 1"
+  },
+  {
+   "say": "high times equals do",
+   "mode": "code",
+   "code": "high *= 2"
+  },
+  {
+   "say": "high equals teen",
+   "mode": "code",
+   "code": "high = 3"
+  },
+  {
+   "say": "high less than seven",
+   "mode": "code",
+   "code": "high < 7"
+  },
+  {
+   "say": "high less than or equal to zero",
+   "mode": "code",
+   "code": "high <= 0"
+  },
+  {
+   "say": "high greater than one",
+   "mode": "code",
+   "code": "high > 1"
+  },
+  {
+   "say": "high greater than or equal to two",
+   "mode": "code",
+   "code": "high >= 2"
+  },
+  {
+   "say": "high not equal to ten",
+   "mode": "code",
+   "code": "high != 10"
+  },
+  {
+   "say": "high equal to twenty five",
+   "mode": "code",
+   "code": "high == 25"
+  },
+  {
+   "say": "high equals equals ek",
+   "mode": "code",
+   "code": "high == 1"
+  },
+  {
+   "say": "mid plus plus",
+   "mode": "code",
+   "code": "mid++"
+  },
+  {
+   "say": "mid minus minus",
+   "mode": "code",
+   "code": "mid--"
+  },
+  {
+   "say": "mid plus equals seven",
+   "mode": "code",
+   "code": "mid += 7"
+  },
+  {
+   "say": "mid minus equals zero",
+   "mode": "code",
+   "code": "mid -= 0"
+  },
+  {
+   "say": "mid times equals one",
+   "mode": "code",
+   "code": "mid *= 1"
+  },
+  {
+   "say": "mid equals two",
+   "mode": "code",
+   "code": "mid = 2"
+  },
+  {
+   "say": "mid less than ten",
+   "mode": "code",
+   "code": "mid < 10"
+  },
+  {
+   "say": "mid less than or equal to twenty five",
+   "mode": "code",
+   "code": "mid <= 25"
+  },
+  {
+   "say": "mid greater than ek",
+   "mode": "code",
+   "code": "mid > 1"
+  },
+  {
+   "say": "mid greater than or equal to do",
+   "mode": "code",
+   "code": "mid >= 2"
+  },
+  {
+   "say": "mid not equal to teen",
+   "mode": "code",
+   "code": "mid != 3"
+  },
+  {
+   "say": "mid equal to seven",
+   "mode": "code",
+   "code": "mid == 7"
+  },
+  {
+   "say": "mid equals equals zero",
+   "mode": "code",
+   "code": "mid == 0"
+  },
+  {
+   "say": "count plus plus",
+   "mode": "code",
+   "code": "count++"
+  },
+  {
+   "say": "count minus minus",
+   "mode": "code",
+   "code": "count--"
+  },
+  {
+   "say": "count plus equals ten",
+   "mode": "code",
+   "code": "count += 10"
+  },
+  {
+   "say": "count minus equals twenty five",
+   "mode": "code",
+   "code": "count -= 25"
+  },
+  {
+   "say": "count times equals ek",
+   "mode": "code",
+   "code": "count *= 1"
+  },
+  {
+   "say": "count equals do",
+   "mode": "code",
+   "code": "count = 2"
+  },
+  {
+   "say": "count less than teen",
+   "mode": "code",
+   "code": "count < 3"
+  },
+  {
+   "say": "count less than or equal to seven",
+   "mode": "code",
+   "code": "count <= 7"
+  },
+  {
+   "say": "count greater than zero",
+   "mode": "code",
+   "code": "count > 0"
+  },
+  {
+   "say": "count greater than or equal to one",
+   "mode": "code",
+   "code": "count >= 1"
+  },
+  {
+   "say": "count not equal to two",
+   "mode": "code",
+   "code": "count != 2"
+  },
+  {
+   "say": "count equal to ten",
+   "mode": "code",
+   "code": "count == 10"
+  },
+  {
+   "say": "count equals equals twenty five",
+   "mode": "code",
+   "code": "count == 25"
+  },
+  {
+   "say": "sum plus plus",
+   "mode": "code",
+   "code": "sum++"
+  },
+  {
+   "say": "sum minus minus",
+   "mode": "code",
+   "code": "sum--"
+  },
+  {
+   "say": "sum plus equals teen",
+   "mode": "code",
+   "code": "sum += 3"
+  },
+  {
+   "say": "sum minus equals seven",
+   "mode": "code",
+   "code": "sum -= 7"
+  },
+  {
+   "say": "sum times equals zero",
+   "mode": "code",
+   "code": "sum *= 0"
+  },
+  {
+   "say": "sum equals one",
+   "mode": "code",
+   "code": "sum = 1"
+  },
+  {
+   "say": "sum less than two",
+   "mode": "code",
+   "code": "sum < 2"
+  },
+  {
+   "say": "sum less than or equal to ten",
+   "mode": "code",
+   "code": "sum <= 10"
+  },
+  {
+   "say": "sum greater than twenty five",
+   "mode": "code",
+   "code": "sum > 25"
+  },
+  {
+   "say": "sum greater than or equal to ek",
+   "mode": "code",
+   "code": "sum >= 1"
+  },
+  {
+   "say": "sum not equal to do",
+   "mode": "code",
+   "code": "sum != 2"
+  },
+  {
+   "say": "sum equal to teen",
+   "mode": "code",
+   "code": "sum == 3"
+  },
+  {
+   "say": "sum equals equals seven",
+   "mode": "code",
+   "code": "sum == 7"
+  },
+  {
+   "say": "a of i",
+   "mode": "code",
+   "code": "a[i]"
+  },
+  {
+   "say": "a of j",
+   "mode": "code",
+   "code": "a[j]"
+  },
+  {
+   "say": "a of mid",
+   "mode": "code",
+   "code": "a[mid]"
+  },
+  {
+   "say": "a of zero",
+   "mode": "code",
+   "code": "a[0]"
+  },
+  {
+   "say": "a of n minus one",
+   "mode": "code",
+   "code": "a[n - 1]"
+  },
+  {
+   "say": "arr of i",
+   "mode": "code",
+   "code": "arr[i]"
+  },
+  {
+   "say": "arr of j",
+   "mode": "code",
+   "code": "arr[j]"
+  },
+  {
+   "say": "arr of mid",
+   "mode": "code",
+   "code": "arr[mid]"
+  },
+  {
+   "say": "arr of zero",
+   "mode": "code",
+   "code": "arr[0]"
+  },
+  {
+   "say": "arr of n minus one",
+   "mode": "code",
+   "code": "arr[n - 1]"
+  },
+  {
+   "say": "nums of i",
+   "mode": "code",
+   "code": "nums[i]"
+  },
+  {
+   "say": "nums of j",
+   "mode": "code",
+   "code": "nums[j]"
+  },
+  {
+   "say": "nums of mid",
+   "mode": "code",
+   "code": "nums[mid]"
+  },
+  {
+   "say": "nums of zero",
+   "mode": "code",
+   "code": "nums[0]"
+  },
+  {
+   "say": "nums of n minus one",
+   "mode": "code",
+   "code": "nums[n - 1]"
+  },
+  {
+   "say": "dp of i",
+   "mode": "code",
+   "code": "dp[i]"
+  },
+  {
+   "say": "dp of j",
+   "mode": "code",
+   "code": "dp[j]"
+  },
+  {
+   "say": "dp of mid",
+   "mode": "code",
+   "code": "dp[mid]"
+  },
+  {
+   "say": "dp of zero",
+   "mode": "code",
+   "code": "dp[0]"
+  },
+  {
+   "say": "dp of n minus one",
+   "mode": "code",
+   "code": "dp[n - 1]"
+  },
+  {
+   "say": "visited of i",
+   "mode": "code",
+   "code": "visited[i]"
+  },
+  {
+   "say": "visited of j",
+   "mode": "code",
+   "code": "visited[j]"
+  },
+  {
+   "say": "visited of mid",
+   "mode": "code",
+   "code": "visited[mid]"
+  },
+  {
+   "say": "visited of zero",
+   "mode": "code",
+   "code": "visited[0]"
+  },
+  {
+   "say": "visited of n minus one",
+   "mode": "code",
+   "code": "visited[n - 1]"
+  },
+  {
+   "say": "dist of i",
+   "mode": "code",
+   "code": "dist[i]"
+  },
+  {
+   "say": "dist of j",
+   "mode": "code",
+   "code": "dist[j]"
+  },
+  {
+   "say": "dist of mid",
+   "mode": "code",
+   "code": "dist[mid]"
+  },
+  {
+   "say": "dist of zero",
+   "mode": "code",
+   "code": "dist[0]"
+  },
+  {
+   "say": "dist of n minus one",
+   "mode": "code",
+   "code": "dist[n - 1]"
+  },
+  {
+   "say": "a sub i",
+   "mode": "code",
+   "code": "a[i]"
+  },
+  {
+   "say": "a index j",
+   "mode": "code",
+   "code": "a[j]"
+  },
+  {
+   "say": "arr ka i",
+   "mode": "code",
+   "code": "arr[i]"
+  },
+  {
+   "say": "a of eye",
+   "mode": "code",
+   "code": "a[i]"
+  },
+  {
+   "say": "length of array",
+   "mode": "code",
+   "code": "length of array"
+  },
+  {
+   "say": "size of v",
+   "mode": "code",
+   "code": "size of v"
+  },
+  {
+   "say": "sum of digits",
+   "mode": "code",
+   "code": "sum of digits"
+  },
+  {
+   "say": "for each of them",
+   "mode": "code",
+   "code": "for each of them"
+  },
+  {
+   "say": "low equals mid plus one",
+   "mode": "code",
+   "code": "low = mid + 1"
+  },
+  {
+   "say": "high equals mid minus one",
+   "mode": "code",
+   "code": "high = mid - 1"
+  },
+  {
+   "say": "mid equals low plus high divided by two",
+   "mode": "code",
+   "code": "mid = low + high / 2"
+  },
+  {
+   "say": "while low less than or equal to high",
+   "mode": "code",
+   "code": "while low <= high"
+  },
+  {
+   "say": "if a of mid equal to key",
+   "mode": "code",
+   "code": "if a[mid] == key"
+  },
+  {
+   "say": "if a of i is less than or equal to key",
+   "mode": "code",
+   "code": "if a[i] <= key"
+  },
+  {
+   "say": "return dp of n",
+   "mode": "code",
+   "code": "return dp[n]"
+  },
+  {
+   "say": "sum plus equals a of i",
+   "mode": "code",
+   "code": "sum += a[i]"
+  },
+  {
+   "say": "count plus equals two",
+   "mode": "code",
+   "code": "count += 2"
+  },
+  {
+   "say": "node dot next equals null",
+   "mode": "code",
+   "code": "node.next = null"
+  },
+  {
+   "say": "node arrow next",
+   "mode": "code",
+   "code": "node->next"
+  },
+  {
+   "say": "for i from zero to n minus one",
+   "mode": "code",
+   "code": "for i from 0 to n - 1"
+  },
+  {
+   "say": "i less than n and j greater than zero",
+   "mode": "code",
+   "code": "i < n && j > 0"
+  },
+  {
+   "say": "i less than n double and j greater than zero",
+   "mode": "code",
+   "code": "i < n && j > 0"
+  },
+  {
+   "say": "x or y",
+   "mode": "code",
+   "code": "x || y"
+  },
+  {
+   "say": "x logical or y",
+   "mode": "code",
+   "code": "x || y"
+  },
+  {
+   "say": "not visited of v",
+   "mode": "code",
+   "code": "!visited[v]"
+  },
+  {
+   "say": "x mod two equal to zero",
+   "mode": "code",
+   "code": "x % 2 == 0"
+  },
+  {
+   "say": "x modulo ten",
+   "mode": "code",
+   "code": "x % 10"
+  },
+  {
+   "say": "x remainder three",
+   "mode": "code",
+   "code": "x % 3"
+  },
+  {
+   "say": "a times b",
+   "mode": "code",
+   "code": "a * b"
+  },
+  {
+   "say": "a into b",
+   "mode": "code",
+   "code": "a * b"
+  },
+  {
+   "say": "a multiplied by b",
+   "mode": "code",
+   "code": "a * b"
+  },
+  {
+   "say": "a divided by b",
+   "mode": "code",
+   "code": "a / b"
+  },
+  {
+   "say": "print open paren x close paren",
+   "mode": "code",
+   "code": "print(x)"
+  },
+  {
+   "say": "print open round bracket x close round bracket",
+   "mode": "code",
+   "code": "print(x)"
+  },
+  {
+   "say": "open curly brace close curly brace",
+   "mode": "code",
+   "code": "{ }"
+  },
+  {
+   "say": "x equals five semicolon",
+   "mode": "code",
+   "code": "x = 5;"
+  },
+  {
+   "say": "a comma b comma c",
+   "mode": "code",
+   "code": "a, b, c"
+  },
+  {
+   "say": "x colon int",
+   "mode": "code",
+   "code": "x: int"
+  },
+  {
+   "say": "max underscore val equals zero",
+   "mode": "code",
+   "code": "max_val = 0"
+  },
+  {
+   "say": "i equals i plus one",
+   "mode": "code",
+   "code": "i = i + 1"
+  },
+  {
+   "say": "j minus equals one",
+   "mode": "code",
+   "code": "j -= 1"
+  },
+  {
+   "say": "total divided by equals two",
+   "mode": "code",
+   "code": "total /= 2"
+  },
+  {
+   "say": "x mod equals three",
+   "mode": "code",
+   "code": "x %= 3"
+  },
+  {
+   "say": "x bang equals y",
+   "mode": "code",
+   "code": "x != y"
+  },
+  {
+   "say": "x double equals y",
+   "mode": "code",
+   "code": "x == y"
+  },
+  {
+   "say": "x is at most y",
+   "mode": "code",
+   "code": "x <= y"
+  },
+  {
+   "say": "x is at least y",
+   "mode": "code",
+   "code": "x >= y"
+  },
+  {
+   "say": "x se chhota y",
+   "mode": "code",
+   "code": "x < y"
+  },
+  {
+   "say": "x se bada y",
+   "mode": "code",
+   "code": "x > y"
+  },
+  {
+   "say": "x barabar paanch",
+   "mode": "code",
+   "code": "x = 5"
+  },
+  {
+   "say": "x barabar barabar paanch",
+   "mode": "code",
+   "code": "x == 5"
+  },
+  {
+   "say": "i plus plus semicolon",
+   "mode": "code",
+   "code": "i++;"
+  },
+  {
+   "say": "plus plus i",
+   "mode": "code",
+   "code": "++i"
+  },
+  {
+   "say": "x equals twenty five plus do",
+   "mode": "code",
+   "code": "x = 25 + 2"
+  },
+  {
+   "say": "x equals three point one four",
+   "mode": "code",
+   "code": "x = 3.14"
+  },
+  {
+   "say": "x equals one hundred",
+   "mode": "code",
+   "code": "x = 100"
+  },
+  {
+   "say": "x equals two hundred fifty",
+   "mode": "code",
+   "code": "x = 250"
+  },
+  {
+   "say": "x equals one thousand",
+   "mode": "code",
+   "code": "x = 1000"
+  },
+  {
+   "say": "x equals ek lakh",
+   "mode": "code",
+   "code": "x = 100000"
+  },
+  {
+   "say": "x equals forty two",
+   "mode": "code",
+   "code": "x = 42"
+  },
+  {
+   "say": "x equals nineteen",
+   "mode": "code",
+   "code": "x = 19"
+  },
+  {
+   "say": "ek do teen",
+   "mode": "code",
+   "code": "1 2 3"
+  },
+  {
+   "say": "one two three",
+   "mode": "code",
+   "code": "1 2 3"
+  },
+  {
+   "say": "do this first",
+   "mode": "code",
+   "code": "do this first"
+  },
+  {
+   "say": "sat on it",
+   "mode": "code",
+   "code": "sat on it"
+  },
+  {
+   "say": "char c",
+   "mode": "code",
+   "code": "char c"
+  },
+  {
+   "say": "return x plus do",
+   "mode": "code",
+   "code": "return x + 2"
+  },
+  {
+   "say": "open bracket i close bracket",
+   "mode": "code",
+   "code": "[i]"
+  },
+  {
+   "say": "a open bracket i close bracket",
+   "mode": "code",
+   "code": "a[i]"
+  },
+  {
+   "say": "left index plus plus",
+   "mode": "code",
+   "code": "left index++"
+  },
+  {
+   "say": "left index plus plus",
+   "mode": "code",
+   "hints": [
+    "leftIndex"
+   ],
+   "code": "leftIndex++"
+  },
+  {
+   "say": "right index minus minus",
+   "mode": "code",
+   "hints": [
+    "rightIndex"
+   ],
+   "code": "rightIndex--"
+  },
+  {
+   "say": "max val equals a of i",
+   "mode": "code",
+   "hints": [
+    "max_val",
+    "a"
+   ],
+   "code": "max_val = a[i]"
+  },
+  {
+   "say": "while kyu not empty",
+   "mode": "code",
+   "hints": [
+    "queue"
+   ],
+   "code": "while queue not empty"
+  },
+  {
+   "say": "return dp of n",
+   "mode": "code",
+   "hints": [
+    "dp"
+   ],
+   "code": "return dp[n]"
+  },
+  {
+   "say": "use dp here",
+   "mode": "code",
+   "code": "use dp here"
+  },
+  {
+   "say": "print banana",
+   "mode": "code",
+   "unplaced": [
+    "banana"
+   ]
+  },
+  {
+   "say": "x equals mid plus one",
+   "mode": "code",
+   "hints": [
+    "mid"
+   ],
+   "unplaced": []
+  },
+  {
+   "say": "mit ko update karo",
+   "mode": "code",
+   "hints": [
+    "mid"
+   ],
+   "unplaced": []
+  },
+  {
+   "say": "for i from zero to n",
+   "mode": "code",
+   "unplaced": []
+  },
+  {
+   "say": "swap a of i and a of j",
+   "mode": "code",
+   "unplaced": []
+  },
+  {
+   "say": "call the frobnicate routine",
+   "mode": "code",
+   "unplaced": [
+    "frobnicate",
+    "routine"
+   ]
+  },
+  {
+   "say": "while queue not empty pop",
+   "mode": "code",
+   "unplaced": []
+  }
+ ]
+}

@@ -28,6 +28,7 @@ import { applyCode } from './code/apply'
 import { parseCode, type CodeCommand } from './code/parse'
 import { activeBuilder, parseBuild } from './code/build'
 import { speak, stopSpeaking } from './speak'
+import { pageHints } from './hints'
 import './voice.css'
 
 type Phase =
@@ -229,8 +230,12 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
       return
     }
     setPhase({ kind: 'listening', text: '' })
+    const code = activeCode()
     handle.current = await listenOnce({
       lang: prefs.lang,
+      // An editor in use expects code; otherwise a command. The page's names help the server ears.
+      mode: code ? 'code' : 'command',
+      hints: pageHints(code, actions),
       onText: (text) => setPhase((p) => (p.kind === 'listening' ? { kind: 'listening', text } : p)),
       onDone: (text, error) => {
         handle.current = null
@@ -242,7 +247,7 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
         decide(text)
       },
     })
-  }, [phase.kind, prefs.lang, decide, hideSoon])
+  }, [phase.kind, prefs.lang, decide, hideSoon, actions])
 
   const onMic = () => {
     if (!prefs.consent) return setConsentOpen(true)
