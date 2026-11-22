@@ -75,7 +75,8 @@ export function Stage({ session, s, layout, pinned, onPin }: { session: LiveSess
     const people: TileItem[] = []
     const screens: TileItem[] = []
     const add = (p: PeerInfo, isSelf: boolean, media: Record<string, MediaStreamTrack> | undefined) => {
-      if (p.device === 'main') {
+      // A lecture's audience is not on the stage: only the teachers and whoever they let speak.
+      if (p.device === 'main' && p.role !== 'viewer') {
         const camTrack = isSelf ? (s.cam ? s.camTrack : null) : p.cam ? media?.cam ?? null : null
         people.push({ key: `${p.peerId}:p`, peerId: p.peerId, pubId: camTrack ? 'cam' : null, screen: false, label: p.name, person: p, self: isSelf, track: camTrack })
       }

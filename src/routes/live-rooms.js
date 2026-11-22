@@ -76,16 +76,16 @@ function createLiveRoomsRouter({ realtime, live }) {
   // (/api/live/classes belongs to the older LiveClass API, routes/live.js.)
   router.use(["/api/live/config", "/api/live/rooms", "/api/live/device", "/api/live/call"], (req, res, next) => store.ensureTables().then(() => next(), next));
 
-  async function createRoom({ host, title, mode, visibility, about, invite = [], isCall = false }) {
+  async function createRoom({ host, title, mode, visibility, about, invite = [], isCall = false, kind = "room" }) {
     let code = store.newCode();
     for (let i = 0; i < 5 && (await get("SELECT 1 AS x FROM live_rooms WHERE code=?", [code])); i++) code = store.newCode();
     const id = crypto.randomBytes(12).toString("base64url");
     const now = Date.now();
     const stmts = [
       [
-        `INSERT INTO live_rooms(id, code, title, host, mode, visibility, about_kind, about_target, about_title, is_call, created_at)
-         VALUES(?,?,?,?,?,?,?,?,?,?,?)`,
-        [id, code, title, host, mode, visibility, about?.kind || null, about?.target || null, about?.title || null, isCall ? 1 : 0, now],
+        `INSERT INTO live_rooms(id, code, title, host, mode, visibility, about_kind, about_target, about_title, is_call, kind, created_at)
+         VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
+        [id, code, title, host, mode, visibility, about?.kind || null, about?.target || null, about?.title || null, isCall ? 1 : 0, kind === "lecture" ? "lecture" : "room", now],
       ],
       ...invite.map((u) => ["INSERT OR IGNORE INTO live_invites(room_id, username) VALUES(?,?)", [id, u]]),
     ];
@@ -140,8 +140,10 @@ function createLiveRoomsRouter({ realtime, live }) {
     const mode = store.MODES.has(b.mode) ? b.mode : "video";
     const visibility = store.VISIBILITY.has(b.visibility) ? b.visibility : "link";
     const about = aboutOf(b.about);
-    const title = cleanTitle(b.title, about ? `Solving ${about.title}` : mode === "voice" ? "Voice room" : "Study room");
-    const room = await createRoom({ host: me, title, mode, visibility, about });
+    // A lecture: the host (and co-hosts) teach, everyone else watches.
+    const kind = b.kind === "lecture" ? "lecture" : "room";
+    const title = cleanTitle(b.title, kind === "lecture" ? "Live lecture" : about ? `Solving ${about.title}` : mode === "voice" ? "Voice room" : "Study room");
+    const room = await createRoom({ host: me, title, mode, visibility, about, kind });
     res.json({ ok: true, room: store.roomView(room, { people: 0 }) });
   }));
 
@@ -187,7 +189,7 @@ function createLiveRoomsRouter({ realtime, live }) {
     const room = await get("SELECT * FROM live_rooms WHERE id=?", [row.room_id]);
     if (!room || room.ended_at) bad("This room has ended.", 404);
     const who = (await store.people([row.username])).get(row.username) || { name: row.username };
-    res.json({ ok: true, code: room.code, title: room.title, mode: room.mode, name: who.name, expiresAt: row.expires_at });
+    res.json({ ok: true, code: room.code, title: room.title, mode: room.mode, kind: room.kind === "lecture" ? "lecture" : "room", name: who.name, expiresAt: row.expires_at });
   }));
 
   router.post("/api/live/call", auth, make, wrap(async (req, res) => {

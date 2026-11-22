@@ -77,6 +77,22 @@ export default function LiveRoomPage() {
   if (!room) return <Loading label="Opening the room" />
   if (room.endedAt && s.phase === 'idle') return <End title="This room has ended" text="Start a new one from Live." />
 
+  // A lecture's audience just watches: no camera or mic to set up.
+  if (room.kind === 'lecture' && !room.isHost && (s.phase === 'idle' || (s.phase === 'joining' && !autoJoin))) {
+    return (
+      <main className="lv-shell">
+        <section className="lv-watch">
+          <p className="ed-label m-0">Live lecture</p>
+          <h1 className="lv-watch-title">{room.title}</h1>
+          {room.hostInfo && <p className="lv-watch-by">with {room.hostInfo.name}</p>}
+          <p className="lv-watch-meta">{room.people ? `${room.people} here now` : 'Starting soon'} · you watch and can chat, react and raise your hand</p>
+          <button type="button" className="lv-watch-go" disabled={s.phase === 'joining'} onClick={() => void session.join({ mic: false, cam: false, micTrack: null, camTrack: null })}>
+            {s.phase === 'joining' ? 'Joining…' : 'Watch the lecture'}
+          </button>
+        </section>
+      </main>
+    )
+  }
   if (s.phase === 'idle' || (s.phase === 'joining' && !autoJoin)) {
     return (
       <main className="lv-shell">

@@ -44,6 +44,8 @@ function ensureTables() {
         created_at INTEGER NOT NULL
       )`);
       await run("CREATE INDEX IF NOT EXISTS idx_live_messages_room ON live_messages(room_id, id)");
+      // Lectures (one teaches, many watch): an older database gets the column.
+      await run("ALTER TABLE live_rooms ADD COLUMN kind TEXT NOT NULL DEFAULT 'room'").catch(() => {});
       await run(`CREATE TABLE IF NOT EXISTS live_attendance (
         room_id TEXT NOT NULL,
         username TEXT NOT NULL,
@@ -114,6 +116,7 @@ function roomView(r, extra = {}) {
     visibility: r.visibility,
     locked: !!r.locked,
     isCall: !!r.is_call,
+    kind: r.kind === "lecture" ? "lecture" : "room",
     about: r.about_kind ? { kind: r.about_kind, target: r.about_target, title: r.about_title } : null,
     createdAt: r.created_at,
     endedAt: r.ended_at || null,

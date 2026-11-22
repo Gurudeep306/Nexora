@@ -232,6 +232,18 @@ from a range, since test files run in parallel and a clash fails the run.
   what devices report; over the monthly limit new rooms go direct. In the direct mode the
   newcomer always starts each connection; keep that, or two offers clash and
   Chrome's ICE stalls. `routes/live.js` is the older LiveClass API, unrelated.
+- **Live lectures** (Live → Start a room or lecture → Live lecture; rooms
+  with `kind = 'lecture'`): the host and co-hosts teach; everyone else joins
+  as a `viewer` ("Watch the lecture": no camera or mic setup) and can chat,
+  react and raise a hand. The server enforces it: a viewer's mic, camera and
+  screens are dropped in `signal.js` until the teacher chooses "Let speak"
+  (`speaker` event); "Stop" sends them back. Viewers are not on the stage,
+  and the top bar counts who is watching. A new lecture opens on the tablet
+  QR (`?teach=1`); a lecture's tablet opens its board by itself, so the
+  teacher only scans. iPad and Android browsers cannot share their whole
+  screen (no getDisplayMedia), so the tablet teaches with its board or
+  camera. Large audiences need the video server (Cloudflare or LiveKit,
+  Admin → Live); direct mode holds 5 devices.
 - **Messages, alerts and invites**: chats have their own full-window page,
   `/messages` (`pages/MessagesPage.tsx`, the same `MessagesTab`), with a
   top-bar button and unread badge; Community → Messages opens it. New

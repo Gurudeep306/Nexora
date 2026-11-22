@@ -9,7 +9,7 @@ const rooms = new Map();
 function roomState(code, id, transport) {
   let s = rooms.get(code);
   if (!s) {
-    s = { id, code, peers: new Map(), waiting: new Map(), transport, spotlight: null, cohosts: new Set(), admitted: new Set(), startedAt: Date.now() };
+    s = { id, code, peers: new Map(), waiting: new Map(), transport, spotlight: null, cohosts: new Set(), admitted: new Set(), speakers: new Set(), startedAt: Date.now() };
     rooms.set(code, s);
   }
   return s;

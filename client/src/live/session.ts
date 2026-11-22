@@ -284,7 +284,16 @@ export class LiveSession {
         const cur = s.peers[peerId]
         return cur ? { peers: { ...s.peers, [peerId]: { ...cur, role } } } : {}
       })
-      if (peerId === this.state.self?.peerId) this.notice(role === 'cohost' ? 'You are now a co-host.' : 'You are no longer a co-host.')
+      if (peerId === this.state.self?.peerId) {
+        if (role === 'viewer') {
+          // Back to watching: everything we send stops at once.
+          this.setMic(false)
+          void this.setCam(false)
+          for (const sc of this.state.screens) void this.stopScreen(sc.id)
+          this.notice('You are watching again.')
+        } else if (role === 'member' && this.state.room?.kind === 'lecture') this.notice('The teacher let you speak: turn your mic on to talk.')
+        else this.notice(role === 'cohost' ? 'You are now a co-host.' : 'You are no longer a co-host.')
+      }
     })
     // Offers can arrive a moment before our transport exists; they wait for it.
     socket.on('signal', ({ from, data }: { from: string; data: unknown }) => {
@@ -390,7 +399,7 @@ export class LiveSession {
         if (!this.mutedTalkFrom) this.mutedTalkFrom = now
         this.mutedTalkLast = now
       } else if (now - this.mutedTalkLast > 1500) this.mutedTalkFrom = 0
-      const hint = !s.mic && now >= this.hintSnoozeUntil && ((this.mutedTalkFrom > 0 && now - this.mutedTalkFrom > 900) || (s.mutedTalking && now - this.mutedTalkLast < 8000))
+      const hint = !s.mic && s.self?.role !== 'viewer' && now >= this.hintSnoozeUntil && ((this.mutedTalkFrom > 0 && now - this.mutedTalkFrom > 900) || (s.mutedTalking && now - this.mutedTalkLast < 8000))
       if (hint !== s.mutedTalking) patch.mutedTalking = hint
       if (Object.keys(patch).length) this.set(patch)
     }, 160)
@@ -645,6 +654,10 @@ export class LiveSession {
   }
   lowerHands() {
     this.socket?.emit('lower-hands')
+  }
+  /** Lecture: let a viewer speak, or send them back to watching (teachers only). */
+  speaker(username: string, on: boolean) {
+    this.socket?.emit('speaker', { username, on })
   }
   cohost(username: string, on: boolean) {
     this.socket?.emit('cohost', { username, on })

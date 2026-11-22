@@ -108,7 +108,8 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
       avatar: who.avatar,
       avatarUrl: who.avatarUrl,
       device: socket.data.device,
-      role: me === room.host ? "host" : s.cohosts.has(me) ? "cohost" : "member",
+      // In a lecture, everyone but the teachers watches until let in to speak.
+      role: me === room.host ? "host" : s.cohosts.has(me) ? "cohost" : room.kind === "lecture" && !s.speakers.has(me) ? "viewer" : "member",
       mic: false,
       cam: false,
       screens: [],
@@ -254,6 +255,14 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
       const c = ctx();
       if (!c || !allow("state", 60, 10_000)) return;
       const { p } = c;
+      // A viewer in a lecture sends nothing: no mic, camera or screen reaches anyone.
+      if (p.role === "viewer") {
+        p.mic = false;
+        p.cam = false;
+        p.pubs = [];
+        p.screens = [];
+        return to(socket.data.code).emit("peer-state", { peerId: p.peerId, mic: false, cam: false, screens: [], pubs: [], cf: p.cf || null });
+      }
       if (typeof payload?.mic === "boolean") p.mic = payload.mic;
       if (typeof payload?.cam === "boolean") p.cam = payload.cam;
       // Cloudflare: which publications this device sends (others pull them by name).
@@ -528,6 +537,29 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
       }
     });
 
+    // Lecture: the teacher lets a viewer speak (mic, camera, screen) or sends them back to watching.
+    socket.on("speaker", async (payload) => {
+      const h = await hostCtx();
+      if (!h || h.room.kind !== "lecture") return;
+      const username = String(payload?.username || "");
+      if (!username || username === h.room.host || h.s.cohosts.has(username)) return;
+      if (payload?.on) h.s.speakers.add(username);
+      else h.s.speakers.delete(username);
+      for (const p of h.s.peers.values()) {
+        if (p.username !== username) continue;
+        p.role = payload?.on ? "member" : "viewer";
+        if (!payload?.on) {
+          p.mic = false;
+          p.cam = false;
+          p.pubs = [];
+          p.screens = [];
+          to(h.room.code).emit("peer-state", { peerId: p.peerId, mic: false, cam: false, screens: [], pubs: [], cf: p.cf || null });
+        }
+        to(h.room.code).emit("peer-role", { peerId: p.peerId, role: p.role });
+        if (payload?.on) p.hand = false;
+      }
+    });
+
     socket.on("cohost", async (payload) => {
       const h = await hostCtx();
       if (!h || me !== h.room.host) return; // only the host shares hosting
@@ -537,7 +569,7 @@ function createLiveSignal({ io, getSessionUser, socketAccess, realtime }) {
       else h.s.cohosts.delete(username);
       for (const p of h.s.peers.values()) {
         if (p.username !== username || p.device !== "main") continue;
-        p.role = payload?.on ? "cohost" : "member";
+        p.role = payload?.on ? "cohost" : h.room.kind === "lecture" && !h.s.speakers.has(username) ? "viewer" : "member";
         to(h.room.code).emit("peer-role", { peerId: p.peerId, role: p.role });
         if (payload?.on) nsp.sockets.get(p.socketId)?.emit("waiting-list", [...h.s.waiting.values()].map(({ socketId, ...w }) => w));
       }

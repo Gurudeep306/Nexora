@@ -24,6 +24,7 @@ import {
   Smile,
   Tablet,
   UserPlus,
+  Eye,
   Users,
   Video,
   VideoOff,
@@ -172,7 +173,8 @@ function useRecorder(session: LiveSession, s: LiveState) {
 }
 
 export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveState; onLeft: () => void }) {
-  const [panel, setPanel] = useState<Panel>(null)
+  // A new lecture opens on the tablet QR (?teach=1): scan it and the board is live.
+  const [panel, setPanel] = useState<Panel>(() => (new URLSearchParams(window.location.search).get('teach') === '1' ? 'tablet' : null))
   const [layout, setLayout] = useState<Layout>('auto')
   const [pinned, setPinned] = useState<string | null>(null)
   const [leaving, setLeaving] = useState(false)
@@ -183,6 +185,10 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
   const recorder = useRecorder(session, s)
   const host = session.isHost()
   const voice = s.room?.mode === 'voice'
+  const lecture = s.room?.kind === 'lecture'
+  // Watching a lecture: no mic, camera or sharing until the teacher lets you speak.
+  const viewer = s.self?.role === 'viewer'
+  const watching = Object.values(s.peers).filter((p) => p.role === 'viewer' && p.device === 'main').length + (viewer ? 1 : 0)
   const myHand = s.self ? s.hands[s.self.peerId] !== undefined : false
   const people = new Set([s.self?.username, ...Object.values(s.peers).map((p) => p.username)].filter(Boolean)).size
   const sharing = s.screens.some((x) => x.kind === 'screen')
@@ -195,8 +201,8 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
       const t = e.target as HTMLElement
       if (e.metaKey || e.ctrlKey || e.altKey || t.closest('input, textarea, select, [contenteditable], .monaco-editor, .lv-board-canvas')) return
       const k = e.key.toLowerCase()
-      if (k === 'm') session.setMic(!s.mic)
-      else if (k === 'v' && !voice) void session.setCam(!s.cam)
+      if (k === 'm' && !viewer) session.setMic(!s.mic)
+      else if (k === 'v' && !voice && !viewer) void session.setCam(!s.cam)
       else if (k === 'h') session.hand(!myHand)
       else if (k === 'c') toggle('chat')
       else if (k === 'p') toggle('people')
@@ -206,7 +212,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
     }
     window.addEventListener('keydown', key)
     return () => window.removeEventListener('keydown', key)
-  }, [session, s.mic, s.cam, myHand, voice, toggle])
+  }, [session, s.mic, s.cam, myHand, voice, viewer, toggle])
 
   const startBoard = async () => {
     setBoard('open')
@@ -248,11 +254,9 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
             </h1>
             <p className="lv-top-sub">
               <span className="lv-dot-live" aria-hidden="true" />
-              <span>{s.room?.isCall ? 'Call' : voice ? 'Voice room' : 'Study room'}</span>
+              <span>{lecture ? 'Live lecture' : s.room?.isCall ? 'Call' : voice ? 'Voice room' : 'Study room'}</span>
               <span aria-hidden="true">·</span>
-              <span>
-                {people} {people === 1 ? 'person' : 'people'}
-              </span>
+              <span>{lecture ? `${watching} watching` : `${people} ${people === 1 ? 'person' : 'people'}`}</span>
               <span aria-hidden="true" className="max-sm:hidden">
                 ·
               </span>
@@ -403,6 +407,12 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
           </span>
         </div>
         <div className="lv-ctrl-center lv-island" role="toolbar" aria-label="Controls">
+          {viewer && (
+            <span className="lv-watch-note">
+              <Eye className="size-4" aria-hidden="true" /> Watching · raise your hand to ask
+            </span>
+          )}
+          {!viewer && (<>
           <span className="lv-split">
           <button type="button" className={cn('lv-ctrl', !s.mic && 'is-off')} onClick={() => session.setMic(!s.mic)} aria-pressed={s.mic} aria-label={s.mic ? 'Mute (M)' : 'Unmute (M)'} title={s.mic ? 'Mute (M)' : 'Unmute (M)'}>
             {s.mic ? <Mic className="size-5" aria-hidden="true" /> : <MicOff className="size-5" aria-hidden="true" />}
@@ -452,6 +462,7 @@ export function Room({ session, s, onLeft }: { session: LiveSession; s: LiveStat
                 ))}
             </MenuContent>
           </Menu>
+          </>)}
           <button type="button" className={cn('lv-ctrl', myHand && 'is-on')} onClick={() => session.hand(!myHand)} aria-pressed={myHand} aria-label={myHand ? 'Lower hand (H)' : 'Raise hand (H)'} title={myHand ? 'Lower hand (H)' : 'Raise hand (H)'}>
             <Hand className="size-5" aria-hidden="true" />
             <span className="lv-ctrl-label">{myHand ? 'Lower' : 'Raise'}</span>

@@ -20,6 +20,8 @@ export interface LiveRoom {
   visibility: Visibility
   locked: boolean
   isCall: boolean
+  /** lecture: one teaches, many watch. */
+  kind?: 'room' | 'lecture'
   about: { kind: 'gate'; target: string; title: string } | null
   createdAt: number
   endedAt: number | null
@@ -43,7 +45,8 @@ export interface PeerInfo {
   avatar: string | null
   avatarUrl: string | null
   device: 'main' | 'tablet'
-  role: 'host' | 'cohost' | 'member'
+  /** viewer: watching a lecture (sends no mic, camera or screen) until let in to speak. */
+  role: 'host' | 'cohost' | 'member' | 'viewer'
   mic: boolean
   cam: boolean
   screens: ScreenInfo[]
@@ -100,11 +103,11 @@ const enc = encodeURIComponent
 export const liveApi = {
   config: () => api.get<{ ok: true; transport: 'sfu' | 'mesh' | 'cf'; maxDevices: number; recording: boolean; calls: boolean; tablets: boolean }>('/api/live/config'),
   list: () => api.get<{ ok: true; live: LiveRoom[]; invited: LiveRoom[]; mine: LiveRoom[] }>('/api/live/rooms'),
-  create: (b: { title?: string; mode: LiveMode; visibility: Visibility; about?: { kind: 'gate'; target: string } }) => api.post<{ ok: true; room: LiveRoom }>('/api/live/rooms', b).then((r) => r.room),
+  create: (b: { title?: string; mode: LiveMode; visibility: Visibility; about?: { kind: 'gate'; target: string }; kind?: 'room' | 'lecture' }) => api.post<{ ok: true; room: LiveRoom }>('/api/live/rooms', b).then((r) => r.room),
   room: (code: string) => api.get<{ ok: true; room: LiveRoom }>(`/api/live/rooms/${enc(code)}`).then((r) => r.room),
   end: (code: string) => api.post<{ ok: true }>(`/api/live/rooms/${enc(code)}/end`),
   device: (code: string) => api.post<{ ok: true; token: string; path: string; expiresAt: number }>(`/api/live/rooms/${enc(code)}/device`),
-  deviceInfo: (token: string) => api.get<{ ok: true; code: string; title: string; mode: LiveMode; name: string; expiresAt: number }>(`/api/live/device/${enc(token)}`),
+  deviceInfo: (token: string) => api.get<{ ok: true; code: string; title: string; mode: LiveMode; kind?: 'room' | 'lecture'; name: string; expiresAt: number }>(`/api/live/device/${enc(token)}`),
   call: (to: string[], mode: LiveMode) => api.post<{ ok: true; room: LiveRoom }>('/api/live/call', { to, mode }).then((r) => r.room),
   decline: (code: string) => api.post<{ ok: true }>(`/api/live/rooms/${enc(code)}/decline`),
   cancel: (code: string) => api.post<{ ok: true }>(`/api/live/rooms/${enc(code)}/cancel`),
