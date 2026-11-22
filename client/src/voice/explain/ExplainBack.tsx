@@ -12,6 +12,7 @@ import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { getVoicePrefs } from '../prefs'
 import { listenOnce, speechSupported, type ListenHandle } from '../speech'
+import { InkWave } from '../listen/InkWave'
 import './explain.css'
 
 interface Started {
@@ -157,6 +158,7 @@ export function ExplainBack({ open, problem, code, language, onClose }: { open: 
                 {live !== null ? 'Listening… pauses are fine. Press Stop when you’re done.' : note || `${words} word${words === 1 ? '' : 's'}`}
               </span>
             </div>
+            {live !== null && <InkWave active />}
             <label className="xb-label" htmlFor="xb-text">
               Your explanation
             </label>

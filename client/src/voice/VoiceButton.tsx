@@ -14,6 +14,7 @@ import { useAuth } from '@/context/AuthContext'
 import { openAssistantEvent, useAgentContext } from '@/context/AgentContext'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
+import { InkWave } from './listen/InkWave'
 import { useActionList } from './actions/useVoiceAction'
 import { expand, matchCommand, normalize, type Match } from './actions/match'
 import type { VoiceAction } from './actions/types'
@@ -338,6 +339,7 @@ function Pill({ phase, onClose, onRun, onAsk, onHint, onListen }: { phase: Phase
         </button>
       </div>
       {'heard' in phase && <p className="vc-heard">“{phase.heard}”</p>}
+      {phase.kind === 'listening' && <InkWave active />}
       {phase.kind === 'listening' && <p className="vc-heard">{phase.text ? `“${phase.text}”` : activeScene() ? 'Talk to the animation: “swap pe ruko”, “why did i change?”, “what if sorted?”' : activeCode() ? 'Edit by voice: “line 12 pe jao”, “rename i to j”, “for loop 0 se n tak”, “translate to python”.' : 'Say a command, like “notes kholo” or “dark mode”.'}</p>}
       {phase.kind === 'error' && <p className="vc-note">{ERRORS[phase.error]}</p>}
       {phase.kind === 'scene' && <p className="vc-answer">{phase.say}</p>}

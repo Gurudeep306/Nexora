@@ -370,6 +370,16 @@ from a range, since test files run in parallel and a clash fails the run.
   agents, so they are lookup material only, never training data; the
   data script accepts only open-licence teacher models. The voice feature never calls a paid service
   (`tests/voice-zero-spend.test.js`).
+- **Voice recognition** (Admin → Voice recognition, `src/voice/stt.js`,
+  `components/admin/VoiceSttSection.tsx`, client `voice/capture.ts` used by
+  `listenOnce` in `voice/speech.ts`): a chain of speech-to-text services for
+  Indian speech (default order Sarvam, Google, ElevenLabs Scribe, Groq Whisper,
+  Deepgram, Azure, plus any Whisper-compatible server), each with its free
+  limits; the chain moves on at 85% of any limit, after an error (rests) or a
+  refused key, and falls back to the browser's own recognition, so nothing is
+  charged. Keys sealed, audio never stored, a fair daily share per student.
+  The only voice file allowed to reach paid-capable hosts, behind free caps
+  (`tests/voice-zero-spend.test.js`). Design: `docs/voice/STEP1_EARS_DESIGN.md`.
 - **AI models** are chosen in Admin → AI models (`src/ai/settings.js`): any
   OpenAI-compatible provider, keys sealed at rest, a model per slot and per
   feature. The GROQ_* environment applies when nothing is chosen.

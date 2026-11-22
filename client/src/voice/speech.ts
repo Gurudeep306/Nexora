@@ -5,8 +5,11 @@
   does it, which the consent screen explains. Nothing is recorded by us.
 
   This is the first link of the ears chain in docs/voice/BLUEPRINT.md
-  ("Never stuck on a limit"); server links come in later phases.
+  ("Never stuck on a limit"); the server links (Admin → Voice recognition)
+  are in capture.ts and src/voice/stt.js.
 */
+
+import { serverEars, startCapture, transcribe, type Capture } from './capture'
 
 // The Web Speech API is not in TypeScript's DOM lib; this is the part we use.
 interface SpeechResultLike {
@@ -66,52 +69,99 @@ export interface ListenHandle {
 /**
  * Listen for one utterance. `onText` gets the running transcript; `onDone`
  * gets the final text ('' if nothing was heard) exactly once.
+ *
+ * With server ears set up (Admin → Voice recognition), the same speech is also
+ * recorded and sent through the chain of services (capture.ts); their text,
+ * built for Indian speech, replaces the browser's when it comes back. Without
+ * a browser recogniser (Firefox) the server ears do it alone.
  */
-export async function listenOnce(opts: { lang: string; onText: (t: string) => void; onDone: (text: string, error?: SpeechError) => void; /** Keep listening through pauses (a long explanation) until stopped. */ continuous?: boolean }): Promise<ListenHandle> {
+export async function listenOnce(opts: {
+  lang: string
+  onText: (t: string) => void
+  onDone: (text: string, error?: SpeechError) => void
+  /** Keep listening through pauses (a long explanation) until stopped. */
+  continuous?: boolean
+  /** Words on the page (actions, variable names) that help the server ears. */
+  hints?: string[]
+}): Promise<ListenHandle> {
   const C = ctor()
-  if (!C) {
+  const server = await serverEars()
+  if (!C && !server) {
     opts.onDone('', 'unsupported')
     return { stop() {}, cancel() {} }
   }
-  const local = await onDeviceAvailable(opts.lang)
-  const rec = new C()
-  rec.lang = opts.lang
-  rec.interimResults = true
-  rec.continuous = !!opts.continuous
-  rec.maxAlternatives = 1
-  if (local && 'processLocally' in rec) rec.processLocally = true
   let finalText = ''
   let done = false
   let error: SpeechError | undefined
-  const finish = () => {
+  let rec: RecognitionLike | null = null
+  let capture: Capture | null = null
+  const finish = async () => {
     if (done) return
     done = true
-    opts.onDone(finalText.trim(), finalText.trim() ? undefined : error)
-  }
-  rec.onresult = (e) => {
-    let interim = ''
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      const r = e.results[i]
-      if (r.isFinal) finalText += (finalText && !/\s$/.test(finalText) ? ' ' : '') + r[0].transcript.trim()
-      else interim += r[0].transcript
+    let text = finalText.trim()
+    if (capture) {
+      const clip = await capture.stop().catch(() => null)
+      capture = null
+      if (clip) {
+        const r = await transcribe(clip, opts.lang, opts.hints)
+        if (r.ok && r.text.trim()) text = r.text.trim()
+      }
     }
-    opts.onText((finalText + interim).trim())
+    opts.onDone(text, text ? undefined : error ?? (C ? undefined : 'no-speech'))
   }
-  rec.onerror = (e) => {
-    error = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? 'not-allowed' : e.error === 'no-speech' ? 'no-speech' : e.error === 'network' ? 'network' : 'other'
+  const stopAll = () => {
+    if (rec) rec.stop()
+    else void finish()
   }
-  rec.onend = finish
-  try {
-    rec.start()
-  } catch {
-    error = 'other'
-    finish()
+  if (server) {
+    capture = await startCapture({
+      // Without a browser recogniser, a pause after speech ends the turn.
+      onPause: () => {
+        if (!C && !opts.continuous) void finish()
+      },
+    })
+    if (!capture && !C) {
+      opts.onDone('', 'not-allowed')
+      return { stop() {}, cancel() {} }
+    }
+  }
+  if (C) {
+    const local = await onDeviceAvailable(opts.lang)
+    rec = new C()
+    rec.lang = opts.lang
+    rec.interimResults = true
+    rec.continuous = !!opts.continuous
+    rec.maxAlternatives = 1
+    if (local && 'processLocally' in rec) rec.processLocally = true
+    rec.onresult = (e) => {
+      let interim = ''
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const r = e.results[i]
+        if (r.isFinal) finalText += (finalText && !/\s$/.test(finalText) ? ' ' : '') + r[0].transcript.trim()
+        else interim += r[0].transcript
+      }
+      opts.onText((finalText + interim).trim())
+    }
+    rec.onerror = (e) => {
+      error = e.error === 'not-allowed' || e.error === 'service-not-allowed' ? 'not-allowed' : e.error === 'no-speech' ? 'no-speech' : e.error === 'network' ? 'network' : 'other'
+    }
+    rec.onend = () => void finish()
+    try {
+      rec.start()
+    } catch {
+      error = 'other'
+      void finish()
+    }
+  } else {
+    opts.onText('…')
   }
   return {
-    stop: () => rec.stop(),
+    stop: stopAll,
     cancel: () => {
       done = true
-      rec.abort()
+      capture?.cancel()
+      capture = null
+      rec?.abort()
     },
   }
 }
