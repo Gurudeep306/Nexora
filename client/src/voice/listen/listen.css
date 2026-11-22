@@ -1,0 +1,49 @@
+/* The listening line (InkWave.tsx) and the mic's ring. Tokens only. */
+@layer components {
+  .vc-ink {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    height: 44px;
+    padding: 0 2px;
+  }
+  .vc-ink-line {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    color: var(--color-text-primary);
+  }
+  /* The clay full stop where the pen is, as in the mark. */
+  .vc-ink-dot {
+    --lv: 0;
+    flex: none;
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: var(--ed-clay, var(--color-accent-brand));
+    transform: scale(calc(1 + var(--lv) * 0.9));
+    transition: transform 80ms linear;
+  }
+  /* The mic in the top bar: a hairline ring that opens with your voice. */
+  .vc-mic.is-on {
+    position: relative;
+  }
+  .vc-mic.is-on::after {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border: 1.5px solid color-mix(in oklab, var(--color-accent-brand) 70%, transparent);
+    border-radius: inherit;
+    transform: scale(calc(1 + var(--vc-level, 0) * 0.32));
+    opacity: calc(0.35 + var(--vc-level, 0) * 0.65);
+    transition: transform 80ms linear, opacity 80ms linear;
+    pointer-events: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vc-ink-dot,
+  .vc-mic.is-on::after {
+    transition: none;
+  }
+}
