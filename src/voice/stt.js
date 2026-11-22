@@ -22,6 +22,14 @@ const { normalise } = require("./normalise");
 
 const KEY = "voice_stt";
 const SAFE = 0.85; // switch before a limit, not after errors
+const UNSURE_BELOW = 0.6; // S6: a service's own confidence under this is unsure
+
+const trimmed = (s) => String(s || "").trim();
+/** Same words, ignoring case, punctuation and spacing (S6's agreement check). */
+function sameWords(a, b) {
+  const norm = (s) => trimmed(s).toLowerCase().normalize("NFC").replace(/[^\p{L}\p{N}+\-*/=<>!&|[\]]+/gu, " ").trim();
+  return norm(a) === norm(b);
+}
 
 /*
   The services we support, in the default order for Indian speech. The order
@@ -463,7 +471,7 @@ async function whisperLike(url, model, key, { audio, lang, prompt }) {
   // Whisper's own doubt signals (docs §S6): low log-probability, likely silence, or repeats.
   const unsure = segs.some((s) => s.avg_logprob < -0.8 || s.no_speech_prob > 0.5 || s.compression_ratio > 2.4);
   const lp = segs.length ? segs.reduce((a, s) => a + (s.avg_logprob ?? 0), 0) / segs.length : -0.3;
-  return { text: (b.text || "").trim(), confidence: unsure ? 0.4 : Math.max(0, Math.min(1, 1 + lp)) };
+  return { text: (b.text || "").trim(), confidence: unsure ? 0.4 : Math.max(0, Math.min(1, 1 + lp)), unsure };
 }
 
 /* ── vocabulary hints (docs §S4) ── */
@@ -522,8 +530,14 @@ async function slotsOf(p) {
 
 /**
  * Transcribe one clip. Walks the chain; returns { ok, text (normalised, S5),
- * raw, code and unplaced (mode "code"), changes, confidence, provider, tried }
- * or { ok: false, fallback: 'browser', tried }.
+ * raw, code and unplaced (mode "code"), changes, confidence, unsure (S6),
+ * alternatives (two services disagreed), provider, tried } or
+ * { ok: false, fallback: 'browser', tried }.
+ *
+ * S6: an unsure answer (the service's own doubt signals, a confidence under
+ * 0.6, or words a code page can't place) is checked once with the next
+ * service. The same words: trusted. Different words: both are returned for the
+ * student to pick. No second service: the answer comes back marked unsure.
  */
 async function transcribe({ audio, lang = "en-IN", hints = [], mode = "text", username = "", fetchConfig = loadConfig, now = new Date() }) {
   const seconds = wavSeconds(audio);
@@ -539,9 +553,12 @@ async function transcribe({ audio, lang = "en-IN", hints = [], mode = "text", us
   const phrases = hintsFrom(hints);
   const prompt = promptFrom(phrases, lang);
   const tried = [];
+  // S6: an unsure answer is checked once with the next service (not another key of the same one).
+  let held = null;
   const list = await ordered(cfg, now);
-  for (const p of list) {
+  services: for (const p of list) {
     if (!p.enabled) continue;
+    if (held && held.provider === p.id) continue;
     // The service's keys in turn: the main key, then each person's own key.
     const slots = await slotsOf(p);
     if (!slots.some((x) => x.key) && p.kind !== "openai_compatible") {
@@ -576,7 +593,17 @@ async function transcribe({ audio, lang = "en-IN", hints = [], mode = "text", us
         }
         tried.push({ id: slot.id, ms: Date.now() - t0 });
         await addStat(p.id, { ok: true, ms: Date.now() - t0, confidence: r.confidence ?? null }, now).catch(() => {});
-        return { ok: true, text: n.text, raw, ...(n.code !== undefined ? { code: n.code, unplaced: n.unplaced } : {}), changes: n.changes, confidence: r.confidence ?? null, provider: p.id, ms: Date.now() - t0, tried };
+        const conf = typeof r.confidence === "number" ? r.confidence : null;
+        const unsure = !!r.unsure || (conf !== null && conf < UNSURE_BELOW) || (mode === "code" && (n.unplaced || []).length > 0);
+        const answer = { ok: true, text: n.text, raw, ...(n.code !== undefined ? { code: n.code, unplaced: n.unplaced } : {}), changes: n.changes, confidence: conf, provider: p.id, ms: Date.now() - t0, unsure, tried };
+        if (held) {
+          // The second opinion: the same words means we can trust it.
+          if (sameWords(held.text, answer.text)) return { ...answer, unsure: false, agreed: [held.provider, p.id] };
+          return { ...held, unsure: true, alternatives: [held.text, answer.text], tried };
+        }
+        if (!unsure || !trimmed(raw)) return answer;
+        held = answer;
+        continue services;
       } catch (e) {
         const s = e.status || 0;
         // Out of credit or a bad key: rest a day. Rate-limited: rest as told. Down or slow: 3 minutes.
@@ -588,6 +615,8 @@ async function transcribe({ audio, lang = "en-IN", hints = [], mode = "text", us
       }
     }
   }
+  // No second opinion was possible: give the one answer, marked unsure.
+  if (held) return { ...held, tried };
   return { ok: false, fallback: "browser", tried };
 }
 
@@ -780,4 +809,4 @@ function createSttRouter({ requireAuthenticatedUser, isTrustedOrigin }) {
   return router;
 }
 
-module.exports = { createSttRouter, transcribe, pruneUsage, usageOf, autoScore, ordered, overLimit, wavSeconds, hintsFrom, promptFrom, sanitizeProvider, KINDS, DEFAULT_ORDER, ADAPTERS, adminSave, adminView, loadConfig, testClip, _cooling: cooling };
+module.exports = { createSttRouter, transcribe, pruneUsage, usageOf, sameWords, autoScore, ordered, overLimit, wavSeconds, hintsFrom, promptFrom, sanitizeProvider, KINDS, DEFAULT_ORDER, ADAPTERS, adminSave, adminView, loadConfig, testClip, _cooling: cooling };

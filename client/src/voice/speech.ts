@@ -84,6 +84,15 @@ export async function onDeviceAvailable(lang: string): Promise<boolean> {
 
 export type SpeechError = 'not-allowed' | 'no-speech' | 'network' | 'unsupported' | 'other'
 
+/** What the server ears thought of the text (S6). Absent when only the browser heard it. */
+export interface Heard {
+  unsure: boolean
+  /** Two services heard different words. */
+  alternatives?: string[]
+  /** Code pages: the speech written as code. */
+  code?: string
+}
+
 export interface ListenHandle {
   stop(): void
   cancel(): void
@@ -101,7 +110,7 @@ export interface ListenHandle {
 export async function listenOnce(opts: {
   lang: string
   onText: (t: string) => void
-  onDone: (text: string, error?: SpeechError) => void
+  onDone: (text: string, error?: SpeechError, heard?: Heard) => void
   /** Keep listening through pauses (a long explanation) until stopped. */
   continuous?: boolean
   /** Words on the page (actions, variable names) that help the server ears. */
@@ -124,15 +133,19 @@ export async function listenOnce(opts: {
     if (done) return
     done = true
     let text = finalText.trim()
+    let heard: Heard | undefined
     if (capture) {
       const clip = await capture.stop().catch(() => null)
       capture = null
       if (clip) {
         const r = await transcribe(clip, opts.lang, opts.hints, opts.mode)
-        if (r.ok && r.text.trim()) text = r.text.trim()
+        if (r.ok && r.text.trim()) {
+          text = r.text.trim()
+          heard = { unsure: r.unsure, ...(r.alternatives ? { alternatives: r.alternatives } : {}), ...(r.code !== undefined ? { code: r.code } : {}) }
+        }
       }
     }
-    opts.onDone(text, text ? undefined : error ?? (C ? undefined : 'no-speech'))
+    opts.onDone(text, text ? undefined : error ?? (C ? undefined : 'no-speech'), heard)
   }
   const stopAll = () => {
     if (rec) rec.stop()

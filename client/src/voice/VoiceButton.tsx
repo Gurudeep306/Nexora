@@ -8,7 +8,7 @@
 */
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { Mic, X } from 'lucide-react'
+import { Mic, Pencil, X } from 'lucide-react'
 import { Button, Modal, Tooltip } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
 import { openAssistantEvent, useAgentContext } from '@/context/AgentContext'
@@ -18,7 +18,7 @@ import { InkWave } from './listen/InkWave'
 import { useActionList } from './actions/useVoiceAction'
 import { expand, matchCommand, normalize, type Match } from './actions/match'
 import type { VoiceAction } from './actions/types'
-import { listenOnce, useVoiceSupport, type ListenHandle, type SpeechError } from './speech'
+import { listenOnce, useVoiceSupport, type Heard, type ListenHandle, type SpeechError } from './speech'
 import { useVoicePrefs, type VoicePrefs } from './prefs'
 import { activeScene, type SceneHandle } from './scene/active'
 import { parseScene, type SceneCommand } from './scene/parse'
@@ -41,6 +41,8 @@ type Phase =
   | { kind: 'guru'; heard: string; say: string; step: number }
   | { kind: 'choose'; heard: string; options: { action: VoiceAction; match: Match }[] }
   | { kind: 'confirm'; heard: string; action: VoiceAction; match: Match }
+  /** S6: the ears weren't sure, and acting on it would change something. */
+  | { kind: 'check'; heard: string; options: string[] }
   | { kind: 'miss'; heard: string }
   | { kind: 'error'; error: SpeechError }
 
@@ -176,9 +178,31 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
     [pageContext, shareContext, prefs.lang, prefs.speak],
   )
 
-  const decide = useCallback(
+  /** Would acting on this text change something (an edit, Build mode, an action that isn't just looking)? */
+  const changesSomething = useCallback(
     (heard: string) => {
+      const code = activeCode()
+      const edit = code ? parseCode(heard) : null
+      if (edit) return !['goto', 'read', 'summary'].includes(edit.verb)
+      if (code && parseBuild(heard)) return true
+      const best = matchCommand(heard, actions, index).best
+      const action = best ? actions.find((a) => a.id === best.id) : null
+      return !!action && action.risk !== 'safe'
+    },
+    [actions, index],
+  )
+
+  const decide = useCallback(
+    (heard: string, ears?: Heard) => {
       const pending = phase
+      // S6: two services heard different words — the student picks. Unsure words
+      // that would change something are shown first ("Did you mean …?").
+      if (pending.kind !== 'confirm' && ears?.alternatives && ears.alternatives.length > 1) {
+        return setPhase({ kind: 'check', heard, options: ears.alternatives })
+      }
+      if (pending.kind !== 'confirm' && ears?.unsure && changesSomething(heard)) {
+        return setPhase({ kind: 'check', heard, options: [heard] })
+      }
       // A reply to "are you sure?" for an irreversible action.
       if (pending.kind === 'confirm') {
         const words = normalize(heard).split(' ')
@@ -220,7 +244,7 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
       if (result.candidates.length > 1) return setPhase({ kind: 'choose', heard, options: result.candidates.map((m) => ({ action: byId(m), match: m })) })
       void askGuru(heard)
     },
-    [actions, index, phase, runAction, hideSoon, runScene, runCode, askGuru, prefs.speak, prefs.lang],
+    [actions, index, phase, runAction, hideSoon, runScene, runCode, askGuru, prefs.speak, prefs.lang, changesSomething],
   )
 
   const start = useCallback(async () => {
@@ -237,14 +261,14 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
       mode: code ? 'code' : 'command',
       hints: pageHints(code, actions),
       onText: (text) => setPhase((p) => (p.kind === 'listening' ? { kind: 'listening', text } : p)),
-      onDone: (text, error) => {
+      onDone: (text, error, ears) => {
         handle.current = null
         if (!text) {
           setPhase({ kind: 'error', error: error ?? 'no-speech' })
           hideSoon(4200)
           return
         }
-        decide(text)
+        decide(text, ears)
       },
     })
   }, [phase.kind, prefs.lang, decide, hideSoon, actions])
@@ -303,7 +327,15 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.16 }}
           >
-            <Pill phase={phase} onClose={() => { handle.current?.cancel(); stopSpeaking(); setPhase({ kind: 'idle' }) }} onRun={runAction} onAsk={(t) => { setPhase({ kind: 'idle' }); openAssistantEvent(t) }} onHint={() => void askGuru('next hint please')} onListen={() => void start()} />
+            <Pill
+              phase={phase}
+              onClose={() => { handle.current?.cancel(); stopSpeaking(); setPhase({ kind: 'idle' }) }}
+              onRun={runAction}
+              onAsk={(t) => { setPhase({ kind: 'idle' }); openAssistantEvent(t) }}
+              onHint={() => void askGuru('next hint please')}
+              onListen={() => void start()}
+              onUse={(t) => { clearHide(); decide(t) }}
+            />
           </motion.div>
         )}
       </AnimatePresence>
@@ -322,7 +354,7 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
   )
 }
 
-function Pill({ phase, onClose, onRun, onAsk, onHint, onListen }: { phase: Phase; onClose: () => void; onRun: (a: VoiceAction, m: Match, heard: string) => void; onAsk: (t: string) => void; onHint: () => void; onListen: () => void }) {
+function Pill({ phase, onClose, onRun, onAsk, onHint, onListen, onUse }: { phase: Phase; onClose: () => void; onRun: (a: VoiceAction, m: Match, heard: string) => void; onAsk: (t: string) => void; onHint: () => void; onListen: () => void; onUse: (text: string) => void }) {
   return (
     <div className="vc-pill-in">
       <div className="vc-pill-head">
@@ -336,6 +368,7 @@ function Pill({ phase, onClose, onRun, onAsk, onHint, onListen }: { phase: Phase
           {phase.kind === 'guru' && (phase.step >= 1 && phase.step <= 5 ? `Guru · hint ${phase.step}` : 'Guru')}
           {phase.kind === 'choose' && 'Which one?'}
           {phase.kind === 'confirm' && `${phase.action.title}?`}
+          {phase.kind === 'check' && (phase.options.length > 1 ? 'Which did you say?' : 'Did you mean this?')}
           {phase.kind === 'miss' && 'That isn’t a command I know'}
           {phase.kind === 'error' && 'Couldn’t listen'}
         </span>
@@ -343,7 +376,7 @@ function Pill({ phase, onClose, onRun, onAsk, onHint, onListen }: { phase: Phase
           <X className="size-3.5" aria-hidden="true" />
         </button>
       </div>
-      {'heard' in phase && <p className="vc-heard">“{phase.heard}”</p>}
+      {'heard' in phase && phase.kind !== 'check' && <HeardCaption key={phase.heard} heard={phase.heard} onUse={onUse} />}
       {phase.kind === 'listening' && <InkWave active />}
       {phase.kind === 'listening' && <p className="vc-heard">{phase.text ? `“${phase.text}”` : activeScene() ? 'Talk to the animation: “swap pe ruko”, “why did i change?”, “what if sorted?”' : activeCode() ? 'Edit by voice: “line 12 pe jao”, “rename i to j”, “for loop 0 se n tak”, “translate to python”.' : 'Say a command, like “notes kholo” or “dark mode”.'}</p>}
       {phase.kind === 'error' && <p className="vc-note">{ERRORS[phase.error]}</p>}
@@ -393,6 +426,26 @@ function Pill({ phase, onClose, onRun, onAsk, onHint, onListen }: { phase: Phase
           </Button>
         </div>
       )}
+      {phase.kind === 'check' && (
+        <>
+          <ol className="vc-options">
+            {phase.options.map((t, i) => (
+              <li key={t}>
+                <button type="button" onClick={() => onUse(t)}>
+                  {phase.options.length > 1 && <span className="vc-num">{i + 1}</span>} “{t}”
+                </button>
+              </li>
+            ))}
+          </ol>
+          <p className="vc-note">{phase.options.length > 1 ? 'Two services heard different words. Tap the right one.' : 'I wasn’t sure I heard that right, so nothing has changed yet.'}</p>
+          <div className="vc-actions">
+            <Button size="sm" variant="ghost" onClick={onListen}>
+              <Mic aria-hidden="true" /> Say again
+            </Button>
+          </div>
+          <HeardCaption heard={phase.options[0]} onUse={onUse} editOnly />
+        </>
+      )}
       {phase.kind === 'miss' && (
         <div className="vc-actions">
           <Button size="sm" variant="secondary" onClick={() => onAsk(phase.heard)}>Ask the AI instead</Button>
@@ -400,6 +453,45 @@ function Pill({ phase, onClose, onRun, onAsk, onHint, onListen }: { phase: Phase
         </div>
       )}
     </div>
+  )
+}
+
+/**
+ * What was heard, always shown (S6), with a way to fix it by typing: the
+ * corrected text is used as if it had been said.
+ */
+function HeardCaption({ heard, onUse, editOnly }: { heard: string; onUse: (text: string) => void; editOnly?: boolean }) {
+  const [editing, setEditing] = useState(false)
+  const [value, setValue] = useState(heard)
+  const input = useRef<HTMLInputElement | null>(null)
+  useEffect(() => {
+    if (editing) input.current?.select()
+  }, [editing])
+  if (editing) {
+    return (
+      <form
+        className="vc-fix"
+        onSubmit={(e) => {
+          e.preventDefault()
+          const t = value.trim()
+          if (t) onUse(t)
+          setEditing(false)
+        }}
+      >
+        <label className="sr-only" htmlFor="vc-fix-input">Fix what was heard</label>
+        <input id="vc-fix-input" ref={input} value={value} onChange={(e) => setValue(e.target.value)} autoComplete="off" spellCheck={false} />
+        <Button size="sm" type="submit">Use</Button>
+        <Button size="sm" variant="ghost" type="button" onClick={() => setEditing(false)}>Cancel</Button>
+      </form>
+    )
+  }
+  return (
+    <p className={cn('vc-heard', editOnly && 'vc-heard-quiet')}>
+      {!editOnly && <span>“{heard}”</span>}
+      <button type="button" className="vc-fix-btn" onClick={() => setEditing(true)} aria-label={editOnly ? 'Type it instead' : `Fix “${heard}” by typing`}>
+        <Pencil aria-hidden="true" /> {editOnly ? 'Type it instead' : 'Fix'}
+      </button>
+    </p>
   )
 }
 
@@ -412,8 +504,8 @@ function ConsentSheet({ open, prefs, onClose, onAccept }: { open: boolean; prefs
       <div className="vc-consent">
         <ul className="vc-points">
           <li><strong>It only listens while you press the mic.</strong> Never in the background.</li>
-          <li><strong>Your browser turns speech into text.</strong> Where it can, it does this on your device; otherwise your browser’s own speech service (Google, Microsoft or Apple) does it.</li>
-          <li><strong>NexoraGuru doesn’t record or keep your voice.</strong> Only the text of the command is used, and only to run it.</li>
+          <li><strong>Turning speech into text:</strong> your browser does it (on your device where it can, otherwise its own service: Google, Microsoft or Apple). If your school has turned on better recognition for Indian speech, a short clip of what you say is also sent through NexoraGuru to a speech service, only to turn it into text.</li>
+          <li><strong>NexoraGuru doesn’t keep your voice.</strong> Clips aren’t stored. Only the text is used, and only to do what you asked. You always see what was heard and can fix it.</li>
           <li>You can turn voice off any time in Settings → Preferences.</li>
         </ul>
 
