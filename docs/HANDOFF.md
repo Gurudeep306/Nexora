@@ -67,7 +67,8 @@ Live site last deployed at `6c04b8fe` (PR #226).
 
 | PR | What |
 |---|---|
-| (this PR) | Voice step 1a: the mic appears in browsers without their own speech recognition (Firefox, some in-app browsers) when the server ears are set up. `useVoiceSupport()` in `client/src/voice/speech.ts` replaces `speechSupported()` wherever a mic is shown (top bar, Settings → Voice, Explain-back, Mirror Run); `serverEars()` re-asks after a minute if the answer was "no". Message alerts box gets `role="log"` (axe). Checked in a browser with recognition removed: the clip is recorded, sent and acted on. |
+| (this PR) | Voice step 1b, **S5 normaliser** (`src/voice/normalise.js`, `src/voice/numwords.js`): cleans digits and the danda, joins spelt names ("b f s" → BFS), fixes known mishearings ("kyu" → queue) and, for commands and code, near-misses of the page's own names ("mit" → mid); code pages also get the speech as code ("low equals mid plus one" → `low = mid + 1`). 340-case set `docs/voice/tests/normalise.json` (100%, `tests/voice-normalise.test.js`). The browser sends the mode and the page's names (`client/src/voice/hints.ts`). Hindi answered in Urdu script → next service. **Bug fixed:** the 2% usage clean-up in `stt.js` used a case-blind LIKE and wrong cut-off, wiping the month and current-hour counters (free limits could be passed); now `pruneUsage()` with GLOB, tested. |
+| #233 | Voice step 1a: the mic appears in browsers without their own speech recognition (Firefox, some in-app browsers) when the server ears are set up. `useVoiceSupport()` in `client/src/voice/speech.ts` replaces `speechSupported()` wherever a mic is shown (top bar, Settings → Voice, Explain-back, Mirror Run); `serverEars()` re-asks after a minute if the answer was "no". Message alerts box gets `role="log"` (axe). Checked in a browser with recognition removed: the clip is recorded, sent and acted on. |
 | #232 | Voice recognition: more keys per service, each from a **different person's own account** (owner named, consent ticked); Save pill fix. |
 | #231 | Voice recognition: "Save and test" beside each key. |
 | #230 | Voice recognition: the order is arranged automatically from real results (`voice_stt_stats`); one entry per service. |
@@ -89,7 +90,7 @@ Live site last deployed at `6c04b8fe` (PR #226).
 **What is left, in order:**
 
 1. **Voice, next (owner chose 2026-11-22): ears + natural voice**. Step 1
-   order: a) mic without browser recognition — done; b) S5 normaliser;
+   order: a) mic without browser recognition — done (#233); b) S5 normaliser — done;
    c) S6 confidence check; d) S8 natural voices; e) S9 measuring script.
    (precise
    design: [`docs/voice/STEP1_EARS_DESIGN.md`](voice/STEP1_EARS_DESIGN.md); the owner

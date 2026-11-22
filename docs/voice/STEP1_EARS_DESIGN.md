@@ -6,8 +6,9 @@ free tools, and answer in a natural voice. This is step 1 of
 `docs/voice/VIRTUAL_TEACHER.md` §7. Every stage below has its own check, so
 an error is caught where it starts instead of reaching the tutor.
 
-Status: **designed, not built** (2026-11-22). The owner has added a Groq key
-and chosen a Groq model for answers.
+Status (2026-11-22): S1–S4 and S7 built (#229–#232); the mic works without
+browser recognition (#233); **S5 built** (`src/voice/normalise.js`, 340-line
+test set). S6, S8 and S9 are next.
 
 ---
 
@@ -158,6 +159,17 @@ is in India; Groq's is not) before launch, and record them in this file.
 
 Test set: `docs/voice/tests/normalise.json` (at least 300 lines: spoken →
 expected), run in `npm test`. Target 100%, because these are rules.
+
+**As built:** the normaliser returns `text` (what the site acts on: the same
+words, cleaned, with names fixed; words stay words because the browser's own
+parsers in `client/src/voice/actions` and `voice/code` read words), `code`
+(code pages only: the speech as code, "i plus plus" → `i++`), `unplaced`
+(code pages only: words it could not place, for S6), `retryHindi` and
+`changes`. Modes: `text` (no guessing), `command` and `code` (near-miss names
+fixed, page names first). The browser sends the mode and the page's names
+(`client/src/voice/hints.ts`: names in the code editor in use, then the
+page's action titles). Hindi that comes back in Urdu script makes the chain
+try the next service. Server and browser number words are checked to agree.
 
 ## S6. Check confidence before acting (both)
 
