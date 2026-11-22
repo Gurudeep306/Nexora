@@ -88,3 +88,10 @@ test('zero-spend: every speech service with paid use keeps a free cap that canno
   const text = fs.readFileSync(path.join(ROOT, 'src/voice/stt.js'), 'utf8');
   assert.doesNotMatch(text, /\b(SARVAM|DEEPGRAM|ELEVENLABS|OPENAI|ANTHROPIC)_API_KEY\b/);
 });
+
+test('zero-spend: the natural voice stops below Azure Speech\'s free month, and the cap cannot be raised or removed', () => {
+  const tts = require('../src/voice/tts');
+  assert.equal(tts.FREE_MONTHLY_CHARS, 500000);
+  assert.ok(tts.SAFE < 1);
+  for (const v of [undefined, '', 0, -1, 9e9, 'lots']) assert.ok(tts.sanitizeTts({ monthlyChars: v }).monthlyChars <= tts.FREE_MONTHLY_CHARS);
+});

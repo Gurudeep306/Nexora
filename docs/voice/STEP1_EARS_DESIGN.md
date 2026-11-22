@@ -8,7 +8,7 @@ an error is caught where it starts instead of reaching the tutor.
 
 Status (2026-11-22): S1–S4 and S7 built (#229–#232); the mic works without
 browser recognition (#233); **S5 built** (#234, `src/voice/normalise.js`,
-340-line test set); **S6 built** (this step). S8 and S9 are next.
+340-line test set); **S6 built** (#235); **S8 built** (this step). S9 is next.
 
 ---
 
@@ -232,6 +232,36 @@ console; they change). The account is shared by all students, so:
   written, so a reply starts in about 1 s.
 - Every AI voice is labelled "AI voice" (India's IT rules).
 - Text always shown alongside (sound off, deaf students).
+
+**As built:**
+- `src/voice/tts.js`, `POST /api/voice/tts`: Azure Speech neural voices
+  (Neerja and Prabhat for en-IN, Swara and Madhur for hi-IN), using the
+  **Azure Speech entry of the ears** (same key and region). Free tier only:
+  it stops at 85% of the free 500,000 characters a month, the cap can only
+  be lowered (Admin → Voice recognition → Natural voice), each student has a
+  daily share (4,000 characters by default), and repeated sentences come from
+  a 24 MB in-memory cache at no cost. Use a Free (F0) resource: a paid (S0)
+  one would bill. `tests/voice-tts.test.js`, and the zero-spend test checks
+  the cap.
+- `client/src/voice/speak.ts`: best available voice (natural → Kokoro if
+  downloaded → device), sentence by sentence
+  (`client/src/voice/sentences.ts`), the next sentence made while one plays;
+  a failure hands the rest to the device voice. `SpeakingChip` shows
+  "AI voice · Neerja" (or "Device voice") with Stop while speaking.
+  `playingAudio()` exposes the audio element for the teacher's lip sync.
+- Settings → Voice: best available / natural (voice picker) / Kokoro
+  (opt-in download with progress, English only) / device voice, and "Try the
+  voice".
+- **Kokoro, honestly:** kokoro-js (Apache-2.0) turns text into sounds with
+  `phonemizer`, which bundles eSpeak NG (GPL-3.0). So it is never bundled
+  into the site: after the student opts in, their browser loads kokoro-js
+  1.2.1 from its public npm copy on jsDelivr and the model from Hugging Face
+  (both allowed in the CSP). The owner should decide whether that is
+  acceptable; switching it off is one line. Not tested end to end here (the
+  build session's network blocks Hugging Face).
+- Lip sync with exact mouth shapes (Azure visemes) needs the Speech SDK's
+  WebSocket, not the REST call used here; the teacher will read the audio's
+  loudness instead (step 2).
 
 ## S9. Measuring accuracy (before turning anything on)
 

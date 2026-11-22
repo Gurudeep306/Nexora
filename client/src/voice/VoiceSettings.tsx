@@ -2,11 +2,13 @@
   Settings → Preferences → Voice: turn voice commands on or off, pick the
   language, and the Bharat Code Speech opt-in (nothing is recorded yet).
 */
-import { Mic } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui'
+import { useEffect, useState } from 'react'
+import { Mic, Volume2 } from 'lucide-react'
+import { Button, Card, CardContent } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
 import { useVoiceSupport } from './speech'
 import { useVoicePrefs } from './prefs'
+import { loadKokoro, naturalVoices, speak } from './speak'
 import './voice.css'
 
 export function VoiceSettings() {
@@ -54,9 +56,10 @@ export function VoiceSettings() {
               <legend>Answers</legend>
               <label>
                 <input type="checkbox" checked={prefs.speak} onChange={(e) => setPrefs({ speak: e.target.checked })} />
-                <span>Read answers aloud (“i changed from 3 to 4…”), using your device’s voice.</span>
+                <span>Read answers aloud (“i changed from 3 to 4…”). The words are always shown too.</span>
               </label>
             </fieldset>
+            {prefs.speak && <VoicePicker />}
             <fieldset className="vc-field">
               <legend>Bharat Code Speech (optional)</legend>
               <label>
@@ -72,5 +75,84 @@ export function VoiceSettings() {
         )}
       </CardContent>
     </Card>
+  )
+}
+
+/** Which voice reads answers (docs/voice/STEP1_EARS_DESIGN.md §S8). */
+function VoicePicker() {
+  const { user } = useAuth()
+  const [prefs, setPrefs] = useVoicePrefs(user?.username)
+  const [natural, setNatural] = useState<{ available: boolean; voices: Record<string, { id: string; label: string }[]> } | null>(null)
+  const [kokoro, setKokoro] = useState<{ state: 'idle' | 'loading' | 'ready' | 'failed'; p: number }>({ state: 'idle', p: 0 })
+  useEffect(() => {
+    let live = true
+    void naturalVoices().then((v) => live && setNatural(v))
+    return () => {
+      live = false
+    }
+  }, [])
+  const voices = natural?.voices[prefs.lang] ?? []
+  const download = async () => {
+    setKokoro({ state: 'loading', p: 0 })
+    try {
+      await loadKokoro((p) => setKokoro({ state: 'loading', p }))
+      setKokoro({ state: 'ready', p: 1 })
+      setPrefs({ kokoro: true, engine: 'kokoro' })
+    } catch {
+      setKokoro({ state: 'failed', p: 0 })
+    }
+  }
+  const sample = prefs.lang === 'hi-IN' ? 'नमस्ते! मैं आपके सवालों के जवाब ऐसे पढ़ूँगी।' : 'Hi! This is how I will read your answers. Mid ko update karo, then check the loop.'
+  return (
+    <fieldset className="vc-field">
+      <legend>Voice</legend>
+      <label>
+        <input type="radio" name="vs-engine" checked={prefs.engine === 'auto'} onChange={() => setPrefs({ engine: 'auto' })} />
+        <span>The best available (natural voice when it’s set up, otherwise this device’s).</span>
+      </label>
+      <label className={natural?.available ? undefined : 'opacity-60'}>
+        <input type="radio" name="vs-engine" disabled={!natural?.available} checked={prefs.engine === 'natural'} onChange={() => setPrefs({ engine: 'natural' })} />
+        <span>
+          Natural Indian voice (AI voice).{' '}
+          {natural?.available ? 'Made on our server from the answer text only; nothing you say goes there.' : 'Not set up on this site yet.'}
+        </span>
+      </label>
+      {natural?.available && (prefs.engine === 'natural' || prefs.engine === 'auto') && voices.length > 0 && (
+        <label className="vc-select">
+          <span>Voice</span>
+          <select value={prefs.voice && voices.some((v) => v.id === prefs.voice) ? prefs.voice : ''} onChange={(e) => setPrefs({ voice: e.target.value })}>
+            <option value="">{voices[0].label} (default)</option>
+            {voices.slice(1).map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+      <label className={prefs.lang === 'hi-IN' ? 'opacity-60' : undefined}>
+        <input type="radio" name="vs-engine" disabled={prefs.lang === 'hi-IN' || (!prefs.kokoro && kokoro.state !== 'ready')} checked={prefs.engine === 'kokoro'} onChange={() => setPrefs({ engine: 'kokoro' })} />
+        <span>Kokoro on this device (AI voice, English only). Free and private: it runs in your browser after a one-time download of about 90 MB (Wi-Fi recommended).</span>
+      </label>
+      {prefs.lang !== 'hi-IN' && !prefs.kokoro && kokoro.state !== 'ready' && (
+        <div className="vc-row">
+          <Button size="sm" variant="secondary" onClick={() => void download()} loading={kokoro.state === 'loading'}>
+            Download Kokoro
+          </Button>
+          <span className="vc-note" aria-live="polite">
+            {kokoro.state === 'loading' ? `Downloading… ${Math.round(kokoro.p * 100)}%` : kokoro.state === 'failed' ? 'The download didn’t finish. Try again on Wi-Fi.' : 'Only when you press it.'}
+          </span>
+        </div>
+      )}
+      <label>
+        <input type="radio" name="vs-engine" checked={prefs.engine === 'device'} onChange={() => setPrefs({ engine: 'device' })} />
+        <span>This device’s own voice.</span>
+      </label>
+      <div className="vc-row">
+        <Button size="sm" variant="ghost" onClick={() => speak(sample, prefs.lang)}>
+          <Volume2 aria-hidden="true" /> Try the voice
+        </Button>
+      </div>
+    </fieldset>
   )
 }

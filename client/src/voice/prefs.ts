@@ -10,6 +10,8 @@ import { useCallback, useEffect, useSyncExternalStore } from 'react'
 import { api } from '@/lib/api'
 
 export type VoiceLang = 'en-IN' | 'hi-IN'
+/** Which voice reads answers: the best available, a natural Indian voice (server), Kokoro on this device, or the device's own. */
+export type VoiceEngine = 'auto' | 'natural' | 'kokoro' | 'device'
 
 export interface VoicePrefs {
   v: 1
@@ -22,11 +24,17 @@ export interface VoicePrefs {
   corpus: boolean
   /** Confirmed 18+ or a parent's/guardian's permission (needed for the corpus). */
   adultOrGuardian: boolean
-  /** Read answers aloud (browser voice). */
+  /** Read answers aloud. */
   speak: boolean
+  /** Which voice reads answers (S8). */
+  engine: VoiceEngine
+  /** The natural voice's name, e.g. en-IN-NeerjaNeural ('' = the default for the language). */
+  voice: string
+  /** Agreed to download Kokoro (a large one-time download) on this device. */
+  kokoro: boolean
 }
 
-export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true }
+export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true, engine: 'auto', voice: '', kokoro: false }
 const LOCAL = 'nexora:voice'
 const KEY = 'voice_prefs'
 
@@ -42,6 +50,9 @@ function sanitize(raw: unknown): VoicePrefs {
     corpus: r.corpus === true && adultOrGuardian,
     adultOrGuardian,
     speak: r.speak !== false,
+    engine: r.engine === 'natural' || r.engine === 'kokoro' || r.engine === 'device' ? r.engine : 'auto',
+    voice: typeof r.voice === 'string' && /^[a-z]{2}-[A-Z]{2}-[A-Za-z]+Neural$/.test(r.voice) ? r.voice : '',
+    kokoro: r.kokoro === true,
   }
 }
 
