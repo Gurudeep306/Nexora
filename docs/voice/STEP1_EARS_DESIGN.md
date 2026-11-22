@@ -7,8 +7,8 @@ free tools, and answer in a natural voice. This is step 1 of
 an error is caught where it starts instead of reaching the tutor.
 
 Status (2026-11-22): S1–S4 and S7 built (#229–#232); the mic works without
-browser recognition (#233); **S5 built** (`src/voice/normalise.js`, 340-line
-test set). S6, S8 and S9 are next.
+browser recognition (#233); **S5 built** (#234, `src/voice/normalise.js`,
+340-line test set); **S6 built** (this step). S8 and S9 are next.
 
 ---
 
@@ -187,6 +187,18 @@ For each clip, from Whisper's numbers:
   tap the right one.
 - The student always sees what was heard (a one-line caption), and can tap
   it to fix it by typing.
+
+**As built:** `stt.js` marks each answer `unsure` (Whisper's own signals, a
+service confidence under 0.6, or unplaced words on a code page) and checks an
+unsure answer once with the **next service** (another key of the same
+service is not a second opinion). The same words (ignoring case, spacing and
+punctuation): trusted. Different words: both come back as `alternatives`. No
+second service: the answer comes back marked unsure. In the mic
+(`VoiceButton.tsx`), unsure words that would change something (a code edit,
+Build mode, an action whose risk isn't `safe`) show "Did you mean this?" and
+change nothing until tapped; two answers show "Which did you say?". Questions
+and looking around (risk `safe`) go ahead. What was heard always shows with
+**Fix** (type the right words; they are used as if said).
 
 ## S7. Never stuck on a limit (server)
 

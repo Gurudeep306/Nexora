@@ -27,7 +27,7 @@ const UNSURE_BELOW = 0.6; // S6: a service's own confidence under this is unsure
 const trimmed = (s) => String(s || "").trim();
 /** Same words, ignoring case, punctuation and spacing (S6's agreement check). */
 function sameWords(a, b) {
-  const norm = (s) => trimmed(s).toLowerCase().normalize("NFC").replace(/[^\p{L}\p{N}+\-*/=<>!&|\[\]]+/gu, " ").trim();
+  const norm = (s) => trimmed(s).toLowerCase().normalize("NFC").replace(/[^\p{L}\p{N}+\-*/=<>!&|[\]]+/gu, " ").trim();
   return norm(a) === norm(b);
 }
 
