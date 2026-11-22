@@ -2474,3 +2474,217 @@
     cursor: pointer;
   }
 }
+
+/* Presenting (Stage.tsx): your own share, live, with who sees it and Stop. */
+@layer components {
+  .lv-presenting {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    max-width: calc(100% - 20px);
+    padding: 4px 4px 4px 12px;
+    border-radius: 999px;
+    background: color-mix(in oklab, #111 82%, transparent);
+    color: #fff;
+    font-size: 12.5px;
+    font-weight: 600;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+  .lv-presenting-dot {
+    width: 8px;
+    height: 8px;
+    flex: none;
+    border-radius: 999px;
+    background: var(--color-state-error);
+  }
+  .lv-presenting-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .lv-presenting-stop {
+    flex: none;
+    height: 26px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: var(--color-state-error);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .lv-strip .lv-presenting {
+    top: 6px;
+    padding-left: 8px;
+    font-size: 11px;
+  }
+  .lv-strip .lv-presenting-stop {
+    height: 22px;
+    padding: 0 8px;
+  }
+  /* A shared screen keeps its whole picture: dark around it, never cropped. */
+  .lv-tile.is-screen {
+    background: #111;
+  }
+}
+
+/* The control bar: the buttons stay centred at every width (the side parts
+   hide below 1024px, so the three columns would push them left). */
+@media (max-width: 1023px) {
+  .lv-controls {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+  }
+}
+
+/* "Everyone sees a black screen" (Room.tsx, blank.ts). */
+@layer components {
+  .lv-blank {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    row-gap: 6px;
+    text-align: left;
+  }
+  .lv-blank-text {
+    flex: 1 1 18rem;
+    min-width: 0;
+    line-height: 1.45;
+  }
+}
+
+/* The people under a shared screen sit centred when they don't fill the row. */
+@layer components {
+  .lv-stage.is-bottom .lv-strip {
+    justify-content: safe center;
+  }
+  .lv-stage.is-side .lv-strip {
+    justify-content: safe center;
+  }
+}
+
+/* Upright screens: the people fill the space under a shared screen (Stage.tsx). */
+@layer components {
+  .lv-people-grid {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+}
+@layer components {
+  /* Screen on top, people under it: the pair sits in the middle. */
+  .lv-stage.is-stacked {
+    justify-content: center;
+  }
+}
+
+/* The teaching board's pages (Board.tsx): back, page n of m, next, new page, open. */
+@layer components {
+  .lv-board-pages {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .lv-board-pn {
+    min-width: 6.5rem;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    color: var(--ed-ink);
+  }
+  .lv-board-canvas[data-tool='laser'] {
+    cursor: none;
+  }
+  .lv-board-canvas[data-tool='eraser'] {
+    cursor: cell;
+  }
+  /* On a tablet the board is the whole screen: larger targets for a finger. */
+  .lv-board.is-device .lv-tool {
+    width: 40px;
+    height: 40px;
+  }
+  .lv-board.is-device .lv-swatch {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Tablet panel v3 (Panels.tsx). */
+@layer components {
+  .lv-tablet-lead {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ed-ink);
+  }
+  .lv-tablet-steps {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+  .lv-tablet-steps li {
+    display: grid;
+    grid-template-columns: 24px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+  }
+  .lv-tablet-n {
+    display: grid;
+    width: 24px;
+    height: 24px;
+    place-items: center;
+    border: 1px solid var(--ed-line);
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .lv-tablet-more {
+    justify-self: start;
+    padding: 0;
+    color: var(--ed-muted);
+    font-size: 13px;
+    text-align: left;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .lv-tablet-more:hover {
+    color: var(--ed-ink);
+  }
+  .lv-tablet-other {
+    display: grid;
+    gap: 14px;
+  }
+  .lv-tablet-warn {
+    margin: 0;
+    padding: 8px 10px;
+    border-left: 3px solid var(--color-state-warning);
+    background: color-mix(in oklab, var(--color-state-warning) 10%, transparent);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--ed-ink);
+  }
+}
+@layer components {
+  .lv-board-rotate {
+    display: none;
+    margin-left: auto;
+    font-size: 12.5px;
+    color: var(--ed-muted);
+  }
+  @media (orientation: portrait) and (max-width: 1100px) {
+    .lv-board.is-device .lv-board-rotate {
+      display: inline;
+    }
+  }
+}

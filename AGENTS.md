@@ -249,11 +249,19 @@ from a range, since test files run in parallel and a clash fails the run.
   teacher only scans. iPad and Android browsers cannot share their whole
   screen (Apple and Google allow it only in installed apps; Chrome on
   Android has getDisplayMedia but always refuses, so `canShareScreen()`
-  checks `tabletKind()`). Room → Tablet → **Whole screen** gives a QR that
-  shares a laptop, Chromebook or Windows tablet's screen in one tap
-  (`?share=screen`), and for an iPad or Android tablet free mirroring to the
-  computer (AirPlay or a cable + QuickTime on a Mac; Windows' Wireless
-  Display for Android), which then shares that window as "iPad screen". Large audiences need the video server (Cloudflare or LiveKit,
+  checks `tabletKind()`), and recent macOS shows a mirrored iPad as black
+  while anything shares the screen. So a tablet that scans Room → Tablet
+  opens straight on the **teaching board** (`live/ui/Board.tsx`): pages, PDF
+  notes or photos opened as pages (`boardFiles.ts`, pdf.js loaded only then,
+  files stay on the device), pen, highlighter, eraser and a fading laser.
+  "Other ways" in the panel keeps one-tap whole-screen sharing for laptops
+  (`?share=screen`) and the Mac mirroring steps with that warning. Your own
+  share is shown to you like everyone else's ("You're presenting", Stop),
+  and `live/blank.ts` warns at once when a share sends a black picture. The
+  stage fits a shared screen to its real shape; on upright screens the
+  people fill the space under it. In direct (mesh) mode, if two offers clash
+  ("RTP extension ID reassignment") the link rebuilds itself from the side
+  that started it (`mesh.ts`, unstick/rebuild); keep that. Large audiences need the video server (Cloudflare or LiveKit,
   Admin → Live); direct mode holds 5 devices.
 - **Messages, alerts and invites**: chats live in Community → Messages
   (`/social?tab=messages`; `/messages` only redirects there). That view fits

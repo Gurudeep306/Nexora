@@ -78,6 +78,11 @@ export function tabletKind(): 'ipad' | 'android' | null {
 export const canShareScreen = () =>
   typeof navigator !== 'undefined' && !!navigator.mediaDevices && 'getDisplayMedia' in navigator.mediaDevices && !tabletKind()
 
+export const isMac = () => typeof navigator !== 'undefined' && /Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints <= 1
+
+export const MAC_PERMISSION =
+  'Your Mac is blocking screen sharing. Open System Settings → Privacy & Security → Screen & System Audio Recording, turn on your browser, then quit and reopen the browser.'
+
 export async function screenTrack(): Promise<{ track: MediaStreamTrack; label: string }> {
   if (!canShareScreen()) throw new Error('This browser cannot share its screen. On an iPad or Android tablet, mirror it to a computer, or use the whiteboard or the camera.')
   let s: MediaStream
@@ -89,10 +94,20 @@ export async function screenTrack(): Promise<{ track: MediaStreamTrack; label: s
       ...({ selfBrowserSurface: 'exclude', surfaceSwitching: 'include' } as object),
     } as DisplayMediaStreamOptions)
   } catch (e) {
-    if ((e as DOMException)?.name === 'NotAllowedError') throw new Error('') // they pressed Cancel
+    const err = e as DOMException
+    // macOS itself refused: Chrome has not been allowed to record the screen.
+    if (err?.name === 'NotAllowedError' && /system/i.test(err.message || '') && isMac())
+      throw new Error(MAC_PERMISSION)
+    if (err?.name === 'NotAllowedError') throw new Error('') // they pressed Cancel
     throw new Error('Could not share the screen.')
   }
   const track = s.getVideoTracks()[0]
+  // Text and handwriting stay sharp (the encoder keeps detail over frame rate).
+  try {
+    track.contentHint = 'detail'
+  } catch {
+    /* older browsers */
+  }
   const surface = (track.getSettings() as { displaySurface?: string }).displaySurface
   const label = surface === 'window' ? 'Window' : surface === 'browser' ? 'Tab' : 'Screen'
   return { track, label }

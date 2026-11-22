@@ -8,6 +8,7 @@
   Leaving:  "leave", close the transport, stop our tracks.
   Network:  if the socket drops, the session rejoins by itself when it is back.
 */
+import { watchBlank } from './blank'
 import { io, type Socket } from 'socket.io-client'
 import { useSyncExternalStore } from 'react'
 import { API_BASE } from '@/lib/api'
@@ -58,6 +59,8 @@ export interface LiveState {
   audioBlocked: boolean
   /** Talking while the mic is off. */
   mutedTalking: boolean
+  /** A shared screen of mine that is sending a black picture (blank.ts). */
+  blankScreen: string | null
   notices: Notice[]
   joinedAt: number | null
 }
@@ -69,6 +72,7 @@ const initial = (): LiveState => ({
   self: null,
   peers: {},
   media: {},
+  blankScreen: null,
   mic: false,
   cam: false,
   micTrack: null,
@@ -506,6 +510,7 @@ export class LiveSession {
     }
     const id = `screen-${Math.random().toString(36).slice(2, 8)}`
     got.track.addEventListener('ended', () => void this.stopScreen(id))
+    this.watchScreen(id, got.track)
     await this.addScreen({ id, label: label || got.label, kind: 'screen', track: got.track })
   }
 
@@ -516,7 +521,23 @@ export class LiveSession {
     this.pushState()
   }
 
+  private blankWatches = new Map<string, () => void>()
+  /** Tell the presenter at once if their share is black (they can't see it themselves). */
+  private watchScreen(id: string, track: MediaStreamTrack) {
+    this.blankWatches.set(
+      id,
+      watchBlank(
+        track,
+        () => this.set(() => ({ blankScreen: id })),
+        () => this.set((s) => (s.blankScreen === id ? { blankScreen: null } : {})),
+      ),
+    )
+  }
+
   async stopScreen(id: string) {
+    this.blankWatches.get(id)?.()
+    this.blankWatches.delete(id)
+    if (this.state.blankScreen === id) this.set(() => ({ blankScreen: null }))
     const sc = this.state.screens.find((x) => x.id === id)
     if (!sc) return
     this.set((s) => ({ screens: s.screens.filter((x) => x.id !== id) }))

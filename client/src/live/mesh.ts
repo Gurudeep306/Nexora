@@ -7,7 +7,13 @@
 */
 import { hintTrack, sourceOf, type Quality, type Transport, type TransportEvents } from './transport'
 
-type Signal = { description?: RTCSessionDescriptionInit; candidate?: RTCIceCandidateInit | null; pubs?: Record<string, string> }
+type Signal = {
+  description?: RTCSessionDescriptionInit
+  candidate?: RTCIceCandidateInit | null
+  pubs?: Record<string, string>
+  /** A stuck link is rebuilt: "please" asks the side that started it; "now" says it is being rebuilt. */
+  reset?: 'please' | 'now'
+}
 
 class Link {
   pc: RTCPeerConnection
@@ -24,12 +30,18 @@ class Link {
   /** Publication ids seen from this peer, with their track. */
   remote = new Map<string, MediaStreamTrack>()
 
+  /** A description failed to apply: this link may be stuck. */
+  failed = false
+
   readonly peerId: string
   readonly polite: boolean
+  /** We started this link (we were the newcomer, or rebuilt it). */
+  readonly initiator: boolean
 
-  constructor(peerId: string, polite: boolean, ice: RTCIceServer[]) {
+  constructor(peerId: string, polite: boolean, ice: RTCIceServer[], initiator: boolean) {
     this.peerId = peerId
     this.polite = polite
+    this.initiator = initiator
     this.pc = new RTCPeerConnection({ iceServers: ice, bundlePolicy: 'max-bundle' })
   }
 }
@@ -60,7 +72,7 @@ export class MeshTransport implements Transport {
 
   peerJoined(peerId: string, initiate = false) {
     if (this.closed || this.links.has(peerId) || peerId === this.selfId) return
-    const link = new Link(peerId, this.selfId < peerId, this.ice)
+    const link = new Link(peerId, this.selfId < peerId, this.ice, initiate)
     this.links.set(peerId, link)
     const pc = link.pc
     pc.onnegotiationneeded = async () => {
@@ -99,6 +111,55 @@ export class MeshTransport implements Transport {
       if (pc.connectionState === 'connected') return
       if (link.polite === false || initiate) pc.restartIce()
     }, 10_000)
+    // An offer left unanswered (two offers crossed, or one was lost). When
+    // both sides add media at the same moment (a tablet opening its board as
+    // it joins), Chrome can fail to merge the two offers ("RTP extension ID
+    // reassignment") and both wait for ever. Then the link is simply rebuilt
+    // by the side that started it: one fresh offer with everything in it.
+    let stuck = 0
+    let tries = 0
+    const unstick = window.setInterval(() => {
+      if (this.links.get(peerId) !== link) return window.clearInterval(unstick)
+      stuck = pc.signalingState !== 'stable' && !link.makingOffer ? stuck + 1 : 0
+      if (stuck < 2) return
+      stuck = 0
+      tries++
+      if (!link.failed && tries === 1) {
+        // First, the gentle way: the polite side withdraws, the other resends.
+        if (link.polite) {
+          void pc
+            .setLocalDescription({ type: 'rollback' })
+            .then(() => pc.onnegotiationneeded?.(new Event('negotiationneeded')))
+            .catch(() => {})
+        } else if (pc.localDescription) this.send(peerId, { description: pc.localDescription.toJSON() })
+        return
+      }
+      window.clearInterval(unstick)
+      this.rebuild(peerId)
+    }, 2000)
+    return
+  }
+
+  /** Start a link again from nothing (see "unstick" above). */
+  private rebuild(peerId: string) {
+    const link = this.links.get(peerId)
+    if (!link || this.closed) return
+    if (!link.initiator) {
+      this.send(peerId, { reset: 'please' })
+      return
+    }
+    this.send(peerId, { reset: 'now' })
+    this.dropLink(peerId)
+    this.peerJoined(peerId, true)
+  }
+
+  /** Close a link and forget its media (the peer is still in the room). */
+  private dropLink(peerId: string) {
+    const link = this.links.get(peerId)
+    if (!link) return
+    for (const pubId of link.remote.keys()) this.on.untrack(peerId, pubId)
+    link.pc.close()
+    this.links.delete(peerId)
   }
 
   /** Put our tracks on a link and tell the peer which stream is which. */
@@ -129,6 +190,15 @@ export class MeshTransport implements Transport {
   }
 
   private async handle(from: string, data: Signal) {
+    if (data.reset === 'please') {
+      if (this.links.get(from)?.initiator) this.rebuild(from)
+      return
+    }
+    if (data.reset === 'now') {
+      // The other side starts again: its next offer makes a fresh link here.
+      this.dropLink(from)
+      return
+    }
     let link = this.links.get(from)
     if (!link) {
       // A newcomer's first message: answer it.
@@ -161,6 +231,10 @@ export class MeshTransport implements Transport {
         const collision = d.type === 'offer' && !ready
         link.ignoreOffer = !link.polite && collision
         if (link.ignoreOffer) return
+        // The polite side steps back from its own offer first (said out loud:
+        // not every browser does it by itself, and a silent failure here left
+        // both sides waiting for each other for ever).
+        if (collision && pc.signalingState === 'have-local-offer') await pc.setLocalDescription({ type: 'rollback' })
         link.settingAnswer = d.type === 'answer'
         await pc.setRemoteDescription(d)
         link.settingAnswer = false
@@ -179,7 +253,8 @@ export class MeshTransport implements Transport {
         }
       }
     } catch {
-      /* the next offer or an ICE restart recovers */
+      // The next offer, an ICE restart or a rebuild (unstick) recovers.
+      if (data.description) link.failed = true
     }
   }
 
