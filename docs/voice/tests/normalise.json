@@ -1939,6 +1939,26 @@
    "say": "while queue not empty pop",
    "mode": "code",
    "unplaced": []
+  },
+  {
+   "say": "agar a of i key se chhota hai",
+   "mode": "code",
+   "code": "agar a[i] < key"
+  },
+  {
+   "say": "agar left right se bada hai",
+   "mode": "code",
+   "code": "agar left > right"
+  },
+  {
+   "say": "jab low high se kam hai",
+   "mode": "code",
+   "code": "jab low < high"
+  },
+  {
+   "say": "if x se chhota y",
+   "mode": "code",
+   "code": "if x < y"
   }
  ]
 }

@@ -494,3 +494,45 @@
 .vstt-extra-add:hover {
   color: var(--color-text-primary);
 }
+
+/* Record test clips (VoiceSttSection, S9). */
+.vstt-rec {
+  display: grid;
+  gap: 0.75rem;
+}
+.vstt-rec-langs,
+.vstt-rec-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.vstt-rec-langs .ai-btn[aria-pressed='true'] {
+  border-color: var(--color-accent-brand);
+  color: var(--color-text-primary);
+}
+.vstt-rec-count {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+.vstt-rec-text {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+  overflow-wrap: anywhere;
+}
+.vstt-rec-row audio {
+  max-width: 100%;
+  height: 2rem;
+}
+.vstt-rec-note {
+  margin: 0;
+  min-height: 1.25em;
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary);
+}

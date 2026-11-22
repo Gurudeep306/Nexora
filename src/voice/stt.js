@@ -620,6 +620,38 @@ async function transcribe({ audio, lang = "en-IN", hints = [], mode = "text", us
   return { ok: false, fallback: "browser", tried };
 }
 
+/**
+ * S9 (measuring): one clip through one named service, with the same free caps,
+ * usage counting and normaliser as the chain. Used by scripts/voice/asr-eval.js.
+ * Returns { ok, text, raw, code?, unsure, ms } or { ok: false, why }.
+ */
+async function transcribeWith(providerId, { audio, lang = "en-IN", hints = [], mode = "text", fetchConfig = loadConfig, now = new Date() }) {
+  const seconds = wavSeconds(audio);
+  if (seconds === null || seconds > 60) return { ok: false, why: "not a 16 kHz mono WAV clip of at most 60 s" };
+  const cfg = await fetchConfig();
+  const p = cfg.providers.find((x) => x.id === providerId);
+  if (!p) return { ok: false, why: "no such service" };
+  const phrases = hintsFrom(hints);
+  const prompt = promptFrom(phrases, lang);
+  for (const slot of await slotsOf(p)) {
+    if (!slot.key && p.kind !== "openai_compatible") continue;
+    const why = overLimit(p.limits, await usageOf(slot.id, now), seconds);
+    if (why) return { ok: false, why };
+    const t0 = Date.now();
+    try {
+      const r = await ADAPTERS[p.kind](p, slot.key, { audio, lang, phrases, prompt });
+      await addUsage(slot.id, seconds, now);
+      const raw = String(r.text || "").trim();
+      const n = normalise(raw, { mode, hints, lang });
+      const conf = typeof r.confidence === "number" ? r.confidence : null;
+      return { ok: true, text: n.text, raw, ...(n.code !== undefined ? { code: n.code } : {}), unsure: !!r.unsure || (conf !== null && conf < UNSURE_BELOW), ms: Date.now() - t0 };
+    } catch (e) {
+      return { ok: false, why: e.status ? `error ${e.status}` : "no answer" };
+    }
+  }
+  return { ok: false, why: "no key" };
+}
+
 /* ── admin view ── */
 
 async function adminView() {
@@ -796,6 +828,15 @@ function createSttRouter({ requireAuthenticatedUser, isTrustedOrigin }) {
   );
 
   router.get("/api/admin/voice-stt", requirePerm("ai.manage"), async (_req, res) => res.json({ ok: true, ...(await adminView()) }));
+  // S9: the sentences to record as test clips (docs/voice/tests/asr/clips.json).
+  router.get("/api/admin/voice-stt/clips", requirePerm("ai.manage"), (_req, res) => {
+    try {
+      const file = require("path").join(__dirname, "..", "..", "docs", "voice", "tests", "asr", "clips.json");
+      res.json({ ok: true, clips: JSON.parse(require("fs").readFileSync(file, "utf8")).clips });
+    } catch {
+      res.status(500).json({ ok: false, error: "The clip list is missing." });
+    }
+  });
   router.put("/api/admin/voice-stt", trusted, requirePerm("ai.manage"), express.json({ limit: "64kb" }), async (req, res) => {
     try {
       res.json({ ok: true, ...(await adminSave(req.body, req.sessionUser.username)) });
@@ -809,4 +850,4 @@ function createSttRouter({ requireAuthenticatedUser, isTrustedOrigin }) {
   return router;
 }
 
-module.exports = { createSttRouter, transcribe, pruneUsage, usageOf, sameWords, autoScore, ordered, overLimit, wavSeconds, hintsFrom, promptFrom, sanitizeProvider, KINDS, DEFAULT_ORDER, ADAPTERS, adminSave, adminView, loadConfig, testClip, _cooling: cooling };
+module.exports = { createSttRouter, transcribe, transcribeWith, pruneUsage, usageOf, sameWords, autoScore, ordered, overLimit, wavSeconds, hintsFrom, promptFrom, sanitizeProvider, KINDS, DEFAULT_ORDER, ADAPTERS, adminSave, adminView, loadConfig, testClip, _cooling: cooling };

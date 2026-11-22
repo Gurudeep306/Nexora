@@ -6,13 +6,14 @@
   when every service is full the student's own browser listens instead. So a
   limit never stops the mic and nothing is ever charged.
 */
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowDown, ArrowUp, ExternalLink, Loader2, Play, Plus, Trash2 } from 'lucide-react'
 import { Button, useToast } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api, ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { Chip, Failed, Panel, Skeleton, Toggle } from './kit'
+import { startCapture, type Capture } from '@/voice/capture'
 
 type Limits = Partial<Record<'perMinute' | 'perDay' | 'perHourSeconds' | 'perDaySeconds' | 'perMonthSeconds' | 'creditSeconds', number>>
 type Use = { requests: number; seconds: number }
@@ -80,6 +81,7 @@ export function VoiceSttSection() {
     <div className="space-y-5">
       <Editor key={JSON.stringify([data.providers, data.studentDailySeconds, data.autoOrder])} data={data} refetch={refetch} />
       <NaturalVoice />
+      <RecordClips />
     </div>
   )
 }
@@ -504,5 +506,125 @@ function ExtraKeys({ p, busy, onChange, onTest }: { p: Provider; busy: string | 
         )
       )}
     </div>
+  )
+}
+
+type Clip = { id: string; lang: 'en' | 'hinglish' | 'hi'; kind: string; text: string }
+const LANG_NAME: Record<Clip['lang'], string> = { en: 'English', hinglish: 'Hinglish', hi: 'Hindi' }
+
+/*
+  S9: record the test clips for scripts/voice/asr-eval.js on any device. Each
+  clip is saved to your own device as <id>.wav (16 kHz mono, the same clean
+  capture the mic uses); nothing is uploaded or stored here. Put the files in
+  <folder>/<lang>/ and run the script with ASR_CLIPS_DIR=<folder>.
+*/
+function RecordClips() {
+  const [open, setOpen] = useState(false)
+  const [clips, setClips] = useState<Clip[] | null>(null)
+  const [lang, setLang] = useState<Clip['lang']>('hinglish')
+  const [at, setAt] = useState(0)
+  const [rec, setRec] = useState<'idle' | 'recording' | 'done' | 'empty' | 'blocked'>('idle')
+  const [url, setUrl] = useState<string | null>(null)
+  const [done, setDone] = useState<Set<string>>(new Set())
+  const cap = useRef<Capture | null>(null)
+  useEffect(() => {
+    if (!open || clips) return
+    api.get<{ clips: Clip[] }>('/api/admin/voice-stt/clips').then((r) => setClips(r.clips)).catch(() => setClips([]))
+  }, [open, clips])
+  useEffect(() => () => {
+    cap.current?.cancel()
+    if (url) URL.revokeObjectURL(url)
+  }, [url])
+  const list = (clips ?? []).filter((c) => c.lang === lang)
+  const clip = list[Math.min(at, Math.max(0, list.length - 1))]
+  const reset = () => {
+    cap.current?.cancel()
+    cap.current = null
+    if (url) URL.revokeObjectURL(url)
+    setUrl(null)
+    setRec('idle')
+  }
+  const start = async () => {
+    reset()
+    const c = await startCapture()
+    if (!c) return setRec('blocked')
+    cap.current = c
+    setRec('recording')
+  }
+  const stop = async () => {
+    const c = cap.current
+    cap.current = null
+    const blob = c ? await c.stop() : null
+    if (!blob) return setRec('empty')
+    setUrl(URL.createObjectURL(blob))
+    setRec('done')
+  }
+  const go = (d: number) => {
+    reset()
+    setAt((i) => Math.max(0, Math.min(list.length - 1, i + d)))
+  }
+  return (
+    <Panel
+      title="Record test clips"
+      icon="volume"
+      description="Before turning on a service or a language, measure it on real voices (scripts/voice/asr-eval.js). Read each sentence as you normally speak. Each recording is saved to your own device only; nothing is uploaded. Keep the files out of the public repository."
+      actions={
+        <button type="button" className="ai-btn" onClick={() => (open ? (reset(), setOpen(false)) : setOpen(true))} aria-expanded={open}>
+          {open ? 'Close' : 'Start recording'}
+        </button>
+      }
+    >
+      {open && !clips && <Skeleton className="h-24" />}
+      {open && clips && clip && (
+        <div className="vstt-rec">
+          <div className="vstt-rec-langs" role="group" aria-label="Language">
+            {(['en', 'hinglish', 'hi'] as const).map((l) => (
+              <button key={l} type="button" className={cn('ai-btn', l === lang && 'is-on')} aria-pressed={l === lang} onClick={() => (reset(), setLang(l), setAt(0))}>
+                {LANG_NAME[l]} · {(clips ?? []).filter((c) => c.lang === l && done.has(c.id)).length}/{(clips ?? []).filter((c) => c.lang === l).length}
+              </button>
+            ))}
+          </div>
+          <p className="vstt-rec-count">
+            {at + 1} of {list.length} · <span className="font-mono">{clip.id}</span> · {clip.kind}
+          </p>
+          <p className="vstt-rec-text" lang={clip.lang === 'hi' ? 'hi' : 'en'}>
+            {clip.text}
+          </p>
+          <div className="vstt-rec-row">
+            {rec !== 'recording' ? (
+              <Button size="sm" onClick={() => void start()}>
+                {rec === 'done' ? 'Record again' : 'Record'}
+              </Button>
+            ) : (
+              <Button size="sm" onClick={() => void stop()}>
+                Stop
+              </Button>
+            )}
+            {url && (
+              <>
+                <audio controls src={url} aria-label={`Your recording of ${clip.id}`} />
+                <a className="ai-btn" href={url} download={`${clip.id}.wav`} onClick={() => setDone((d) => new Set(d).add(clip.id))}>
+                  Save {clip.id}.wav
+                </a>
+              </>
+            )}
+          </div>
+          <p className="vstt-rec-note" aria-live="polite">
+            {rec === 'recording' && 'Recording… press Stop when you have finished the sentence.'}
+            {rec === 'empty' && 'No speech was heard. Move closer to the mic and try again.'}
+            {rec === 'blocked' && 'The microphone is blocked. Allow it in the browser’s address bar, then try again.'}
+            {rec === 'done' && `Save it into the “${clip.lang}” folder, then go to the next one.`}
+          </p>
+          <div className="vstt-rec-row">
+            <Button size="sm" variant="ghost" onClick={() => go(-1)} disabled={at === 0}>
+              Previous
+            </Button>
+            <Button size="sm" variant="secondary" onClick={() => go(1)} disabled={at >= list.length - 1}>
+              Next sentence
+            </Button>
+          </div>
+        </div>
+      )}
+    </Panel>
   )
 }

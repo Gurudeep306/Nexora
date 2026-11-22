@@ -8,7 +8,9 @@ an error is caught where it starts instead of reaching the tutor.
 
 Status (2026-11-22): S1–S4 and S7 built (#229–#232); the mic works without
 browser recognition (#233); **S5 built** (#234, `src/voice/normalise.js`,
-340-line test set); **S6 built** (#235); **S8 built** (this step). S9 is next.
+340-line test set); **S6 built** (#235); **S8 built** (#238); **S9 built**
+(this step): the measuring script and the clip list; the first results wait
+for the owner's recordings.
 
 ---
 
@@ -284,6 +286,26 @@ console; they change). The account is shared by all students, so:
    - p95 under 1.5 s on 4G.
    Results go in this file, and a language is offered only when it passes.
 4. Repeat monthly and whenever an engine or prompt changes.
+
+**As built:**
+- `docs/voice/tests/asr/clips.json`: the first 58 sentences (19 English,
+  24 Hinglish, 15 Hindi; commands, code and doubts). Each command clip names
+  the action it must trigger and each code clip the code it must become; a
+  test checks every expectation holds for the clip's own text.
+- **Record** in Admin → Voice recognition → Record test clips: one sentence
+  at a time, the same clean 16 kHz capture as the mic, saved to the owner's
+  own device as `<id>.wav`. Nothing is uploaded.
+- **Voices are private:** keep recordings out of this public repository.
+  `docs/voice/tests/asr/<lang>/*.wav` and `results/` are gitignored; put the
+  files in a private folder as `<folder>/<lang>/<id>.wav`.
+- **Run** where the site's database and SESSION_SECRET are set:
+  `ASR_CLIPS_DIR=<folder> node scripts/voice/asr-eval.js [--only groq]
+  [--lang hinglish] [--limit 20]`. It runs each service separately through
+  `stt.transcribeWith()` (same free caps and usage counting as the chain; it
+  stops a service at its cap), and prints WER, code-word error rate, command
+  and code accuracy, p50/p95 and the gates (✓/✗). Measures:
+  `scripts/voice/asr-metrics.js`, tested in `tests/voice-asr-metrics.test.js`.
+- Results: none yet (no recordings). Record them here when they exist.
 
 ## S10. Getting better over time (what we build ourselves)
 
