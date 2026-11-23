@@ -13,6 +13,8 @@ export type Move = 'wave' | 'namaste' | 'thumbs' | 'point' | 'turn'
 
 export interface TeacherState {
   side: Side
+  /** Standing at this x (px, page centre of the teacher) to point at something; null = at `side`. */
+  atX: number | null
   sitting: boolean
   hidden: boolean
   status: Status
@@ -32,7 +34,7 @@ function saved(): Pick<TeacherState, 'side' | 'hidden'> {
   }
 }
 
-let state: TeacherState = { ...saved(), sitting: false, status: 'off', progress: 0, why: '' }
+let state: TeacherState = { ...saved(), atX: null, sitting: false, status: 'off', progress: 0, why: '' }
 const listeners = new Set<() => void>()
 const moveListeners = new Set<(m: Move) => void>()
 
@@ -41,7 +43,8 @@ export function getTeacher(): TeacherState {
 }
 
 export function setTeacher(patch: Partial<TeacherState>) {
-  state = { ...state, ...patch }
+  // Choosing a side ends standing beside something.
+  state = { ...state, ...(patch.side ? { atX: null } : {}), ...patch }
   if ('side' in patch || 'hidden' in patch) {
     try {
       localStorage.setItem(LOCAL, JSON.stringify({ side: state.side, hidden: state.hidden }))
@@ -61,6 +64,20 @@ export function useTeacher(): TeacherState {
     () => state,
     () => state,
   )
+}
+
+/** Point at a place on screen (viewport px), looking at it. */
+export interface PointAt {
+  x: number
+  y: number
+}
+const pointListeners = new Set<(p: PointAt) => void>()
+export function teacherPoint(p: PointAt) {
+  for (const l of pointListeners) l(p)
+}
+export function onTeacherPoint(fn: (p: PointAt) => void): () => void {
+  pointListeners.add(fn)
+  return () => pointListeners.delete(fn)
 }
 
 /** Play a move (wave, namaste…). Ignored while no teacher is drawn. */

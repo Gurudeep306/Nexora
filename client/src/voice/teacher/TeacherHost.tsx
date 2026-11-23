@@ -13,6 +13,7 @@ import type { ActionSpec, VoiceAction } from '../actions/types'
 import { useVoicePrefs } from '../prefs'
 import { introduce } from './intro'
 import { startTalk } from '../talk'
+import { clickOn, describeSide, pointAt, pointAtLine, stopTour, tour } from './guide'
 import { setTeacher, teacherMove, useTeacher } from './store'
 import { teacherById, teacherPortrait } from './teachers'
 import './teacher.css'
@@ -31,7 +32,16 @@ export function TeacherHost() {
     if (!teacher) return []
     const spec = (id: string): ActionSpec => TEACHER_SPECS.find((s) => s.id === id)!
     const n = teacher.name
-    const a = (id: string, title: string, run: () => void): VoiceAction => ({ ...spec(id), title, group: 'Teacher', icon: 'profile', run })
+    const a = (id: string, title: string, run: (args: Record<string, string>) => void, palette = true): VoiceAction => ({ ...spec(id), title, group: 'Teacher', icon: 'profile', palette, run })
+    // The guide's actions read their target from the sentence; they're voice-only (no palette entry).
+    const guide = (run: (args: Record<string, string>) => unknown): [(args: Record<string, string>) => void, boolean] => [
+      (args) => {
+        stopTour()
+        setTeacher({ hidden: false })
+        void run(args)
+      },
+      false,
+    ]
     return [
       a('teacher.left', `${n}: go left`, () => setTeacher({ side: 'left', hidden: false })),
       a('teacher.right', `${n}: go right`, () => setTeacher({ side: 'right', hidden: false })),
@@ -45,6 +55,11 @@ export function TeacherHost() {
       a('teacher.point', `${n}: point`, () => teacherMove('point')),
       a('teacher.hide', `Hide ${n}`, () => setTeacher({ hidden: true })),
       a('teacher.show', `Show ${n}`, () => setTeacher({ hidden: false })),
+      a('teacher.point.at', `${n}: point at something`, ...guide((args) => pointAt(args.target ?? ''))),
+      a('teacher.click', `${n}: press something for me`, ...guide((args) => clickOn(args.target ?? ''))),
+      a('teacher.point.line', `${n}: point at a line of code`, ...guide((args) => pointAtLine(Number(args.line)))),
+      a('teacher.side', `${n}: what's beside you?`, ...guide((args) => describeSide(args.side === 'left' ? 'left' : 'right', document.querySelector('.tch-stage')?.getBoundingClientRect() ?? null))),
+      a('teacher.tour', `${n}: give me a tour of this page`, guide(() => tour())[0]),
       a('teacher.talk', `Talk with ${n}`, () => {
         setTeacher({ hidden: false })
         startTalk()

@@ -257,6 +257,14 @@
   }
 }
 
+/* What the teacher is pointing at: an accent outline for a moment (no glow). */
+.tch-target {
+  outline: 2px solid var(--color-accent-brand) !important;
+  outline-offset: 3px;
+  border-radius: 6px;
+  transition: outline-color 0.2s ease;
+}
+
 @keyframes tch-wait {
   0%, 100% { opacity: 0.9; }
   50% { opacity: 0.55; }

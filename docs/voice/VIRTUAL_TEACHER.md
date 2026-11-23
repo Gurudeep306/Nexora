@@ -106,6 +106,24 @@ tools, not drawn by us.
   (no smile) when the student sounds worried or stuck. A small nod when the
   student finishes speaking. When idle, now and then a glance at where the
   student points. Reduced motion: no gestures or nods.
+- **Guide (T2, `teacher/guide.ts`, `findTarget.ts`):** the teacher finds
+  things by the names people see, on any page, with no tagging
+  (`data-guide-label` can give a clearer name):
+  - "point at the Run button", "Settings kahan hai": scrolls to it, walks
+    under it, turns, looks and points with the hand on that side, outlines
+    it, says "Here it is".
+  - "click Run", "Run dabao": the same, says "Okay, pressing Run", then
+    presses it. Never presses anything that changes or loses something
+    (submit, delete, sign out, reset, send…): points and asks the student
+    to press it.
+  - "point at line 12": in the code editor in use, scrolls to the line,
+    selects it, points and reads it.
+  - "what's on your right?": names the nearest three things on that side.
+  - "give me a tour" / "is page ke baare mein batao": what the page is (from
+    the Explore list, true names only), then up to four main things on it,
+    walking to and pointing at each; any new command stops it.
+  The sentence shapes are strict (whole sentence), so a question like
+  "where is the mistake in my code" still goes to Guru.
 - **Never in the way:** the drawing lets every click through; only its name
   bar (move, sit/stand, hide) is clickable. Hidden, it leaves a small "Show
   Maya" button. Its place is remembered in the browser. It is not shown in
@@ -137,10 +155,9 @@ tools, not drawn by us.
 
 ### 3.4 Next
 
-- **T2 — guide:** a places registry (`data-guide` names on each page), fly
-  to a button and point at it (TalkingHead `touchAt`/IK), click it for the
-  student, page tours, "point at line 12", "what's on your right", and a real
-  walk cycle. The server only accepts place names that exist on the page.
+- **T2 — guide:** done (point, press, line, side, tour). Still to do: a
+  real walk cycle (our own keyframes or a CC0 source), and Guru's answers
+  choosing places to point at.
 - **T3 — whiteboard:** the teacher opens a board and writes and draws a
   diagram step by step while explaining, from Guru's structured steps.
 

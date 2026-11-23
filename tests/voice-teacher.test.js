@@ -102,3 +102,30 @@ test('the face and hands follow the words: smiles, thumbs up, namaste, shrug; ca
   assert.ok(soundsWorried('मुझे डर लग रहा है'));
   assert.ok(!soundsWorried('what is the time complexity of merge sort'));
 });
+
+test('every teacher and site-wide action id is unique (a reused id silently breaks a command)', async () => {
+  const S = await import(require('node:url').pathToFileURL(path.join(__dirname, '..', 'client', 'src', 'voice', 'actions', 'teacherSpecs.ts')).href);
+  const G = await import(require('node:url').pathToFileURL(path.join(__dirname, '..', 'client', 'src', 'voice', 'actions', 'globalSpecs.ts')).href);
+  const ids = [...S.TEACHER_SPECS, ...G.GLOBAL_SPECS].map((s) => s.id);
+  assert.equal(new Set(ids).size, ids.length, `duplicates: ${ids.filter((x, i) => ids.indexOf(x) !== i)}`);
+});
+
+test('the guide finds things by the names people see, prefers what is on screen, and never presses risky buttons', async () => {
+  const { nameScore, bestTarget, risky } = await T('findTarget.ts');
+  assert.equal(nameScore('run', 'Run'), 1);
+  assert.ok(nameScore('the run button', 'Run') >= 0.95);
+  assert.ok(nameScore('setings', 'Settings') > 0.6, 'a small slip still finds it');
+  assert.ok(nameScore('dark mode', 'Switch to dark mode') > 0.6);
+  assert.equal(nameScore('submit', 'Run'), 0);
+  const list = [
+    { name: 'Run', kind: 'button', visible: false },
+    { name: 'Run', kind: 'button', visible: true, id: 2 },
+    { name: 'Run your code', kind: 'heading', visible: true },
+    { name: 'Settings', kind: 'link', visible: true },
+  ];
+  assert.equal(bestTarget('run', list).id, 2, 'on-screen beats below the fold');
+  assert.equal(bestTarget('run your code', list, true), null, 'a click never lands on a heading');
+  assert.equal(bestTarget('history', list), null, 'nothing close: nothing found');
+  for (const n of ['Submit', 'Delete account', 'Log out', 'End test', 'Send']) assert.ok(risky(n), n);
+  for (const n of ['Run', 'Settings', 'Next', 'Dark mode']) assert.ok(!risky(n), n);
+});
