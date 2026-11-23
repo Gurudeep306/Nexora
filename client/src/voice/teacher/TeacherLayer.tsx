@@ -25,7 +25,7 @@ import { onSentence, stopSpeaking, useSpeaking } from '../speak'
 import { endTalk, getTalk, startTalk, useTalk } from '../talk'
 import { toRoman, wordTimes } from './lipsync'
 import { gestureFor, moodFor, soundsWorried } from './expressions'
-import { getTeacher, onTeacherMove, setTeacher, useTeacher, type Move, type Side } from './store'
+import { getTeacher, onTeacherMove, onTeacherPoint, setTeacher, useTeacher, type Move, type PointAt, type Side } from './store'
 import { teacherModel, teacherPortrait, type TeacherInfo } from './teachers'
 import './teacher.css'
 
@@ -40,8 +40,10 @@ function hasWebGL2(): boolean {
 }
 
 const GAP = 16
-function xFor(side: Side, w: number): number {
+function xFor(side: Side, w: number, atX: number | null = null): number {
   const vw = document.documentElement.clientWidth
+  // Standing beside something to point at it (kept on screen).
+  if (atX != null) return Math.round(Math.max(GAP, Math.min(vw - w - GAP, atX - w / 2)))
   if (side === 'left') return GAP
   if (side === 'centre') return Math.max(GAP, Math.round((vw - w) / 2))
   return Math.max(GAP, vw - w - GAP)
@@ -270,6 +272,21 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
     }
   }, [talk.on, talk.status, st.status, st.side])
 
+  /* Point at something on the page: turn a little towards it, look at it, point with the hand on that side. */
+  useEffect(
+    () =>
+      onTeacherPoint((p: PointAt) => {
+        const head = headRef.current
+        const box = stage.current?.getBoundingClientRect()
+        if (!head || !box) return
+        const dx = p.x - (box.left + box.width / 2)
+        head.lookAt(p.x, p.y, 2600)
+        if (!reduced()) turnTo(Math.max(-0.45, Math.min(0.45, (dx / window.innerWidth) * 1.2)), 400, () => window.setTimeout(() => turnTo(0, 500), 2400))
+        if (!getTeacher().sitting) head.playGesture('index', 2.8, dx > 0)
+      }),
+    [],
+  )
+
   /* Sit and stand. */
   useEffect(() => {
     const head = headRef.current
@@ -291,11 +308,11 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
     const el = root.current
     if (!el) return
     const place = () => {
-      lastX.current = xFor(st.side, el.offsetWidth)
+      lastX.current = xFor(st.side, el.offsetWidth, st.atX)
       setX(lastX.current)
     }
     const prev = lastX.current
-    const next = xFor(st.side, el.offsetWidth)
+    const next = xFor(st.side, el.offsetWidth, st.atX)
     let back: (() => void) | null = null
     if (prev !== null && Math.abs(next - prev) > 40 && !reduced() && headRef.current) {
       turnTo((next > prev ? 1 : -1) * Math.PI * 0.42, 380)
@@ -309,7 +326,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       window.removeEventListener('resize', place)
       if (back) el.removeEventListener('transitionend', back)
     }
-  }, [st.side, size])
+  }, [st.side, st.atX, size])
 
   const ai = speaking.engine === 'natural' || speaking.engine === 'kokoro'
   const lang = getVoicePrefs().lang

@@ -363,6 +363,32 @@ export function speak(text: string, lang: string) {
   })()
 }
 
+/**
+ * Say `text` and wait until it has been said (or was stopped). For the
+ * teacher's tours: the next stop starts when this one has finished.
+ * Resolves `true` if it was said to the end, `false` if stopped or replaced.
+ */
+export function speakAndWait(text: string, lang: string): Promise<boolean> {
+  speak(text, lang)
+  const my = session
+  return new Promise((resolve) => {
+    let started = false
+    const check = () => {
+      if (my !== session) return done(false)
+      if (state.on) started = true
+      else if (started) done(true)
+    }
+    const done = (ok: boolean) => {
+      listeners.delete(check)
+      window.clearTimeout(guard)
+      resolve(ok)
+    }
+    listeners.add(check)
+    // If no voice starts at all (sound off, no voice), move on after a reading pause.
+    const guard = window.setTimeout(() => !started && done(my === session), Math.min(8000, estimateMs(text) + 1200))
+  })
+}
+
 export function stopSpeaking() {
   session++
   abort?.abort()

@@ -130,6 +130,17 @@
     { "say": "बात करते हैं", "expect": "teacher.talk" },
     { "say": "talk to me", "expect": "teacher.talk" },
     { "say": "can we talk about recursion", "expect": null },
-    { "say": "what is the time complexity of quicksort", "expect": null }
+    { "say": "what is the time complexity of quicksort", "expect": null },
+    { "say": "point at the Run button", "expect": "teacher.point.at", "args": {"target": "Run"} },
+    { "say": "Settings kahan hai", "expect": "teacher.point.at", "args": {"target": "Settings"} },
+    { "say": "click the dark mode button", "expect": "teacher.click", "args": {"target": "dark mode"} },
+    { "say": "Run dabao", "expect": "teacher.click", "args": {"target": "Run"} },
+    { "say": "point at line 12", "expect": "teacher.point.line", "args": {"line": "12"} },
+    { "say": "what is on your right", "expect": "teacher.side", "args": {"side": "right"} },
+    { "say": "tumhare left mein kya hai", "expect": "teacher.side", "args": {"side": "left"} },
+    { "say": "give me a tour", "expect": "teacher.tour" },
+    { "say": "is page ke baare mein batao", "expect": "teacher.tour" },
+    { "say": "where is the mistake in my code", "expect": null },
+    { "say": "how do I click faster in contests", "expect": null }
   ]
 }
