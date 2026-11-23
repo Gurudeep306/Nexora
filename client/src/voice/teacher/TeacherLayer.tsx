@@ -21,14 +21,15 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ArrowLeftRight, Armchair, Cpu, EyeOff, MessageCircle, PenLine, PersonStanding, Square } from 'lucide-react'
 import type { TalkingHead } from '@met4citizen/talkinghead'
 import { getVoicePrefs, type TeacherSize } from '../prefs'
-import { onSentence, stopSpeaking, useSpeaking } from '../speak'
+import { onSentence, speak, stopSpeaking, useSpeaking } from '../speak'
 import { VoiceOffer } from './VoiceOffer'
 import { useBrain } from '../brain/brain'
 import { cancelListening, endTalk, getTalk, startTalk, teacherSays, useTalk } from '../talk'
 import { closeBoard, openBoard, pageTopic, useBoard } from './boardStore'
 import { toRoman, wordTimes } from './lipsync'
 import { gestureFor, moodFor, soundsWorried } from './expressions'
-import { getTeacher, onTeacherMove, onTeacherPoint, setTeacher, useTeacher, type Move, type PointAt, type Side } from './store'
+import { countResult, reactionFor } from './reactions'
+import { getTeacher, onTeacherMove, onTeacherPoint, onTeacherReact, setTeacher, useTeacher, type Move, type PointAt, type Side } from './store'
 import { teacherModel, teacherPortrait, type TeacherInfo } from './teachers'
 import './teacher.css'
 
@@ -127,6 +128,12 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         lightAmbientIntensity: 0.6,
         lightDirectIntensity: 18,
         lightDirectColor: 0xffd8b0,
+        // A soft, cool light from behind and above: separates her from the page, like a studio portrait.
+        lightSpotIntensity: 3.5,
+        lightSpotColor: 0xdfe8ff,
+        lightSpotPhi: 0.6,
+        lightSpotTheta: Math.PI,
+        lightSpotDispersion: 0.9,
       })
       head.renderer.toneMappingExposure = 0.85
       head.lipsync.en = new LipsyncEn()
@@ -232,6 +239,36 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
           window.clearTimeout(moodTimer.current)
           moodTimer.current = window.setTimeout(() => headRef.current?.setMood('neutral'), 3200)
         }
+      }),
+    [],
+  )
+
+  /* Real results (judge verdicts, GATE grades): she reacts like a teacher beside the student (reactions.ts). */
+  const lastReact = useRef(0)
+  useEffect(
+    () =>
+      onTeacherReact((result) => {
+        const head = headRef.current
+        const misses = countResult(result)
+        const now = Date.now()
+        // One reaction at a time, and never over her own talking or a conversation turn.
+        if (!head || now - lastReact.current < 5000 || speakingNowRef.current || getTalk().status !== 'idle') return
+        lastReact.current = now
+        const prefs = getVoicePrefs()
+        const r = reactionFor(result, { misses, lang: prefs.lang, seed: now / 1000 })
+        window.clearTimeout(moodTimer.current)
+        head.setMood(r.mood)
+        moodTimer.current = window.setTimeout(() => headRef.current?.setMood('neutral'), 3500)
+        if (!reduced()) {
+          if (r.gesture && !getTeacher().sitting) head.playGesture(r.gesture, 2.4)
+          const box = stage.current?.getBoundingClientRect()
+          if (r.nod && box) {
+            head.lookAt(box.left + box.width / 2, box.bottom + box.height * 0.5, 260)
+            window.setTimeout(() => headRef.current?.lookAtCamera(900), 320)
+          }
+        }
+        if (prefs.speak) speak(r.say, prefs.lang)
+        else teacherSays(r.say, 5000)
       }),
     [],
   )

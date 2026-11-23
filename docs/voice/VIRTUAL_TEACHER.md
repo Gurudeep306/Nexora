@@ -197,6 +197,27 @@ The exam console keeps its own mic and box.
   her bar. The server still decides per turn: unsolved questions, tests and
   Explain-back stay on the server so answer keys never reach a device.
 
+### 3.2.3 She reacts to your results, and a studio light (2026-11-23, this PR)
+
+- **Reactions** (`voice/teacher/reactions.ts`, `teacherReact` in `store.ts`):
+  - When the judge returns a verdict on the Solve page (not in a contest), or
+    a GATE practice or daily question is graded (never in a timed test), she
+    reacts like a teacher beside you:
+    - Accepted: a thumbs up and a smile.
+    - Examples only, or a correct GATE answer: the "OK" sign.
+    - A wrong answer, time limit or crash: a calm nod and one line of general
+      advice (never a thumbs down).
+    - The third miss in a row: she offers a hint.
+  - Lines are varied, in English or Hindi. Each one is checked to contain no
+    digits, option letters or code, so nothing about the answer leaks.
+  - She speaks the line if reading aloud is on; otherwise it shows in her
+    bubble. She stays quiet while she is already talking or in a
+    conversation turn, and reacts at most once every 5 seconds.
+- **Light**: a soft, cool back light (the library's spot light, behind and
+  above her) separates her from the page in both themes, like a studio
+  portrait. It was compared side by side in light and dark with no back
+  light and a stronger one; the softer setting looked the most natural.
+
 ### 3.3 Honest limits
 
 - **No walking legs yet.** It glides (turned sideways) rather than taking

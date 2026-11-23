@@ -4,6 +4,7 @@
   loaded only when a teacher is on). Its place and "hidden" are remembered in
   this browser.
 */
+import type { Result } from './reactions'
 import { useSyncExternalStore } from 'react'
 
 export type Side = 'left' | 'right' | 'centre'
@@ -92,4 +93,15 @@ export function onTeacherMove(fn: (m: Move) => void): () => void {
 /** Is the teacher on screen now (it then shows the "AI voice" label itself)? */
 export function teacherShowing(): boolean {
   return state.status === 'ready' && !state.hidden
+}
+
+/** The student's real result (judge verdict, GATE grade): the teacher reacts (reactions.ts). Ignored while no teacher is drawn. */
+const reactListeners = new Set<(r: Result) => void>()
+export function teacherReact(r: Result) {
+  if (!teacherShowing()) return
+  for (const l of reactListeners) l(r)
+}
+export function onTeacherReact(fn: (r: Result) => void): () => void {
+  reactListeners.add(fn)
+  return () => reactListeners.delete(fn)
 }

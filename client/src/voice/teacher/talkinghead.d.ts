@@ -18,6 +18,11 @@ declare module '@met4citizen/talkinghead' {
     lightAmbientColor?: number
     lightDirectIntensity?: number
     lightDirectColor?: number
+    lightSpotIntensity?: number
+    lightSpotColor?: number
+    lightSpotPhi?: number
+    lightSpotTheta?: number
+    lightSpotDispersion?: number
   }
   export interface Lipsync {
     preProcessText(s: string): string

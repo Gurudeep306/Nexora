@@ -145,3 +145,43 @@ test('interrupting the teacher: only a clear, sustained voice above what the mic
   assert.equal(isVoice(0.05, 0.02), false, 'her own voice leaking into the mic sets the bar higher');
   assert.equal(isVoice(0.02, 0), false, 'never below the minimum level');
 });
+
+test('she reacts to real results: praise for Accepted, calm help after misses, never the answer', async () => {
+  const { reactionFor, resultFromVerdict, allLines, countResult } = await T('reactions.ts');
+  assert.equal(resultFromVerdict('AC'), 'solved');
+  assert.equal(resultFromVerdict('AC', true), 'examples', 'examples only is never called solved');
+  assert.equal(resultFromVerdict('wa'), 'wrong');
+  assert.equal(resultFromVerdict('PENDING'), null);
+  const win = reactionFor('solved');
+  assert.equal(win.mood, 'happy');
+  assert.equal(win.gesture, 'thumbup');
+  const miss = reactionFor('wrong');
+  assert.equal(miss.mood, 'neutral', 'no smile at a wrong answer');
+  assert.equal(miss.gesture, null, 'never a thumbs down');
+  assert.ok(miss.nod);
+  assert.match(reactionFor('wrong', { misses: 2 }).say, /hint/i, 'the third miss in a row: she offers a hint');
+  assert.doesNotMatch(reactionFor('wrong', { misses: 1 }).say, /hint/i);
+  assert.match(reactionFor('incorrect', { misses: 4, lang: 'hi-IN' }).say, /हिंट/);
+  // Varied, not one canned line.
+  assert.ok(new Set([0, 1, 2, 3].map((seed) => reactionFor('correct', { seed }).say)).size >= 3);
+  // Lines are general: no digits, option letters or code, so nothing about the answer can leak.
+  for (const line of allLines()) {
+    assert.doesNotMatch(line, /\d/, line);
+    assert.doesNotMatch(line, /\(([A-D])\)|\boption [a-d]\b|\banswer is\b/i, line);
+    assert.doesNotMatch(line, /[{};=]/, line);
+    assert.ok(line.length <= 80, `short enough to say in a breath: ${line}`);
+  }
+  // Misses in a row: reset by a success.
+  countResult('wrong');
+  countResult('wrong');
+  assert.equal(countResult('wrong'), 2);
+  assert.equal(countResult('solved'), 3);
+  assert.equal(countResult('wrong'), 0);
+});
+
+test('reactions are never sent during a contest or a timed test', () => {
+  const solve = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'pages', 'SolvePage.tsx'), 'utf8');
+  assert.match(solve, /contestId \? null : resultFromVerdict/);
+  const q = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'gate', 'QuestionView.tsx'), 'utf8');
+  assert.match(q, /mode !== 'test' && \(o === 'correct'/);
+});
