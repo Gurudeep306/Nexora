@@ -43,3 +43,33 @@ test('voices: a quiet clip is brought to speaking level, never clipped', async (
   assert.equal(levelUp(loud), 1, 'a loud clip is left alone');
   assert.equal(levelUp(new Float32Array(10)), 1, 'silence is left alone');
 });
+
+test('she never hangs: every network call in the voice code has a time limit', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const root = path.join(__dirname, '..', 'client', 'src', 'voice');
+  const files = [];
+  const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).forEach((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : /\.tsx?$/.test(e.name) && files.push(path.join(d, e.name))));
+  walk(root);
+  let calls = 0;
+  for (const f of files) {
+    const src = fs.readFileSync(f, 'utf8');
+    const parts = src.split(/\bfetch\(/).slice(1);
+    for (const p of parts) {
+      calls++;
+      const call = p.slice(0, p.indexOf('\n  }') > 0 ? Math.min(600, p.length) : 600);
+      assert.match(call, /signal/, `${path.relative(root, f)}: a fetch without a time limit or abort signal`);
+    }
+  }
+  assert.ok(calls >= 5, `checked ${calls} calls`);
+});
+
+test('she never hangs: the answer on the device and each voice clip have a time limit', () => {
+  const fs = require('fs');
+  const path = require('path');
+  const brain = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'voice', 'brain', 'brain.ts'), 'utf8');
+  assert.match(brain, /Promise\.race\(\[generate\(/);
+  const speak = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'voice', 'speak.ts'), 'utf8');
+  assert.match(speak, /const usual = \(s: string\) => inTime\(/);
+  assert.match(speak, /await inTime\(ownClip\(s\)\)/);
+});

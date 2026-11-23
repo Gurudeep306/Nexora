@@ -137,7 +137,7 @@ let natural: Promise<NaturalStatus> | null = null
 /** Is the server's natural voice set up? Asked once per page load; a "no" is asked again after a minute. */
 export function naturalVoices() {
   if (!natural) {
-    const p = fetch(`${API_BASE}/api/voice/tts/status`, { credentials: 'include' })
+    const p = fetch(`${API_BASE}/api/voice/tts/status`, { credentials: 'include', signal: AbortSignal.timeout(4000) })
       .then((r) => (r.ok ? r.json() : null))
       .then((j): NaturalStatus => ({ available: !!j?.available, engine: j?.engine === 'own' || j?.engine === 'azure' ? j.engine : null, voices: (j?.voices ?? {}) as NaturalStatus['voices'] }))
       .catch((): NaturalStatus => ({ available: false, engine: null, voices: {} }))
@@ -159,6 +159,12 @@ function b64Blob(b64: string, mime: string): Blob {
   const bytes = new Uint8Array(bin.length)
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
   return new Blob([bytes], { type: mime })
+}
+
+/** A voice clip that doesn't arrive in time counts as failed: the next voice (finally the device's own) says it instead of silence. */
+const CLIP_LIMIT_MS = 15_000
+function inTime<T>(p: Promise<T | null>, ms = CLIP_LIMIT_MS): Promise<T | null> {
+  return Promise.race([p, new Promise<null>((resolve) => window.setTimeout(() => resolve(null), ms))])
 }
 
 async function naturalClip(text: string, lang: string, voice: string, signal: AbortSignal): Promise<Clip | null> {
@@ -261,7 +267,7 @@ export function loadKokoro(onProgress?: (p: number) => void): Promise<HeadTtsLik
 async function phonetic(text: string): Promise<unknown> {
   if (!/[\u0900-\u097F]/.test(text)) return text
   try {
-    const r = await fetch(`${API_BASE}/api/voice/phonetic`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) })
+    const r = await fetch(`${API_BASE}/api/voice/phonetic`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }), signal: AbortSignal.timeout(5000) })
     const j = (await r.json()) as { input?: unknown }
     return j.input ?? text
   } catch {
@@ -425,11 +431,11 @@ export function speak(text: string, lang: string) {
     const voice = (known ? picked : '') || teacherVoice(lang, status?.engine ?? null)
     // On the device: the voice the student chose (voices.ts), else the clearest one for the teacher; Hindi in a Hindi voice.
     const male = teacherById(getVoicePrefs().teacher)?.body === 'M'
-    const usual = (s: string) => (engine === 'natural' ? naturalClip(s, lang, voice, ctrl.signal) : kokoroClip(s, pickVoice(getVoicePrefs().kokoroVoice, male, s)))
+    const usual = (s: string) => inTime(engine === 'natural' ? naturalClip(s, lang, voice, ctrl.signal) : kokoroClip(s, pickVoice(getVoicePrefs().kokoroVoice, male, s)))
     // The voice the student gave (clone/clone.ts), when it is on and ready; Hindi and anything it can't say use the usual voice.
     const own = getVoicePrefs().ownVoice && getClone().hasVoice
     if (own && getClone().status === 'off') void loadClone().catch(() => {})
-    const make = async (s: string): Promise<Clip | null> => (own ? ((await ownClip(s)) ?? usual(s)) : usual(s))
+    const make = async (s: string): Promise<Clip | null> => (own ? ((await inTime(ownClip(s))) ?? usual(s)) : usual(s))
     const name = own && getClone().status === 'ready' ? 'Your voice' : engine === 'kokoro' ? 'Kokoro' : voiceName(status, voice, lang)
     let next = make(parts[0])
     for (let i = 0; i < parts.length; i++) {

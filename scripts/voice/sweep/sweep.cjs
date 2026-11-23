@@ -237,6 +237,17 @@ const S = process.argv[2] || require('os').tmpdir()
     await ctx.close()
   }
 
+  /* ── 2c. Never stuck: the server's speech status never answers, yet the mic still works ── */
+  {
+    const { ctx, p } = await context('light', 1280)
+    await ctx.route('**/api/voice/stt/status', () => {}) // never answers
+    await p.goto(`${BASE}/hub`, { waitUntil: 'domcontentloaded' })
+    await p.waitForTimeout(1500)
+    await say(p, 'dark mode', 7000)
+    ok('the mic still works when the server never answers (gives up after 4 s)', (await p.evaluate(() => document.documentElement.getAttribute('data-mode'))) === 'dark')
+    await ctx.close()
+  }
+
   /* ── 3. Light, dark and phone: the mic pill and voice pages have no accessibility problems and no sideways scroll ── */
   for (const [scheme, width] of [['light', 1280], ['dark', 1280], ['light', 360], ['dark', 360]]) {
     const { ctx, p } = await context(scheme, width, '')

@@ -237,10 +237,28 @@ export async function startBrain(force?: TierId): Promise<BrainState> {
 }
 
 /** Answer on the device (only when it is ready). Resolves with the text, or rejects so the server can answer. */
+/** Longest wait for an answer on the device; past it the server answers instead, so she never just goes silent. */
+export const ANSWER_LIMIT_MS = 25_000
+
 export async function askOnDevice(messages: unknown, onText?: (t: string) => void): Promise<string> {
   if (state.status !== 'ready' || !worker) throw new Error('not ready')
-  const r = await generate(messages, 220, onText)
-  return r.text.replace(/<think>[\s\S]*?<\/think>/g, '').trim()
+  let timer = 0
+  const late = new Promise<never>((_, reject) => {
+    timer = window.setTimeout(() => reject(new Error('too slow')), ANSWER_LIMIT_MS)
+  })
+  try {
+    const r = await Promise.race([generate(messages, 220, onText), late])
+    return r.text.replace(/<think>[\s\S]*?<\/think>/g, '').trim()
+  } catch (e) {
+    // Stuck or too slow on this device: start the worker afresh next time, and tell the student once in Settings.
+    if (e instanceof Error && e.message === 'too slow') {
+      unload()
+      set({ status: 'off', why: 'Guru took too long on this device, so the server answered. It will try again next time.' })
+    }
+    throw e
+  } finally {
+    window.clearTimeout(timer)
+  }
 }
 
 /** Delete the download from this browser and forget past failures. */
