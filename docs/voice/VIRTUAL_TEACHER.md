@@ -251,7 +251,7 @@ with her lips. The causes, and what changed:
   Indian voices (IndicF5, Veena, Indic Parler) are free models but need a
   paid GPU server to speak in real time.
 
-### 3.2.5 A truer look, and teachers the student names (2026-11-24, this PR)
+### 3.2.5 A truer look, and teachers the student names (2026-11-24, #261)
 
 - **Look** (`voice/teacher/look.ts`). Tuned by comparing renders side by side
   in light and dark, on a woman and a man teacher:
