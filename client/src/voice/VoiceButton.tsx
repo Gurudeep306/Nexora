@@ -31,6 +31,8 @@ import { speak, stopSpeaking, useSpeaking } from './speak'
 import { endTalk, getTalk, onStartTalk, remember, saysGoodbye, setTalkStatus, useTalk } from './talk'
 import { teacherMove } from './teacher/store'
 import { teacherById } from './teacher/teachers'
+import { askOnDevice, getBrain, startBrain } from './brain/brain'
+import { spoken } from './brain/spoken'
 import { pageHints } from './hints'
 import { SpeakingChip } from './SpeakingChip'
 import './voice.css'
@@ -63,6 +65,30 @@ const ERRORS: Record<SpeechError, string> = {
 
 /** Hints Guru has given per question / problem / page this session (the hint ladder). */
 const hintsGiven = new Map<string, number>()
+
+/**
+ * Guru on this device (Settings → Voice): the server plans the turn and says
+ * whether it may be answered here (never an unsolved question: its answer
+ * stays on the server). Returns null whenever the server should answer.
+ * The first question after a page load starts the model in the background.
+ */
+async function onDevice(body: Record<string, unknown>): Promise<{ ok: boolean; say: string; step: number } | null> {
+  const b = getBrain()
+  if (b.status === 'off') {
+    void startBrain()
+    return null
+  }
+  if (b.status !== 'ready') return null
+  try {
+    const plan = await api.post<{ ok: boolean; local: boolean; say?: string; step?: number; messages?: unknown }>('/api/voice/guru/plan', body)
+    if (plan.say) return { ok: true, say: plan.say, step: plan.step ?? 0 }
+    if (!plan.local || !plan.messages) return null
+    const say = spoken(await askOnDevice(plan.messages))
+    return say ? { ok: true, say, step: plan.step ?? 0 } : null
+  } catch {
+    return null
+  }
+}
 
 /** What was done, in words: "Open Notes", "Switch to dark mode". */
 function describe(action: VoiceAction, match: Match) {
@@ -199,7 +225,7 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
       try {
         const t = getTalk()
         if (t.on) setTalkStatus('thinking')
-        const r = await api.post<{ ok: boolean; say: string; step: number }>('/api/voice/guru', {
+        const body = {
           text: heard,
           page,
           hintsGiven: hintsGiven.get(item) ?? 0,
@@ -208,7 +234,8 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
           teacher: prefs.teacher,
           talk: t.on,
           history: t.on ? t.history : [],
-        })
+        }
+        const r = (prefs.brain && (await onDevice(body))) || (await api.post<{ ok: boolean; say: string; step: number }>('/api/voice/guru', body))
         if (r.step >= 1 && r.step <= 5) hintsGiven.set(item, r.step)
         setPhase({ kind: 'guru', heard, say: r.say, step: r.step, who: teacherById(prefs.teacher)?.name })
         if (getTalk().on) {
@@ -222,7 +249,7 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
         if (getTalk().on) sayThenListen(prefs.lang === 'hi-IN' ? 'माफ़ करना, अभी जवाब नहीं दे पाया। फिर से बोलो?' : 'Sorry, I couldn’t answer that just now. Say it again?')
       }
     },
-    [pageContext, shareContext, prefs.lang, prefs.speak, prefs.teacher, sayThenListen],
+    [pageContext, shareContext, prefs.lang, prefs.speak, prefs.teacher, prefs.brain, sayThenListen],
   )
 
   /** Would acting on this text change something (an edit, Build mode, an action that isn't just looking)? */

@@ -90,6 +90,7 @@ export const FEATURE_GROUPS: FeatureGroup[] = [
       { id: 'voice', name: 'Voice commands', what: '“Notes kholo”, “dark mode”, “run” — the site does it. Alt+M opens the mic anywhere.', where: 'The mic in the top bar', to: '', icon: 'sparkles', action: 'voice', tags: 'mic speak hindi' },
       { id: 'scene', name: 'Talk to animations', what: '“Swap pe ruko”, “why did i become 4”, “what if sorted” — answers come from the real steps.', where: 'With an animation on screen, press the mic', to: '/learn/dsa', icon: 'activity' },
       { id: 'guru', name: 'Guru, the tutor', what: 'Ask a doubt aloud: hints that climb step by step, never the answer before you try.', where: 'Press the mic and ask', to: '', icon: 'bot', action: 'voice', tags: 'doubt hint' },
+      { id: 'guru-device', name: 'Guru on your device', what: 'Download Guru once and it answers on your own laptop: private, free, quick on a weak connection. Needs a browser that can use the graphics chip.', where: 'Settings → Voice → Guru on this device', to: '/settings', icon: 'bot', tags: 'offline private download local model' },
       { id: 'assistant', name: 'AI assistant', what: 'Ask about anything on the page you are on.', where: 'The sparkle button (⌘J)', to: '', icon: 'sparkles' },
     ],
   },

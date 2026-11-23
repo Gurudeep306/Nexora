@@ -9,6 +9,8 @@ import { useAuth } from '@/context/AuthContext'
 import { useVoiceSupport } from './speech'
 import { useVoicePrefs } from './prefs'
 import { KOKORO_MB, loadKokoro, naturalVoices, speak } from './speak'
+import { deviceInfo, removeBrain, startBrain, useBrain } from './brain/brain'
+import { downloadMb, pickTier, unsupportedWhy, type DeviceInfo, type Tier } from './brain/tiers'
 import './voice.css'
 
 export function VoiceSettings() {
@@ -60,6 +62,7 @@ export function VoiceSettings() {
               </label>
             </fieldset>
             {prefs.speak && <VoicePicker />}
+            <OnDevice />
             <fieldset className="vc-field">
               <legend>Bharat Code Speech (optional)</legend>
               <label>
@@ -155,6 +158,86 @@ function VoicePicker() {
         <Button size="sm" variant="ghost" onClick={() => speak(sample, prefs.lang)}>
           <Volume2 aria-hidden="true" /> Try the voice
         </Button>
+      </div>
+    </fieldset>
+  )
+}
+
+/** Guru on this device (docs/voice/BLUEPRINT.md §4.6): download once, answer here, private. */
+const size = (mb: number) => (mb >= 1000 ? `${(mb / 1000).toFixed(1)} GB` : `${mb} MB`)
+
+function OnDevice() {
+  const { user } = useAuth()
+  const [prefs, setPrefs] = useVoicePrefs(user?.username)
+  const brain = useBrain()
+  const [tier, setTier] = useState<Tier | null | undefined>(undefined)
+  const [info, setInfo] = useState<DeviceInfo | null>(null)
+  const look = async () => {
+    const d = await deviceInfo()
+    setInfo(d)
+    setTier(pickTier(d))
+  }
+  useEffect(() => {
+    let live = true
+    void deviceInfo().then((d) => {
+      if (!live) return
+      setInfo(d)
+      setTier(pickTier(d))
+    })
+    return () => {
+      live = false
+    }
+  }, [])
+  const busy = brain.status === 'loading' || brain.status === 'testing'
+  const start = async () => {
+    setPrefs({ brain: true })
+    await startBrain()
+  }
+  const remove = async () => {
+    await removeBrain()
+    setPrefs({ brain: false })
+    await look()
+  }
+  const line =
+    brain.status === 'loading'
+      ? `Downloading ${brain.tier?.name ?? 'Guru'}… ${Math.round(brain.progress * 100)}%`
+      : brain.status === 'testing'
+        ? 'Checking its speed on this device…'
+        : brain.status === 'ready'
+          ? `${brain.tier?.name} is answering on this device (about ${Math.max(1, Math.round(brain.speed * 0.75))} words a second).`
+          : brain.status === 'failed' || brain.status === 'unsupported'
+            ? brain.why
+            : prefs.brain
+              ? `${tier?.name ?? 'Guru'} is downloaded; it starts with your first question.`
+              : tier === null && info
+                ? unsupportedWhy(info)
+                : ''
+  return (
+    <fieldset className="vc-field">
+      <legend>Guru on this device</legend>
+      <p className="vc-note">
+        Answers your questions on this device: private, free, and it keeps working on a weak connection. Questions you haven’t solved yet still go to the server, so hints stay fair and the
+        answer never reaches your device.{tier ? ` This device can run ${tier.name}, built on Qwen3.5 (Apache licence): a one-time download of about ${size(info ? downloadMb(tier, info) : tier.mb)} (Wi-Fi recommended).` : ''}
+      </p>
+      <div className="vc-row">
+        {!prefs.brain && tier && (
+          <Button size="sm" variant="secondary" onClick={() => void start()} loading={busy}>
+            Download {tier.name}
+          </Button>
+        )}
+        {prefs.brain && brain.status !== 'ready' && !busy && brain.status !== 'failed' && brain.status !== 'unsupported' && (
+          <Button size="sm" variant="secondary" onClick={() => void startBrain()}>
+            Start now
+          </Button>
+        )}
+        {prefs.brain && (
+          <Button size="sm" variant="ghost" onClick={() => void remove()} disabled={busy}>
+            Remove from this device
+          </Button>
+        )}
+        <span className="vc-note" aria-live="polite">
+          {line}
+        </span>
       </div>
     </fieldset>
   )

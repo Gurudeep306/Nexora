@@ -249,10 +249,12 @@ function firstSentences(s, n = 3) {
 }
 
 /**
- * One Guru turn. Returns { say, step, source }.
- * page: the AgentPage the client reports; hintsGiven: hints already given on this item.
+ * Everything before the model: the rules (off-topic, test running), the page
+ * and verified material, the hint step and the messages. Returns
+ * { kind: "say", say, step, source } for a reply that needs no model, or
+ * { kind: "ask", messages, step, unsolved, … } for one that does.
  */
-async function askGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN", teacher = "", talk = false, history = [] }) {
+async function planGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN", teacher = "", talk = false, history = [] }) {
   const persona = personaFor(teacher);
   const username = user?.username || "";
   const question = String(text || "").trim().slice(0, 1200);
@@ -260,13 +262,13 @@ async function askGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN", 
   const hinglish = lang !== "hi-IN";
 
   if (offTopic(question)) {
-    return { say: hinglish ? `Main sirf CS aur GATE mein help ${g(persona, "karta", "karti")} hoon. Chalo, kahan the hum?` : `मैं सिर्फ़ CS और GATE में मदद ${g(persona, "करता", "करती")} हूँ। चलो, पढ़ाई जारी रखें?`, step: 0, source: "rule" };
+    return { kind: "say", say: hinglish ? `Main sirf CS aur GATE mein help ${g(persona, "karta", "karti")} hoon. Chalo, kahan the hum?` : `मैं सिर्फ़ CS और GATE में मदद ${g(persona, "करता", "करती")} हूँ। चलो, पढ़ाई जारी रखें?`, step: 0, source: "rule" };
   }
 
   const ctx = await runAs(username, () => agent.pageContext(page));
   const p = ctx.page;
   if (p.examActive) {
-    return { say: hinglish ? "Test chal raha hai — abhi hint nahi. Test ke baad saath mein dekhenge." : "टेस्ट चल रहा है — अभी हिंट नहीं। टेस्ट के बाद साथ में देखेंगे।", step: 0, source: "rule" };
+    return { kind: "say", say: hinglish ? "Test chal raha hai — abhi hint nahi. Test ke baad saath mein dekhenge." : "टेस्ट चल रहा है — अभी हिंट नहीं। टेस्ट के बाद साथ में देखेंगे।", step: 0, source: "rule" };
   }
 
   // Verified material: the GATE question's key and solution when one is on screen.
@@ -290,6 +292,26 @@ async function askGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN", 
   const step = unsolved ? ladderStep({ attempted: false, hintsGiven: stuckRe.test(question) || wantsSolution ? hintsGiven : Math.max(0, hintsGiven - 1), wantsSolution }) : wantsSolution ? 6 : 0;
 
   const messages = buildMessages({ pageText: ctx.text, verified, step, examActive: false, lang, text: question, unsolved, persona, talk, history });
+  return { kind: "ask", messages, step, unsolved, answerKey, options, verified, hasTask, hinglish, persona, username };
+}
+
+/**
+ * Can this turn be answered on the student's own device? Only when nothing
+ * in it must stay hidden: no unsolved question or problem (its key and
+ * solution never leave the server, and the Leak Guard runs here).
+ */
+function localAllowed(plan) {
+  return plan.kind === "ask" && !plan.unsolved;
+}
+
+/**
+ * One Guru turn. Returns { say, step, source }.
+ * page: the AgentPage the client reports; hintsGiven: hints already given on this item.
+ */
+async function askGuru(args) {
+  const plan = await planGuru(args);
+  if (plan.kind === "say") return { say: plan.say, step: plan.step, source: plan.source };
+  const { messages, step, unsolved, answerKey, options, verified, hasTask, hinglish, persona, username } = plan;
   const tries = chain();
   let lastErr = null;
   for (const t of tries) {
@@ -332,4 +354,4 @@ async function askGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN", 
   return { say: `${base} ${hasTask ? (hinglish ? "Tab tak question ko chhote examples pe try karo." : "तब तक छोटे उदाहरणों पर कोशिश करो।") : ""}`.trim(), step, source: "none" };
 }
 
-module.exports = { askGuru, leaks, ladderStep, buildMessages, freeTargets, offTopic, spoken, chain, personaFor, cleanHistory, FREE_KINDS };
+module.exports = { askGuru, planGuru, localAllowed, leaks, ladderStep, buildMessages, freeTargets, offTopic, spoken, chain, personaFor, cleanHistory, FREE_KINDS };

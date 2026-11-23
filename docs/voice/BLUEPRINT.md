@@ -266,6 +266,35 @@ of live replies in "my voice" can be tested.
   files, say they were modified, don't use the Qwen name for the product
   ("Guru S/M/L, built on Qwen3.5").
 
+**As built (on-device runtime, base models, 2026-11-23, #247):**
+`client/src/voice/brain/` — `tiers.ts` (the rules, tested in
+`tests/voice-brain.test.js`), `brain.ts` (download, worker, speed test, idle
+unload, crash guard), `worker.ts` (transformers.js 4.3.2 from jsDelivr, the
+model from Hugging Face, kept in the browser cache), `spoken.ts`.
+- Models: the official ONNX exports — S `onnx-community/Qwen3.5-0.8B-Text-ONNX`
+  (470 MB fp16 build, 550 MB plain), M `Qwen3.5-2B-ONNX-OPT` (1.4 GB),
+  L `Qwen3.5-4B-ONNX-OPT` (2.8 GB). The 2B/4B exports also hold a picture
+  encoder; the text-generation pipeline loads only the text parts.
+- **A GPU is required.** Measured here: WebAssembly lacks the 4-bit word-table
+  operation (`GatherBlockQuantized`), and with a half-precision word table it
+  ran 0.8B at about a quarter of a token a second (one thread: the site isn't
+  cross-origin isolated). So: WebGPU with fp16 → S/M/L in `q4f16`; WebGPU
+  without fp16 → S only, plain `q4`; no WebGPU, iPhone/iPad, or under 4 GB →
+  the server. The plain 4-bit S was checked loading and answering correctly
+  on a software GPU; real GPUs were not available to measure speed, so the
+  speed test decides on each device.
+- Speed test: 32 tokens right after loading, timed from the first token (GPU
+  warm-up left out); below the tier's floor (5–6 tokens/s) or no answer in
+  30 s → the tier is marked failed and the next one down is tried next time.
+- **The answer key never reaches a device.** The browser asks
+  `POST /api/voice/guru/plan`; the server builds the turn (`planGuru` in
+  `src/voice/guru.js`) and hands it over only when `localAllowed` (not an
+  unsolved question or problem, not Explain-back, no test running). Otherwise
+  the server answers as before. Any failure on the device falls back to the
+  server.
+- Opt-in: Settings → Voice → Guru on this device (download only after the
+  student presses it; "Remove from this device" deletes the cache).
+
 ### 4.7 Ears (speech to text)
 
 | Need | Choice |
