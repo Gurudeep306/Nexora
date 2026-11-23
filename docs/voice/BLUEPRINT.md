@@ -266,7 +266,7 @@ of live replies in "my voice" can be tested.
   files, say they were modified, don't use the Qwen name for the product
   ("Guru S/M/L, built on Qwen3.5").
 
-**As built (on-device runtime, base models, 2026-11-23, this PR):**
+**As built (on-device runtime, base models, 2026-11-23, #247):**
 `client/src/voice/brain/` — `tiers.ts` (the rules, tested in
 `tests/voice-brain.test.js`), `brain.ts` (download, worker, speed test, idle
 unload, crash guard), `worker.ts` (transformers.js 4.3.2 from jsDelivr, the
