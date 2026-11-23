@@ -67,7 +67,7 @@ Live site last deployed at `6c04b8fe` (PR #226).
 
 | PR | What |
 |---|---|
-| (this PR) | **Teacher whiteboard (T3)**: "explain X on the whiteboard" / "board pe X samjhao" / Board button: a free model writes 3–6 steps in a small checked drawing language (text, box, circle, arrow, array with pointers); drawn stroke by stroke while the teacher points and explains; Leak Guard on everything; voice controls (aage, ruko, phir se bolo, board band karo). |
+| #245 | **Teacher whiteboard (T3)**: "explain X on the whiteboard" / "board pe X samjhao" / Board button: a free model writes 3–6 steps in a small checked drawing language (text, box, circle, arrow, array with pointers); drawn stroke by stroke while the teacher points and explains; Leak Guard on everything; voice controls (aage, ruko, phir se bolo, board band karo). |
 | #244 | **Teacher guide (T2)**: "point at Run", "click Run" / "Run dabao" (never presses submit, delete, sign out, reset…), "point at line 12" in the code editor, "what's on your right", "give me a tour" (the page's Explore line, then up to four stops). Finds things by their visible names on any page (`teacher/guide.ts`, `findTarget.ts`). |
 | #243 | **Lifelike teacher**: face and hands follow the words (smile, thumbs up, namaste, shrug, point; calm for a worried student), a nod when the student finishes, an idle glance at the pointer (`teacher/expressions.ts`). |
 | #242 | **Conversation mode**: talk to the teacher hands-free (Talk button or "let's talk"): the mic reopens after each reply, Guru answers as the chosen teacher (name, gender-correct Hindi) remembering the last 8 turns, warm and short, small talk allowed then back to study; listening / thinking cues, hands while speaking; "bye" or two quiet turns end it. |
