@@ -18,6 +18,7 @@ import { API_BASE } from '@/lib/api'
 import { getVoicePrefs } from './prefs'
 import { speechChunks, splitSentences } from './sentences'
 import { bestVoice } from './deviceVoice'
+import { levelUp, pickVoice } from './voices'
 import { teacherById } from './teacher/teachers'
 
 export { splitSentences }
@@ -188,8 +189,6 @@ async function naturalClip(text: string, lang: string, voice: string, signal: Ab
    the server (/api/voice/phonetic), Hindi. */
 
 const HEADTTS = '/headtts/modules/headtts.mjs'
-/** Kokoro's Indian voices (the same four the voice server uses). */
-const OWN_VOICE_IDS = ['hf_alpha', 'hf_beta', 'hm_omega', 'hm_psi']
 const TRANSFORMERS = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.0.0/dist/transformers.min.js'
 interface HeadTtsAudio {
   audio: AudioBuffer
@@ -207,17 +206,23 @@ interface HeadTtsLike {
 }
 let kokoro: Promise<HeadTtsLike> | null = null
 
-/** The one-time download, depending on the device: 163 MB with a GPU that can run it, else 92 MB. */
-export const KOKORO_MB = '90–165'
+/** The one-time download, depending on the device: 163 MB (GPU with half precision), 326 MB (other GPUs: full precision, the clearest), 92 MB (no GPU). */
+export const KOKORO_MB = '90–330'
 
-/** Can this device's GPU run the half-precision model? (Many can't: then WebAssembly, which works everywhere.) */
-async function gpuHalf(): Promise<boolean> {
+/**
+ * What this device's GPU can run: 'half' (half precision), 'full' (a GPU
+ * without half precision: the full model, the clearest), or null (no WebGPU).
+ * Before, a GPU without half precision fell back to the small compressed
+ * model on the processor, which sounds muffled.
+ */
+async function gpuKind(): Promise<'half' | 'full' | null> {
   try {
     const gpu = (navigator as unknown as { gpu?: { requestAdapter(): Promise<{ features: Set<string> } | null> } }).gpu
     const adapter = gpu ? await gpu.requestAdapter() : null
-    return !!adapter?.features.has('shader-f16')
+    if (!adapter) return null
+    return adapter.features.has('shader-f16') ? 'half' : 'full'
   } catch {
-    return false
+    return null
   }
 }
 
@@ -229,10 +234,11 @@ export function loadKokoro(onProgress?: (p: number) => void): Promise<HeadTtsLik
   if (!kokoro) {
     kokoro = (async () => {
       const mod = (await import(/* @vite-ignore */ HEADTTS)) as { HeadTTS: new (o: Record<string, unknown>) => HeadTtsLike }
+      const gpu = await gpuKind()
       const tts = new mod.HeadTTS({
-        endpoints: (await gpuHalf()) ? ['webgpu', 'wasm'] : ['wasm'],
+        endpoints: gpu ? ['webgpu', 'wasm'] : ['wasm'],
         transformersModule: TRANSFORMERS,
-        dtypeWebgpu: 'fp16',
+        dtypeWebgpu: gpu === 'half' ? 'fp16' : 'fp32',
         dtypeWasm: 'q8',
         languages: ['en-us'],
         defaultVoice: 'hf_alpha',
@@ -295,7 +301,10 @@ async function kokoroClip(text: string, voice: string): Promise<Clip | null> {
     const first = parts[0]
     if (!first?.audio) return null
     const timing = { words: first.words, wtimes: first.wtimes, wdurations: first.wdurations, visemes: first.visemes, vtimes: first.vtimes, vdurations: first.vdurations }
-    return { blob: wavBlob(first.audio.getChannelData(0), first.audio.sampleRate), timing }
+    // Clearly audible: the voice comes out quiet; bring it to speaking level without clipping.
+    const samples = Float32Array.from(first.audio.getChannelData(0))
+    levelUp(samples)
+    return { blob: wavBlob(samples, first.audio.sampleRate), timing }
   } catch {
     return null
   }
@@ -405,8 +414,9 @@ export function speak(text: string, lang: string) {
     const picked = getVoicePrefs().voice
     const known = status?.voices[lang]?.some((v) => v.id === picked)
     const voice = (known ? picked : '') || teacherVoice(lang, status?.engine ?? null)
-    const kokoroVoice = OWN_VOICE_IDS.includes(picked) ? picked : (teacherById(getVoicePrefs().teacher)?.voice ?? 'hf_alpha')
-    const make = (s: string) => (engine === 'natural' ? naturalClip(s, lang, voice, ctrl.signal) : kokoroClip(s, kokoroVoice))
+    // On the device: the voice the student chose (voices.ts), else the clearest one for the teacher; Hindi in a Hindi voice.
+    const male = teacherById(getVoicePrefs().teacher)?.body === 'M'
+    const make = (s: string) => (engine === 'natural' ? naturalClip(s, lang, voice, ctrl.signal) : kokoroClip(s, pickVoice(getVoicePrefs().kokoroVoice, male, s)))
     const name = engine === 'kokoro' ? 'Kokoro' : voiceName(status, voice, lang)
     let next = make(parts[0])
     for (let i = 0; i < parts.length; i++) {
@@ -426,6 +436,21 @@ export function speak(text: string, lang: string) {
       announce(null)
     }
   })()
+}
+
+/** Say a sample in one on-device voice (the voice picker's play button). Needs the voices downloaded (prefs.kokoro). */
+export async function previewVoice(voiceId: string, text: string, lang: string): Promise<boolean> {
+  stopSpeaking()
+  const my = ++session
+  const clip = await kokoroClip(text, voiceId)
+  if (!clip || my !== session) return false
+  set({ on: true, engine: 'kokoro', name: 'Kokoro' })
+  await play(clip, my, text, lang)
+  if (my === session) {
+    set(IDLE)
+    announce(null)
+  }
+  return true
 }
 
 /**

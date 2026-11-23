@@ -275,6 +275,22 @@ with her lips. The causes, and what changed:
   - Guru training examples use many names, so a model trained on them
     answers to any name.
 
+### 3.2.6 A catalogue of voices, clearer and louder (2026-11-24, this PR)
+
+- **Voices** (`voice/voices.ts`): twelve of Kokoro's voices (Apache-2.0) on
+  the student's device, women and men, American, British and Indian. Each
+  has a name, a few words on how it sounds, and a play button (Settings →
+  Virtual teacher → Voice).
+  - By default the teacher uses the clearest voice for their gender. Kokoro
+    grades Heart (woman) A; the Indian voices are graded C (little training
+    data), which was part of why the voice sounded unclear.
+  - Hindi always goes to a Hindi voice of the same gender.
+- **Clearer:** a GPU without half precision used to fall back to the small
+  compressed model on the processor, which sounds muffled. It now runs the
+  full model on the GPU. Only devices with no WebGPU use the small model.
+- **Louder:** each clip is brought to speaking level (`levelUp`: RMS 0.1,
+  peaks never above 0.95).
+
 ### 3.3 Honest limits
 
 - **No walking legs yet.** It glides (turned sideways) rather than taking
