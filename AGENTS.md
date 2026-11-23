@@ -117,6 +117,10 @@ node client/scripts/check-learn.mjs <topic>        # content integrity
 
 Before pushing, run the tests, the typecheck and the build for the parts you
 changed.
+After changing pages or the page kit, run the site crawl
+(`node scripts/site/crawl.cjs`, against a local server signed in as the owner):
+it opens every linked page and reports page errors, failed API calls, axe
+violations and sideways scroll, then one page of each kind in dark and at 360 px.
 
 Server tests that start their own server get a free port from
 `tests/helpers/free-port.js` (`await freePort()`); never pick a random port

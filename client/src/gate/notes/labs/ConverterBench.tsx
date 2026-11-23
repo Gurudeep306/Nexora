@@ -463,7 +463,7 @@ function DacTool() {
             const bit = n - 1 - i
             const on = (code >> bit) & 1
             return (
-              <button key={bit} type="button" className={cn('lab-toggle', on && 'is-on')} aria-pressed={!!on} aria-label={`bit ${bit}`} onClick={() => flip(bit)}>
+              <button key={bit} type="button" className={cn('lab-toggle', on && 'is-on')} aria-pressed={!!on} onClick={() => flip(bit)}>
                 b{bit}={on}
               </button>
             )

@@ -18,7 +18,7 @@ import { useNotesPrefs } from '@/gate/notes/prefs'
 import type { LessonPayload } from '@/gate/notes/types'
 import { ReadAloud } from '@/components/reader/ReadAloud'
 import { MasteryRing, CrossChips } from './NodePanel'
-import { ExamInsight, Flashcards, MasteryMeter, NodeNotes, TestOut, TimeChip, UnlockPath, type NodeInsight } from './NodeExtras'
+import { ExamInsight, ExtrasHeadingLevel, Flashcards, MasteryMeter, NodeNotes, TestOut, TimeChip, UnlockPath, type NodeInsight } from './NodeExtras'
 import { confidence, fmtMinutes, unlockPath } from './insights'
 import { readReviewList, toggleReview, type NodeContentData } from './NodeContent'
 import type { CrossLink, NexusNode } from './types'
@@ -436,10 +436,12 @@ export function CourseLesson(p: LessonProps) {
   )
 
   return (
+    // Section headings here are h2 (the lesson title is the h1); in the Nexus panel they stay h3.
+    <ExtrasHeadingLevel.Provider value="h2">
     <div className="nx-bloom">
       <PathRail p={p} stops={stops} activeStop={active} readPct={embedNotes ? readPct : 0} fresh={fresh} />
 
-      <motion.main
+      <motion.article
         className="min-w-0"
         initial={reduce ? false : { opacity: 0, y: 14, scale: 0.985 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -623,7 +625,7 @@ export function CourseLesson(p: LessonProps) {
           </button>
           {metaOpen && <div className="pb-4">{meta}</div>}
         </section>
-      </motion.main>
+      </motion.article>
 
       <aside className="nx-meta" aria-label="Tools for this node">
         {meta}
@@ -632,5 +634,6 @@ export function CourseLesson(p: LessonProps) {
         </Link>
       </aside>
     </div>
+    </ExtrasHeadingLevel.Provider>
   )
 }
