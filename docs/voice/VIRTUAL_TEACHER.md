@@ -308,6 +308,12 @@ the teacher to speak in, with no cost at all.
   - Measured on a 4-core processor without a GPU (2026-11-24): 7× slower than
     real time (5.4 s of speech in 47 s). That is too slow for a server
     without a GPU, so this runs on the student's own GPU.
+  - In a real browser (headless Chromium on the processor, WebAssembly,
+    2026-11-24), the whole pipeline worked: the model loaded in 104 s, the
+    voice print was made, and a 3.5 s sentence was spoken in 250 s. The
+    browser's processor path is far too slow, so the feature needs WebGPU.
+    Its speed on a real GPU is measured on the student's device the first
+    time.
   - The first sentence is timed. Below 0.8× real time she keeps her usual
     voice and says why.
 - **Privacy and consent:**
