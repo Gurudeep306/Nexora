@@ -22,9 +22,10 @@ import { ArrowLeftRight, Armchair, EyeOff, MessageCircle, PersonStanding, Square
 import type { TalkingHead } from '@met4citizen/talkinghead'
 import { getVoicePrefs, type TeacherSize } from '../prefs'
 import { onSentence, stopSpeaking, useSpeaking } from '../speak'
-import { endTalk, startTalk, useTalk } from '../talk'
+import { endTalk, getTalk, startTalk, useTalk } from '../talk'
 import { toRoman, wordTimes } from './lipsync'
-import { onTeacherMove, setTeacher, useTeacher, type Move, type Side } from './store'
+import { gestureFor, moodFor, soundsWorried } from './expressions'
+import { getTeacher, onTeacherMove, setTeacher, useTeacher, type Move, type Side } from './store'
 import { teacherModel, teacherPortrait, type TeacherInfo } from './teachers'
 import './teacher.css'
 
@@ -54,11 +55,17 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
   const headRef = useRef<TalkingHead | null>(null)
   const turnRaf = useRef(0)
   const lastX = useRef<number | null>(null)
+  const moodTimer = useRef(0)
+  const lastHeard = useRef('')
   /** Was the teacher sitting (so "stand" has something to do)? */
   const standUp = useRef(false)
   const st = useTeacher()
   const speaking = useSpeaking()
   const talk = useTalk()
+  const speakingNowRef = useRef(false)
+  useEffect(() => {
+    speakingNowRef.current = speaking.on
+  }, [speaking.on])
   const [caption, setCaption] = useState<string | null>(null)
   const [x, setX] = useState<number | null>(null)
   const [attempt, setAttempt] = useState(0)
@@ -168,10 +175,17 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         if (!s) {
           setCaption(null)
           head?.stopSpeaking()
+          // Back to a calm face a moment after speaking.
+          window.clearTimeout(moodTimer.current)
+          moodTimer.current = window.setTimeout(() => headRef.current?.setMood('neutral'), 1800)
           return
         }
         setCaption(s.text)
         if (!head) return
+        // Face and hands follow the words: a smile for greetings and praise, a thumbs up, a shrug…
+        window.clearTimeout(moodTimer.current)
+        head.setMood(moodFor(s.text))
+        const g = reduced() ? null : gestureFor(s.text)
         const exact = s.timing
         const hasShapes = !!exact?.visemes?.length && exact.visemes.length === exact.vtimes?.length && exact.visemes.length === exact.vdurations?.length
         const hasWords = !!exact?.words?.length && exact.words.length === exact.wtimes?.length && exact.words.length === exact.wdurations?.length
@@ -181,8 +195,9 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         if (ctx.state === 'suspended') void ctx.resume()
         const silent = ctx.createBuffer(1, Math.max(1, Math.round((ctx.sampleRate * s.ms) / 1000)), ctx.sampleRate)
         head.stopSpeaking()
-        // Hands move a little while talking, like a person explaining (only when standing).
-        if (!reduced()) head.speakWithHands(0, 0.6)
+        // Hands: a gesture that fits the sentence, else they move a little while talking (only standing).
+        if (g && !getTeacher().sitting) head.playGesture(g, 2.2, g === 'index')
+        else if (!reduced()) head.speakWithHands(0, 0.6)
         // With exact mouth shapes TalkingHead uses them instead of guessing from the words.
         head.speakAudio({ audio: silent, ...t, ...(hasShapes ? { visemes: exact!.visemes!, vtimes: exact!.vtimes!, vdurations: exact!.vdurations! } : {}) }, { lipsyncLang: 'en' })
       }),
@@ -205,19 +220,53 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         }
         const g = { wave: 'handup', namaste: 'namaste', thumbs: 'thumbup', point: 'index' }[m]
         head.playGesture(g, m === 'namaste' ? 3 : 2.5)
+        if (m !== 'point') {
+          head.setMood('happy')
+          window.clearTimeout(moodTimer.current)
+          moodTimer.current = window.setTimeout(() => headRef.current?.setMood('neutral'), 3200)
+        }
       }),
     [],
   )
 
-  /* Conversation cues: look at the student while they speak, glance away while thinking. */
+  /* When nothing else is going on, now and then glance at where the student is pointing, like a person beside them. */
+  useEffect(() => {
+    if (st.status !== 'ready') return
+    let last = 0
+    const onMove = (e: PointerEvent) => {
+      const head = headRef.current
+      const now = performance.now()
+      if (!head || now - last < 2500 || speakingNowRef.current || getTalk().status !== 'idle' || Math.random() > 0.35) return
+      last = now
+      head.lookAt(e.clientX, e.clientY, 900)
+    }
+    window.addEventListener('pointermove', onMove, { passive: true })
+    return () => window.removeEventListener('pointermove', onMove)
+  }, [st.status])
+
+  /* What the student last said, for the face (a worried student gets calm attention). */
+  useEffect(() => {
+    if (talk.hearing) lastHeard.current = talk.hearing
+  }, [talk.hearing])
+
+  /* Conversation cues: look at the student while they speak, nod, glance away while thinking. */
   useEffect(() => {
     const head = headRef.current
     if (!head || st.status !== 'ready' || !talk.on) return
-    if (talk.status === 'listening') head.lookAtCamera(4000)
-    else if (talk.status === 'thinking') {
+    if (talk.status === 'listening') {
+      head.lookAtCamera(4000)
+    } else if (talk.status === 'thinking') {
+      // A small nod ("got it"): a quick look down and back, then think.
+      const r0 = stage.current?.getBoundingClientRect()
+      if (r0 && !reduced()) {
+        head.lookAt(r0.left + r0.width / 2, r0.bottom + r0.height * 0.6, 260)
+        window.setTimeout(() => headRef.current?.lookAtCamera(300), 300)
+      }
+      // A worried student gets calm attention, not a smile.
+      if (soundsWorried(lastHeard.current)) head.setMood('neutral')
       // Up and to one side, as people do when they think.
       const r = stage.current?.getBoundingClientRect()
-      if (r) head.lookAt(r.left + r.width * (st.side === 'left' ? 0.9 : 0.1), r.top - r.height * 0.4, 1600)
+      if (r) window.setTimeout(() => headRef.current?.lookAt(r.left + r.width * (st.side === 'left' ? 0.9 : 0.1), r.top - r.height * 0.4, 1600), 650)
     }
   }, [talk.on, talk.status, st.status, st.side])
 
