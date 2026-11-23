@@ -291,7 +291,7 @@ with her lips. The causes, and what changed:
 - **Louder:** each clip is brought to speaking level (`levelUp`: RMS 0.1,
   peaks never above 0.95).
 
-### 3.2.7 A voice of your own, free and on the device (2026-11-24, this PR)
+### 3.2.7 A voice of your own, free and on the device (2026-11-24, #263)
 
 The owner asked for students to give any voice (30 seconds to a minute) for
 the teacher to speak in, with no cost at all.
