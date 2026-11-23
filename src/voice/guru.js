@@ -16,6 +16,7 @@ const { AiError, createGroqClient, models } = require("../ai/groq");
 const settings = require("../ai/settings");
 const agent = require("../ai/agent");
 const { runAs } = require("../context");
+const { numbersToDigits } = require("./numwords");
 
 /* ── pure parts (tests/voice-guru.test.js) ── */
 
@@ -66,6 +67,60 @@ const stuckRe = /\b(stuck|hint|help|samajh nahi|nahi samjha|confused|kaise karu|
  * answerKey: the GATE key ("B", "A;C", "3.14", "2.5:2.7") or null.
  * referenceCode: a reference solution, or null.
  */
+/* ── The Leak Guard reads a reply the way a student would hear it ── */
+
+/** Words that say "this is the answer", in English, Hinglish and Hindi. */
+const ANS = "(answer|answers|ans|correct|right|sahi|sahee|jawab|jawaab|uttar|theek|thik|उत्तर|जवाब|सही|ठीक|✓|✔|☑)";
+/** Words that give a result ("comes to 42", "42 aayega"). */
+const RESULT = "(result|value|equals|equal to|comes|comes to|come out|get|gets|gives|give|final|total|aayega|aaega|aata|aati|hoga|hogi|nikalta|nikalega|banta|banega|आएगा|आता|होगा|निकलता|बनता)";
+
+const OPTION_DEV = { "ए": "A", "बी": "B", "सी": "C", "डी": "D" };
+
+/**
+ * The reply as heard: option letters marked ‹B› ("B", "(b)", "option b",
+ * "बी"; an English "a" stays an article), lower case, numbers in words as
+ * digits ("forty-two", "बयालीस", "zero point five" → 42, 42, 0.5).
+ */
+function answerForm(text) {
+  let s = String(text || "").normalize("NFC");
+  s = s.replace(/[*_`#>]/g, " ");
+  // Option letters, before lower-casing: "(B)", "option b", a capital B/C/D on its own, "बी".
+  s = s.replace(/\(([A-Da-d])\)/g, (_, l) => ` ‹${l.toUpperCase()}› `);
+  s = s.replace(/\b(option|choice|vikalp)\s+([A-Da-d])\b/gi, (_, w, l) => `${w} ‹${l.toUpperCase()}›`);
+  // A whole word only: "नवासी" (89) ends in सी but isn't option C, so no letter or vowel sign may come before.
+  s = s.replace(/(^|[^\p{L}\p{M}])(ए|बी|सी|डी)(?=$|[^\p{L}\p{M}])/gu, (_, p, l) => `${p}‹${OPTION_DEV[l]}›`);
+  s = s.replace(/(^|[^\p{L}‹])([B-D])(?=$|[^\p{L}›'’])/gu, (_, p, l) => `${p}‹${l}›`);
+  // A capital A is the option unless it starts a sentence as the article ("A stack is…").
+  s = s.replace(/(^|[^\p{L}‹])A(?=$|[^\p{L}›'’])/gu, (m, p, off, all) => {
+    const before = all.slice(0, off + p.length).trimEnd();
+    const after = all.slice(off + p.length + 1);
+    const sentenceStart = before === "" || /[.!?।:\n]$/.test(before);
+    const article = sentenceStart && /^\s+(?!(is|are|hai|wala|option|sahi|correct|right|ka|ki|ke|hi|✓)\b)[a-z]/.test(after);
+    return article ? m : `${p}‹A›`;
+  });
+  s = s.replace(/\b([b-d])\b(?![\p{L}'’›])/gu, (m, l, off, all) => (/[‹]$/.test(all.slice(0, off)) ? m : `‹${l.toUpperCase()}›`));
+  s = s.toLowerCase().replace(/‹([a-d])›/g, (_, l) => `‹${l.toUpperCase()}›`);
+  // Numbers in words → digits ("forty-two", "bayalis", "बयालीस"; "point five" → 0.5).
+  s = s.replace(/(\p{L})-(\p{L})/gu, "$1 $2");
+  s = s.replace(/(^|\s)(point|dashamlav|दशमलव)\s+(?=\p{L})/gu, "$1zero $2 ");
+  // Split off punctuation, but not the point or comma inside a number ("0.005", "1,024").
+  const words = s.replace(/(?<!\d)[.,]|[.,](?!\d)|[!?;:।()=]/g, " $& ").split(/\s+/).filter(Boolean);
+  return numbersToDigits(words).join(" ").replace(/(\d) \. (\d)/g, "$1.$2");
+}
+
+// After numbers become digits, "one half" reads "1 half".
+const FRACTION_WORDS = { half: 0.5, "1 half": 0.5, "a half": 0.5, "1 third": 1 / 3, "a third": 1 / 3, "2 thirds": 2 / 3, "1 fourth": 0.25, "a quarter": 0.25, "1 quarter": 0.25, "3 fourths": 0.75, "3 quarters": 0.75, aadha: 0.5, "आधा": 0.5 };
+
+/** Fractions in a heard reply: "1/2", "3 / 4", "one half" → { v, at, len }. */
+function fractions(said) {
+  const out = [];
+  for (const m of said.matchAll(/(-?\d+)\s*\/\s*(\d+)/g)) if (Number(m[2])) out.push({ v: Number(m[1]) / Number(m[2]), at: m.index ?? 0, len: m[0].length });
+  for (const [w, v] of Object.entries(FRACTION_WORDS)) {
+    for (const m of said.matchAll(new RegExp(`(^|[^\\p{L}])${w}(?=$|[^\\p{L}])`, "gu"))) out.push({ v, at: m.index ?? 0, len: m[0].length });
+  }
+  return out;
+}
+
 function leaks({ reply, answerKey, options = [], referenceCode = null, codeAllowed = false }) {
   const text = String(reply || "");
   if (!codeAllowed) {
@@ -82,48 +137,56 @@ function leaks({ reply, answerKey, options = [], referenceCode = null, codeAllow
     }
   }
   if (answerKey != null && String(answerKey).trim()) {
+    const said = answerForm(text);
     const keys = String(answerKey).split(/\s+or\s+/i).map((k) => k.trim()).filter(Boolean);
     for (const key of keys) {
-      // Option letters: "answer is B", "option (B) is correct", "B and D".
+      // Option letters: "answer is B", "सही उत्तर B है", "B hi sahi hai", "Ans: B", "it's option B" — but not "look at option B".
       const letters = key.split(/[;,]/).map((x) => x.trim().toUpperCase()).filter((x) => /^[A-D]$/.test(x));
       if (letters.length) {
-        const set = letters.join("");
-        // "answer is B", "B is correct", "pick B" — but not "look at option B".
+        const L = `‹[${letters.join("")}]›`;
         const res = [
-          new RegExp(`\\b(answer|correct|sahi|right)\\b[^.\\n]{0,30}\\(?\\b[${set}]\\b\\)?`, "i"),
-          new RegExp(`\\(?\\b[${set}]\\b\\)?[^.\\n]{0,25}\\b(is|are|hai)\\s+(the\\s+)?(correct|right|answer|sahi)`, "i"),
-          new RegExp(`\\b(choose|pick|mark|select|go with|chuno)\\s+(option\\s+)?\\(?[${set}]\\b`, "i"),
-          new RegExp(`\\(?\\b[${set}]\\b\\)?\\s+(option\\s+)?(is\\s+)?(sahi|correct|right)\\b`, "i"),
+          new RegExp(`${ANS}[^.\\n?]{0,30}${L}`, "u"),
+          new RegExp(`${L}[^.\\n?]{0,25}${ANS}`, "u"),
+          new RegExp(`(choose|pick|mark|select|go with|chuno|choose karo|le lo|lo)\\s+(option\\s+|विकल्प\\s+)?${L}`, "u"),
+          new RegExp(`(it's|it is|its|that's|that is|thats|yeh|ye|यह)\\s+(option\\s+|विकल्प\\s+)?${L}(?!\\s*(mein|में|says|kehta|mentions|ka|ki|ke|के|की|का))`, "u"),
+          new RegExp(`${L}\\s*(option\\s+)?(is the one|is the 1|wala hi|hi hai|ही है)`, "u"),
+          // "Hence (B)." / "इसलिए B" ends the working on the answer; "(B). That is the correct answer." names it a sentence later.
+          new RegExp(`(hence|therefore|thus|isliye|atah|इसलिए|अतः|अत:)\\s*,?\\s*(the answer is\\s+|option\\s+|विकल्प\\s+)?${L}`, "u"),
+          new RegExp(`${L}\\s*[.!।]\\s*(that|this|which|yahi|yeh|ye|यही|यह)\\s+(is\\s+|hai\\s+|है\\s+)?(the\\s+)?${ANS}`, "u"),
         ];
-        if (res.some((re) => re.test(text))) return { leak: true, why: "states the option" };
-        for (const L of letters) {
-          const opt = options.find((o) => String(o.l || o.label || "").toUpperCase() === L);
-          const optText = String(opt?.t || "").trim();
-          if (optText.length >= 6 && text.toLowerCase().includes(optText.toLowerCase()) && /\b(answer|correct|sahi|right)\b/i.test(text)) return { leak: true, why: "quotes the right option" };
+        if (res.some((re) => re.test(said))) return { leak: true, why: "states the option" };
+        for (const Lt of letters) {
+          const opt = options.find((o) => String(o.l || o.label || "").toUpperCase() === Lt);
+          const optText = String(opt?.t || "").trim().toLowerCase();
+          if (optText.length >= 6 && text.toLowerCase().includes(optText) && new RegExp(ANS, "u").test(said)) return { leak: true, why: "quotes the right option" };
         }
         continue;
       }
-      // Numerical answers: the value, or a range end, said outright.
-      const nums = key.split(/\s*(?:to|:|-)\s*/).map(Number).filter(Number.isFinite);
+      // Numerical answers: the value, or a range end, said outright — in digits or in words, any language.
+      const nums = key.split(/\s*(?:to|:|(?<=\d)-)\s*/).map(Number).filter(Number.isFinite);
+      const near = (i, len) => said.slice(Math.max(0, i - 40), i + len + 40);
+      const answerNear = (ctx) => new RegExp(`${ANS}|${RESULT}|=`, "u").test(ctx);
       // A range key ("2.5:2.7"): any value said inside it next to answer words.
       if (nums.length === 2) {
         const [lo, hi] = nums[0] <= nums[1] ? nums : [nums[1], nums[0]];
-        for (const m of text.matchAll(/-?\d+(?:\.\d+)?/g)) {
+        for (const m of said.matchAll(/-?\d+(?:\.\d+)?/g)) {
           const v = Number(m[0]);
-          const near = text.slice(Math.max(0, (m.index ?? 0) - 40), (m.index ?? 0) + 40);
-          if (v >= lo && v <= hi && /\b(answer|result|value|equals|comes out|sahi|final|is)\b|=/.test(near)) return { leak: true, why: "states a value in the key's range" };
+          if (v >= lo && v <= hi && answerNear(near(m.index ?? 0, m[0].length))) return { leak: true, why: "states a value in the key's range" };
         }
       }
       for (const n of nums) {
         const forms = [...new Set([String(n), n.toFixed(1), n.toFixed(2)].map((x) => x.replace(/\.0+$/, "")))];
         for (const f of forms) {
-          const at = new RegExp(`(^|[^\\d.])${f.replace(".", "\\.")}([^\\d]|$)`);
-          const m = text.match(at);
+          const at = new RegExp(`(^|[^\\d.])${f.replace("-", "\\-").replace(".", "\\.")}(?!\\d)(?!\\.0*[1-9])`);
+          const m = said.match(at);
           if (!m) continue;
           // Small whole numbers turn up in hints ("2 steps"): only flag them next to answer words.
           const small = Number.isInteger(n) && Math.abs(n) < 10;
-          const near = text.slice(Math.max(0, (m.index ?? 0) - 40), (m.index ?? 0) + 40);
-          if (!small || /\b(answer|result|value|equals|comes out|sahi|final)\b|=/.test(near)) return { leak: true, why: "states the value" };
+          if (!small || answerNear(near(m.index ?? 0, m[0].length))) return { leak: true, why: "states the value" };
+        }
+        // The same value as a fraction ("1/2", "one half") next to answer words.
+        for (const fr of fractions(said)) {
+          if (Math.abs(fr.v - n) <= Math.max(1e-9, Math.abs(n) * 0.005) && (answerNear(near(fr.at, fr.len)) || /\b(it is|it's|its|that is|that's)\s*$/.test(said.slice(0, fr.at + 1)))) return { leak: true, why: "states the value as a fraction" };
         }
       }
     }
@@ -354,4 +417,4 @@ async function askGuru(args) {
   return { say: `${base} ${hasTask ? (hinglish ? "Tab tak question ko chhote examples pe try karo." : "तब तक छोटे उदाहरणों पर कोशिश करो।") : ""}`.trim(), step, source: "none" };
 }
 
-module.exports = { askGuru, planGuru, localAllowed, leaks, ladderStep, buildMessages, freeTargets, offTopic, spoken, chain, personaFor, cleanHistory, FREE_KINDS };
+module.exports = { answerForm, askGuru, planGuru, localAllowed, leaks, ladderStep, buildMessages, freeTargets, offTopic, spoken, chain, personaFor, cleanHistory, FREE_KINDS };

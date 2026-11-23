@@ -142,7 +142,8 @@ const POINT = new Set(["point", "dashamlav", "dashmalav", "दशमलव", "�
 const AMBIGUOUS = new Set(["do", "sat", "char", "che", "ath", "oh", "das", "teen", "saath"]);
 const OPERATOR_WORDS = new Set(["plus", "minus", "times", "into", "by", "equals", "equal", "barabar", "se", "tak", "mod", "modulo", "than", "point", "multiplied", "divided", "upto", "till", "to"]);
 /* Words a number usually follows in code talk: "size do", "line teen", "index char". */
-const COUNT_WORDS = new Set(["size", "length", "len", "line", "index", "row", "column", "col", "position", "number", "no", "step", "level", "count", "capacity"]);
+// Also answer words: "jawab char hai" is 4.
+const COUNT_WORDS = new Set(["answer", "ans", "jawab", "jawaab", "uttar", "उत्तर", "जवाब", "size", "length", "len", "line", "index", "row", "column", "col", "position", "number", "no", "step", "level", "count", "capacity"]);
 
 const DEV_DIGITS = "०१२३४५६७८९";
 
