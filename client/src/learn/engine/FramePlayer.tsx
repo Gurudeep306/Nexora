@@ -79,7 +79,7 @@ export function CodeLines({ lines, hot, lang, layoutKey, label = 'Code' }: { lin
     el.scrollTo({ top: Math.max(0, row.offsetTop - el.clientHeight / 3), behavior: 'smooth' })
   }, [first, lang])
   return (
-    <div ref={box} tabIndex={0} role="region" aria-label={label} className="viz-code relative max-h-[360px] overflow-auto rounded-xl py-2 font-mono text-[12.5px] leading-[1.75]">
+    <div ref={box} tabIndex={0} role="group" aria-label={label} className="viz-code relative max-h-[360px] overflow-auto rounded-xl py-2 font-mono text-[12.5px] leading-[1.75]">
       {lines.map((line, i) => (
         <div key={i} data-line={i} className={cn('viz-code-line relative flex pr-3', hot.has(i) && 'viz-code-hot', hot.size > 0 && !hot.has(i) && 'viz-code-cold')}>
           {hot.has(i) &&
@@ -435,8 +435,8 @@ export function FramePlayer({ id, kicker = 'Visualizer', title, blurb, frames, e
       <div className={cn('grid gap-0', focus ? 'xl:grid-cols-[minmax(0,1.55fr)_minmax(360px,1fr)]' : 'lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]')}>
         <div className="flex min-w-0 flex-col border-border lg:border-r">
           <StageContext.Provider value={stage}>
-            {/* Wide animations scroll sideways, so the stage is a named region the keyboard can reach. */}
-            <div ref={stageRef} tabIndex={0} role="region" aria-label={`Animation: ${title}`} className={cn('viz-stage flex flex-1 flex-col justify-center gap-7 overflow-x-auto px-3 py-5 sm:px-4 sm:py-7', focus ? 'min-h-[48vh]' : 'min-h-[190px] sm:min-h-[250px]')}>
+            {/* Wide animations scroll sideways, so the stage is a named group the keyboard can reach (a group, not a landmark: a lesson may show the same animation twice). */}
+            <div ref={stageRef} tabIndex={0} role="group" aria-label={`Animation: ${title}`} className={cn('viz-stage flex flex-1 flex-col justify-center gap-7 overflow-x-auto px-3 py-5 sm:px-4 sm:py-7', focus ? 'min-h-[48vh]' : 'min-h-[190px] sm:min-h-[250px]')}>
               {error ? (
                 <p className="text-center text-[13px] text-state-error">{error}</p>
               ) : onStage.length ? (

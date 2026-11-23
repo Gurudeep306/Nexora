@@ -126,14 +126,17 @@ export default function SocialPage() {
           {tab === 'messages' && <MessageTools />}
         </header>
         {/* Phone: the sections as a row of chips under the title. */}
-        <div className="soc-chips" role="tablist" aria-label="Community sections">
-          {TABS.filter((t) => tabOn(t.id)).map((t) => (
-            <button key={t.id} type="button" role="tab" aria-selected={t.id === current.id} className={cn('soc-chip', t.id === current.id && 'is-on')} onClick={() => selectTab(t.id)}>
-              {t.icon}
-              {t.label}
-              {t.badge !== undefined && <span className="soc-badge">{t.badge}</span>}
-            </button>
-          ))}
+        {/* Only the sections are tabs; Live is a link beside them (a tablist may hold tabs only). */}
+        <div className="soc-chips">
+          <div role="tablist" aria-label="Community sections" className="contents">
+            {TABS.filter((t) => tabOn(t.id)).map((t) => (
+              <button key={t.id} type="button" role="tab" aria-selected={t.id === current.id} className={cn('soc-chip', t.id === current.id && 'is-on')} onClick={() => selectTab(t.id)}>
+                {t.icon}
+                {t.label}
+                {t.badge !== undefined && <span className="soc-badge">{t.badge}</span>}
+              </button>
+            ))}
+          </div>
           <Link to="/live" className="soc-chip">
             <Radio className="size-3.5" aria-hidden="true" /> Live
           </Link>

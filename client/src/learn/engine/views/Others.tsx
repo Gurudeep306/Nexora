@@ -80,7 +80,7 @@ export function GridView({ s }: { s: GridState }) {
   useEffect(() => {
     const el = box.current
     if (!el) return
-    const check = () => setOverflows(el.scrollWidth > el.clientWidth + 1)
+    const check = () => setOverflows(el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1)
     check()
     const ro = new ResizeObserver(check)
     ro.observe(el)
