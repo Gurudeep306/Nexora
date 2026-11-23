@@ -18,11 +18,12 @@
   - Reduced motion: it appears in its new place instead of gliding.
 */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { ArrowLeftRight, Armchair, EyeOff, MessageCircle, PersonStanding, Square } from 'lucide-react'
+import { ArrowLeftRight, Armchair, EyeOff, MessageCircle, PenLine, PersonStanding, Square } from 'lucide-react'
 import type { TalkingHead } from '@met4citizen/talkinghead'
 import { getVoicePrefs, type TeacherSize } from '../prefs'
 import { onSentence, stopSpeaking, useSpeaking } from '../speak'
 import { endTalk, getTalk, startTalk, useTalk } from '../talk'
+import { closeBoard, openBoard, pageTopic, useBoard } from './boardStore'
 import { toRoman, wordTimes } from './lipsync'
 import { gestureFor, moodFor, soundsWorried } from './expressions'
 import { getTeacher, onTeacherMove, onTeacherPoint, setTeacher, useTeacher, type Move, type PointAt, type Side } from './store'
@@ -64,6 +65,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
   const st = useTeacher()
   const speaking = useSpeaking()
   const talk = useTalk()
+  const board = useBoard()
   const speakingNowRef = useRef(false)
   useEffect(() => {
     speakingNowRef.current = speaking.on
@@ -356,7 +358,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
           </div>
         </div>
       )}
-      {speaking.on && (
+      {speaking.on && !board.open && (
         <div className="tch-say" role="status">
           {caption && (
             <p className="tch-say-text" aria-hidden="true" lang={lang === 'hi-IN' ? 'hi' : 'en'}>
@@ -409,6 +411,17 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
           title={talk.on ? 'End the conversation' : 'Talk (hands-free)'}
         >
           <MessageCircle aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className="tch-btn"
+          data-on={board.open ? '' : undefined}
+          aria-pressed={board.open}
+          onClick={() => (board.open ? (stopSpeaking(), closeBoard(), setTeacher({ atX: null })) : void openBoard(pageTopic()))}
+          aria-label={board.open ? 'Close the whiteboard' : `${teacher.name}: explain this page on the whiteboard`}
+          title={board.open ? 'Close the whiteboard' : 'Whiteboard'}
+        >
+          <PenLine aria-hidden="true" />
         </button>
         <button type="button" className="tch-btn" onClick={() => setTeacher({ side: nextSide })} aria-label={`Move ${teacher.name} to the ${nextSide}`} title={`Move to the ${nextSide}`}>
           <ArrowLeftRight aria-hidden="true" />

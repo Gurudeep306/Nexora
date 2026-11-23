@@ -14,16 +14,21 @@ import { useVoicePrefs } from '../prefs'
 import { introduce } from './intro'
 import { startTalk } from '../talk'
 import { clickOn, describeSide, pointAt, pointAtLine, stopTour, tour } from './guide'
+import { openBoard, pageTopic, useBoard } from './boardStore'
+import { useAgentContext } from '@/context/AgentContext'
 import { setTeacher, teacherMove, useTeacher } from './store'
 import { teacherById, teacherPortrait } from './teachers'
 import './teacher.css'
 
 const TeacherLayer = lazy(() => import('./TeacherLayer'))
+const Board = lazy(() => import('./Board'))
 
 export function TeacherHost() {
   // The top bar's mic keeps the prefs in step with the account; here we only read them.
   const [prefs] = useVoicePrefs(null)
   const st = useTeacher()
+  const board = useBoard()
+  const { pageContext, shareContext } = useAgentContext()
   const { pathname } = useLocation()
   const teacher = teacherById(prefs.teacher)
   const allowed = !!teacher && !pathname.startsWith('/gate/cbt')
@@ -55,6 +60,10 @@ export function TeacherHost() {
       a('teacher.point', `${n}: point`, () => teacherMove('point')),
       a('teacher.hide', `Hide ${n}`, () => setTeacher({ hidden: true })),
       a('teacher.show', `Show ${n}`, () => setTeacher({ hidden: false })),
+      a('teacher.board', `${n}: explain on the whiteboard`, ...guide((args) => {
+        const full = pageContext()
+        return openBoard(args.topic || pageTopic(), shareContext ? (full as unknown as Record<string, unknown>) : { path: full.path })
+      })),
       a('teacher.point.at', `${n}: point at something`, ...guide((args) => pointAt(args.target ?? ''))),
       a('teacher.click', `${n}: press something for me`, ...guide((args) => clickOn(args.target ?? ''))),
       a('teacher.point.line', `${n}: point at a line of code`, ...guide((args) => pointAtLine(Number(args.line)))),
@@ -69,7 +78,7 @@ export function TeacherHost() {
         introduce(teacher)
       }),
     ]
-  }, [teacher])
+  }, [teacher, pageContext, shareContext])
   useVoiceActions(allowed ? actions : [])
 
   if (!teacher || !allowed) return null
@@ -84,6 +93,7 @@ export function TeacherHost() {
   return (
     <Suspense fallback={null}>
       <TeacherLayer teacher={teacher} size={prefs.teacherSize} />
+      {board.open && <Board />}
     </Suspense>
   )
 }
