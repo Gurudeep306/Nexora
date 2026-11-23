@@ -3,7 +3,7 @@
 const express = require("express");
 const rateLimit = require("express-rate-limit");
 const { logError } = require("../http-error");
-const { askGuru } = require("../voice/guru");
+const { askGuru, planGuru, localAllowed } = require("../voice/guru");
 const { approachToPseudo } = require("../voice/pseudo");
 const { buildCode } = require("../voice/build");
 const { makeBoard } = require("../voice/board");
@@ -51,6 +51,35 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
       if (e?.name === "AiError") return res.status(e.status || 502).json({ ok: false, error: e.message });
       logError("voice.guru", e);
       res.status(500).json({ ok: false, error: "Guru ran into a problem — try again." });
+    }
+  });
+
+  // Guru on the student's own device: the server plans the turn (rules, page,
+  // safety) and hands over the messages only when nothing in them must stay
+  // hidden; otherwise the device asks /api/voice/guru as before.
+  router.post("/api/voice/guru/plan", requireAuthenticatedUser, limiter, async (req, res) => {
+    const { text, page, hintsGiven, lang, teacher, talk, history } = req.body || {};
+    const username = req.sessionUser?.username || "";
+    const problemId = page && typeof page === "object" ? page.problemId : null;
+    if (problemId && explain.explaining(username, problemId)) return res.json({ ok: true, local: false });
+    try {
+      const plan = await planGuru({
+        user: req.sessionUser,
+        page: page && typeof page === "object" && !Array.isArray(page) ? page : {},
+        text,
+        hintsGiven: Math.max(0, Math.min(10, Number(hintsGiven) || 0)),
+        lang: lang === "hi-IN" ? "hi-IN" : "en-IN",
+        teacher: typeof teacher === "string" ? teacher.slice(0, 20) : "",
+        talk: talk === true,
+        history: Array.isArray(history) ? history.slice(-8) : [],
+      });
+      if (plan.kind === "say") return res.json({ ok: true, local: false, say: plan.say, step: plan.step, source: plan.source });
+      if (!localAllowed(plan)) return res.json({ ok: true, local: false });
+      res.json({ ok: true, local: true, messages: plan.messages, step: plan.step });
+    } catch (e) {
+      if (e?.name === "AiError") return res.status(e.status || 502).json({ ok: false, error: e.message });
+      logError("voice.guru.plan", e);
+      res.json({ ok: true, local: false });
     }
   });
 

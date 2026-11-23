@@ -368,7 +368,12 @@ from a range, since test files run in parallel and a clash fails the run.
   Alt+M opens the top mic anywhere. **Training data** rules are in
   `docs/voice/TRAINING.md`: our solutions and lessons were drafted with AI
   agents, so they are lookup material only, never training data; the
-  data script accepts only open-licence teacher models. The voice feature never calls a paid service
+  data script accepts only open-licence teacher models. **Guru on the device** (`voice/brain/`, Settings → Voice): opt-in
+  download of base Qwen3.5 (S/M/L by the device's GPU, `tiers.ts`) run in a
+  Web Worker on WebGPU only (WebAssembly measured far too slow); the server
+  decides per turn (`/api/voice/guru/plan`, `localAllowed`): unsolved
+  questions, Explain-back and tests never run on a device, so answer keys
+  stay on the server. The voice feature never calls a paid service
   (`tests/voice-zero-spend.test.js`).
 - **Voice recognition** (Admin → Voice recognition, `src/voice/stt.js`,
   `components/admin/VoiceSttSection.tsx`, client `voice/capture.ts` used by
