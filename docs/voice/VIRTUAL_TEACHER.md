@@ -218,7 +218,7 @@ The exam console keeps its own mic and box.
   portrait. It was compared side by side in light and dark with no back
   light and a stronger one; the softer setting looked the most natural.
 
-### 3.2.4 The voice, reworked (2026-11-23, this PR)
+### 3.2.4 The voice, reworked (2026-11-23, #260)
 
 The owner found her voice robotic, choppy, odd on some words and out of step
 with her lips. The causes, and what changed:
