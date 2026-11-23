@@ -22,7 +22,8 @@ const NAV = [
 
 async function specs() {
   const G = await mod('globalSpecs.ts');
-  return [G.placeSpec([...NAV, ...G.EXTRA_PLACES]), ...G.GLOBAL_SPECS];
+  const T = await mod('teacherSpecs.ts');
+  return [G.placeSpec([...NAV, ...G.EXTRA_PLACES]), ...G.GLOBAL_SPECS, ...T.TEACHER_SPECS];
 }
 
 test('normalize folds Hindi, Hinglish and English into one form', async () => {
