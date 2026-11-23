@@ -4,7 +4,7 @@ import { speak } from '../speak'
 import { teacherMove } from './store'
 import type { TeacherInfo } from './teachers'
 
-const HINDI_NAMES: Record<string, string> = { maya: 'माया', elena: 'एलेना', kai: 'काई', victor: 'विक्टर' }
+const HINDI_NAMES: Record<string, string> = { priya: 'प्रिया', kavya: 'काव्या', neha: 'नेहा', ananya: 'अनन्या', arjun: 'अर्जुन', rohan: 'रोहन', dev: 'देव' }
 
 /** The teacher says who they are and what they can do. */
 export function introduce(t: TeacherInfo) {
@@ -12,8 +12,8 @@ export function introduce(t: TeacherInfo) {
   teacherMove('wave')
   speak(
     lang === 'hi-IN'
-      ? `नमस्ते! मैं ${HINDI_NAMES[t.id] ?? t.name} हूँ, आपकी टीचर। माइक दबाकर मुझसे कुछ भी पूछिए। आप कह सकते हैं: बाएं जाओ, बैठ जाओ, घूम जाओ।`
-      : `Hi, I'm ${t.name}, your NexoraGuru teacher. Press the mic and ask me anything. You can also say: go left, sit down, or turn around.`,
+      ? `नमस्ते! मैं ${HINDI_NAMES[t.id] ?? t.name} हूँ, ${t.body === 'M' ? 'आपका' : 'आपकी'} टीचर। माइक दबाकर मुझसे कुछ भी पूछिए। आप कह सकते हैं: बाएं जाओ, बैठ जाओ, घूम जाओ।`
+      : `Namaste! I'm ${t.name}, your NexoraGuru teacher. Press the mic and ask me anything. You can also say: go left, sit down, or turn around.`,
     lang,
   )
 }

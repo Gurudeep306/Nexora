@@ -136,18 +136,24 @@ for p in 80 443; do
   iptables -C INPUT -p tcp --dport $p -j ACCEPT 2>/dev/null || iptables -I INPUT 1 -p tcp --dport $p -j ACCEPT
 done
 netfilter-persistent save >/dev/null 2>&1 || true
+# Each NexoraGuru service adds its own route in /etc/caddy/nexora.d (the voice
+# server, deploy/voice-server, can share this server and address).
+mkdir -p /etc/caddy/nexora.d
+cat > /etc/caddy/nexora.d/coder.caddy <<CADDY
+# NexoraGuru coding model (its own password is checked by llama-server).
+@coder path /v1/* /health
+handle @coder {
+	reverse_proxy 127.0.0.1:$PORT {
+		flush_interval -1
+	}
+}
+CADDY
 cat > /etc/caddy/Caddyfile <<CADDY
 $DOMAIN {
 	encode zstd gzip
-	# Only the model's API (its own password is checked by llama-server).
-	@api path /v1/* /health
-	handle @api {
-		reverse_proxy 127.0.0.1:$PORT {
-			flush_interval -1
-		}
-	}
+	import /etc/caddy/nexora.d/*.caddy
 	handle {
-		respond "NexoraGuru coding model" 200
+		respond "NexoraGuru server" 200
 	}
 }
 CADDY

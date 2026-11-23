@@ -1,7 +1,9 @@
 /*
-  S8, natural voice for spoken answers (src/voice/tts.js): Azure Speech
-  free tier only, capped below the free allowance; when it can't speak, the
-  browser's own voice does. Nothing is ever charged.
+  Natural voice for spoken answers (src/voice/tts.js): our own voice server
+  first (free, Indian voices, exact mouth shapes); Azure Speech's free tier
+  only when an admin turns it on for a non-commercial site, capped below the
+  free allowance; when neither can speak, the browser's own voice does.
+  Nothing is ever charged.
 */
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -23,6 +25,8 @@ const mp3 = Buffer.from('ID3fake-mp3-bytes');
 
 test.before(async () => {
   await db.run('CREATE TABLE IF NOT EXISTS site_settings (key TEXT PRIMARY KEY, value TEXT, updated_by TEXT, updated_at TEXT)');
+  // These Azure tests are for a non-commercial site that turned its free tier on.
+  await tts.saveTtsConfig({ azureFree: true, ownUrl: '', clearOwnKey: true }, 'test');
 });
 
 test('SSML is escaped and the text is cleaned and cut to one or two sentences', () => {
@@ -83,4 +87,90 @@ test('stops at 85% of the free month, and at a student\'s daily share; a refused
   assert.equal(share.reason, 'daily share used');
   const refused = await tts.synthesize({ text: 'Key check.', loadSttConfig: azure(), fetchImpl: async () => new Response('', { status: 401 }) });
   assert.deepEqual([refused.ok, refused.fallback, refused.reason], [false, 'browser', 'key refused']);
+});
+
+/* ── our own voice server ── */
+
+const wav = () => {
+  const b = Buffer.alloc(48);
+  b.write('RIFF', 0, 'ascii');
+  b.write('WAVE', 8, 'ascii');
+  return b;
+};
+const ownReply = (extra = {}) => ({
+  audio: wav().toString('base64'),
+  words: ['Mid ', 'is ', 'four.'],
+  wtimes: [100, 400, 600],
+  wdurations: [280, 180, 500],
+  visemes: ['PP', 'I', 'DD', 'I', 'SS', 'FF', 'O'],
+  vtimes: [100, 160, 300, 400, 470, 600, 700],
+  vdurations: [60, 140, 80, 70, 110, 100, 300],
+  ...extra,
+});
+
+test('Azure free tier is off by default: Microsoft gives commercial rights only on the paid tier', async () => {
+  assert.equal(tts.sanitizeTts({}).azureFree, false);
+  await tts.saveTtsConfig({ azureFree: false }, 'test');
+  const r = await tts.synthesize({ text: 'Hello.', loadSttConfig: azure(), fetchImpl: async () => assert.fail('must not call Azure') });
+  assert.deepEqual([r.ok, r.reason], [false, 'no voice server set up']);
+  assert.deepEqual(await tts.statusView(azure()), { available: false, engine: null, voices: {} });
+  await tts.saveTtsConfig({ azureFree: true }, 'test');
+});
+
+test('the voice server address must be https (http only on this machine), with no path', () => {
+  assert.equal(tts.cleanUrl('https://1-2-3-4.sslip.io/v1?x=1'), 'https://1-2-3-4.sslip.io');
+  assert.equal(tts.cleanUrl('http://1-2-3-4.sslip.io'), '');
+  assert.equal(tts.cleanUrl('http://127.0.0.1:8882'), 'http://127.0.0.1:8882');
+  assert.equal(tts.cleanUrl('javascript:alert(1)'), '');
+  assert.equal(tts.cleanUrl(''), '');
+});
+
+test('our own voice server speaks first, Hindi as sounds, with word times and mouth shapes; the password is sealed', async () => {
+  tts._cache.clear();
+  await tts.saveTtsConfig({ ownUrl: 'https://voice.example.test/extra', newOwnKey: 'voice-secret-1234' }, 'test');
+  const row = await db.get("SELECT value FROM site_settings WHERE key='voice_tts'");
+  assert.doesNotMatch(row.value, /voice-secret-1234/, 'the password is never stored in plain text');
+  const calls = [];
+  const fetchImpl = async (url, init) => {
+    calls.push({ url, init });
+    return new Response(JSON.stringify(ownReply()), { status: 200, headers: { 'content-type': 'application/json' } });
+  };
+  const r = await tts.synthesize({ text: 'नमस्ते! Mid is four.', lang: 'hi-IN', voice: 'hm_psi', username: 'ravi', loadSttConfig: azure(), fetchImpl });
+  assert.equal(r.ok, true);
+  assert.deepEqual([r.engine, r.voice, r.mime], ['own', 'hm_psi', 'audio/wav']);
+  assert.equal(calls.length, 1, 'Azure is not asked when our own server answers');
+  assert.equal(calls[0].url, 'https://voice.example.test/voice/v1/synthesize');
+  assert.equal(calls[0].init.headers.Authorization, 'Bearer voice-secret-1234');
+  const body = JSON.parse(calls[0].init.body);
+  assert.deepEqual(body.input[0], { type: 'phonetic', value: 'nəməsteː', subtitles: 'नमस्ते' });
+  assert.equal(body.input.at(-1).type, 'text');
+  assert.deepEqual(r.timing.visemes, ownReply().visemes);
+  // English alone goes as plain text, so the server times every word.
+  await tts.synthesize({ text: 'Only English here.', voice: 'hm_psi', loadSttConfig: azure(), fetchImpl });
+  assert.equal(JSON.parse(calls.at(-1).init.body).input, 'Only English here.');
+  assert.deepEqual(r.timing.words, ownReply().words);
+  const status = await tts.statusView(azure());
+  assert.equal(status.engine, 'own');
+  assert.deepEqual(status.voices['hi-IN'].map((v) => v.id), ['hf_alpha', 'hf_beta', 'hm_omega', 'hm_psi']);
+  // An unknown voice gets a default Indian voice, never an Azure one.
+  const odd = await tts.synthesize({ text: 'Another one.', voice: 'en-IN-NeerjaNeural', loadSttConfig: azure(), fetchImpl });
+  assert.equal(odd.voice, 'hf_alpha');
+});
+
+test('a bad answer from the voice server is never passed on: no audio, odd shapes or a refused password', async () => {
+  tts._cache.clear();
+  const reply = (j, status = 200) => async () => new Response(JSON.stringify(j), { status });
+  const noAudio = await tts.synthesize({ text: 'One.', loadSttConfig: azure(), fetchImpl: reply({ audio: '' }) });
+  assert.deepEqual([noAudio.ok, noAudio.reason], [false, 'voice server sent no audio']);
+  const notWav = await tts.synthesize({ text: 'Two.', loadSttConfig: azure(), fetchImpl: reply({ audio: Buffer.from('<html>oops</html>'.repeat(4)).toString('base64') }) });
+  assert.equal(notWav.ok, false);
+  const refused = await tts.synthesize({ text: 'Three.', loadSttConfig: azure(), fetchImpl: reply({}, 401) });
+  assert.equal(refused.reason, 'voice server password refused');
+  // Unknown mouth shapes or mismatched lengths: the audio plays, the bad timings are dropped.
+  const odd = tts.readOwn(ownReply({ visemes: ['PP', '<script>'], vtimes: [0, 1], vdurations: [1, 1], wtimes: [1] }));
+  assert.ok(odd.audio.length);
+  assert.equal(odd.timing, null);
+  const down = await tts.synthesize({ text: 'Four.', loadSttConfig: azure(), fetchImpl: async () => { throw new Error('down'); } });
+  assert.deepEqual([down.ok, down.fallback, down.reason], [false, 'browser', "voice server didn't answer"]);
+  await tts.saveTtsConfig({ ownUrl: '', clearOwnKey: true }, 'test');
 });

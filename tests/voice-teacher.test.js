@@ -44,7 +44,8 @@ function glbJson(file) {
 
 test('every teacher ships a model with Mixamo bones, visemes and ARKit shapes, plus a portrait', async () => {
   const { TEACHERS } = await T('teachers.ts');
-  assert.equal(TEACHERS.length, 4);
+  assert.equal(TEACHERS.length, 7);
+  assert.deepEqual(TEACHERS.map((t) => t.id), ['priya', 'kavya', 'neha', 'ananya', 'arjun', 'rohan', 'dev']);
   const bones = ['Hips', 'Spine', 'Spine1', 'Spine2', 'Neck', 'Head', 'LeftEye', 'RightEye', 'LeftShoulder', 'LeftArm', 'LeftForeArm', 'LeftHand', 'LeftHandIndex1', 'RightHandIndex1', 'LeftUpLeg', 'RightFoot'];
   const shapes = ['viseme_sil', 'viseme_PP', 'viseme_FF', 'viseme_aa', 'viseme_O', 'viseme_U', 'eyeBlinkLeft', 'eyeBlinkRight', 'jawOpen', 'mouthSmileLeft', 'browInnerUp', 'mouthOpen', 'mouthSmile'];
   for (const t of TEACHERS) {
@@ -63,6 +64,20 @@ test('every teacher ships a model with Mixamo bones, visemes and ARKit shapes, p
   const lic = fs.readFileSync(path.join(DIR, 'LICENSE-rocketbox.md'), 'utf8');
   assert.match(lic, /MIT License/);
   assert.match(lic, /Microsoft/);
+});
+
+test('every teacher has an Indian voice on our voice server, women and men matched, and retired teachers move on', async () => {
+  const { TEACHERS, RENAMED, teacherById } = await T('teachers.ts');
+  const tts = require('../src/voice/tts');
+  const own = new Map(tts.OWN_VOICES.map((v) => [v.id, v.gender]));
+  for (const t of TEACHERS) {
+    assert.ok(own.has(t.voice), `${t.id}: voice ${t.voice} is on the server`);
+    assert.equal(own.get(t.voice), t.body === 'M' ? 'male' : 'female', `${t.id}: voice matches`);
+  }
+  for (const [old, now] of Object.entries(RENAMED)) {
+    assert.ok(teacherById(now), `${old} → ${now} exists`);
+    assert.equal(teacherById(old), null, `${old} is retired`);
+  }
 });
 
 test('the teacher layer is never in the first page load', () => {

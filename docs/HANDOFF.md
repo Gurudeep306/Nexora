@@ -67,6 +67,7 @@ Live site last deployed at `6c04b8fe` (PR #226).
 
 | PR | What |
 |---|---|
+| (this PR) | **Indian teachers and a free Indian voice**: seven Rocketbox teachers chosen and toned to look Indian (Priya, Kavya, Neha, Ananya, Arjun, Rohan, Dev; `scripts/teacher/tint-skin.py`; old choices move on), warmer lighting; our own voice server `deploy/voice-server` (HeadTTS MIT + Kokoro's Indian voices, Apache, commercial OK, on the free Oracle server, shares Caddy with the coding model) speaks English with an Indian accent and Hindi (`src/voice/hindi-ipa.js`, no GPL phonemizer) and returns exact mouth shapes the teacher plays; Admin → Natural voice: address, password, Test in English/Hindi. Azure's free tier is now off by default (its terms: commercial use only on the paid tier). |
 | #240 | **Virtual teacher T1**: four realistic 3D teachers (Maya, Elena, Kai, Victor; Microsoft Rocketbox, MIT; converted by `scripts/teacher/convert-rocketbox.py`) drawn with TalkingHead (MIT), chosen in Settings → Virtual teacher (off by default); lips follow every spoken sentence (`speak.ts` `onSentence`, Hindi via Roman spelling), speech bubble with the AI-voice label; by voice or its buttons it goes left/right/middle (glides, turned), turns around, sits and stands, waves, namaste, thumbs up, points, hides; never takes a click; lazy-loaded; not in the exam console. CSP `connect-src` gains `blob:` (model textures). `tests/voice-teacher.test.js`. |
 | #239 | Voice step 1e, **S9 measuring**: `scripts/voice/asr-eval.js` (WER, code-word error rate, command and code accuracy, p50/p95, the gates; every service separately within its free caps via `stt.transcribeWith`), 58-sentence clip list `docs/voice/tests/asr/clips.json` (expectations self-checked), Admin → Voice recognition → **Record test clips** (saved to your device only), recordings gitignored. Normaliser learns Hindi comparison order ("a of i key se chhota hai" → `a[i] < key`). |
 | #238 | Voice step 1d, **S8 natural voice**: Azure Speech neural voices (Neerja, Prabhat, Swara, Madhur) through the ears' Azure entry, free tier only (stops at 85% of 500,000 characters a month; cap can only be lowered; daily share per student; cache), Admin → Voice recognition → Natural voice; answers spoken sentence by sentence with the next made while one plays; "AI voice" label with Stop; Settings → Voice picker with **Kokoro** opt-in (loaded from jsDelivr/Hugging Face only after consent, never bundled, because its phonemizer bundles GPL eSpeak NG — owner to decide). |
@@ -101,9 +102,13 @@ Live site last deployed at `6c04b8fe` (PR #226).
    (precise
    design: [`docs/voice/STEP1_EARS_DESIGN.md`](voice/STEP1_EARS_DESIGN.md); the owner
    has added a Groq key), then the
-   **virtual teacher**: T1 done (#240: 3D people, lip sync, body
-   commands). Next T2 (guide: places, point, click, tours, walk cycle), then
-   T3 (whiteboard). Plan and honest limits:
+   **virtual teacher**: T1 done (#240), Indian teachers and the free Indian
+   voice done (this PR; the owner must run `deploy/voice-server` on the
+   Oracle server). Next, in order (owner's ask 2026-11-23: "talk to a normal
+   person", "do all the parts"): conversation mode (hands-free, warm short
+   replies, memory), the lifelike look (expressions, listening and thinking
+   cues), in-browser HeadTTS replacing the GPL kokoro-js opt-in, then T2
+   (guide: places, point, click, tours, walk cycle) and T3 (whiteboard). Plan and honest limits:
    [`docs/voice/VIRTUAL_TEACHER.md`](voice/VIRTUAL_TEACHER.md) §3. After the
    teacher: Phase 4 own models (ask the owner for Kaggle before training).
 2. **Owner reported "some problems are not fetched (an error)"**: still

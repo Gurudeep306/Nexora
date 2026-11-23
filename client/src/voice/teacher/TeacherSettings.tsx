@@ -30,8 +30,8 @@ export function TeacherSettings() {
             <GraduationCap className="size-4 text-text-muted" aria-hidden="true" /> Virtual teacher
           </p>
           <p className="mb-0 text-[12.5px] text-text-muted">
-            A 3D teacher who stands beside the page and says the answers with you. Say “go left”, “sit down”, “turn around” or “namaste”. Each teacher is a
-            one-time download of 3–5 MB; it needs a browser that can draw 3D.
+            A 3D teacher who stands beside the page and says the answers with you, in an Indian voice, in English or Hindi. Say “go left”, “sit down”, “turn around” or
+            “namaste”. Each teacher is a one-time download of 3–5 MB; it needs a browser that can draw 3D.
           </p>
         </div>
         <fieldset className="tch-pick">
@@ -79,7 +79,7 @@ export function TeacherSettings() {
             </div>
           </div>
         )}
-        <p className="mb-0 text-[11.5px] text-text-muted">3D people from the Microsoft Rocketbox Avatar Library (MIT licence), animated with TalkingHead (MIT).</p>
+        <p className="mb-0 text-[11.5px] text-text-muted">3D people from the Microsoft Rocketbox Avatar Library (MIT licence), animated with TalkingHead (MIT); voices by Kokoro (Apache licence).</p>
       </CardContent>
     </Card>
   )
