@@ -251,6 +251,30 @@ with her lips. The causes, and what changed:
   Indian voices (IndicF5, Veena, Indic Parler) are free models but need a
   paid GPU server to speak in real time.
 
+### 3.2.5 A truer look, and teachers the student names (2026-11-24, #261)
+
+- **Look** (`voice/teacher/look.ts`). Tuned by comparing renders side by side
+  in light and dark, on a woman and a man teacher:
+  - The library's ACES tone mapping washed the skin out and made it orange.
+    Neutral tone mapping keeps real skin colour and depth.
+  - Skin and clothes are matte (the models were as shiny as plastic).
+  - Hair edges are cut cleanly, with no dark halo.
+  - Textures are sharper at an angle.
+  - The portraits are re-rendered to match
+    (`scripts/teacher/render-portraits.cjs`).
+- **Speed**: TalkingHead multiplies its pixel ratio by the screen's, and we
+  passed up to 1.5, so a Retina Mac drew her at 3× (about 9× the pixels
+  needed). Now she is drawn at no more than 2×.
+- **Catalogue, no names**:
+  - Settings → Virtual teacher shows looks ("Brown sweater, curly hair in a
+    bun"), and the student names their teacher ("What will you call her?",
+    `prefs.teacherNames`). Until then the teacher is "Teacher".
+  - The name goes to the AI as the teacher's name (`personaFor(look, name)`),
+    cleaned to letters only, at most 20 characters.
+  - Anyone who chose a teacher before this keeps the old name.
+  - Guru training examples use many names, so a model trained on them
+    answers to any name.
+
 ### 3.3 Honest limits
 
 - **No walking legs yet.** It glides (turned sideways) rather than taking

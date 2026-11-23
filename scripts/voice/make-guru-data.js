@@ -86,7 +86,7 @@ async function main() {
       const job = jobs[next++];
       stats.asked++;
       try {
-        const persona = require("../../src/voice/guru").personaFor(job.teacher);
+        const persona = require("../../src/voice/guru").personaFor(job.teacher, D.trainingName(job.teacher, job.item.id));
         const t = D.parseTeacher(await chat({ baseUrl, model, apiKey: process.env.TEACHER_API_KEY, messages: D.teacherMessages(job.kind, job.item, job.lang, persona) }), D.REPLIES[job.kind]);
         if (!t) {
           stats.unreadable++;

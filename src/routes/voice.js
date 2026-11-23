@@ -26,7 +26,7 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
   explain.ensureTables(db).catch((e) => logError("voice.explain.tables", e));
 
   router.post("/api/voice/guru", requireAuthenticatedUser, limiter, async (req, res) => {
-    const { text, page, hintsGiven, lang, teacher, talk, history } = req.body || {};
+    const { text, page, hintsGiven, lang, teacher, teacherName, talk, history } = req.body || {};
     const username = req.sessionUser?.username || "";
     const problemId = page && typeof page === "object" ? page.problemId : null;
     // Explain-back is a viva: no hints until it ends.
@@ -45,6 +45,7 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
         lang: lang === "hi-IN" ? "hi-IN" : "en-IN",
         // Conversation mode with the virtual teacher: who is speaking, and what was said before.
         teacher: typeof teacher === "string" ? teacher.slice(0, 20) : "",
+        teacherName: typeof teacherName === "string" ? teacherName.slice(0, 40) : "",
         talk: talk === true,
         history: Array.isArray(history) ? history.slice(-8) : [],
       });
@@ -63,7 +64,7 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
   // safety) and hands over the messages only when nothing in them must stay
   // hidden; otherwise the device asks /api/voice/guru as before.
   router.post("/api/voice/guru/plan", requireAuthenticatedUser, limiter, async (req, res) => {
-    const { text, page, hintsGiven, lang, teacher, talk, history } = req.body || {};
+    const { text, page, hintsGiven, lang, teacher, teacherName, talk, history } = req.body || {};
     const username = req.sessionUser?.username || "";
     const problemId = page && typeof page === "object" ? page.problemId : null;
     if (problemId && explain.explaining(username, problemId)) return res.json({ ok: true, local: false });
@@ -77,6 +78,7 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
         hintsGiven: Math.max(0, Math.min(10, Number(hintsGiven) || 0)),
         lang: lang === "hi-IN" ? "hi-IN" : "en-IN",
         teacher: typeof teacher === "string" ? teacher.slice(0, 20) : "",
+        teacherName: typeof teacherName === "string" ? teacherName.slice(0, 40) : "",
         talk: talk === true,
         history: Array.isArray(history) ? history.slice(-8) : [],
       });
@@ -113,7 +115,7 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
 
   // The teacher's whiteboard: a topic → a short lesson of spoken steps with drawings.
   router.post("/api/voice/board", requireAuthenticatedUser, limiter, async (req, res) => {
-    const { topic, page, lang, teacher } = req.body || {};
+    const { topic, page, lang, teacher, teacherName } = req.body || {};
     try {
       const out = await makeBoard({
         user: req.sessionUser,
@@ -121,6 +123,7 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
         page: page && typeof page === "object" && !Array.isArray(page) ? page : {},
         lang: lang === "hi-IN" ? "hi-IN" : "en-IN",
         teacher: typeof teacher === "string" ? teacher.slice(0, 20) : "",
+        teacherName: typeof teacherName === "string" ? teacherName.slice(0, 40) : "",
       });
       res.json({ ok: true, ...out });
     } catch (e) {

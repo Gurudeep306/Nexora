@@ -29,6 +29,7 @@ import { closeBoard, openBoard, pageTopic, useBoard } from './boardStore'
 import { toRoman, wordTimes } from './lipsync'
 import { gestureFor, moodFor, soundsWorried } from './expressions'
 import { countResult, reactionFor } from './reactions'
+import { pixelRatio, polish } from './look'
 import { getTeacher, onTeacherMove, onTeacherPoint, onTeacherReact, setTeacher, useTeacher, type Move, type PointAt, type Side } from './store'
 import { teacherModel, teacherPortrait, type TeacherInfo } from './teachers'
 import './teacher.css'
@@ -121,7 +122,8 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         cameraZoomEnable: false,
         cameraPanEnable: false,
         modelFPS: 30,
-        modelPixelRatio: Math.min(window.devicePixelRatio || 1, 1.5),
+        // TalkingHead multiplies this by the screen's ratio: a sharp picture, never more than 2× (it was 3× on a Retina Mac).
+        modelPixelRatio: pixelRatio(window.devicePixelRatio || 1),
         avatarIdleEyeContact: 0.4,
         avatarSpeakingEyeContact: 0.7,
         avatarIdleHeadMove: reduced() ? 0.2 : 0.5,
@@ -135,12 +137,12 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         lightSpotTheta: Math.PI,
         lightSpotDispersion: 0.9,
       })
-      head.renderer.toneMappingExposure = 0.85
       head.lipsync.en = new LipsyncEn()
       await head.showAvatar({ url: teacherModel(teacher.id), body: teacher.body, avatarMood: 'neutral', lipsyncLang: 'en' }, (e) => {
         if (e.lengthComputable && e.total) setTeacher({ progress: e.loaded / e.total })
       })
       if (dead) return head.dispose()
+      polish(head as unknown as Parameters<typeof polish>[0])
       headRef.current = head
       setTeacher({ status: 'ready', progress: 1 })
     })().catch(() => {

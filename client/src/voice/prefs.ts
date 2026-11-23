@@ -8,7 +8,7 @@
 */
 import { useCallback, useEffect, useSyncExternalStore } from 'react'
 import { api } from '@/lib/api'
-import { RENAMED, TEACHERS, type TeacherId } from './teacher/teachers'
+import { cleanName, OLD_NAMES, RENAMED, setTeacherNames, TEACHERS, type TeacherId } from './teacher/teachers'
 export type { TeacherId }
 
 export type VoiceLang = 'en-IN' | 'hi-IN'
@@ -40,12 +40,14 @@ export interface VoicePrefs {
   teacher: TeacherId | ''
   /** How big the teacher is drawn. */
   teacherSize: TeacherSize
+  /** The names the student gave each teacher (teachers have no names of their own). */
+  teacherNames: Partial<Record<TeacherId, string>>
 }
 
 export type TeacherSize = 's' | 'm' | 'l'
 const TEACHER_IDS: readonly string[] = TEACHERS.map((t) => t.id)
 
-export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true, engine: 'auto', voice: '', kokoro: false, brain: false, teacher: '', teacherSize: 'm' }
+export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true, engine: 'auto', voice: '', kokoro: false, brain: false, teacher: '', teacherSize: 'm', teacherNames: {} }
 const LOCAL = 'nexora:voice'
 const KEY = 'voice_prefs'
 
@@ -67,7 +69,24 @@ function sanitize(raw: unknown): VoicePrefs {
     brain: r.brain === true,
     teacher: teacherPref(r.teacher),
     teacherSize: r.teacherSize === 's' || r.teacherSize === 'l' ? r.teacherSize : 'm',
+    teacherNames: teacherNames(r),
   }
+}
+
+/** The names the student gave; someone who chose a teacher before naming existed keeps the name that teacher had. */
+function teacherNames(r: Record<string, unknown>): Partial<Record<TeacherId, string>> {
+  const out: Partial<Record<TeacherId, string>> = {}
+  const raw = r.teacherNames && typeof r.teacherNames === 'object' ? (r.teacherNames as Record<string, unknown>) : null
+  if (raw) {
+    for (const id of TEACHER_IDS) {
+      const n = cleanName(raw[id])
+      if (n) out[id as TeacherId] = n
+    }
+    return out
+  }
+  const before = teacherPref(r.teacher)
+  if (before) out[before] = OLD_NAMES[before]
+  return out
 }
 
 /** A saved teacher, moved to who replaced them if they were retired. */
@@ -84,10 +103,12 @@ let current: VoicePrefs = (() => {
     return DEFAULT_PREFS
   }
 })()
+setTeacherNames(current.teacherNames)
 const listeners = new Set<() => void>()
 
 function publish(next: VoicePrefs) {
   current = next
+  setTeacherNames(next.teacherNames)
   try {
     localStorage.setItem(LOCAL, JSON.stringify(next))
   } catch {

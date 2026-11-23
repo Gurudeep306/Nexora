@@ -1,17 +1,18 @@
 /*
-  Settings → Preferences → Virtual teacher: off by default. Choose one of the
-  four teachers and how big they are drawn, and say hello.
+  Settings → Preferences → Virtual teacher: off by default. A catalogue of
+  looks (teachers have no names of their own): pick one, give them a name,
+  choose how big they are drawn, and say hello.
 */
 import { GraduationCap, UserX, Volume2 } from 'lucide-react'
 import { Button, Card, CardContent } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { api } from '@/lib/api'
 import { useVoicePrefs, type TeacherSize } from '../prefs'
 import { OnDevice } from '../VoiceSettings'
 import { introduce } from './intro'
 import { setTeacher } from './store'
-import { TEACHERS, teacherById, teacherPortrait } from './teachers'
+import { cleanName, TEACHERS, teacherById, teacherPortrait, UNNAMED, type TeacherId } from './teachers'
 import './teacher.css'
 import '../voice.css'
 
@@ -38,7 +39,7 @@ export function TeacherSettings() {
           </p>
         </div>
         <fieldset className="tch-pick">
-          <legend>Teacher</legend>
+          <legend>Choose a look</legend>
           <label className="tch-opt">
             <input type="radio" name="tch-who" checked={!chosen} onChange={() => setPrefs({ teacher: '' })} />
             <span className="tch-off" aria-hidden="true">
@@ -58,12 +59,13 @@ export function TeacherSettings() {
                 }}
               />
               <img src={teacherPortrait(t.id)} alt="" width={96} height={120} loading="lazy" />
-              {t.name}
+              <span className="tch-look">{prefs.teacherNames[t.id] || t.look}</span>
             </label>
           ))}
         </fieldset>
         {chosen && (
           <div className="vc-consent">
+            <NameField key={chosen.id} id={chosen.id} male={chosen.body === 'M'} />
             <fieldset className="vc-field">
               <legend>Size</legend>
               <div className="flex flex-wrap gap-4">
@@ -87,6 +89,43 @@ export function TeacherSettings() {
         <p className="mb-0 text-[11.5px] text-text-muted">3D people from the Microsoft Rocketbox Avatar Library (MIT licence), animated with TalkingHead (MIT); voices by Kokoro (Apache licence).</p>
       </CardContent>
     </Card>
+  )
+}
+
+/** The student names their teacher; saved when they leave the field or press Enter. */
+function NameField({ id, male }: { id: TeacherId; male: boolean }) {
+  const { user } = useAuth()
+  const [prefs, setPrefs] = useVoicePrefs(user?.username)
+  const saved = prefs.teacherNames[id] ?? ''
+  const [draft, setDraft] = useState(saved)
+  const input = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    if (!saved) input.current?.focus()
+  }, [saved])
+  const save = () => {
+    const n = cleanName(draft)
+    setDraft(n)
+    if (n !== saved) setPrefs({ teacherNames: { ...prefs.teacherNames, [id]: n } })
+  }
+  return (
+    <div className="vc-field">
+      <label htmlFor="tch-name" className="tch-name-label">
+        What will you call {male ? 'him' : 'her'}?
+      </label>
+      <input
+        ref={input}
+        id="tch-name"
+        className="tch-name-input"
+        value={draft}
+        maxLength={20}
+        autoComplete="off"
+        placeholder="Type a name"
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={save}
+        onKeyDown={(e) => e.key === 'Enter' && save()}
+      />
+      <p className="vc-note">{saved ? `${male ? 'He' : 'She'} answers to “${saved}”.` : `Until you name ${male ? 'him' : 'her'}, ${male ? 'he' : 'she'} is just “${UNNAMED}”.`}</p>
+    </div>
   )
 }
 

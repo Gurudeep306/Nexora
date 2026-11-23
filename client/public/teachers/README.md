@@ -23,4 +23,8 @@ How they were made:
    TalkingHead (MIT), face shapes renamed to ARKit and Oculus visemes,
    textures resized.
 
-The `.jpg` portraits are renders of the same teachers in the site's lighting.
+The `.jpg` portraits are renders of the same teachers in the site's lighting:
+`node scripts/teacher/render-portraits.cjs` (local server, signed-in owner).
+
+The file names are only ids: teachers have no names of their own. Students
+name them in Settings → Virtual teacher.

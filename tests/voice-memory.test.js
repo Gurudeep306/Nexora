@@ -34,7 +34,7 @@ test('the AI gets study facts only — never the name', () => {
   assert.match(facts, /GATE 2027/);
   assert.match(facts, /Dynamic programming/);
   assert.doesNotMatch(facts, /Rahul/);
-  const msgs = G.buildMessages({ lang: 'en-IN', text: 'hi', talk: true, persona: G.personaFor('priya'), memory: facts });
+  const msgs = G.buildMessages({ lang: 'en-IN', text: 'hi', talk: true, persona: G.personaFor('priya', 'Priya'), memory: facts });
   assert.ok(msgs.some((x) => x.content === facts));
   assert.ok(!JSON.stringify(msgs).includes('Rahul'));
   assert.equal(M.promptFacts(null), '');

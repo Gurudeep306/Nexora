@@ -59,7 +59,7 @@ test('the Leak Guard reads what is written on the board too', () => {
 });
 
 test('the lesson prompt: who teaches, the drawing language, Hindi, and a different example while unsolved', () => {
-  const m = B.buildBoardMessages({ topic: 'binary search', lang: 'hi-IN', persona: G.personaFor('arjun'), unsolved: true });
+  const m = B.buildBoardMessages({ topic: 'binary search', lang: 'hi-IN', persona: G.personaFor('arjun', 'Arjun'), unsolved: true });
   const sys = m[0].content;
   assert.match(sys, /You are Arjun, a teacher on NexoraGuru/);
   assert.match(sys, /"t":"array"/);

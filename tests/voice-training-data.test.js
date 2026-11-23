@@ -58,10 +58,11 @@ test('examples are built with the server’s own prompt builder: the model learn
   const ex = D.toExamples('hint', Q, 'hg', 'priya', t, 'Qwen/Qwen3-32B');
   assert.equal(ex.length, 3);
   const last = ex[2];
-  const expected = G.buildMessages({ pageText: last.messages.find((m) => m.content.startsWith("On the student's screen"))?.content.replace("On the student's screen:\n", ''), verified: null, step: 3, examActive: false, lang: 'en-IN', text: 'abhi bhi samajh nahi aaya', unsolved: true, persona: G.personaFor('priya'), talk: false, history: [{ role: 'user', content: 'mujhe hint do' }, { role: 'assistant', content: t.replies[0] }, { role: 'user', content: 'aur hint do' }, { role: 'assistant', content: t.replies[1] }] });
+  const expected = G.buildMessages({ pageText: last.messages.find((m) => m.content.startsWith("On the student's screen"))?.content.replace("On the student's screen:\n", ''), verified: null, step: 3, examActive: false, lang: 'en-IN', text: 'abhi bhi samajh nahi aaya', unsolved: true, persona: G.personaFor('priya', D.trainingName('priya', Q.id)), talk: false, history: [{ role: 'user', content: 'mujhe hint do' }, { role: 'assistant', content: t.replies[0] }, { role: 'user', content: 'aur hint do' }, { role: 'assistant', content: t.replies[1] }] });
   assert.deepEqual(last.messages.slice(0, -1), expected);
   assert.equal(last.messages.at(-1).content, t.replies[2]);
-  assert.match(last.messages[0].content, /Priya/, 'the persona is in the system prompt');
+  const nm = D.trainingName('priya', Q.id);
+  assert.match(last.messages[0].content, nm ? new RegExp(nm) : /the student's teacher/, 'the persona (by the name it was given) is in the system prompt');
   assert.ok(last.messages.some((m) => /NOT solved|NOT answered/.test(m.content)));
   assert.ok(!JSON.stringify(last).includes('SECRET-WRITTEN-SOLUTION'));
   assert.deepEqual(ex.map((e) => e.meta.step), [1, 2, 3]);
