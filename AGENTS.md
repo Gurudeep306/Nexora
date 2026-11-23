@@ -88,7 +88,7 @@ The owner is the founder. These preferences come from many sessions. Follow them
 | `content/gate-notes/`, `public/gate-fig/` | GATE notes and figures. The past-paper PDFs and third-party reference notes are in the private repo `Gurudeep306/Materials` (clone it next to this one; the GATE scripts find it there or via `GATE_PYQ_DIR`) |
 | `scripts/learn/` | Problem and solution build/verify pipeline |
 | `bridge/` | Hive bridge (runs Claude Code / Codex / Vibe on a worker machine) |
-| `deploy/` | Deploy configs; `deploy/model-farm/` serves open models on a GPU; `deploy/coder-model/` runs NexoraGuru's own small coding model on a free Oracle server (the Solve page's AI tests) |
+| `deploy/` | Deploy configs; `deploy/model-farm/` serves open models on a GPU; `deploy/coder-model/` runs NexoraGuru's own small coding model on a free Oracle server (the Solve page's AI tests); `deploy/voice-server/` runs its own free Indian voices there (HeadTTS + Kokoro, exact lip shapes for the virtual teacher) |
 | `docs/` | `docs/hive/GUIDE.md`, `docs/gate/*`, `docs/ui/*`, `docs/ops/*` |
 | `tests/` | Server tests (`node --test`) |
 

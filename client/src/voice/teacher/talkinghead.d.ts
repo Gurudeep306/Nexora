@@ -15,7 +15,9 @@ declare module '@met4citizen/talkinghead' {
     avatarSpeakingEyeContact?: number
     avatarSpeakingHeadMove?: number
     lightAmbientIntensity?: number
+    lightAmbientColor?: number
     lightDirectIntensity?: number
+    lightDirectColor?: number
   }
   export interface Lipsync {
     preProcessText(s: string): string
@@ -30,8 +32,17 @@ declare module '@met4citizen/talkinghead' {
       avatar: { url: string; body: 'F' | 'M'; avatarMood?: string; lipsyncLang?: string },
       onprogress?: (e: ProgressEvent) => void,
     ): Promise<void>
+    renderer: { toneMappingExposure: number }
     speakAudio(
-      r: { audio: AudioBuffer; words: string[]; wtimes: number[]; wdurations: number[] },
+      r: {
+        audio: AudioBuffer
+        words: string[]
+        wtimes: number[]
+        wdurations: number[]
+        visemes?: string[]
+        vtimes?: number[]
+        vdurations?: number[]
+      },
       opt?: { lipsyncLang?: string },
     ): void
     stopSpeaking(): void

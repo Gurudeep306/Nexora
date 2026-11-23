@@ -4,9 +4,13 @@
   standing beside the page. Loaded only when a student turns a teacher on;
   three.js and the model are never part of the normal page load.
 
-  - Lips: every sentence the site says (speak.ts → onSentence) is timed word
-    by word and played to TalkingHead as silent audio of the same length, so
-    the mouth follows our own voice. Hindi is written in Roman letters first.
+  - Lips: every sentence the site says (speak.ts → onSentence) is played to
+    TalkingHead as silent audio of the same length, so the mouth follows our
+    own voice. Our voice server sends the exact mouth shapes and word times;
+    for other voices the words share the sentence's time by length (Hindi is
+    written in Roman letters first).
+  - Light: a warm key light and a soft fill, slightly lower exposure, so skin
+    keeps its colour and shape instead of looking washed out.
   - Body: goes left, right or to the middle (glides there, turned the way it
     goes), sits and stands, turns around, waves, namaste, thumbs up, points.
   - It never takes a click: the drawing lets every click through to the page;
@@ -104,7 +108,11 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         avatarIdleEyeContact: 0.4,
         avatarSpeakingEyeContact: 0.7,
         avatarIdleHeadMove: reduced() ? 0.2 : 0.5,
+        lightAmbientIntensity: 0.6,
+        lightDirectIntensity: 18,
+        lightDirectColor: 0xffd8b0,
       })
+      head.renderer.toneMappingExposure = 0.85
       head.lipsync.en = new LipsyncEn()
       await head.showAvatar({ url: teacherModel(teacher.id), body: teacher.body, avatarMood: 'neutral', lipsyncLang: 'en' }, (e) => {
         if (e.lengthComputable && e.total) setTeacher({ progress: e.loaded / e.total })
@@ -162,13 +170,17 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         }
         setCaption(s.text)
         if (!head) return
-        const t = wordTimes(toRoman(s.text), s.ms)
-        if (!t.words.length) return
+        const exact = s.timing
+        const hasShapes = !!exact?.visemes?.length && exact.visemes.length === exact.vtimes?.length && exact.visemes.length === exact.vdurations?.length
+        const hasWords = !!exact?.words?.length && exact.words.length === exact.wtimes?.length && exact.words.length === exact.wdurations?.length
+        const t = hasWords ? { words: exact!.words!, wtimes: exact!.wtimes!, wdurations: exact!.wdurations! } : wordTimes(toRoman(s.text), s.ms)
+        if (!t.words.length && !hasShapes) return
         const ctx = head.audioCtx
         if (ctx.state === 'suspended') void ctx.resume()
         const silent = ctx.createBuffer(1, Math.max(1, Math.round((ctx.sampleRate * s.ms) / 1000)), ctx.sampleRate)
         head.stopSpeaking()
-        head.speakAudio({ audio: silent, ...t }, { lipsyncLang: 'en' })
+        // With exact mouth shapes TalkingHead uses them instead of guessing from the words.
+        head.speakAudio({ audio: silent, ...t, ...(hasShapes ? { visemes: exact!.visemes!, vtimes: exact!.vtimes!, vdurations: exact!.vdurations! } : {}) }, { lipsyncLang: 'en' })
       }),
     [],
   )

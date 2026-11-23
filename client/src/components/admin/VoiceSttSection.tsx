@@ -86,26 +86,46 @@ export function VoiceSttSection() {
   )
 }
 
-type TtsView = { enabled: boolean; monthlyChars: number; studentDailyChars: number; freeMonthlyChars: number; stopAt: number; usedThisMonth: number; linked: boolean }
+type TtsView = {
+  enabled: boolean
+  ownUrl: string
+  ownKeySet: boolean
+  ownKeyHint: string
+  own: boolean
+  azureFree: boolean
+  monthlyChars: number
+  studentDailyChars: number
+  freeMonthlyChars: number
+  stopAt: number
+  usedThisMonth: number
+  linked: boolean
+  ownVoices: { id: string; label: string }[]
+}
+type TtsDraft = { enabled: boolean; daily: number; monthly: number; ownUrl: string; newKey: string; azureFree: boolean }
+type TtsTest = { ok: boolean; reason?: string; ms: number; cached?: boolean; engine?: string; voice?: string; mime?: string; audio?: string; visemes?: number }
 
 /*
-  Natural voice for spoken answers (src/voice/tts.js): the Azure Speech entry
-  above also speaks, on its free tier only. It stops at 85% of the free month;
-  the caps here can only be lowered.
+  Natural voice for spoken answers (src/voice/tts.js): our own voice server
+  first (deploy/voice-server: Kokoro's Indian voices, free, exact mouth
+  shapes for the teacher), Azure Speech's free tier only for non-commercial
+  sites.
 */
 function NaturalVoice() {
   const { data, error, loading, refetch } = useApi(() => api.get<TtsView>('/api/admin/voice-tts'), [], { cacheKey: 'admin:voice-tts' })
   const toast = useToast()
-  const [draft, setDraft] = useState<{ enabled: boolean; daily: number; monthly: number } | null>(null)
+  const [draft, setDraft] = useState<TtsDraft | null>(null)
   const [saving, setSaving] = useState(false)
+  const [test, setTest] = useState<{ busy: boolean; result: TtsTest | null }>({ busy: false, result: null })
   if (error) return <Failed message={error} onRetry={refetch} />
   if (loading || !data) return <Skeleton className="h-40" />
-  const d = draft ?? { enabled: data.enabled, daily: data.studentDailyChars, monthly: data.monthlyChars }
-  const changed = draft !== null && (d.enabled !== data.enabled || d.daily !== data.studentDailyChars || d.monthly !== data.monthlyChars)
+  const d: TtsDraft = draft ?? { enabled: data.enabled, daily: data.studentDailyChars, monthly: data.monthlyChars, ownUrl: data.ownUrl, newKey: '', azureFree: data.azureFree }
+  const changed =
+    draft !== null &&
+    (d.enabled !== data.enabled || d.daily !== data.studentDailyChars || d.monthly !== data.monthlyChars || d.ownUrl !== data.ownUrl || d.newKey !== '' || d.azureFree !== data.azureFree)
   const save = async () => {
     setSaving(true)
     try {
-      await api.put('/api/admin/voice-tts', { enabled: d.enabled, studentDailyChars: d.daily, monthlyChars: d.monthly })
+      await api.put('/api/admin/voice-tts', { enabled: d.enabled, studentDailyChars: d.daily, monthlyChars: d.monthly, ownUrl: d.ownUrl.trim(), newOwnKey: d.newKey.trim(), azureFree: d.azureFree })
       setDraft(null)
       refetch()
       toast.success('Saved')
@@ -115,34 +135,93 @@ function NaturalVoice() {
       setSaving(false)
     }
   }
+  const runTest = async (lang: 'en-IN' | 'hi-IN') => {
+    setTest({ busy: true, result: null })
+    try {
+      const r = await api.post<TtsTest>('/api/admin/voice-tts/test', {
+        lang,
+        text: lang === 'hi-IN' ? 'नमस्ते! मैं आपकी NexoraGuru टीचर हूँ। चलिए, साथ में सीखते हैं।' : 'Namaste! I am your NexoraGuru teacher. Let us learn binary search together.',
+      })
+      setTest({ busy: false, result: r })
+      if (r.ok && r.audio && r.mime) void new Audio(`data:${r.mime};base64,${r.audio}`).play().catch(() => {})
+    } catch (e) {
+      setTest({ busy: false, result: { ok: false, ms: 0, reason: e instanceof ApiError ? e.message : 'The test didn’t run.' } })
+    }
+  }
   const pct = data.stopAt ? Math.min(100, Math.round((data.usedThisMonth / data.stopAt) * 100)) : 0
+  const state = !data.enabled ? 'Off' : data.own ? 'Your voice server' : data.azureFree && data.linked ? 'Azure free tier' : 'Not set up'
+  const t = test.result
   return (
     <Panel
       title="Natural voice"
       icon="volume"
-      description="Spoken answers in a natural Indian voice (Neerja, Prabhat, Swara, Madhur), made from the answer text only. It uses the Microsoft Azure Speech entry above (key and region). Use a Free (F0) resource: it can’t be billed. The site stops at 85% of the free 500,000 characters a month; after that, students hear their own device’s voice."
+      description="Spoken answers in natural Indian voices that also move the virtual teacher’s lips exactly. They come from your own free voice server (Kokoro’s Indian voices, open licence, commercial use allowed): set it up once on the free Oracle server with deploy/voice-server/README.md, then paste its address and password here. Without it, students hear their own device’s voice."
     >
       <div className="vstt-auto">
         <Toggle checked={d.enabled} onChange={(v) => setDraft({ ...d, enabled: v })} label="Use the natural voice" />
         <div>
           <p className="vstt-auto-title">
-            Use the natural voice <Chip tone={data.linked && data.enabled ? 'success' : 'warning'}>{!data.enabled ? 'Off' : data.linked ? 'Ready' : 'Needs Azure Speech above'}</Chip>
+            Use the natural voice <Chip tone={state === 'Off' || state === 'Not set up' ? 'warning' : 'success'}>{state}</Chip>
           </p>
-          <p className="vstt-auto-line">
-            {data.usedThisMonth.toLocaleString('en-IN')} of {data.stopAt.toLocaleString('en-IN')} characters used this month ({pct}%).
-          </p>
+          <p className="vstt-auto-line">Voices: {data.ownVoices.map((v) => v.label).join(', ')}. Each speaks English and Hindi.</p>
         </div>
       </div>
       <div className="vstt-fields">
         <label className="ai-field">
+          <span>Voice server address</span>
+          <input className="ai-input" type="url" inputMode="url" placeholder="https://1-2-3-4.sslip.io" value={d.ownUrl} onChange={(e) => setDraft({ ...d, ownUrl: e.target.value })} />
+        </label>
+        <label className="ai-field">
+          <span>Password{data.ownKeySet ? ` (saved, ends ${data.ownKeyHint})` : ''}</span>
+          <input
+            className="ai-input"
+            type="password"
+            autoComplete="off"
+            placeholder={data.ownKeySet ? 'Leave empty to keep it' : 'From the setup script'}
+            value={d.newKey}
+            onChange={(e) => setDraft({ ...d, newKey: e.target.value })}
+          />
+        </label>
+        <label className="ai-field">
           <span>Each student, characters a day</span>
           <input className="ai-input" type="number" min={200} max={50000} step={100} value={d.daily} onChange={(e) => setDraft({ ...d, daily: Number(e.target.value) || 0 })} />
         </label>
-        <label className="ai-field">
-          <span>Monthly cap (at most {data.freeMonthlyChars.toLocaleString('en-IN')})</span>
-          <input className="ai-input" type="number" min={1000} max={data.freeMonthlyChars} step={1000} value={d.monthly} onChange={(e) => setDraft({ ...d, monthly: Math.min(data.freeMonthlyChars, Number(e.target.value) || 0) })} />
-        </label>
       </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" variant="secondary" onClick={() => void runTest('en-IN')} loading={test.busy} disabled={changed}>
+          Test in English
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => void runTest('hi-IN')} disabled={changed || test.busy}>
+          Test in Hindi
+        </Button>
+        <span className="vstt-auto-line" aria-live="polite">
+          {changed
+            ? 'Save first, then test.'
+            : t
+              ? t.ok
+                ? `${t.cached ? 'Spoke from memory (said before)' : `Spoke in ${(t.ms / 1000).toFixed(1)} s`} with ${t.engine === 'own' ? 'your voice server' : 'Azure'}${t.visemes ? `, ${t.visemes} mouth shapes for the teacher` : ''}.`
+                : `Didn’t speak: ${t.reason ?? 'unknown'}.`
+              : ''}
+        </span>
+      </div>
+      <div className="vstt-auto">
+        <Toggle checked={d.azureFree} onChange={(v) => setDraft({ ...d, azureFree: v })} label="Use Azure Speech’s free tier" />
+        <div>
+          <p className="vstt-auto-title">Azure Speech’s free tier (non-commercial sites only)</p>
+          <p className="vstt-auto-line">
+            Microsoft’s terms allow commercial use of its voices only on the paid tier, so leave this off for NexoraGuru. When on, it uses the Azure Speech entry above and
+            stops at 85% of the free 500,000 characters a month ({data.usedThisMonth.toLocaleString('en-IN')} used, {pct}%).
+          </p>
+        </div>
+      </div>
+      {d.azureFree && (
+        <div className="vstt-fields">
+          <label className="ai-field">
+            <span>Azure monthly cap (at most {data.freeMonthlyChars.toLocaleString('en-IN')})</span>
+            <input className="ai-input" type="number" min={1000} max={data.freeMonthlyChars} step={1000} value={d.monthly} onChange={(e) => setDraft({ ...d, monthly: Math.min(data.freeMonthlyChars, Number(e.target.value) || 0) })} />
+          </label>
+        </div>
+      )}
       {changed && (
         <div className="flex justify-end">
           <Button size="sm" onClick={() => void save()} loading={saving}>

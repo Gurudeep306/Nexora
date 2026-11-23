@@ -43,9 +43,15 @@ tools, not drawn by us.
 ### 3.1 What it is made from (all free and open)
 
 - **People:** the Microsoft Rocketbox Avatar Library (MIT licence, 115
-  rigged, realistic humans with face shapes for speech). Four ship now:
-  Maya, Elena, Kai and Victor (`client/public/teachers/`, 3–5 MB each, with
-  the MIT notice in `LICENSE-rocketbox.md`).
+  rigged, realistic humans with face shapes for speech). The owner asked for
+  an Indian look and voice (2026-11-23), so seven were chosen and toned to
+  look Indian: Priya, Kavya, Neha, Ananya, Arjun, Rohan and Dev
+  (`client/public/teachers/`, 3–5 MB each, MIT notice in
+  `LICENSE-rocketbox.md`; which avatar and toning in its README).
+  `scripts/teacher/tint-skin.py` warms and deepens only skin-coloured pixels
+  and makes the iris brown (the eyeball sits in the same place in every
+  Rocketbox head texture). The first four (Maya, Elena, Kai, Victor) were
+  retired; a saved choice moves to Ananya, Kavya, Arjun or Dev.
 - **Converter:** `scripts/teacher/convert-rocketbox.py` runs Blender as a
   Python module: it poses each avatar, rebuilds the skeleton with standard
   (Mixamo) bone names, keeps 69 face shapes renamed to the Oculus visemes and
@@ -62,13 +68,18 @@ tools, not drawn by us.
 - **Choose:** Settings → Preferences → Virtual teacher: Off (default) or one
   of four faces, and a size (small, medium, large). "Say hello" makes the
   teacher introduce itself.
-- **Talks:** every sentence the site says aloud (`speak.ts`) is announced
-  with its length (`onSentence`). The teacher plays silent audio of that
-  length with each word's timing, so its lips follow our real voice (natural
-  voice, Kokoro or the device's voice). Hindi is written in Roman letters
-  first (`teacher/lipsync.ts`). A speech bubble shows the sentence, with the
-  "AI voice" label and Stop (it replaces the separate chip while shown). The
-  male teachers get a male voice when the student picked none.
+- **Talks, in an Indian voice:** our own free voice server
+  (`deploy/voice-server`: HeadTTS, MIT, running Kokoro's four Indian voices,
+  Apache-2.0, commercial use allowed) speaks English with an Indian accent
+  and Hindi. Hindi is written as sounds by `src/voice/hindi-ipa.js` (schwa
+  deletion, nasals, nukta; only Kokoro's symbols), so no GPL phonemizer is
+  used. Each teacher has their own voice (`teachers.ts`). The server also
+  returns the exact mouth shapes (visemes) and word times, which the teacher
+  plays: lips match the sound. Other voices (device, Kokoro in the browser)
+  fall back to word timing by length (`teacher/lipsync.ts`). A speech bubble
+  shows the sentence, with the "AI voice" label and Stop.
+- **Light:** a warm key light, a soft fill and slightly lower exposure, so
+  skin keeps its colour and shape.
 - **Body, by voice or its buttons:** go left, go right, come here (middle),
   turn around, sit down, stand up, wave, namaste, thumbs up, point, hide,
   show, introduce yourself. In English, Hinglish and Hindi
@@ -89,8 +100,14 @@ tools, not drawn by us.
 - **No walking legs yet.** It glides (turned sideways) rather than taking
   steps. Mixamo's walk animations may not be redistributed, so a walk cycle
   needs our own keyframes or a CC0 source (T2).
-- Lip shapes come from the words' spelling and timing, not from the sound
-  itself. Azure's exact viseme events are a later improvement.
+- Exact lip shapes need the voice server; with the device's own voice the
+  lips follow the words' length only.
+- Azure Speech's free tier is **not** used: Microsoft's terms give
+  commercial rights to the paid tier only, and NexoraGuru is (or will be)
+  commercial. It stays behind an off switch for non-commercial sites.
+- No free tool with clear commercial terms makes a 3D person from a photo
+  (checked 2026-11); Rocketbox, toned, is the best free option. MetaHuman
+  may only be rendered in Unreal Engine, so not on a web page.
 - The browser picture is a little less rich than an offline render. On older
   phones the first load is 3–5 MB plus 1 MB of 3D code, and drawing costs
   battery; it is off by default for that reason.

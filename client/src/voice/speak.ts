@@ -17,6 +17,7 @@ import { useSyncExternalStore } from 'react'
 import { API_BASE } from '@/lib/api'
 import { getVoicePrefs } from './prefs'
 import { splitSentences } from './sentences'
+import { teacherById } from './teacher/teachers'
 
 export { splitSentences }
 
@@ -37,6 +38,17 @@ export interface SpokenSentence {
   text: string
   lang: string
   ms: number
+  /** Exact word times and mouth shapes, when the voice server sent them (our own voice server does). */
+  timing?: VoiceTiming | null
+}
+
+export interface VoiceTiming {
+  words?: string[]
+  wtimes?: number[]
+  wdurations?: number[]
+  visemes?: string[]
+  vtimes?: number[]
+  vdurations?: number[]
 }
 const sentenceListeners = new Set<(s: SpokenSentence | null) => void>()
 /** Hear each sentence as it starts (and `null` when speech stops). Returns an unsubscribe. */
@@ -54,11 +66,14 @@ export function estimateMs(text: string, rate = 1.02): number {
 
 /**
  * The voice that suits the chosen teacher when the student picked no voice:
- * the male teachers get a male voice. '' = the language's default.
+ * on our own voice server each teacher has their own Indian voice; on Azure
+ * the men get a male voice. '' = the default.
  */
-function teacherVoice(lang: string): string {
-  const t = getVoicePrefs().teacher
-  if (t !== 'kai' && t !== 'victor') return ''
+function teacherVoice(lang: string, engine: string | null): string {
+  const t = teacherById(getVoicePrefs().teacher)
+  if (!t) return ''
+  if (engine === 'own') return t.voice
+  if (t.body !== 'M') return ''
   return lang === 'hi-IN' ? 'hi-IN-MadhurNeural' : 'en-IN-PrabhatNeural'
 }
 
@@ -93,14 +108,20 @@ export function canSpeak(): boolean {
 
 /* ── the natural voice (server) ── */
 
-let natural: Promise<{ available: boolean; voices: Record<string, { id: string; label: string }[]> }> | null = null
+export interface NaturalStatus {
+  available: boolean
+  /** 'own' = our voice server (Indian voices, exact lip shapes); 'azure' = Azure's free tier. */
+  engine: 'own' | 'azure' | null
+  voices: Record<string, { id: string; label: string }[]>
+}
+let natural: Promise<NaturalStatus> | null = null
 /** Is the server's natural voice set up? Asked once per page load; a "no" is asked again after a minute. */
 export function naturalVoices() {
   if (!natural) {
     const p = fetch(`${API_BASE}/api/voice/tts/status`, { credentials: 'include' })
       .then((r) => (r.ok ? r.json() : null))
-      .then((j) => ({ available: !!j?.available, voices: (j?.voices ?? {}) as Record<string, { id: string; label: string }[]> }))
-      .catch(() => ({ available: false, voices: {} }))
+      .then((j): NaturalStatus => ({ available: !!j?.available, engine: j?.engine === 'own' || j?.engine === 'azure' ? j.engine : null, voices: (j?.voices ?? {}) as NaturalStatus['voices'] }))
+      .catch((): NaturalStatus => ({ available: false, engine: null, voices: {} }))
     natural = p
     void p.then((v) => {
       if (!v.available) window.setTimeout(() => (natural === p ? (natural = null) : undefined), 60_000)
@@ -109,7 +130,19 @@ export function naturalVoices() {
   return natural
 }
 
-async function naturalClip(text: string, lang: string, voice: string, signal: AbortSignal): Promise<Blob | null> {
+interface Clip {
+  blob: Blob
+  timing?: VoiceTiming | null
+}
+
+function b64Blob(b64: string, mime: string): Blob {
+  const bin = atob(b64)
+  const bytes = new Uint8Array(bin.length)
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i)
+  return new Blob([bytes], { type: mime })
+}
+
+async function naturalClip(text: string, lang: string, voice: string, signal: AbortSignal): Promise<Clip | null> {
   try {
     const r = await fetch(`${API_BASE}/api/voice/tts`, {
       method: 'POST',
@@ -119,8 +152,10 @@ async function naturalClip(text: string, lang: string, voice: string, signal: Ab
       signal,
     })
     if (!r.ok) return null
-    const b = await r.blob()
-    return b.size ? b : null
+    const j = (await r.json()) as { ok?: boolean; audio?: string; mime?: string; timing?: VoiceTiming | null }
+    if (!j.ok || !j.audio) return null
+    const blob = b64Blob(j.audio, j.mime === 'audio/wav' ? 'audio/wav' : 'audio/mpeg')
+    return blob.size ? { blob, timing: j.timing ?? null } : null
   } catch {
     return null
   }
@@ -196,13 +231,13 @@ function wavBlob(data: Float32Array, rate: number): Blob {
   return new Blob([buf], { type: 'audio/wav' })
 }
 
-async function kokoroClip(text: string): Promise<Blob | null> {
+async function kokoroClip(text: string): Promise<Clip | null> {
   try {
     const tts = await loadKokoro()
-    const t = getVoicePrefs().teacher
-    const a = await tts.generate(text, { voice: t === 'kai' || t === 'victor' ? 'am_michael' : 'af_heart' })
-    if (a.toBlob) return a.toBlob()
-    if (a.data && a.sampling_rate) return wavBlob(a.data, a.sampling_rate)
+    const male = teacherById(getVoicePrefs().teacher)?.body === 'M'
+    const a = await tts.generate(text, { voice: male ? 'am_michael' : 'af_heart' })
+    if (a.toBlob) return { blob: a.toBlob() }
+    if (a.data && a.sampling_rate) return { blob: wavBlob(a.data, a.sampling_rate) }
     return null
   } catch {
     return null
@@ -252,15 +287,15 @@ function deviceSay(parts: string[], lang: string, my: number) {
   })
 }
 
-function play(blob: Blob, my: number, text: string, lang: string): Promise<void> {
+function play(clip: Clip, my: number, text: string, lang: string): Promise<void> {
   return new Promise((resolve) => {
     if (my !== session) return resolve()
-    const url = URL.createObjectURL(blob)
+    const url = URL.createObjectURL(clip.blob)
     const a = new Audio(url)
     playing = a
     a.onplaying = () => {
       a.onplaying = null
-      if (my === session) announce({ text, lang, ms: Number.isFinite(a.duration) && a.duration > 0 ? Math.round(a.duration * 1000) : estimateMs(text) })
+      if (my === session) announce({ text, lang, ms: Number.isFinite(a.duration) && a.duration > 0 ? Math.round(a.duration * 1000) : estimateMs(text), timing: clip.timing })
     }
     const done = () => {
       URL.revokeObjectURL(url)
@@ -273,14 +308,22 @@ function play(blob: Blob, my: number, text: string, lang: string): Promise<void>
   })
 }
 
-async function which(lang: string): Promise<Engine> {
+async function which(lang: string): Promise<{ engine: Engine; status: NaturalStatus | null }> {
   const p = getVoicePrefs()
-  if (p.engine === 'device') return 'device'
+  if (p.engine === 'device') return { engine: 'device', status: null }
   const kokoroOk = p.kokoro && lang.startsWith('en')
-  if (p.engine === 'kokoro') return kokoroOk ? 'kokoro' : 'device'
-  if ((await naturalVoices()).available) return 'natural'
-  if (p.engine === 'natural') return 'device'
-  return kokoroOk ? 'kokoro' : 'device'
+  if (p.engine === 'kokoro') return { engine: kokoroOk ? 'kokoro' : 'device', status: null }
+  const status = await naturalVoices()
+  if (status.available) return { engine: 'natural', status }
+  if (p.engine === 'natural') return { engine: 'device', status }
+  return { engine: kokoroOk ? 'kokoro' : 'device', status }
+}
+
+/** What the label calls a voice: the server's label's first word ("Alpha"), or the Azure name ("Neerja"). */
+function voiceName(status: NaturalStatus | null, voice: string, lang: string): string {
+  const own = status?.voices[lang]?.find((v) => v.id === voice) ?? status?.voices[lang]?.[0]
+  if (status?.engine === 'own' && own) return own.label.split(' ')[0]
+  return voice.match(/-([A-Z][a-z]+)Neural$/)?.[1] ?? (lang === 'hi-IN' ? 'Swara' : 'Neerja')
 }
 
 /** Say `text` in `lang` ('en-IN' or 'hi-IN'), replacing anything being said. */
@@ -290,14 +333,16 @@ export function speak(text: string, lang: string) {
   const parts = splitSentences(text)
   if (!parts.length) return
   void (async () => {
-    const engine = await which(lang)
+    const { engine, status } = await which(lang)
     if (my !== session) return
     if (engine === 'device') return deviceSay(parts, lang, my)
     const ctrl = new AbortController()
     abort = ctrl
-    const voice = getVoicePrefs().voice || teacherVoice(lang)
+    const picked = getVoicePrefs().voice
+    const known = status?.voices[lang]?.some((v) => v.id === picked)
+    const voice = (known ? picked : '') || teacherVoice(lang, status?.engine ?? null)
     const make = (s: string) => (engine === 'natural' ? naturalClip(s, lang, voice, ctrl.signal) : kokoroClip(s))
-    const name = engine === 'kokoro' ? 'Kokoro' : (voice.match(/-([A-Z][a-z]+)Neural$/)?.[1] ?? (lang === 'hi-IN' ? 'Swara' : 'Neerja'))
+    const name = engine === 'kokoro' ? 'Kokoro' : voiceName(status, voice, lang)
     let next = make(parts[0])
     for (let i = 0; i < parts.length; i++) {
       const clip = await next

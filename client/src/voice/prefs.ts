@@ -8,6 +8,8 @@
 */
 import { useCallback, useEffect, useSyncExternalStore } from 'react'
 import { api } from '@/lib/api'
+import { RENAMED, TEACHERS, type TeacherId } from './teacher/teachers'
+export type { TeacherId }
 
 export type VoiceLang = 'en-IN' | 'hi-IN'
 /** Which voice reads answers: the best available, a natural Indian voice (server), Kokoro on this device, or the device's own. */
@@ -38,9 +40,8 @@ export interface VoicePrefs {
   teacherSize: TeacherSize
 }
 
-export type TeacherId = 'maya' | 'elena' | 'kai' | 'victor'
 export type TeacherSize = 's' | 'm' | 'l'
-const TEACHER_IDS: readonly string[] = ['maya', 'elena', 'kai', 'victor']
+const TEACHER_IDS: readonly string[] = TEACHERS.map((t) => t.id)
 
 export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true, engine: 'auto', voice: '', kokoro: false, teacher: '', teacherSize: 'm' }
 const LOCAL = 'nexora:voice'
@@ -61,9 +62,16 @@ function sanitize(raw: unknown): VoicePrefs {
     engine: r.engine === 'natural' || r.engine === 'kokoro' || r.engine === 'device' ? r.engine : 'auto',
     voice: typeof r.voice === 'string' && /^[a-z]{2}-[A-Z]{2}-[A-Za-z]+Neural$/.test(r.voice) ? r.voice : '',
     kokoro: r.kokoro === true,
-    teacher: typeof r.teacher === 'string' && TEACHER_IDS.includes(r.teacher) ? (r.teacher as TeacherId) : '',
+    teacher: teacherPref(r.teacher),
     teacherSize: r.teacherSize === 's' || r.teacherSize === 'l' ? r.teacherSize : 'm',
   }
+}
+
+/** A saved teacher, moved to who replaced them if they were retired. */
+function teacherPref(v: unknown): TeacherId | '' {
+  if (typeof v !== 'string') return ''
+  if (TEACHER_IDS.includes(v)) return v as TeacherId
+  return RENAMED[v] ?? ''
 }
 
 let current: VoicePrefs = (() => {
