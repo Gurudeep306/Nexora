@@ -3,13 +3,15 @@
   looks (teachers have no names of their own): pick one, give them a name,
   choose how big they are drawn, and say hello.
 */
-import { GraduationCap, UserX, Volume2 } from 'lucide-react'
+import { GraduationCap, Play, UserX, Volume2 } from 'lucide-react'
 import { Button, Card, CardContent } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
 import { useEffect, useRef, useState } from 'react'
 import { api } from '@/lib/api'
 import { useVoicePrefs, type TeacherSize } from '../prefs'
 import { OnDevice } from '../VoiceSettings'
+import { KOKORO_MB, loadKokoro, previewVoice } from '../speak'
+import { pickVoice, VOICES } from '../voices'
 import { introduce } from './intro'
 import { setTeacher } from './store'
 import { cleanName, TEACHERS, teacherById, teacherPortrait, UNNAMED, type TeacherId } from './teachers'
@@ -66,6 +68,7 @@ export function TeacherSettings() {
         {chosen && (
           <div className="vc-consent">
             <NameField key={chosen.id} id={chosen.id} male={chosen.body === 'M'} />
+            <VoicePicker male={chosen.body === 'M'} name={chosen.name} />
             <fieldset className="vc-field">
               <legend>Size</legend>
               <div className="flex flex-wrap gap-4">
@@ -89,6 +92,74 @@ export function TeacherSettings() {
         <p className="mb-0 text-[11.5px] text-text-muted">3D people from the Microsoft Rocketbox Avatar Library (MIT licence), animated with TalkingHead (MIT); voices by Kokoro (Apache licence).</p>
       </CardContent>
     </Card>
+  )
+}
+
+/** The teacher's voice: a catalogue of on-device voices, each with a play button. */
+function VoicePicker({ male, name }: { male: boolean; name: string }) {
+  const { user } = useAuth()
+  const [prefs, setPrefs] = useVoicePrefs(user?.username)
+  const [get, setGet] = useState<{ phase: 'idle' | 'loading' | 'failed'; p: number }>({ phase: 'idle', p: 0 })
+  const [playing, setPlaying] = useState('')
+  const current = pickVoice(prefs.kokoroVoice, male, 'a')
+  const hi = prefs.lang === 'hi-IN'
+  const sample = (v: (typeof VOICES)[number]) => (hi && v.hindi ? `नमस्ते, मैं ${name} हूँ। चलो, आज साथ में पढ़ते हैं।` : `Hi, I'm ${name}. Shall we study together today?`)
+  const getVoices = async () => {
+    setGet({ phase: 'loading', p: 0 })
+    try {
+      await loadKokoro((p) => setGet({ phase: 'loading', p }))
+      setPrefs({ kokoro: true, engine: prefs.engine === 'device' || prefs.engine === 'auto' ? 'kokoro' : prefs.engine })
+      setGet({ phase: 'idle', p: 1 })
+    } catch {
+      setGet({ phase: 'failed', p: 0 })
+    }
+  }
+  const play = async (id: string, text: string) => {
+    setPlaying(id)
+    try {
+      await previewVoice(id, text, hi && VOICES.find((v) => v.id === id)?.hindi ? 'hi-IN' : 'en-IN')
+    } finally {
+      setPlaying('')
+    }
+  }
+  return (
+    <fieldset className="vc-field">
+      <legend>{name === UNNAMED ? 'Voice' : `${name}’s voice`}</legend>
+      {!prefs.kokoro ? (
+        <div className="grid gap-2">
+          <p className="vc-note">
+            Natural voices that run on this device: free and private, after a one-time download of about {KOKORO_MB} MB (Wi-Fi is best). Without them {male ? 'he' : 'she'} uses the
+            device’s own voice.
+          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <Button size="sm" variant="secondary" onClick={() => void getVoices()} loading={get.phase === 'loading'}>
+              Get natural voices
+            </Button>
+            <span className="vc-note" aria-live="polite">
+              {get.phase === 'loading' ? `Downloading… ${Math.round(get.p * 100)}%` : get.phase === 'failed' ? 'The download didn’t finish. Try again on Wi-Fi.' : ''}
+            </span>
+          </div>
+        </div>
+      ) : (
+        <ul className="tch-voices">
+          {VOICES.filter((v) => v.gender === (male ? 'M' : 'F')).map((v) => (
+            <li key={v.id}>
+              <label>
+                <input type="radio" name="tch-voice" checked={current === v.id} onChange={() => setPrefs({ kokoroVoice: v.id })} />
+                <span>
+                  <strong>{v.name}</strong> · {v.sounds}
+                  {v.grade === 'A' ? ' · clearest' : ''}
+                </span>
+              </label>
+              <button type="button" className="tch-play" onClick={() => void play(v.id, sample(v))} disabled={!!playing} aria-label={`${playing === v.id ? 'Playing' : 'Play'} ${v.name}`}>
+                <Play className="size-3.5" aria-hidden="true" />
+                {playing === v.id ? 'Playing' : 'Play'}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </fieldset>
   )
 }
 
