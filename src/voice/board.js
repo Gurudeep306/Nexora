@@ -129,7 +129,7 @@ Rules: 3 to 6 steps. Each step adds a little to the picture, so it builds up lik
 
 /** Messages for one whiteboard lesson. Pure. */
 function buildBoardMessages({ topic, lang, persona, pageText, unsolved }) {
-  const who = persona ? `${persona.name}, a teacher on NexoraGuru` : "Guru, NexoraGuru's teacher";
+  const who = persona ? (persona.name ? `${persona.name}, a teacher on NexoraGuru` : "a teacher on NexoraGuru") : "Guru, NexoraGuru's teacher";
   return [
     {
       role: "system",
@@ -155,7 +155,7 @@ function boardLeaks(board, guard) {
 }
 
 /** Make a whiteboard lesson. Returns { title, steps, source } or throws AiError. */
-async function makeBoard({ user, topic, page = {}, lang = "en-IN", teacher = "" }) {
+async function makeBoard({ user, topic, page = {}, lang = "en-IN", teacher = "", teacherName = "" }) {
   const username = user?.username || "";
   const t = String(topic || "").trim().slice(0, 200);
   if (!t) throw new AiError("Say what to explain on the board", 400, "bad_request");
@@ -170,7 +170,7 @@ async function makeBoard({ user, topic, page = {}, lang = "en-IN", teacher = "" 
     if (q) guard = { answerKey: q.answer ?? null, options: q.options || [] };
   }
   const unsolved = !!(p.gateQuestionId || p.problemId) && !(p.gateAnswered || ctx.solved);
-  const messages = buildBoardMessages({ topic: t, lang, persona: guru.personaFor(teacher), pageText: ctx.text, unsolved });
+  const messages = buildBoardMessages({ topic: t, lang, persona: guru.personaFor(teacher, teacherName), pageText: ctx.text, unsolved });
   let lastErr = null;
   for (const c of guru.chain()) {
     try {

@@ -244,6 +244,8 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
           lang: prefs.lang,
           // With a virtual teacher, they answer as themselves; in conversation mode, remembering the talk.
           teacher: prefs.teacher,
+          // The name the student gave their teacher (teachers have none of their own).
+          teacherName: prefs.teacher ? (prefs.teacherNames[prefs.teacher] ?? '') : '',
           // A teacher on screen always talks like a person; the history is kept in conversation mode.
           talk: face,
           history: t.on ? t.history : [],
@@ -268,7 +270,7 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
         if (getTalk().on) sayThenListen(prefs.lang === 'hi-IN' ? 'माफ़ करना, अभी जवाब नहीं दे पाया। फिर से बोलो?' : 'Sorry, I couldn’t answer that just now. Say it again?')
       }
     },
-    [pageContext, shareContext, prefs.lang, prefs.speak, prefs.teacher, prefs.brain, sayThenListen, viaTeacher],
+    [pageContext, shareContext, prefs.lang, prefs.speak, prefs.teacher, prefs.teacherNames, prefs.brain, sayThenListen, viaTeacher],
   )
 
   /** Would acting on this text change something (an edit, Build mode, an action that isn't just looking)? */

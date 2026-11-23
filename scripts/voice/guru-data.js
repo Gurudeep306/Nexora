@@ -139,9 +139,20 @@ function screenOf(kind, item) {
   return item.page ? `Page: ${item.page}` : "";
 }
 
+/* Students name their teachers, so examples use many names (and sometimes none): the model learns to answer to whatever name it is given. */
+const TRAIN_NAMES = ["Priya", "Kavya", "Neha", "Ananya", "Arjun", "Rohan", "Dev", "Meera", "Sana", "Vikram", "Asha", "Kabir", "Tara", "Ravi", ""];
+const FIRST = { priya: "Priya", kavya: "Kavya", neha: "Neha", ananya: "Ananya", arjun: "Arjun", rohan: "Rohan", dev: "Dev" };
+/** The name a teacher has in one example: the look's old name for half the items, else one from the pool (deterministic by item). */
+function trainingName(teacherId, itemId) {
+  if (!teacherId) return "";
+  let h = 0;
+  for (const c of String(itemId)) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return h % 2 === 0 ? FIRST[teacherId] || "" : TRAIN_NAMES[h % TRAIN_NAMES.length];
+}
+
 /** Chat-format examples ({ id, split, messages, meta }), one per assistant turn, built with buildMessages. */
 function toExamples(kind, item, lang, teacherId, t, teacherModel) {
-  const persona = G.personaFor(teacherId);
+  const persona = G.personaFor(teacherId, trainingName(teacherId, item.id));
   const itemId = item.id;
   const split = splitOf(itemId);
   const pageText = screenOf(kind, item);
@@ -192,4 +203,5 @@ function plan({ questions, topics, perKind = {}, seed = 1 }) {
 
 const REPLIES = { hint: 3, review: 1, concept: 1, talk: 1 };
 
-module.exports = { allowedTeacher, TEACHERS, FORBIDDEN, KINDS, LANGS, TEACHER_IDS, REPLIES, teacherMessages, parseTeacher, rejectReason, toExamples, splitOf, pickLang, gateItems, topicItems, plan, devanagariShare, unit };
+module.exports = {
+  trainingName, allowedTeacher, TEACHERS, FORBIDDEN, KINDS, LANGS, TEACHER_IDS, REPLIES, teacherMessages, parseTeacher, rejectReason, toExamples, splitOf, pickLang, gateItems, topicItems, plan, devanagariShare, unit };

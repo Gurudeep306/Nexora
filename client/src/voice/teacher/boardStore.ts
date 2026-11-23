@@ -59,7 +59,7 @@ export async function openBoard(topic: string, page: Record<string, unknown> = {
   set({ open: true, topic: t, loading: true, error: '', lesson: null })
   try {
     const p = getVoicePrefs()
-    const r = await api.post<{ ok: boolean; title: string; steps: Lesson['steps'] }>('/api/voice/board', { topic: t, page, lang: p.lang, teacher: p.teacher })
+    const r = await api.post<{ ok: boolean; title: string; steps: Lesson['steps'] }>('/api/voice/board', { topic: t, page, lang: p.lang, teacher: p.teacher, teacherName: p.teacher ? (p.teacherNames[p.teacher] ?? '') : '' })
     if (my !== ask) return
     set({ loading: false, lesson: { title: r.title, steps: r.steps } })
   } catch (e) {

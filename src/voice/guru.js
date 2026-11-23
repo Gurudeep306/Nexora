@@ -212,12 +212,23 @@ function spoken(text, max = 900) {
  * Who is speaking: the student's chosen virtual teacher (a name and a gender,
  * for Hindi verb forms), or Guru. Only names from the site's teacher list.
  */
-const TEACHER_NAMES = { priya: "Priya", kavya: "Kavya", neha: "Neha", ananya: "Ananya", arjun: "Arjun", rohan: "Rohan", dev: "Dev" };
+// The teachers' looks (client/src/voice/teacher/teachers.ts); students name them, so names come with each request.
+const TEACHER_IDS = new Set(["priya", "kavya", "neha", "ananya", "arjun", "rohan", "dev"]);
 const MALE = new Set(["arjun", "rohan", "dev"]);
-function personaFor(teacher) {
+/** A name the student gave their teacher, made safe for a prompt: letters, spaces, ' and -, at most 20 characters. */
+function cleanTeacherName(v) {
+  return String(v ?? "")
+    .replace(/[^\p{L}\p{M}' -]/gu, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 20)
+    .trim();
+}
+/** Who is speaking: the teacher's look (for their gender) and the name the student gave them ("" = not named yet). */
+function personaFor(teacher, name = "") {
   const id = String(teacher || "").toLowerCase();
-  if (!TEACHER_NAMES[id]) return null;
-  return { name: TEACHER_NAMES[id], male: MALE.has(id) };
+  if (!TEACHER_IDS.has(id)) return null;
+  return { name: cleanTeacherName(name), male: MALE.has(id) };
 }
 
 /** A gendered Hindi/Hinglish word for the speaker: "karta/karti", "karunga/karungi". */
@@ -234,7 +245,7 @@ function cleanHistory(history) {
     .map((m) => ({ role: m.role, content: spoken(m.content, 600) }));
 }
 
-const TALK = (persona) => `This is a spoken conversation, face to face, like a real teacher sitting with the student${persona ? ` (you appear on screen as ${persona.name}, a 3D person)` : ""}. Your words are spoken aloud by a voice, so write exactly how a warm Indian teacher talks, not how a chatbot writes.
+const TALK = (persona) => `This is a spoken conversation, face to face, like a real teacher sitting with the student${persona ? ` (you appear on screen as ${persona.name ? `${persona.name}, ` : ""}a 3D person)` : ""}. Your words are spoken aloud by a voice, so write exactly how a warm Indian teacher talks, not how a chatbot writes.
 - Start by reacting to what they said, in a few words ("Okay, got it." / "Hmm, good doubt." / "Right, look…"), then answer. Never open with "Great question", "Certainly", "As an AI" or by repeating their question.
 - Mix short and medium sentences; one idea per sentence. Use contractions ("it's", "you'll", "don't") and everyday words. No lists, no "firstly / secondly / in conclusion", no brackets.
 - Match the student's language exactly. If they spoke plain English, reply in plain, friendly English with no Hindi words at all (an English voice reads Hindi words badly). Only if they spoke Hinglish, talk the way students do ("dekho", "achha", "samjhe?"), Roman script only.
@@ -244,14 +255,14 @@ const TALK = (persona) => `This is a spoken conversation, face to face, like a r
 - Greetings, "how are you", feeling tired or stressed about exams: answer briefly and kindly like a person would, then gently bring it back to studying.
 - In Hindi or Hinglish, speak about yourself as a ${persona && !persona.male ? "woman (\"main samjhati hoon\", \"karungi\")" : "man (\"main samjhata hoon\", \"karunga\")"}.`;
 
-const SYSTEM = (lang, persona) => `You are ${persona ? `${persona.name}, a teacher on NexoraGuru` : "Guru, NexoraGuru's voice tutor"}: the senior who cleared GATE and now sits beside the student. Calm, quick, warm, never showing off.
+const SYSTEM = (lang, persona) => `You are ${persona ? (persona.name ? `${persona.name}, a teacher on NexoraGuru (the student chose this name for you)` : "the student's teacher on NexoraGuru") : "Guru, NexoraGuru's voice tutor"}: the senior who cleared GATE and now sits beside the student. Calm, quick, warm, never showing off.
 Rules you never break:
 - Speak, don't write: short spoken sentences, at most 70 words, no lists, no markdown, no headings, no code blocks. Say symbols in words ("O of n log n", "i plus plus", "for all x").
 - Reply in the student's own mix of languages. ${lang === "hi-IN" ? "They chose Hindi: reply in simple Hindi (Devanagari), technical terms in English." : "If they write Hinglish, reply in Hinglish (Roman script); if English, in English."} Keep technical terms in English.
 - Only CS, GATE CSE, maths for CS, GATE aptitude and using NexoraGuru. Anything else: one polite line, then offer to continue studying.
 - Never invent facts, numbers, years or marks. Use the page and the verified material given. If something is not there, say you won't guess.
 - Never write the student's code for an unsolved problem. Never give the answer to an unanswered question unless the instruction for this turn says to.
-- If asked whether you are human, say honestly that you are NexoraGuru's AI teacher${persona ? `, shown as ${persona.name}` : ""}.
+- If asked whether you are human, say honestly that you are NexoraGuru's AI teacher${persona ? `, shown as a 3D ${persona.male ? "man" : "woman"}${persona.name ? ` they named ${persona.name}` : ""}` : ""}.
 - Encourage after mistakes, briefly. No flattery.`;
 
 /** The messages for one Guru turn. Pure. `talk`: a spoken conversation with the virtual teacher. */
@@ -321,8 +332,8 @@ function firstSentences(s, n = 3) {
  * { kind: "say", say, step, source } for a reply that needs no model, or
  * { kind: "ask", messages, step, unsolved, … } for one that does.
  */
-async function planGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN", teacher = "", talk = false, history = [], memory = "" }) {
-  const persona = personaFor(teacher);
+async function planGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN", teacher = "", teacherName = "", talk = false, history = [], memory = "" }) {
+  const persona = personaFor(teacher, teacherName);
   const username = user?.username || "";
   const question = String(text || "").trim().slice(0, 1200);
   if (!question) throw new AiError("Say something first", 400, "bad_request");
