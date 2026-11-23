@@ -1160,6 +1160,15 @@ app.get("/api/problem-pdf/:id", async (req, res) => {
   }
 });
 
+/* Statements from the judge within a time budget (src/statement-fetch.js). */
+const { makeStatementFetcher, STILL_FETCHING } = require("./statement-fetch");
+const statementFetcher = makeStatementFetcher({
+  fetch: (problem) => require("./sources").fetchStatement(problem),
+  save: (id, data) => _saveStatement(id, data),
+  budgetMs: Number(process.env.STATEMENT_BUDGET_MS) || 40000,
+  log: (problem, e) => console.log(`[statement] ✗ ${problem.platform} ${problem.problem_id}: ${e.message}`),
+});
+
 app.get("/api/problem-statement/:id", async (req, res) => {
   try {
     const problem = await get("SELECT * FROM problems WHERE id=?", [
@@ -1228,22 +1237,23 @@ app.get("/api/problem-statement/:id", async (req, res) => {
       } catch {}
     }
 
-    // 3. The platform's source module (API / page / mirror / archive).
-    try {
-      const data = await require("./sources").fetchStatement(problem);
-      if (data && (data.statement || "").replace(/<[^>]+>/g, "").trim().length > 10) {
-        await _saveStatement(problem.id, data);
-        const norm = normalizeStatement(data, problem);
-        return res.json({
-          ok: true,
-          ...norm,
-          extra: data.extra || {},
-          platform: problem.platform,
-          source: "live",
-        });
-      }
-    } catch (e) {
-      console.log(`[statement] ✗ ${problem.platform} ${problem.problem_id}: ${e.message}`);
+    // 3. The platform's source module (API / page / dataset / archive),
+    // within STATEMENT_BUDGET_MS: past that the page hears "still fetching"
+    // (never a timeout error), while the fetch carries on and stores the
+    // statement for the next visit. One fetch per problem at a time.
+    const data = await statementFetcher.within(problem);
+    if (data === STILL_FETCHING) {
+      return res.json({ ok: true, unavailable: true, pending: true, url: problem.url, statement: "", samples: [], inputSpec: "", outputSpec: "", note: "", timeLimit: "", memLimit: "", platform: problem.platform, source: "pending" });
+    }
+    if (data) {
+      const norm = normalizeStatement(data, problem);
+      return res.json({
+        ok: true,
+        ...norm,
+        extra: data.extra || {},
+        platform: problem.platform,
+        source: "live",
+      });
     }
 
     // 4. SLOW FALLBACK: Puppeteer (for Cloudflare-protected pages)

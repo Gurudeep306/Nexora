@@ -119,8 +119,26 @@ test("no trustworthy reference: a clear error, no tests", { skip: !hasPython }, 
   await assert.rejects(generateTests(problem, { count: 6, plan: plan({ solution: wrong, brute: wrong }) }), /Neither AI reference solution got the official samples right/);
 });
 
-test("a broken generator is reported, not hidden", { skip: !hasPython }, async () => {
-  await assert.rejects(generateTests(problem, { count: 6, plan: plan({ generator: "def gen(rng, size) return 1", edgeCases: [] }) }), /generator didn't run/);
+test("a broken generator is written again once; if it is still broken, the student gets plain words, never a traceback", { skip: !hasPython }, async () => {
+  let calls = 0;
+  const broken = plan({ generator: "def gen(rng, size) return 1", edgeCases: [] });
+  const counted = async (p) => (calls++, broken(p));
+  const err = await generateTests(problem, { count: 6, plan: counted }).then(() => null, (e) => e);
+  assert.ok(err, "it fails");
+  assert.equal(calls, 2, "the plan is asked for once more");
+  assert.match(err.message, /test maker had a mistake.*Try again/);
+  assert.doesNotMatch(err.message, /SyntaxError|Traceback|invalid syntax/);
+});
+
+test("a broken generator followed by a good one: tests come out, no error", { skip: !hasPython }, async () => {
+  let calls = 0;
+  const first = plan({ generator: "def gen(rng, size) return 1", edgeCases: [] });
+  const good = plan();
+  const steps = [];
+  const r = await generateTests(problem, { count: 12, plan: async (p) => (calls++ === 0 ? first(p) : good(p)), onProgress: (s) => steps.push(s) });
+  assert.equal(calls, 2);
+  assert.ok(r.tests.length >= 6, `got ${r.tests.length}`);
+  assert.ok(steps.some((s) => /writing it again/.test(s)));
 });
 
 /* ── Short steps for small self-hosted models (routes/coding.js splitPlan) ── */

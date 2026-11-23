@@ -159,3 +159,18 @@
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
+.stmt-away-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+/* The quiet one beside the main action (one accent button per card). */
+button.stmt-away-btn {
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary) !important;
+  cursor: pointer;
+}
+button.stmt-away-btn:hover {
+  background: var(--color-bg-surface-2);
+}
