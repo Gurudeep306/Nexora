@@ -177,7 +177,7 @@ The exam console keeps its own mic and box.
   click-through so the page under her stays usable; her Talk button starts a
   conversation.
 
-### 3.2.2 She remembers you, and can think on your device (2026-11-23, this PR)
+### 3.2.2 She remembers you, and can think on your device (2026-11-23, #258)
 
 - **Memory** (`src/voice/memory.js`, table `teacher_memory`, one row per student):
   learned by rules from what the student says and the page they are on, no
