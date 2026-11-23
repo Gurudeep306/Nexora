@@ -349,3 +349,9 @@
 @media (prefers-reduced-motion: reduce) {
   .wb-new .wb-stroke, .wb-new text { animation: none; stroke-dashoffset: 0; }
 }
+
+/* Her offer of a natural voice sits where her speech bubble does. */
+.tch-offer .tch-say-foot {
+  justify-content: flex-start;
+  gap: 8px;
+}

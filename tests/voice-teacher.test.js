@@ -129,3 +129,19 @@ test('the guide finds things by the names people see, prefers what is on screen,
   for (const n of ['Submit', 'Delete account', 'Log out', 'End test', 'Send']) assert.ok(risky(n), n);
   for (const n of ['Run', 'Settings', 'Next', 'Dark mode']) assert.ok(!risky(n), n);
 });
+
+test('natural speech: a breath between sentences, longer after a question', async () => {
+  const { gapAfter } = await import(pathToFileURL(path.join(__dirname, '..', 'client', 'src', 'voice', 'sentences.ts')).href);
+  assert.ok(gapAfter('Samjha?') > gapAfter('Yeh dekho.'));
+  assert.ok(gapAfter('Yeh dekho.') > gapAfter('pehle yeh —'));
+  assert.equal(gapAfter('बहुत अच्छा।'), gapAfter('Very good.'));
+  for (const s of ['a?', 'b.', 'c,', 'd']) assert.ok(gapAfter(s) >= 100 && gapAfter(s) <= 400, s);
+});
+
+test('interrupting the teacher: only a clear, sustained voice above what the mic hears while she talks', async () => {
+  const { isVoice } = await import(pathToFileURL(path.join(__dirname, '..', 'client', 'src', 'voice', 'bargeIn.ts')).href);
+  assert.equal(isVoice(0.01, 0.002), false, 'quiet room, quiet frame');
+  assert.equal(isVoice(0.05, 0.004), true, 'a student talking');
+  assert.equal(isVoice(0.05, 0.02), false, 'her own voice leaking into the mic sets the bar higher');
+  assert.equal(isVoice(0.02, 0), false, 'never below the minimum level');
+});

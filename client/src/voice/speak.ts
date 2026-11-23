@@ -16,7 +16,7 @@
 import { useSyncExternalStore } from 'react'
 import { API_BASE } from '@/lib/api'
 import { getVoicePrefs } from './prefs'
-import { splitSentences } from './sentences'
+import { gapAfter, splitSentences } from './sentences'
 import { teacherById } from './teacher/teachers'
 
 export { splitSentences }
@@ -396,6 +396,8 @@ export function speak(text: string, lang: string) {
       if (i + 1 < parts.length) next = make(parts[i + 1])
       set({ on: true, engine, name })
       await play(clip, my, parts[i], lang)
+      // A breath between sentences, as people speak: a little longer after a question.
+      if (i + 1 < parts.length && my === session) await new Promise((r) => window.setTimeout(r, gapAfter(parts[i])))
     }
     if (my === session) {
       set(IDLE)
