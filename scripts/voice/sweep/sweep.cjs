@@ -177,6 +177,48 @@ const S = process.argv[2] || require('os').tmpdir()
     await ctx.close()
   }
 
+  /* ── 2b. Her voice on a device with no voice server: the most natural device voice, a few smooth pieces, lips that follow each word ── */
+  {
+    const ctx = await b.newContext({ viewport: { width: 1280, height: 860 } })
+    await ctx.addInitScript(() => {
+      localStorage.setItem('nexora:voice', JSON.stringify({ v: 1, consent: true, lang: 'en-IN', speak: true, engine: 'device', teacher: 'priya', teacherSize: 'm' }))
+      // A stand-in device voice: the voices a Mac lists, and word boundaries as a real voice reports them.
+      const voices = ['Rishi|en-IN', 'Zarvox|en-US', 'Veena|en-IN', 'Veena (Enhanced)|en-IN', 'Samantha|en-US'].map((x) => ({ name: x.split('|')[0], lang: x.split('|')[1], localService: true, default: false, voiceURI: x }))
+      window.__utter = []
+      window.__words = 0
+      const synth = { speaking: false, pending: false, paused: false, getVoices: () => voices, cancel() {}, pause() {}, resume() {}, addEventListener() {}, removeEventListener() {},
+        speak(u) {
+          window.__utter.push({ text: u.text, voice: u.voice && u.voice.name })
+          const words = [...u.text.matchAll(/\S+/g)]
+          setTimeout(() => {
+            u.onstart && u.onstart({})
+            words.forEach((m, i) => setTimeout(() => { window.__words++; u.onboundary && u.onboundary({ name: 'word', charIndex: m.index, charLength: m[0].length }) }, i * 120))
+            setTimeout(() => u.onend && u.onend({}), words.length * 120 + 50)
+          }, 20 + window.__utter.length * 5)
+        } }
+      Object.defineProperty(window, 'speechSynthesis', { value: synth, configurable: true })
+      window.SpeechSynthesisUtterance = function (t) { this.text = t }
+      class R { start() { const t = (window.__says || []).shift() || ''; setTimeout(() => { if (t) this.onresult && this.onresult({ resultIndex: 0, results: [{ isFinal: true, 0: { transcript: t, confidence: 0.95 } }] }); this.onend && this.onend() }, 300) } stop() {} abort() {} }
+      window.SpeechRecognition = R
+      window.webkitSpeechRecognition = R
+    })
+    await ctx.request.post(`${BASE}/api/user/login`, { data: { username: 'vowner', password: 'secret123' } })
+    const p = await ctx.newPage()
+    p.__errs = []
+    p.on('pageerror', (e) => p.__errs.push(String(e).slice(0, 160)))
+    await p.goto(`${BASE}/hub`, { waitUntil: 'networkidle' })
+    await p.waitForSelector('.tch[data-ready]', { timeout: 120000 })
+    await say(p, 'what is a heap and why is the smallest element always on top of it', 6000)
+    const u = await p.evaluate(() => ({ utter: window.__utter, words: window.__words }))
+    ok('the device voice is the most natural one it has (not the robotic one)', u.utter.length > 0 && u.utter.every((x) => x.voice === 'Veena (Enhanced)'), u.utter.map((x) => x.voice).join(', '))
+    const sentences = u.utter.map((x) => x.text).join(' ').split(/(?<=[.?!])\s+/).length
+    ok('the answer is said in a few smooth pieces, not sentence by sentence', u.utter.length >= 1 && u.utter.length < Math.max(2, sentences), `${u.utter.length} pieces for ${sentences} sentences`)
+    ok('her lips get every word as it is said', u.words > 5, `${u.words} words`)
+    ok('no Hindi words in an English answer from the rules', !/\b(achha|shabaash|chalo)\b/i.test(u.utter.map((x) => x.text).join(' ')))
+    ok('no page errors (device voice)', p.__errs.length === 0, p.__errs.join(' | '))
+    await ctx.close()
+  }
+
   /* ── 3. Light, dark and phone: the mic pill and voice pages have no accessibility problems and no sideways scroll ── */
   for (const [scheme, width] of [['light', 1280], ['dark', 1280], ['light', 360], ['dark', 360]]) {
     const { ctx, p } = await context(scheme, width, '')

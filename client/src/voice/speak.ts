@@ -16,7 +16,8 @@
 import { useSyncExternalStore } from 'react'
 import { API_BASE } from '@/lib/api'
 import { getVoicePrefs } from './prefs'
-import { gapAfter, splitSentences } from './sentences'
+import { speechChunks, splitSentences } from './sentences'
+import { bestVoice } from './deviceVoice'
 import { teacherById } from './teacher/teachers'
 
 export { splitSentences }
@@ -40,6 +41,8 @@ export interface SpokenSentence {
   ms: number
   /** Exact word times and mouth shapes, when the voice server sent them (our own voice server does). */
   timing?: VoiceTiming | null
+  /** The device voice: word starts follow as `onWord` events where the voice reports them. */
+  live?: boolean
 }
 
 export interface VoiceTiming {
@@ -49,6 +52,20 @@ export interface VoiceTiming {
   visemes?: string[]
   vtimes?: number[]
   vdurations?: number[]
+}
+/** One word as the device voice starts it (only voices that report word boundaries). */
+export interface SpokenWord {
+  word: string
+  ms: number
+}
+const wordListeners = new Set<(w: SpokenWord) => void>()
+/** Hear each word the device voice starts. Returns an unsubscribe. */
+export function onWord(fn: (w: SpokenWord) => void): () => void {
+  wordListeners.add(fn)
+  return () => wordListeners.delete(fn)
+}
+function announceWord(w: SpokenWord) {
+  for (const l of wordListeners) l(w)
 }
 const sentenceListeners = new Set<(s: SpokenSentence | null) => void>()
 /** Hear each sentence as it starts (and `null` when speech stops). Returns an unsubscribe. */
@@ -61,7 +78,7 @@ function announce(s: SpokenSentence | null) {
 }
 /** About how long a device voice takes to say `text` (it reports no length). */
 export function estimateMs(text: string, rate = 1.02): number {
-  return Math.max(400, Math.round((text.length * 62) / rate))
+  return Math.max(text.length < 15 ? 140 : 400, Math.round((text.length * 62) / rate))
 }
 
 /**
@@ -296,8 +313,8 @@ function deviceSay(parts: string[], lang: string, my: number) {
   }
   const synth = window.speechSynthesis
   synth.cancel()
-  const voices = synth.getVoices()
-  const voice = voices.find((v) => v.lang === lang) ?? voices.find((v) => v.lang.startsWith(lang.slice(0, 2))) ?? null
+  // The most natural voice the device has for this language, matching the teacher (deviceVoice.ts).
+  const voice = bestVoice(synth.getVoices(), lang, teacherById(getVoicePrefs().teacher)?.body === 'M')
   set({ on: true, engine: 'device', name: 'Device voice' })
   // One utterance per sentence: each start is announced for the teacher's lips,
   // and long answers aren't cut off (some browsers stop one long utterance).
@@ -307,7 +324,13 @@ function deviceSay(parts: string[], lang: string, my: number) {
     u.voice = voice
     u.rate = 1.02
     u.onstart = () => {
-      if (my === session) announce({ text, lang, ms: estimateMs(text, u.rate) })
+      if (my === session) announce({ text, lang, ms: estimateMs(text, u.rate), live: true })
+    }
+    // Most device voices say where each word starts: the teacher's lips follow those, not a guess.
+    u.onboundary = (e) => {
+      if (my !== session || (e.name && e.name !== 'word')) return
+      const word = (e.charLength ? text.slice(e.charIndex, e.charIndex + e.charLength) : (text.slice(e.charIndex).match(/^\S+/)?.[0] ?? '')).replace(/[^\p{L}\p{N}']/gu, '')
+      if (word) announceWord({ word, ms: estimateMs(word, u.rate) })
     }
     u.onerror = () => {
       if (my === session) {
@@ -370,7 +393,8 @@ function voiceName(status: NaturalStatus | null, voice: string, lang: string): s
 export function speak(text: string, lang: string) {
   stopSpeaking()
   const my = ++session
-  const parts = splitSentences(text)
+  // Pieces of a sentence or two: the voice keeps its own rhythm inside each, with few seams.
+  const parts = speechChunks(text)
   if (!parts.length) return
   void (async () => {
     const { engine, status } = await which()
@@ -396,8 +420,6 @@ export function speak(text: string, lang: string) {
       if (i + 1 < parts.length) next = make(parts[i + 1])
       set({ on: true, engine, name })
       await play(clip, my, parts[i], lang)
-      // A breath between sentences, as people speak: a little longer after a question.
-      if (i + 1 < parts.length && my === session) await new Promise((r) => window.setTimeout(r, gapAfter(parts[i])))
     }
     if (my === session) {
       set(IDLE)

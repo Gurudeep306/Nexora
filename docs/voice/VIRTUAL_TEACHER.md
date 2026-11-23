@@ -218,6 +218,39 @@ The exam console keeps its own mic and box.
   portrait. It was compared side by side in light and dark with no back
   light and a stronger one; the softer setting looked the most natural.
 
+### 3.2.4 The voice, reworked (2026-11-23, this PR)
+
+The owner found her voice robotic, choppy, odd on some words and out of step
+with her lips. The causes, and what changed:
+
+- **Robotic:** without a voice server she uses a voice built into the
+  device, and the site took the first one listed for the language. On a Mac
+  that is often a robotic one. Now `deviceVoice.ts` scores every voice:
+  - the right language;
+  - natural ones first (Edge "Online (Natural)", macOS "Premium" or
+    "Enhanced", Google);
+  - the teacher's gender;
+  - novelty voices last.
+- **Odd words:** the conversation prompt told the AI to open English answers
+  with Hindi words ("Achha", "Haan, dekho"), and a few of her fixed lines had
+  "Shabaash". An English voice says these badly. Now Hindi words are used
+  only when the student speaks Hinglish.
+- **Choppy:** every sentence was a separate clip with an added pause on top
+  of the voice's own. Now sentences are joined into a few pieces
+  (`speechChunks`: a short first piece so she starts at once, then up to 180
+  characters), with no added pause.
+- **Lips:** for the device voice, the length of each sentence was guessed, so
+  the mouth drifted. Now the word starts the voice reports (`onboundary`,
+  `onWord`) move her lips word by word. Voices that report none fall back to
+  the guess.
+- **For a natural voice for everyone:** set up the free voice server
+  (`deploy/voice-server`: Kokoro on a free Oracle server). It gives every
+  student the same Indian voices, with exact lip shapes. Azure's free tier is
+  not an option: Microsoft allows commercial use of its voices only on the
+  paid tier, which Admin → Voice recognition also says. The most natural
+  Indian voices (IndicF5, Veena, Indic Parler) are free models but need a
+  paid GPU server to speak in real time.
+
 ### 3.3 Honest limits
 
 - **No walking legs yet.** It glides (turned sideways) rather than taking

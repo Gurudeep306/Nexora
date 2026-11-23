@@ -53,7 +53,7 @@ export function VoiceOffer({ name }: { name: string }) {
       setVoicePrefs({ kokoro: true, engine: 'kokoro' })
       setShow(false)
       const hi = getVoicePrefs().lang === 'hi-IN'
-      speak(hi ? 'अब मेरी आवाज़ कैसी लग रही है? चलो, आज क्या पढ़ें?' : 'Achha, does this sound better? Chalo, what shall we study today?', hi ? 'hi-IN' : 'en-IN')
+      speak(hi ? 'अब मेरी आवाज़ कैसी लग रही है? चलो, आज क्या पढ़ें?' : 'Does this sound better? So, what shall we study today?', hi ? 'hi-IN' : 'en-IN')
     } catch {
       setState({ phase: 'failed', p: 0 })
     }
