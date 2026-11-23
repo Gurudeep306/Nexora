@@ -2561,6 +2561,9 @@ h4.notes-h {
 .km-cell.is-x .km-val {
   color: color-mix(in oklab, var(--color-state-warning) 70%, var(--color-text-primary));
 }
+.km-idx::after {
+  content: attr(data-m);
+}
 .km-idx {
   position: absolute;
   right: 3px;
@@ -3289,4 +3292,9 @@ h4.notes-h {
 }
 .notes-table :is(td, th)[style*='right'] {
   font-variant-numeric: tabular-nums;
+}
+
+/* Row numbers in the truth-table buttons, drawn from data-m (not part of the button's name). */
+.lab-row-no::after {
+  content: attr(data-m);
 }

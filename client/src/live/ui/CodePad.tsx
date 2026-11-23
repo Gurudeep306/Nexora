@@ -24,7 +24,8 @@ export default function CodePad({ session, lang }: { session: LiveSession; lang:
   const doc = session.codePad
 
   useEffect(() => {
-    if (!host.current) return
+    // The pad's text library loads when the room is joined; until then there is nothing to bind.
+    if (!host.current || !doc) return
     const dark = document.documentElement.dataset.mode === 'dark'
     const model = monaco.editor.createModel('', lang)
     const ed = monaco.editor.create(host.current, {
@@ -65,10 +66,10 @@ export default function CodePad({ session, lang }: { session: LiveSession; lang:
             </option>
           ))}
         </select>
-        <button type="button" className="lv-chip-btn" onClick={() => void navigator.clipboard?.writeText(doc.getText('code').toString())}>
+        <button type="button" className="lv-chip-btn" disabled={!doc} onClick={() => doc && void navigator.clipboard?.writeText(doc.getText('code').toString())}>
           Copy all
         </button>
-        <span className="lv-hint">Everyone types here together.</span>
+        <span className="lv-hint" role="status">{doc ? 'Everyone types here together.' : 'Getting the code pad ready…'}</span>
       </div>
       <div ref={host} className="lv-code-editor" />
     </div>

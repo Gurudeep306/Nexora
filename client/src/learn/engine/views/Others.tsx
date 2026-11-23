@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import type { GridState, MeterState, OutputState, QueueState, StackState, VarsState } from '../types'
 import { cn } from '@/lib/utils'
@@ -73,6 +74,18 @@ export function QueueView({ s }: { s: QueueState }) {
  */
 export function GridView({ s }: { s: GridState }) {
   const { width: stageW } = useStage()
+  // Measured, not estimated: whenever the grid really is wider than its box it can be scrolled from the keyboard.
+  const box = useRef<HTMLDivElement>(null)
+  const [overflows, setOverflows] = useState(false)
+  useEffect(() => {
+    const el = box.current
+    if (!el) return
+    const check = () => setOverflows(el.scrollWidth > el.clientWidth + 1)
+    check()
+    const ro = new ResizeObserver(check)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
   const cols = Math.max(0, ...s.rows.map((r) => r.length))
   const longest = Math.max(1, ...s.rows.flat().map((v) => (v === null ? 0 : fmt(v).length)))
   const rowLab = s.rowLabels ? Math.max(18, ...s.rowLabels.map((l) => l.length * 7 + 8)) : 0
@@ -89,8 +102,9 @@ export function GridView({ s }: { s: GridState }) {
   return (
     // Wider than the stage, it scrolls sideways: then it must be reachable by keyboard too.
     <div
+      ref={box}
       className="viz-grid overflow-x-auto rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--color-focus)]"
-      {...(W > stageW ? { tabIndex: 0, role: 'region', 'aria-label': `${s.label ?? 'Grid'} (scrolls sideways)` } : {})}
+      {...(overflows || W > stageW ? { tabIndex: 0, role: 'region', 'aria-label': `${s.label ?? 'Grid'} (scrolls sideways)` } : {})}
     >
       {s.label && <p className="viz-label">{s.label}</p>}
       <div className="relative mx-auto" style={{ width: W, height: Ht }}>

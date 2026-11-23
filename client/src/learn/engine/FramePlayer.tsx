@@ -435,7 +435,8 @@ export function FramePlayer({ id, kicker = 'Visualizer', title, blurb, frames, e
       <div className={cn('grid gap-0', focus ? 'xl:grid-cols-[minmax(0,1.55fr)_minmax(360px,1fr)]' : 'lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]')}>
         <div className="flex min-w-0 flex-col border-border lg:border-r">
           <StageContext.Provider value={stage}>
-            <div ref={stageRef} className={cn('viz-stage flex flex-1 flex-col justify-center gap-7 overflow-x-auto px-3 py-5 sm:px-4 sm:py-7', focus ? 'min-h-[48vh]' : 'min-h-[190px] sm:min-h-[250px]')}>
+            {/* Wide animations scroll sideways, so the stage is a named region the keyboard can reach. */}
+            <div ref={stageRef} tabIndex={0} role="region" aria-label={`Animation: ${title}`} className={cn('viz-stage flex flex-1 flex-col justify-center gap-7 overflow-x-auto px-3 py-5 sm:px-4 sm:py-7', focus ? 'min-h-[48vh]' : 'min-h-[190px] sm:min-h-[250px]')}>
               {error ? (
                 <p className="text-center text-[13px] text-state-error">{error}</p>
               ) : onStage.length ? (

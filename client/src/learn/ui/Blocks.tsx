@@ -213,7 +213,10 @@ export function LessonBlock({ b, bank }: { b: Block; bank: Map<string, Question>
     case 'readmore':
       return (
         <section className="nr-readmore" aria-label="Read more">
-          <h3 className="!mt-0">Read more</h3>
+          {/* A section of the lesson (level 2 for screen readers, so the outline never skips a level); it keeps the smaller look. */}
+          <h3 className="!mt-0" role="heading" aria-level={2}>
+            Read more
+          </h3>
           <ul>
             {b.items.map((it, i) => {
               const book = BOOKS[it.book]
