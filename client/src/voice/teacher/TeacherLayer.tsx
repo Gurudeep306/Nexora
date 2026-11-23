@@ -341,6 +341,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       data-size={size}
       data-side={st.side}
       data-ready={st.status === 'ready' ? '' : undefined}
+      data-sitting={st.sitting ? '' : undefined}
       style={x === null ? { visibility: 'hidden' } : { transform: `translateX(${x}px)` }}
       role="region"
       aria-label={`Virtual teacher ${teacher.name}`}
