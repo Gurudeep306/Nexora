@@ -7,6 +7,7 @@
   Dependency-free and type-strippable.
 */
 import type { ActionSpec, Args } from './types'
+import { isQuestion } from './ask.ts'
 
 /* The guide (T2): what to point at or press is any name on the page, read from the whole sentence.
    Strict whole-sentence shapes only, so a question never turns into a click. */
@@ -49,11 +50,14 @@ export function parseBoard(u: string): Args | null {
 
 /** "point at the Run button", "Settings kahan hai" → { target: 'Run' }. */
 export function parsePoint(u: string): Args | null {
+  // "where is Settings" / "Settings kahan hai" asks to be shown; "point to point link kya hai" asks about a topic.
+  if (isQuestion(u)) return null
   const v = first(u, [POINT_EN, POINT_HI, POINT_DEV])
   return v ? { target: v } : null
 }
 /** "click Run", "press the submit button", "Run dabao" → { target: 'Run' }. */
 export function parseClick(u: string): Args | null {
+  if (isQuestion(u)) return null
   const v = first(u, [CLICK_EN, CLICK_HI, CLICK_DEV])
   return v ? { target: v } : null
 }
