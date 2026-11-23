@@ -19,6 +19,7 @@ import { getVoicePrefs } from './prefs'
 import { speechChunks, splitSentences } from './sentences'
 import { bestVoice } from './deviceVoice'
 import { levelUp, pickVoice } from './voices'
+import { cloneSay, getClone, loadClone } from './clone/clone'
 import { teacherById } from './teacher/teachers'
 
 export { splitSentences }
@@ -310,6 +311,14 @@ async function kokoroClip(text: string, voice: string): Promise<Clip | null> {
   }
 }
 
+/** A sentence in the voice the student gave, levelled like the others. */
+async function ownClip(text: string): Promise<Clip | null> {
+  const audio = await cloneSay(text)
+  if (!audio?.length) return null
+  levelUp(audio)
+  return { blob: wavBlob(audio, 24000), timing: null }
+}
+
 /* ── speaking ── */
 
 let session = 0
@@ -416,8 +425,12 @@ export function speak(text: string, lang: string) {
     const voice = (known ? picked : '') || teacherVoice(lang, status?.engine ?? null)
     // On the device: the voice the student chose (voices.ts), else the clearest one for the teacher; Hindi in a Hindi voice.
     const male = teacherById(getVoicePrefs().teacher)?.body === 'M'
-    const make = (s: string) => (engine === 'natural' ? naturalClip(s, lang, voice, ctrl.signal) : kokoroClip(s, pickVoice(getVoicePrefs().kokoroVoice, male, s)))
-    const name = engine === 'kokoro' ? 'Kokoro' : voiceName(status, voice, lang)
+    const usual = (s: string) => (engine === 'natural' ? naturalClip(s, lang, voice, ctrl.signal) : kokoroClip(s, pickVoice(getVoicePrefs().kokoroVoice, male, s)))
+    // The voice the student gave (clone/clone.ts), when it is on and ready; Hindi and anything it can't say use the usual voice.
+    const own = getVoicePrefs().ownVoice && getClone().hasVoice
+    if (own && getClone().status === 'off') void loadClone().catch(() => {})
+    const make = async (s: string): Promise<Clip | null> => (own ? ((await ownClip(s)) ?? usual(s)) : usual(s))
+    const name = own && getClone().status === 'ready' ? 'Your voice' : engine === 'kokoro' ? 'Kokoro' : voiceName(status, voice, lang)
     let next = make(parts[0])
     for (let i = 0; i < parts.length; i++) {
       const clip = await next

@@ -291,6 +291,43 @@ with her lips. The causes, and what changed:
 - **Louder:** each clip is brought to speaking level (`levelUp`: RMS 0.1,
   peaks never above 0.95).
 
+### 3.2.7 A voice of your own, free and on the device (2026-11-24, this PR)
+
+The owner asked for students to give any voice (30 seconds to a minute) for
+the teacher to speak in, with no cost at all.
+
+- **Model:** Chatterbox (MIT, Resemble AI), the ONNX export from
+  `onnx-community/chatterbox-ONNX`. It runs in a Web Worker on the student's
+  GPU (WebGPU) through transformers.js (`voice/clone/worker.ts`).
+  - About 1.5 GB, downloaded once: language model 305–354 MB, speech decoder
+    540 MB, voice encoder 592 MB, text embeddings 62 MB.
+  - Output carries Resemble's PerTh watermark.
+- **Once per voice:** the sample (trimmed of silence, at most 15 s; at least
+  8 s of speech) becomes a voice print in a few seconds.
+- **Every sentence:** each sentence she says is made as she says it.
+  - Measured on a 4-core processor without a GPU (2026-11-24): 7× slower than
+    real time (5.4 s of speech in 47 s). That is too slow for a server
+    without a GPU, so this runs on the student's own GPU.
+  - The first sentence is timed. Below 0.8× real time she keeps her usual
+    voice and says why.
+- **Privacy and consent:**
+  - The sample is kept only in the browser (IndexedDB) and is never sent
+    anywhere. A test checks the clone code makes no network calls.
+  - Recording and upload stay locked until the student confirms it is their
+    own voice, or that its owner agreed. The recording starts with them
+    reading a consent line.
+  - "Delete this voice" erases it.
+- **Limits:**
+  - English only: the in-browser model doesn't speak Hindi yet, so Hindi
+    sentences use her usual Hindi voice.
+  - It needs WebGPU (Chrome or Edge on a computer with a good graphics chip).
+  - Lips follow the sentence length, not exact mouth shapes.
+- **Rejected, and why:**
+  - A cloud GPU (Modal): its free credit is $30 a month, and the owner wants
+    no paid plan at all.
+  - The free Oracle server: it has no GPU and is too slow (measured above).
+  - IndicF5: its licence for commercial use is unclear.
+
 ### 3.3 Honest limits
 
 - **No walking legs yet.** It glides (turned sideways) rather than taking
