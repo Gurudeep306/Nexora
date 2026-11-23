@@ -40,6 +40,8 @@ import { ProblemPanel } from '@/components/solve/ProblemPanel'
 import { TestcaseDeck } from '@/components/solve/TestcaseDeck'
 import { JudgeResults, JudgingCard, RunOutput } from '@/components/solve/ResultsPanel'
 import { VerdictBanner } from '@/components/solve/VerdictBanner'
+import { teacherReact } from '@/voice/teacher/store'
+import { resultFromVerdict } from '@/voice/teacher/reactions'
 import { agentTask, aiErrorText, plainAiText } from '@/lib/agent'
 import { useAgentContext, useAgentPageContext } from '@/context/AgentContext'
 import { sanitizeHtml } from '@/lib/sanitize'
@@ -500,6 +502,9 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
       // Only the examples (and your own tests) ran: say so, never "Accepted".
       const examplesOnly = res.verdict === 'AC' && !!res.coverage && !res.coverage.full
       setBanner({ verdict: res.verdict, xp, id: Date.now(), examplesOnly })
+      // A teacher on screen reacts to the verdict (never in a contest).
+      const reaction = contestId ? null : resultFromVerdict(res.verdict, examplesOnly)
+      if (reaction) teacherReact(reaction)
       if (learn && id) markLearn(codeKey(id), res.verdict === 'AC' ? 'solved' : 'attempted')
       if (res.verdict === 'AC') {
         celebrateFavicon()
