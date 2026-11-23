@@ -12,3 +12,10 @@ const ASK =
 export function isQuestion(text: string): boolean {
   return ASK.test(String(text || '').normalize('NFC'))
 }
+
+const ASK_HI = /(^|[^\p{L}])(kya|kyaa|kyun|kyon|kyu|kaise|kaisa|kaisi|kaun|kitna|kitne|samjhao|samjha|samjhaiye|batao|bataiye|matlab|hota|hoti|क्या|क्यों|कैसे|कौन|समझाओ|बताओ|मतलब)(?=$|[^\p{L}])/iu
+
+/** Hinglish or Hindi question words only: a button may be called "How it runs", but never "… kya hai". */
+export function asksInHindi(text: string): boolean {
+  return ASK_HI.test(String(text || '').normalize('NFC'))
+}

@@ -26,11 +26,12 @@ const C = {
   ट: "ʈ", ठ: "ʈʰ", ड: "ɖ", ढ: "ɖʰ", ण: "ɳ",
   त: "t", थ: "tʰ", द: "d", ध: "dʰ", न: "n",
   प: "p", फ: "pʰ", ब: "b", भ: "bʰ", म: "m",
-  य: "j", र: "ɾ", ल: "l", व: "ʋ", श: "ʃ", ष: "ʂ", स: "s", ह: "h", ळ: "ɭ",
+  य: "j", र: "ɾ", ल: "l", व: "ʋ", श: "ʃ", ष: "ʂ", स: "s", ह: "h", ळ: "l", // ɭ is not in Kokoro's symbols; Hindi speakers mostly say ळ as l
 };
 // With a nukta (as one code point or letter + ़).
 const NUKTA = { क: "q", ख: "χ", ग: "ɣ", ज: "z", ड: "ɽ", ढ: "ɽʰ", फ: "f", य: "j" };
-const PRECOMPOSED = { "क़": "क", "ख़": "ख", "ग़": "ग", "ज़": "ज", "ड़": "ड", "ढ़": "ढ", "फ़": "फ", "य़": "य" };
+// ऩ ऱ ऴ (न र ळ with a nukta) stay single characters in NFC; Hindi says them as the plain letter.
+const PRECOMPOSED = { "क़": "क", "ख़": "ख", "ग़": "ग", "ज़": "ज", "ड़": "ड", "ढ़": "ढ", "फ़": "फ", "य़": "य", "ऩ": "न", "ऱ": "र", "ऴ": "ळ" };
 
 const V = { अ: "ə", आ: "aː", इ: "ɪ", ई: "iː", उ: "ʊ", ऊ: "uː", ऋ: "ɾɪ", ए: "eː", ऐ: "ɛː", ओ: "oː", औ: "ɔː", ऑ: "ɒ", ऍ: "ɛ" };
 const SIGN = { "ा": "aː", "ि": "ɪ", "ी": "iː", "ु": "ʊ", "ू": "uː", "ृ": "ɾɪ", "े": "eː", "ै": "ɛː", "ो": "oː", "ौ": "ɔː", "ॉ": "ɒ", "ॅ": "ɛ" };
@@ -46,7 +47,8 @@ const PLACE = { k: "ŋ", ɡ: "ŋ", ʧ: "ɲ", ʤ: "ɲ", ʈ: "ɳ", ɖ: "ɳ", t: "n
 
 /** One word as a list of units: { c: consonant } or { v: vowel, nasal? }. */
 function units(word) {
-  const s = [...word.normalize("NFC")].map((ch) => PRECOMPOSED[ch] ? [PRECOMPOSED[ch], NUKTA_SIGN] : [ch]).flat();
+  // ज्ञ is said "gy" in Hindi (ज्ञान = gyaan), not as its letters.
+  const s = [...word.normalize("NFC").replace(/ज्ञ/g, "ग्य")].map((ch) => PRECOMPOSED[ch] ? [PRECOMPOSED[ch], NUKTA_SIGN] : [ch]).flat();
   const out = [];
   for (let i = 0; i < s.length; i++) {
     const ch = s[i];

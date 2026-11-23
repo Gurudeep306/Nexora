@@ -68,3 +68,74 @@ test('the lesson prompt: who teaches, the drawing language, Hindi, and a differe
   assert.equal(m.at(-1).content, 'Explain on the whiteboard: binary search');
   assert.doesNotMatch(B.buildBoardMessages({ topic: 'x', lang: 'en-IN' })[0].content, /DIFFERENT example/);
 });
+
+/* ── 5,000 random, malformed and hostile lessons: whatever comes out is safe to draw ── */
+
+function rng(seed) {
+  let x = seed >>> 0 || 1;
+  return () => ((x = (x * 1664525 + 1013904223) >>> 0) / 2 ** 32);
+}
+
+test('random and hostile whiteboard lessons always come out safe, small and on the board', (t) => {
+  const { cleanBoard, W, H, MAX_STEPS, MAX_OPS } = require('../src/voice/board');
+  const r = rng(20261123);
+  const pick = (a) => a[Math.floor(r() * a.length)];
+  const NASTY_STR = ['<script>alert(1)</script>', '<img src=x onerror=alert(1)>', 'a[mid] < key', 'x'.repeat(500), '', '   ', 'नमस्ते', '\u0000\u0007', '{"t":"box"}', 'javascript:alert(1)', 'low ≤ high', '<b>bold</b> text'];
+  const num = () => pick([r() * 100, -r() * 1e9, r() * 1e12, NaN, Infinity, -Infinity, '12', 'abc', null, undefined, [], {}, 1e-9, 50]);
+  const str = () => (r() < 0.5 ? pick(NASTY_STR) : Math.random().toString(36).slice(2));
+  const T = ['text', 'box', 'circle', 'arrow', 'line', 'array', 'clear', 'image', 'html', 'script', null, 7];
+  const op = () => {
+    const o = { t: pick(T), id: r() < 0.3 ? str() : 'a', x: num(), y: num(), w: num(), h: num(), r: num(), size: num(), text: str(), label: str(), color: pick(['ink', 'accent', 'bad', 'red', '<x>', null]) };
+    if (r() < 0.5) o.from = pick([[num(), num()], [1], 'x', null, [1, 2, 3]]);
+    if (r() < 0.5) o.to = pick([[num(), num()], null]);
+    if (o.t === 'array' || r() < 0.2) {
+      o.values = pick([Array.from({ length: Math.floor(r() * 40) }, () => pick([str(), num(), 3, 'x'])), 'abc', null, []]);
+      o.highlight = pick([[0, 1, -5, 999, 'x', 2.7], null, 'a']);
+      o.pointers = pick([[{ i: 0, label: 'low' }, { i: 99, label: 'x' }, { i: 'a' }, null, { i: 2, label: '<b>mid</b>' }], null]);
+      o.cell = num();
+    }
+    return o;
+  };
+  const real = () => ({ title: str(), steps: Array.from({ length: 1 + Math.floor(r() * 12) }, () => ({ say: str(), draw: Array.from({ length: Math.floor(r() * 25) }, op) })) });
+  const lesson = () => (r() < 0.7 ? real() : pick([
+    null, 'text', [], { steps: 'x' },
+    { title: str(), steps: Array.from({ length: Math.floor(r() * 30) }, () => pick([null, 'x', { say: str(), draw: Array.from({ length: Math.floor(r() * 40) }, op) }, { say: 42, draw: 'x' }])) },
+  ]));
+  let boards = 0;
+  let shapes = 0;
+  const bad = [];
+  for (let k = 0; k < 5000; k++) {
+    const out = cleanBoard(lesson());
+    if (!out) continue;
+    boards++;
+    const where = `lesson ${k}`;
+    if (typeof out.title !== 'string' || out.title.length > 60 || /<[a-z/]/i.test(out.title)) bad.push(`${where}: title ${JSON.stringify(out.title)}`);
+    if (!Array.isArray(out.steps) || !out.steps.length || out.steps.length > MAX_STEPS) bad.push(`${where}: ${out.steps?.length} steps`);
+    for (const s of out.steps) {
+      if (typeof s.say !== 'string' || s.say.length > 400 || /<[a-z/]/i.test(s.say)) bad.push(`${where}: say ${JSON.stringify(s.say).slice(0, 60)}`);
+      if (s.draw.length > MAX_OPS) bad.push(`${where}: ${s.draw.length} shapes in a step`);
+      for (const o of s.draw) {
+        shapes++;
+        const texts = [o.text, o.label, ...(o.values || []), ...(o.pointers || []).map((p) => p.label)].filter((x) => x != null);
+        for (const tx of texts) if (typeof tx !== 'string' || /<[a-z/]/i.test(tx)) bad.push(`${where}: text ${JSON.stringify(tx)}`);
+        const nums = [o.x, o.y, o.w, o.h, o.r, o.size, o.cell, ...(o.from || []), ...(o.to || [])].filter((v) => v !== undefined);
+        for (const v of nums) if (typeof v !== 'number' || !Number.isFinite(v)) bad.push(`${where}: number ${v} in ${o.t}`);
+        if (o.color && !['ink', 'accent', 'muted', 'good', 'bad'].includes(o.color)) bad.push(`${where}: colour ${o.color}`);
+        const inside = (x, y) => x >= 0 && x <= W && y >= 0 && y <= H;
+        if (o.t === 'text' || o.t === 'box' || o.t === 'circle') if (!inside(o.x, o.y)) bad.push(`${where}: ${o.t} at ${o.x},${o.y}`);
+        if (o.t === 'box' && (o.w <= 0 || o.h <= 0)) bad.push(`${where}: box size`);
+        if ((o.t === 'arrow' || o.t === 'line') && !(inside(...o.from) && inside(...o.to))) bad.push(`${where}: ${o.t} off the board`);
+        if (o.t === 'array') {
+          if (o.x < 0 || o.x + o.cell * o.values.length > W) bad.push(`${where}: array off the board (${o.x} + ${o.cell}×${o.values.length})`);
+          if (o.values.length > 12 || o.values.some((v) => v.length > 6)) bad.push(`${where}: array too big`);
+          if (o.highlight.some((i) => !Number.isInteger(i) || i < 0 || i >= o.values.length)) bad.push(`${where}: highlight ${o.highlight}`);
+          if (o.pointers.some((p) => !Number.isInteger(p.i) || p.i < 0 || p.i >= o.values.length || !p.label)) bad.push(`${where}: pointer`);
+        }
+        if (!['text', 'box', 'circle', 'arrow', 'line', 'array', 'clear'].includes(o.t)) bad.push(`${where}: shape ${o.t}`);
+      }
+    }
+  }
+  t.diagnostic(`${boards} boards with ${shapes} shapes checked out of 5000 random lessons`);
+  assert.equal(bad.length, 0, bad.slice(0, 25).join('\n'));
+  assert.ok(boards > 3000, `${boards} boards`);
+});
