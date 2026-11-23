@@ -84,3 +84,47 @@ test('how numbers sound in Hindi speech; code stays code', () => {
   assert.deepEqual(toVoiceInput('answer is 42'), [{ type: 'text', value: 'answer is 42' }]);
   assert.deepEqual(toVoiceInput('4.5f देखो')[0], { type: 'text', value: '4.5f ' });
 });
+
+/* ── more words, as Hindi speakers say them (written down separately from the rules) ── */
+
+const EVERYDAY = {
+  पानी: 'paːniː', किताब: 'kɪtaːb', लड़का: 'ləɽkaː', लड़की: 'ləɽkiː', घर: 'ɡʰəɾ', दिन: 'dɪn', रात: 'ɾaːt', सड़क: 'səɽək', बादल: 'baːdəl',
+  कमरा: 'kəmɾaː', जानवर: 'ʤaːnʋəɾ', सरकार: 'səɾkaːɾ', मदद: 'mədəd', अदरक: 'ədɾək', बोलना: 'boːlnaː', पढ़ना: 'pəɽʰnaː', लिखना: 'lɪkʰnaː',
+  चलना: 'ʧəlnaː', सवाल: 'səʋaːl', जवाब: 'ʤəʋaːb', प्रश्न: 'pɾəʃn', विद्यार्थी: 'ʋɪdjaːɾtʰiː', अध्यापक: 'ədʰjaːpək', कंप्यूटर: 'kəmpjuːʈəɾ',
+  गणित: 'ɡəɳɪt', विज्ञान: 'ʋɪɡjaːn', ज्ञान: 'ɡjaːn', श्री: 'ʃɾiː', धन्यवाद: 'dʰənjəʋaːd', आसान: 'aːsaːn', मुश्किल: 'mʊʃkɪl', ज़रूरी: 'zəɾuːɾiː',
+  फ़ायदा: 'faːjdaː', ग़लत: 'ɣələt', क़लम: 'qələm', ख़ाना: 'χaːnaː', सबसे: 'səbseː', करते: 'kəɾteː', कहानी: 'kəhaːniː', पहला: 'pəhlaː',
+  दोस्त: 'doːst', मैं: 'mɛː̃', हाँ: 'haː̃', नहीं: 'nəhiː̃', ठीक: 'ʈʰiːk', समय: 'səməj', अगला: 'əɡlaː', पिछला: 'pɪʧʰlaː', बिल्कुल: 'bɪlkʊl',
+};
+
+test('everyday Hindi words sound the way Hindi speakers say them', () => {
+  const wrong = [];
+  for (const [w, ipa] of Object.entries(EVERYDAY)) if (wordToIpa(w) !== ipa) wrong.push(`${w}: ${wordToIpa(w)} (want ${ipa})`);
+  assert.equal(wrong.length, 0, wrong.join('\n'));
+});
+
+test('every consonant with every vowel sign, nukta, virama, anusvara and chandrabindu: Kokoro symbols only, nothing left unread', (t) => {
+  const CONS = [...'कखगघङचछजझञटठडढणतथदधनपफबभमयरलवशषसहळ'];
+  const SIGNS = ['', 'ा', 'ि', 'ी', 'ु', 'ू', 'ृ', 'े', 'ै', 'ो', 'ौ', 'ॉ', 'ॅ', '्'];
+  const MARKS = ['', 'ं', 'ँ', 'ः'];
+  let n = 0;
+  const bad = [];
+  for (const c of CONS) {
+    for (const nukta of ['', '़']) {
+      for (const sgn of SIGNS) {
+        for (const m of MARKS) {
+          // The syllable on its own, and inside a word, before another consonant.
+          for (const w of [c + nukta + sgn + m, 'क' + c + nukta + sgn + m + 'ल', c + nukta + sgn + m + 'त']) {
+            if (sgn === '्' && m) continue;
+            n++;
+            const ipa = wordToIpa(w);
+            if (!ipa) bad.push(`${w}: empty`);
+            for (const ch of ipa) if (!KOKORO.has(ch)) bad.push(`${w}: "${ch}"`);
+            if (/[ऀ-ॿ]/.test(ipa)) bad.push(`${w}: Devanagari left in ${ipa}`);
+          }
+        }
+      }
+    }
+  }
+  t.diagnostic(`syllables and words: ${n}`);
+  assert.equal(bad.length, 0, bad.slice(0, 20).join('\n'));
+});

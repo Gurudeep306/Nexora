@@ -76,3 +76,30 @@ test('the server hands a turn to the device only when nothing in it must stay hi
   assert.equal(G.localAllowed({ kind: 'ask', unsolved: true }), false, 'an unsolved question’s answer never leaves the server');
   assert.equal(G.localAllowed({ kind: 'say', say: 'Test chal raha hai' }), false);
 });
+
+test('every device combination: never a failed tier, iOS always the server, more memory or GPU never a smaller tier', async (t) => {
+  const { pickTier } = await B('tiers.ts');
+  const RANK = { null: 0, S: 1, M: 2, L: 3 };
+  const tier = (d) => pickTier(d)?.id ?? null;
+  const MEM = [undefined, 0.5, 1, 2, 4, 8];
+  const BUF = [undefined, 0.25 * GB, 0.5 * GB, 1 * GB, 2 * GB, 4 * GB];
+  const FAILED = [[], ['L'], ['M'], ['S'], ['L', 'M'], ['L', 'S'], ['M', 'S'], ['L', 'M', 'S']];
+  let n = 0;
+  for (const webgpu of [false, true]) for (const f16 of [false, true]) for (const memoryGB of MEM) for (const maxBufferBytes of BUF) for (const failed of FAILED) for (const ios of [false, true]) {
+    const d = { webgpu, f16: webgpu && f16, memoryGB, maxBufferBytes, failed, ios };
+    const got = tier(d);
+    n++;
+    if (ios) assert.equal(got, null, JSON.stringify(d));
+    if (!webgpu) assert.equal(got, null, 'no GPU: the server');
+    if (got) assert.ok(!failed.includes(got), `failed tier offered: ${JSON.stringify(d)}`);
+    // More memory never gives a smaller tier (same GPU, same failures).
+    const more = MEM[MEM.indexOf(memoryGB) + 1];
+    if (more !== undefined && memoryGB !== undefined) assert.ok(RANK[tier({ ...d, memoryGB: more })] >= RANK[got], `memory ${memoryGB}→${more}: ${JSON.stringify(d)}`);
+    // A bigger GPU buffer never gives a smaller tier.
+    const bigger = BUF[BUF.indexOf(maxBufferBytes) + 1];
+    if (bigger !== undefined && maxBufferBytes !== undefined) assert.ok(RANK[tier({ ...d, maxBufferBytes: bigger })] >= RANK[got], `buffer: ${JSON.stringify(d)}`);
+    // fp16 never gives a smaller tier than without it.
+    if (webgpu && !f16) assert.ok(RANK[tier({ ...d, f16: true })] >= RANK[got], `fp16: ${JSON.stringify(d)}`);
+  }
+  t.diagnostic(`device combinations: ${n}`);
+});
