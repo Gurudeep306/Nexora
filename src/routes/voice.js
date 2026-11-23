@@ -6,6 +6,7 @@ const { logError } = require("../http-error");
 const { askGuru } = require("../voice/guru");
 const { approachToPseudo } = require("../voice/pseudo");
 const { buildCode } = require("../voice/build");
+const { makeBoard } = require("../voice/board");
 const explain = require("../voice/explain");
 const db = require("../db");
 const { invalidateNexusUser } = require("../nexus/user-cache");
@@ -50,6 +51,25 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
       if (e?.name === "AiError") return res.status(e.status || 502).json({ ok: false, error: e.message });
       logError("voice.guru", e);
       res.status(500).json({ ok: false, error: "Guru ran into a problem — try again." });
+    }
+  });
+
+  // The teacher's whiteboard: a topic → a short lesson of spoken steps with drawings.
+  router.post("/api/voice/board", requireAuthenticatedUser, limiter, async (req, res) => {
+    const { topic, page, lang, teacher } = req.body || {};
+    try {
+      const out = await makeBoard({
+        user: req.sessionUser,
+        topic,
+        page: page && typeof page === "object" && !Array.isArray(page) ? page : {},
+        lang: lang === "hi-IN" ? "hi-IN" : "en-IN",
+        teacher: typeof teacher === "string" ? teacher.slice(0, 20) : "",
+      });
+      res.json({ ok: true, ...out });
+    } catch (e) {
+      if (e?.name === "AiError") return res.status(e.status || 502).json({ ok: false, error: e.message });
+      logError("voice.board", e);
+      res.status(500).json({ ok: false, error: "The whiteboard ran into a problem — try again." });
     }
   });
 

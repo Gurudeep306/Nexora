@@ -29,6 +29,24 @@ function first(u: string, res: RegExp[]): string | null {
   return null
 }
 
+const BOARD = [
+  /^(?:please\s+)?(?:explain|teach|draw|show(?:\s+me)?)\s+(.{2,80}?)\s+(?:on|using|with|at)\s+(?:the\s+)?(?:white\s?board|board)$/i,
+  /^(?:white\s?board|board)\s+(?:pe|par)\s+(.{2,80}?)\s+(?:samjhao|samjha do|samjhaiye|explain karo|padhao|sikhao)$/i,
+  /^(.{2,80}?)\s+(?:white\s?board|board)\s+(?:pe|par)\s+(?:samjhao|samjha do|samjhaiye|explain karo|padhao|sikhao)$/i,
+  /^(?:व्हाइटबोर्ड|बोर्ड)\s+पर\s+(.{2,60}?)\s+(?:समझाओ|समझाइए|पढ़ाओ)$/,
+  /^(.{2,60}?)\s+(?:व्हाइटबोर्ड|बोर्ड)\s+पर\s+(?:समझाओ|समझाइए|पढ़ाओ)$/,
+]
+/** "explain binary search on the whiteboard", "board pe recursion samjhao" → { topic }; "open the whiteboard" → { topic: '' } (this page). */
+export function parseBoard(u: string): Args | null {
+  const t = u.trim().replace(/[.!?।]+$/, '')
+  if (/^(?:open|show)\s+(?:the\s+)?(?:white\s?board|board)$|^(?:white\s?board|board)\s+(?:kholo|khol do|dikhao)$|^(?:explain|teach)\s+(?:this|it)\s+(?:on|using)\s+(?:the\s+)?(?:white\s?board|board)$|^(?:yeh|ise|isko)\s+board\s+(?:pe|par)\s+samjhao$/i.test(t)) return { topic: '' }
+  for (const re of BOARD) {
+    const m = t.match(re)
+    if (m?.[1]) return { topic: m[1].trim() }
+  }
+  return null
+}
+
 /** "point at the Run button", "Settings kahan hai" → { target: 'Run' }. */
 export function parsePoint(u: string): Args | null {
   const v = first(u, [POINT_EN, POINT_HI, POINT_DEV])
@@ -59,6 +77,7 @@ export const TEACHER_SPECS: ActionSpec[] = [
   { id: 'teacher.point', risk: 'safe', say: { en: ['point up', 'point', 'point with your finger', 'ungli dikhao'], hi: ['उंगली दिखाओ'] } },
   { id: 'teacher.hide', risk: 'reversible', say: { en: ['hide the teacher', 'hide teacher', 'hide yourself', 'teacher hide', 'go away', 'teacher hatao', 'chhup go'], hi: ['टीचर हटाओ', 'छुप जाओ'] } },
   { id: 'teacher.show', risk: 'safe', say: { en: ['show the teacher', 'show teacher', 'teacher show', 'teacher dikhao', 'come out', 'bahar aao'], hi: ['टीचर दिखाओ', 'बाहर आओ'] } },
+  { id: 'teacher.board', risk: 'safe', parse: parseBoard, say: { en: [] } },
   { id: 'teacher.point.line', risk: 'safe', parse: parseLine, say: { en: [] } },
   { id: 'teacher.point.at', risk: 'safe', parse: parsePoint, say: { en: [] } },
   { id: 'teacher.click', risk: 'reversible', parse: parseClick, say: { en: [] } },
@@ -71,4 +90,14 @@ export const TEACHER_SPECS: ActionSpec[] = [
   { id: 'teacher.tour', risk: 'safe', say: { en: ['give me a tour', 'page tour', 'tour of this page', 'explain this page', 'what is this page', 'show me around', 'is page ke baare mein batao', 'yeh page kya hai', 'page samjhao'], hi: ['इस पेज के बारे में बताओ', 'यह पेज क्या है'] } },
   { id: 'teacher.talk', risk: 'safe', say: { en: ["let's talk", 'lets talk', 'talk to me', 'conversation mode', 'chat with me', 'baat karte hain', 'baat karo', 'mujhse baat karo'], hi: ['बात करते हैं', 'बात करो', 'मुझसे बात करो'] } },
   { id: 'teacher.intro', risk: 'safe', say: { en: ['introduce yourself', 'who are you', 'what is your name', 'your name', 'apna naam batao', 'apne baare mein batao'], hi: ['अपना नाम बताओ', 'अपने बारे में बताओ'] } },
+]
+
+/** While the whiteboard is open (Board.tsx): its own controls. Not site-wide, so "next" means the board only then. */
+export const BOARD_SPECS: ActionSpec[] = [
+  { id: 'board.next', risk: 'safe', say: { en: ['next', 'next step', 'go on', 'aage', 'aage badho', 'agla step'], hi: ['आगे', 'अगला स्टेप'] } },
+  { id: 'board.prev', risk: 'safe', say: { en: ['previous step', 'last step', 'step before', 'pichla step'], hi: ['पिछला स्टेप'] } },
+  { id: 'board.pause', risk: 'safe', say: { en: ['pause', 'wait', 'hold on', 'ruko', 'ek minute'], hi: ['रुको'] } },
+  { id: 'board.play', risk: 'safe', say: { en: ['continue', 'carry on', 'resume', 'keep going', 'chalo', 'aage chalo'], hi: ['चलो'] } },
+  { id: 'board.repeat', risk: 'safe', say: { en: ['repeat', 'say that again', 'once more', 'phir se bolo', 'dobara bolo', 'phir se'], hi: ['फिर से बोलो', 'दोबारा बोलो'] } },
+  { id: 'board.close', risk: 'safe', say: { en: ['close the board', 'close the whiteboard', 'close board', 'board band karo', 'whiteboard band karo'], hi: ['बोर्ड बंद करो'] } },
 ]

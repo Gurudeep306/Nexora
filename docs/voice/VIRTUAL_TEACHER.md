@@ -124,6 +124,23 @@ tools, not drawn by us.
     walking to and pointing at each; any new command stops it.
   The sentence shapes are strict (whole sentence), so a question like
   "where is the mistake in my code" still goes to Guru.
+- **Whiteboard (T3, `src/voice/board.js`, `teacher/Board.tsx`):** "explain
+  binary search on the whiteboard", "board pe recursion samjhao", "open the
+  whiteboard" (this page's topic), or the Board button. A free model writes
+  a short lesson as 3–6 steps; each is a spoken sentence or two plus shapes
+  in a tiny drawing language (text, box, circle, arrow/line, array with
+  highlights and pointers, clear). The server checks it strictly (known
+  shapes only, kept on the 100×60 board, short text, at most 8 steps and 14
+  shapes a step; HTML tags removed, comparison signs kept), and on an
+  unsolved question Guru's Leak Guard reads everything said and written
+  (the prompt also asks for a different example); no board during a test.
+  The board draws each step stroke by stroke and writes text left to right
+  (in the student's handwriting font if they chose one), the teacher stands
+  beside it, points at what was just drawn and explains; then the next step.
+  Pause, back, next, start again and close, by button or voice ("aage",
+  "ruko", "phir se bolo", "board band karo"). While the board is open its
+  caption carries the "AI voice" label. Reduced motion: no drawing
+  animation.
 - **Never in the way:** the drawing lets every click through; only its name
   bar (move, sit/stand, hide) is clickable. Hidden, it leaves a small "Show
   Maya" button. Its place is remembered in the browser. It is not shown in
@@ -158,8 +175,8 @@ tools, not drawn by us.
 - **T2 — guide:** done (point, press, line, side, tour). Still to do: a
   real walk cycle (our own keyframes or a CC0 source), and Guru's answers
   choosing places to point at.
-- **T3 — whiteboard:** the teacher opens a board and writes and draws a
-  diagram step by step while explaining, from Guru's structured steps.
+- **T3 — whiteboard:** done. Next: trees and graphs as shapes, and the
+  board from Guru's answers in conversation mode.
 
 ## 4. Ears, speed and voices
 

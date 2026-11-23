@@ -274,3 +274,78 @@
   .tch-load:not(.tch-fail) img { animation: none; }
   .tch-dots { animation: none; }
 }
+
+/* The teacher's whiteboard (Board.tsx): a sheet of paper beside the teacher.
+   Ink is the text colour; the accent marks what to look at, never text. */
+@layer components {
+  .wb {
+    position: fixed;
+    top: 4.25rem;
+    left: clamp(1rem, 6vw, 5rem);
+    z-index: 54;
+    width: min(46rem, calc(100vw - 2rem - 15rem));
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius, 1rem);
+    background: var(--color-bg-surface);
+    box-shadow: var(--elev-2);
+  }
+  @media (max-width: 760px) {
+    .wb { left: 1rem; width: calc(100vw - 2rem); top: 3.75rem; }
+  }
+  .wb-head { display: flex; align-items: center; gap: 0.5rem; }
+  .wb-title { flex: 1; min-width: 0; margin: 0; font-weight: 600; font-size: 0.95rem; color: var(--color-text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wb-count { font-size: 0.75rem; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+  .wb-btn {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+  .wb-btn svg { width: 1rem; height: 1rem; }
+  .wb-btn:hover:not(:disabled),
+  .wb-btn:focus-visible { color: var(--color-text-primary); background: color-mix(in oklab, var(--color-text-primary) 7%, transparent); }
+  .wb-btn:disabled { opacity: 0.4; cursor: default; }
+  .wb-sheet {
+    position: relative;
+    aspect-ratio: 100 / 60;
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--kit-card-radius, 1rem) - 0.375rem);
+    background: color-mix(in oklab, var(--color-text-primary) 2%, var(--color-bg-surface));
+    overflow: hidden;
+  }
+  .wb-svg { display: block; width: 100%; height: 100%; }
+  .wb-wait { position: absolute; inset: 0; display: grid; place-content: center; margin: 0; padding: 1rem; text-align: center; font-size: 0.875rem; color: var(--color-text-secondary); }
+  .wb-text { fill: var(--color-text-primary); font-family: var(--font-solution, var(--font-body, inherit)); }
+  .wb-index { fill: var(--color-text-muted); font-family: var(--font-body, inherit); }
+  .wb-stroke { fill: none; stroke-width: 0.32; stroke-linecap: round; stroke-linejoin: round; }
+  .wb-ink { stroke: var(--color-text-primary); }
+  .wb-muted { stroke: var(--color-text-muted); }
+  .wb-accent { stroke: var(--color-accent-brand); }
+  .wb-good { stroke: var(--color-state-success); }
+  .wb-bad { stroke: var(--color-state-error); }
+  .wb-hl { fill: color-mix(in oklab, var(--color-accent-brand) 16%, transparent); stroke: var(--color-accent-brand); }
+  .wb-fill-ink { fill: var(--color-text-primary); }
+  .wb-fill-muted { fill: var(--color-text-muted); }
+  .wb-fill-accent { fill: var(--color-accent-brand); }
+  .wb-fill-good { fill: var(--color-state-success); }
+  .wb-fill-bad { fill: var(--color-state-error); }
+  .wb-say { margin: 0; min-height: 2.6em; font-family: var(--kit-read, inherit); font-size: 0.95rem; line-height: 1.45; color: var(--color-text-primary); }
+  .wb-controls { display: flex; justify-content: center; gap: 0.25rem; }
+  .wb-voice { margin: -0.25rem 0 0; font-size: 0.75rem; color: var(--color-text-secondary); }
+  .wb-voice strong { color: var(--color-text-primary); font-weight: 600; }
+
+  /* Drawing: strokes are drawn, text is written left to right. */
+  .wb-new .wb-stroke { stroke-dasharray: 1; stroke-dashoffset: 1; animation: wb-draw 0.8s ease-out forwards; }
+  .wb-new text { animation: wb-write 0.7s ease-out both; }
+}
+@keyframes wb-draw { to { stroke-dashoffset: 0; } }
+@keyframes wb-write { from { clip-path: inset(0 100% 0 0); opacity: 0.2; } to { clip-path: inset(0 0 0 0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .wb-new .wb-stroke, .wb-new text { animation: none; stroke-dashoffset: 0; }
+}
