@@ -86,3 +86,19 @@ test('the teacher layer is never in the first page load', () => {
   assert.doesNotMatch(host, /from '@met4citizen\/talkinghead'/);
   assert.doesNotMatch(host, /from 'three'/);
 });
+
+test('the face and hands follow the words: smiles, thumbs up, namaste, shrug; calm for a worried student', async () => {
+  const { moodFor, gestureFor, soundsWorried } = await T('expressions.ts');
+  assert.equal(moodFor('Shabaash! Bilkul sahi jawab.'), 'happy');
+  assert.equal(moodFor('Namaste! Let us begin.'), 'happy');
+  assert.equal(moodFor('The loop runs n times, so it is O of n.'), 'neutral');
+  assert.equal(gestureFor('Well done, that is correct.'), 'thumbup');
+  assert.equal(gestureFor('नमस्ते! मैं प्रिया हूँ।'), 'namaste');
+  assert.equal(gestureFor("I won't guess that number."), 'shrug');
+  assert.equal(gestureFor('Dekho, the middle element is 7.'), 'index');
+  assert.equal(gestureFor('The loop runs n times.'), null, 'most sentences need no gesture');
+  assert.ok(soundsWorried('I find recursion really hard'));
+  assert.ok(soundsWorried('mujhe samajh nahi aaya'));
+  assert.ok(soundsWorried('मुझे डर लग रहा है'));
+  assert.ok(!soundsWorried('what is the time complexity of merge sort'));
+});

@@ -99,6 +99,13 @@ tools, not drawn by us.
   hands move. Commands still work mid-talk ("go left"). "Bye", "bas" or
   "stop talking" ends it with a wave; two quiet turns in a row end it too, so
   the mic is never left open.
+- **Face and hands follow the words** (`teacher/expressions.ts`, rules, no
+  AI): a smile for greetings and praise, thumbs up for "well done" /
+  "shabaash", namaste for "namaste", a shrug for "I won't guess", pointing
+  for "dekho"; otherwise the hands move a little while talking. A calm face
+  (no smile) when the student sounds worried or stuck. A small nod when the
+  student finishes speaking. When idle, now and then a glance at where the
+  student points. Reduced motion: no gestures or nods.
 - **Never in the way:** the drawing lets every click through; only its name
   bar (move, sit/stand, hide) is clickable. Hidden, it leaves a small "Show
   Maya" button. Its place is remembered in the browser. It is not shown in
