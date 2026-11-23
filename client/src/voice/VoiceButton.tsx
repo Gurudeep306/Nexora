@@ -28,8 +28,9 @@ import { applyCode } from './code/apply'
 import { parseCode, type CodeCommand } from './code/parse'
 import { activeBuilder, parseBuild } from './code/build'
 import { speak, stopSpeaking, useSpeaking } from './speak'
-import { endTalk, getTalk, onStartTalk, remember, saysGoodbye, setTalkStatus, useTalk } from './talk'
-import { teacherMove } from './teacher/store'
+import { bargeInOn, bargeInResult, listenForInterruption } from './bargeIn'
+import { endTalk, getTalk, onCancelListening, onStartTalk, remember, saysGoodbye, setTalkStatus, teacherSays, useTalk } from './talk'
+import { teacherMove, teacherShowing, useTeacher } from './teacher/store'
 import { teacherById } from './teacher/teachers'
 import { askOnDevice, getBrain, startBrain } from './brain/brain'
 import { spoken } from './brain/spoken'
@@ -51,6 +52,9 @@ type Phase =
   | { kind: 'check'; heard: string; options: string[] }
   | { kind: 'miss'; heard: string }
   | { kind: 'error'; error: SpeechError }
+
+/** What the teacher shows herself when she is on screen; the rest (choices that need a tap) stays in the box. */
+const TEACHER_SHOWS = new Set<Phase['kind']>(['listening', 'thinking', 'guru', 'done', 'scene', 'error'])
 
 const YES = new Set(['confirm', 'yes', 'haan', 'han', 'ha', 'pakka', 'sure', 'ok', 'theek', 'thik'])
 const NO = new Set(['no', 'nahi', 'nahin', 'cancel', 'mat', 'ruko', 'pause', 'stop'])
@@ -119,6 +123,11 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
   const supported = useVoiceSupport()
   const talk = useTalk()
   const speaking = useSpeaking()
+  // With a teacher on screen, she is the one who listens and answers: no box on the website
+  // (except for choices that need a tap). The exam console keeps its own mic and box.
+  const teacherState = useTeacher()
+  const viaTeacher = useCallback(() => layer !== 'top' && teacherShowing(), [layer])
+  const teacherOn = layer !== 'top' && teacherState.status === 'ready' && !teacherState.hidden
   // Conversation mode: turns in a row where nothing was heard (two end it).
   const misses = useRef(0)
   /** True from the moment listening is asked for until it ends (listenOnce is async). */
@@ -161,12 +170,13 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
   const runAction = useCallback(
     (action: VoiceAction, match: Match, heard: string) => {
       setPhase({ kind: 'done', heard, said: describe(action, match) })
+      if (viaTeacher()) teacherSays(describe(action, match), 2400)
       hideSoon()
       void action.run(match.args)
       // In a conversation, keep listening after doing what was asked ("go left").
       if (getTalk().on) window.setTimeout(() => getTalk().on && !speakingNow.current && startRef.current(), 900)
     },
-    [hideSoon],
+    [hideSoon, viaTeacher],
   )
 
   /** Carry out a Scene Voice command on the animation on screen. */
@@ -194,9 +204,10 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
       setPhase({ kind: 'scene', heard, title: scene.title, say })
       // Answers are worth hearing; "Paused" is not.
       if (prefs.speak && (r.kind === 'answer' || r.kind === 'none' || cmd.verb === 'whatif')) speak(say, prefs.lang === 'hi-IN' ? 'hi-IN' : 'en-IN')
+      else if (viaTeacher()) teacherSays(say, r.kind === 'answer' ? 9000 : 3200)
       hideSoon(r.kind === 'answer' ? 9000 : 3200)
     },
-    [hideSoon, prefs.speak, prefs.lang],
+    [hideSoon, prefs.speak, prefs.lang, viaTeacher],
   )
 
   /** Carry out a code-by-voice edit in the editor in use (lane C, no AI). */
@@ -224,7 +235,8 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
       const item = String(page.gateQuestionId || page.problemId || page.path || '')
       try {
         const t = getTalk()
-        if (t.on) setTalkStatus('thinking')
+        const face = t.on || viaTeacher()
+        if (face) setTalkStatus('thinking')
         const body = {
           text: heard,
           page,
@@ -232,7 +244,8 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
           lang: prefs.lang,
           // With a virtual teacher, they answer as themselves; in conversation mode, remembering the talk.
           teacher: prefs.teacher,
-          talk: t.on,
+          // A teacher on screen always talks like a person; the history is kept in conversation mode.
+          talk: face,
           history: t.on ? t.history : [],
         }
         const r = (prefs.brain && (await onDevice(body))) || (await api.post<{ ok: boolean; say: string; step: number }>('/api/voice/guru', body))
@@ -242,14 +255,20 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
           setTalkStatus('idle')
           remember(heard, r.say)
           sayThenListen(r.say)
+        } else if (viaTeacher()) {
+          setTalkStatus('idle')
+          if (prefs.speak) speak(r.say, prefs.lang)
+          else teacherSays(r.say, 14000)
         } else if (prefs.speak) speak(r.say, prefs.lang)
       } catch (e) {
-        setPhase({ kind: 'guru', heard, say: e instanceof Error && e.message ? e.message : 'Guru couldn’t answer just now. Try again in a moment.', step: 0 })
-        if (getTalk().on) setTalkStatus('idle')
+        const msg = e instanceof Error && e.message ? e.message : 'Guru couldn’t answer just now. Try again in a moment.'
+        setPhase({ kind: 'guru', heard, say: msg, step: 0 })
+        if (getTalk().on || viaTeacher()) setTalkStatus('idle')
+        if (!getTalk().on && viaTeacher()) teacherSays(msg)
         if (getTalk().on) sayThenListen(prefs.lang === 'hi-IN' ? 'माफ़ करना, अभी जवाब नहीं दे पाया। फिर से बोलो?' : 'Sorry, I couldn’t answer that just now. Say it again?')
       }
     },
-    [pageContext, shareContext, prefs.lang, prefs.speak, prefs.teacher, prefs.brain, sayThenListen],
+    [pageContext, shareContext, prefs.lang, prefs.speak, prefs.teacher, prefs.brain, sayThenListen, viaTeacher],
   )
 
   /** Would acting on this text change something (an edit, Build mode, an action that isn't just looking)? */
@@ -338,7 +357,8 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
     }
     starting.current = true
     setPhase({ kind: 'listening', text: '' })
-    if (getTalk().on) {
+    const face = getTalk().on || viaTeacher()
+    if (face) {
       // The student is about to speak: the teacher stops and listens.
       stopSpeaking()
       setTalkStatus('listening')
@@ -351,12 +371,17 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
       hints: pageHints(code, actions),
       onText: (text) => {
         setPhase((p) => (p.kind === 'listening' ? { kind: 'listening', text } : p))
-        if (getTalk().on) setTalkStatus('listening', text)
+        if (face) setTalkStatus('listening', text)
       },
       onDone: (text, error, ears) => {
         handle.current = null
         starting.current = false
-        if (getTalk().on) setTalkStatus('idle')
+        if (face) setTalkStatus('idle')
+        if (interrupted.current) {
+          // Was it really the student? Two false alarms turn interrupting off for this session.
+          bargeInResult(!!text)
+          interrupted.current = false
+        }
         if (!text) {
           // In a conversation, one quiet turn listens again; two end it, so the mic is never left open.
           if (getTalk().on && error !== 'not-allowed' && error !== 'unsupported' && ++misses.current < 2) {
@@ -366,6 +391,7 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
           }
           if (getTalk().on) endTalk()
           setPhase({ kind: 'error', error: error ?? 'no-speech' })
+          if (face) teacherSays(ERRORS[error ?? 'no-speech'], 5000)
           hideSoon(4200)
           return
         }
@@ -373,7 +399,7 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
         decide(text, ears)
       },
     })
-  }, [phase.kind, prefs.lang, decide, hideSoon, actions])
+  }, [phase.kind, prefs.lang, decide, hideSoon, actions, viaTeacher])
 
   const onMic = () => {
     if (!prefs.consent) return setConsentOpen(true)
@@ -385,6 +411,29 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
       void start()
     }
   })
+
+  // Interrupting: in a conversation, starting to talk while the teacher speaks stops her and she listens.
+  const interrupted = useRef(false)
+  useEffect(() => {
+    if (!talk.on || !speaking.on || !bargeInOn()) return
+    return listenForInterruption(() => {
+      interrupted.current = true
+      stopSpeaking()
+      startRef.current()
+    })
+  }, [talk.on, speaking.on])
+
+  // "Cancel" on the teacher's bubble stops the mic.
+  useEffect(
+    () =>
+      onCancelListening(() => {
+        handle.current?.cancel()
+        handle.current = null
+        starting.current = false
+        setPhase({ kind: 'idle' })
+      }),
+    [],
+  )
 
   // Conversation mode: when the teacher finishes speaking, listen again.
   useEffect(() => {
@@ -440,11 +489,11 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
 
   return (
     <>
-      <Tooltip label={listening ? 'Listening… press to stop' : 'Speak a command (Alt+M)'} side="bottom">
+      <Tooltip label={listening ? 'Listening… press to stop' : teacherOn ? `Talk to ${teacherById(prefs.teacher)?.name ?? 'your teacher'} (Alt+M)` : 'Speak a command (Alt+M)'} side="bottom">
         <button
           type="button"
           onClick={onMic}
-          aria-label={listening ? 'Stop listening' : 'Speak a command'}
+          aria-label={listening ? 'Stop listening' : teacherOn ? `Talk to ${teacherById(prefs.teacher)?.name ?? 'your teacher'}` : 'Speak a command'}
           aria-pressed={listening}
           className={cn('vc-mic flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-text-primary/6 hover:text-text-primary', listening && 'is-on')}
         >
@@ -453,7 +502,7 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
       </Tooltip>
 
       <AnimatePresence>
-        {phase.kind !== 'idle' && (
+        {phase.kind !== 'idle' && !(teacherOn && TEACHER_SHOWS.has(phase.kind)) && (
           <motion.div
             key="pill"
             role="status"

@@ -22,7 +22,8 @@ import { ArrowLeftRight, Armchair, EyeOff, MessageCircle, PenLine, PersonStandin
 import type { TalkingHead } from '@met4citizen/talkinghead'
 import { getVoicePrefs, type TeacherSize } from '../prefs'
 import { onSentence, stopSpeaking, useSpeaking } from '../speak'
-import { endTalk, getTalk, startTalk, useTalk } from '../talk'
+import { VoiceOffer } from './VoiceOffer'
+import { cancelListening, endTalk, getTalk, startTalk, teacherSays, useTalk } from '../talk'
 import { closeBoard, openBoard, pageTopic, useBoard } from './boardStore'
 import { toRoman, wordTimes } from './lipsync'
 import { gestureFor, moodFor, soundsWorried } from './expressions'
@@ -253,10 +254,23 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
     if (talk.hearing) lastHeard.current = talk.hearing
   }, [talk.hearing])
 
+  /* While the student speaks, small nods now and then ("mm-hm, go on"), as a listener does. */
+  const lastNod = useRef(0)
+  useEffect(() => {
+    const head = headRef.current
+    const r = stage.current?.getBoundingClientRect()
+    if (!head || !r || talk.status !== 'listening' || !talk.hearing || reduced()) return
+    const now = Date.now()
+    if (now - lastNod.current < 1800) return
+    lastNod.current = now
+    head.lookAt(r.left + r.width / 2, r.bottom + r.height * 0.35, 220)
+    window.setTimeout(() => headRef.current?.lookAtCamera(1600), 240)
+  }, [talk.hearing, talk.status])
+
   /* Conversation cues: look at the student while they speak, nod, glance away while thinking. */
   useEffect(() => {
     const head = headRef.current
-    if (!head || st.status !== 'ready' || !talk.on) return
+    if (!head || st.status !== 'ready') return
     if (talk.status === 'listening') {
       head.lookAtCamera(4000)
     } else if (talk.status === 'thinking') {
@@ -272,7 +286,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       const r = stage.current?.getBoundingClientRect()
       if (r) window.setTimeout(() => headRef.current?.lookAt(r.left + r.width * (st.side === 'left' ? 0.9 : 0.1), r.top - r.height * 0.4, 1600), 650)
     }
-  }, [talk.on, talk.status, st.status, st.side])
+  }, [talk.status, st.status, st.side])
 
   /* Point at something on the page: turn a little towards it, look at it, point with the hand on that side. */
   useEffect(
@@ -346,15 +360,37 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       role="region"
       aria-label={`Virtual teacher ${teacher.name}`}
     >
-      {talk.on && !speaking.on && (talk.status === 'listening' || talk.status === 'thinking') && (
+      {/* The teacher listens, thinks and answers here — not a box on the website. */}
+      {!speaking.on && (talk.status === 'listening' || talk.status === 'thinking') && (
         <div className="tch-say tch-say--talk" role="status">
           <p className="tch-say-text">
-            {talk.status === 'listening' ? (talk.hearing ? <span lang={lang === 'hi-IN' ? 'hi' : 'en'}>“{talk.hearing}”</span> : 'Listening…') : <span className="tch-dots" aria-label="Thinking">…</span>}
+            {talk.status === 'listening' ? (talk.hearing ? <span lang={lang === 'hi-IN' ? 'hi' : 'en'}>“{talk.hearing}”</span> : `${teacher.name} is listening…`) : <span className="tch-dots" aria-label="Thinking">…</span>}
           </p>
           <div className="tch-say-foot">
-            <span>Talking with {teacher.name}</span>
-            <button type="button" onClick={() => { endTalk(); stopSpeaking() }} aria-label={`End the conversation with ${teacher.name}`}>
-              <Square className="size-3" aria-hidden="true" /> End
+            <span>{talk.on ? `Talking with ${teacher.name}` : talk.status === 'listening' ? 'Speak now' : 'Thinking'}</span>
+            {talk.on ? (
+              <button type="button" onClick={() => { endTalk(); stopSpeaking() }} aria-label={`End the conversation with ${teacher.name}`}>
+                <Square className="size-3" aria-hidden="true" /> End
+              </button>
+            ) : (
+              talk.status === 'listening' && (
+                <button type="button" onClick={cancelListening} aria-label={`Stop ${teacher.name} listening`}>
+                  <Square className="size-3" aria-hidden="true" /> Cancel
+                </button>
+              )
+            )}
+          </div>
+        </div>
+      )}
+      {!speaking.on && talk.status === 'idle' && talk.says && (
+        <div className="tch-say" role="status">
+          <p className="tch-say-text" lang={lang === 'hi-IN' ? 'hi' : 'en'}>
+            {talk.says}
+          </p>
+          <div className="tch-say-foot">
+            <span>{teacher.name}</span>
+            <button type="button" onClick={() => teacherSays('')} aria-label="Close">
+              <Square className="size-3" aria-hidden="true" /> Close
             </button>
           </div>
         </div>
@@ -378,6 +414,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         </div>
       )}
 
+      {st.status === 'ready' && !speaking.on && talk.status === 'idle' && !talk.says && !board.open && <VoiceOffer name={teacher.name} />}
       <div className="tch-stage" ref={stage} aria-hidden="true" />
 
       {st.status === 'loading' && (

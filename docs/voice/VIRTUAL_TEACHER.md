@@ -151,6 +151,32 @@ tools, not drawn by us.
 - **Reduced motion:** it appears in its new place instead of gliding, and
   idle head movement is smaller.
 
+### 3.2.1 The teacher listens, not the website (2026-11-23, #257)
+
+The owner's ask: "I want the 3D model to listen, not the website." With a
+teacher on screen, every voice turn is hers (`VoiceButton.tsx`, `TEACHER_SHOWS`):
+she looks at the student and nods now and then while they speak, her bubble
+shows the words being heard and "Cancel", she glances away while thinking,
+and she answers in her voice, or in her bubble when sound is off. The website
+box stays only for things that need a tap (confirm, choose, "did you mean").
+The exam console keeps its own mic and box.
+
+- **Conversational speech:** with a teacher on screen every answer uses the
+  spoken-conversation style (`TALK` in `src/voice/guru.js`: react first, short
+  and medium sentences, contractions, Hinglish the way students talk, one
+  question back), and the voice pauses between sentences like a person,
+  longer after a question (`gapAfter` in `sentences.ts`).
+- **Interrupting:** in a conversation, starting to talk while she speaks stops
+  her and she listens (`bargeIn.ts`: echo cancellation, a level well above what
+  the mic hears while she talks, held for 350 ms; two false alarms turn it off
+  for the session; nothing is recorded, only loudness is read).
+- **A natural voice, offered once:** without the voice server she would use the
+  device's robotic voice, so she offers Kokoro in the browser (one-time
+  download, Apache-2.0) herself (`VoiceOffer.tsx`); "Not now" is remembered.
+- Tapping her body to talk was tried and left out: her picture area is
+  click-through so the page under her stays usable; her Talk button starts a
+  conversation.
+
 ### 3.3 Honest limits
 
 - **No walking legs yet.** It glides (turned sideways) rather than taking
