@@ -455,7 +455,12 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
           return
         }
         const hi = prefsRef.current.lang === 'hi-IN'
-        sayThenListen(hi ? 'हाँ, बोलो! आज क्या पढ़ना है?' : 'Haan, bolo! What shall we study today?')
+        const plain = hi ? 'हाँ, बोलो! आज क्या पढ़ना है?' : 'Haan, bolo! What shall we study today?'
+        // She remembers the student: "Welcome back! Last time we were on paging…" (built on our server, no AI).
+        void api
+          .get<{ greeting?: string }>('/api/voice/teacher/memory', { query: { lang: prefsRef.current.lang }, timeoutMs: 2500 })
+          .then((r) => sayThenListen(r.greeting || plain))
+          .catch(() => sayThenListen(plain))
       }),
     [sayThenListen],
   )

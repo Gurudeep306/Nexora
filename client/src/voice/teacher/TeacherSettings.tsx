@@ -5,7 +5,10 @@
 import { GraduationCap, UserX, Volume2 } from 'lucide-react'
 import { Button, Card, CardContent } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
+import { useEffect, useState } from 'react'
+import { api } from '@/lib/api'
 import { useVoicePrefs, type TeacherSize } from '../prefs'
+import { OnDevice } from '../VoiceSettings'
 import { introduce } from './intro'
 import { setTeacher } from './store'
 import { TEACHERS, teacherById, teacherPortrait } from './teachers'
@@ -77,10 +80,61 @@ export function TeacherSettings() {
               </Button>
               {!prefs.speak && <span className="vc-note">Reading answers aloud is off (Voice, above), so {chosen.name} only speaks when you ask.</span>}
             </div>
+            <Memory name={chosen.name} />
+            <OnDevice who={chosen.name} />
           </div>
         )}
         <p className="mb-0 text-[11.5px] text-text-muted">3D people from the Microsoft Rocketbox Avatar Library (MIT licence), animated with TalkingHead (MIT); voices by Kokoro (Apache licence).</p>
       </CardContent>
     </Card>
+  )
+}
+
+interface Remembered {
+  name: string
+  goal: string
+  topics: string[]
+  hard: string[]
+  turns: number
+}
+
+/** What the teacher remembers about you (src/voice/memory.js), and a way to erase it. */
+function Memory({ name }: { name: string }) {
+  const [mem, setMem] = useState<Remembered | null>(null)
+  const [busy, setBusy] = useState(false)
+  useEffect(() => {
+    let live = true
+    api
+      .get<{ memory: Remembered }>('/api/voice/teacher/memory')
+      .then((r) => live && setMem(r.memory))
+      .catch(() => live && setMem(null))
+    return () => {
+      live = false
+    }
+  }, [])
+  const forget = async () => {
+    setBusy(true)
+    try {
+      await api.delete('/api/voice/teacher/memory')
+      setMem({ name: '', goal: '', topics: [], hard: [], turns: 0 })
+    } finally {
+      setBusy(false)
+    }
+  }
+  const facts = mem ? [mem.name && `your name, ${mem.name}`, mem.goal && `your goal: ${mem.goal}`, mem.topics.length > 0 && `recent topics: ${mem.topics.slice(0, 4).join(', ')}`, mem.hard.length > 0 && `what felt hard: ${mem.hard.slice(0, 3).join(', ')}`].filter(Boolean) : []
+  return (
+    <fieldset className="vc-field">
+      <legend>What {name} remembers</legend>
+      <p className="vc-note">
+        {facts.length
+          ? `${name} remembers ${facts.join('; ')}. It stays on NexoraGuru, and the name she remembers is never sent to an AI service.`
+          : `Nothing yet. As you talk, ${name} remembers your goal, recent topics and what felt hard, so the next session starts where you left off. The name she remembers is never sent to an AI service.`}
+      </p>
+      {facts.length > 0 && (
+        <Button size="sm" variant="ghost" onClick={() => void forget()} loading={busy}>
+          Forget all of it
+        </Button>
+      )}
+    </fieldset>
   )
 }

@@ -8,6 +8,7 @@ const { approachToPseudo } = require("../voice/pseudo");
 const { buildCode } = require("../voice/build");
 const { makeBoard } = require("../voice/board");
 const explain = require("../voice/explain");
+const memory = require("../voice/memory");
 const db = require("../db");
 const { invalidateNexusUser } = require("../nexus/user-cache");
 
@@ -33,7 +34,10 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
       return res.json({ ok: true, say: lang === "hi-IN" ? "अभी Explain-back चल रहा है — अपने शब्दों में समझाओ, हिंट बाद में।" : "Explain-back is on — tell it in your own words. Hints after.", step: 0, source: "rule" });
     }
     try {
+      // A teacher on screen remembers the student between sessions (src/voice/memory.js; study facts only go to the AI).
+      const mem = teacher ? await memory.recall(username).catch(() => null) : null;
       const out = await askGuru({
+        memory: memory.promptFacts(mem),
         user: req.sessionUser,
         page: page && typeof page === "object" && !Array.isArray(page) ? page : {},
         text,
@@ -46,6 +50,7 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
       });
       // Any help on a problem makes a later explain-back of it "aided" for a day.
       if (problemId && out.source !== "rule" && out.source !== "none") explain.logHint(db, username, problemId).catch(() => {});
+      if (teacher) memory.remember(username, { heard: text, page }).catch(() => {});
       res.json({ ok: true, ...out });
     } catch (e) {
       if (e?.name === "AiError") return res.status(e.status || 502).json({ ok: false, error: e.message });
@@ -63,7 +68,9 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
     const problemId = page && typeof page === "object" ? page.problemId : null;
     if (problemId && explain.explaining(username, problemId)) return res.json({ ok: true, local: false });
     try {
+      const mem = teacher ? await memory.recall(username).catch(() => null) : null;
       const plan = await planGuru({
+        memory: memory.promptFacts(mem),
         user: req.sessionUser,
         page: page && typeof page === "object" && !Array.isArray(page) ? page : {},
         text,
@@ -75,11 +82,32 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
       });
       if (plan.kind === "say") return res.json({ ok: true, local: false, say: plan.say, step: plan.step, source: plan.source });
       if (!localAllowed(plan)) return res.json({ ok: true, local: false });
+      if (teacher) memory.remember(username, { heard: text, page }).catch(() => {});
       res.json({ ok: true, local: true, messages: plan.messages, step: plan.step });
     } catch (e) {
       if (e?.name === "AiError") return res.status(e.status || 502).json({ ok: false, error: e.message });
       logError("voice.guru.plan", e);
       res.json({ ok: true, local: false });
+    }
+  });
+
+  // What the teacher remembers about the student, and a welcome that shows it; the student can erase it.
+  router.get("/api/voice/teacher/memory", requireAuthenticatedUser, async (req, res) => {
+    try {
+      const mem = await memory.recall(req.sessionUser?.username || "");
+      res.json({ ok: true, memory: mem, greeting: memory.greeting(mem, req.query.lang === "hi-IN" ? "hi-IN" : "en-IN") });
+    } catch (e) {
+      logError("voice.memory", e);
+      res.json({ ok: true, memory: memory.EMPTY, greeting: memory.greeting(null, req.query.lang === "hi-IN" ? "hi-IN" : "en-IN") });
+    }
+  });
+  router.delete("/api/voice/teacher/memory", requireAuthenticatedUser, async (req, res) => {
+    try {
+      await memory.forget(req.sessionUser?.username || "");
+      res.json({ ok: true });
+    } catch (e) {
+      logError("voice.memory.forget", e);
+      res.status(500).json({ ok: false, error: "Couldn't forget just now — try again." });
     }
   });
 
