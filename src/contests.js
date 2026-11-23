@@ -511,7 +511,50 @@ function genCode() {
   return code;
 }
 
+/**
+ * Is this person inside a running graded contest window for what is on the
+ * page? Then the AI assistant and Guru follow the exam rules (no answers, no
+ * hints on it) — decided here on the server, never by the browser.
+ *   /contests/<id>/paper           → that contest
+ *   /solve/<id>, /solve/custom/<id> → a contest holding that problem
+ *   a GATE question id              → a contest holding that question
+ */
+async function examFor(username, { path = "", problemId = "", gateQuestionId = "" } = {}) {
+  if (!username) return false;
+  const where = [];
+  const args = [username];
+  const paper = String(path).match(/^\/contests\/(\d+)\/paper(?:\/|$)/);
+  if (paper) {
+    where.push("c.id=?");
+    args.push(Number(paper[1]));
+  }
+  const custom = String(path).match(/^\/solve\/custom\/(\d+)/);
+  const plain = String(path).match(/^\/solve\/(\d+)/);
+  if (custom) {
+    where.push("(i.kind='workshop' AND i.ref=?)");
+    args.push(custom[1]);
+  } else if (plain || /^\d+$/.test(String(problemId))) {
+    where.push("(i.kind='problem' AND i.ref=?)");
+    args.push(String(plain ? plain[1] : problemId));
+  }
+  if (gateQuestionId) {
+    where.push("(i.kind='gate' AND i.ref=?)");
+    args.push(String(gateQuestionId));
+  }
+  if (!where.length) return false;
+  await init();
+  const rows = await all(
+    `SELECT DISTINCT c.*, p.started_at, p.ends_at, p.finished_at FROM custom_contests c
+     JOIN contest_participants p ON p.contest_id=c.id AND p.username=?
+     LEFT JOIN contest_items i ON i.contest_id=c.id
+     WHERE c.status<>'draft' AND (${where.join(" OR ")})`,
+    args,
+  );
+  return rows.some((r) => personWindow(shape(r), r).state === "running");
+}
+
 module.exports = {
+  examFor,
   MAX_ITEMS,
   MAX_QUESTIONS,
   MAX_DRAFTS,

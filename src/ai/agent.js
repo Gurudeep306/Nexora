@@ -224,6 +224,16 @@ async function pageContext(rawPage = {}) {
     const r = await get("SELECT status FROM learn_progress WHERE username=? AND item=?", [me(), `code:${pid}`]).catch(() => null);
     learnSolved = r?.status === "solved" || r?.status === "correct";
   }
+  // Checked on the server, never taken from the browser: whether this GATE
+  // question really was answered or revealed (an attempt is on record), and
+  // whether a graded contest is running for what is on the page.
+  if (page.gateQuestionId) {
+    const r = await get("SELECT 1 AS x FROM gate_qstate WHERE username=? AND question_id=?", [me(), page.gateQuestionId]).catch(() => null);
+    page.gateAnswered = !!r;
+  }
+  if (!page.examActive) {
+    page.examActive = await require("../contests").examFor(me(), page).catch(() => false);
+  }
   return { ...describePage(page, { problem, learnSolved }), page };
 }
 
