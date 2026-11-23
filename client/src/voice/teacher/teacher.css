@@ -104,6 +104,12 @@
     cursor: pointer;
   }
   .tch-btn svg { width: 0.875rem; height: 0.875rem; }
+  .tch-btn[data-on] {
+    color: var(--color-accent-brand);
+    background: color-mix(in oklab, var(--color-accent-brand) 12%, transparent);
+  }
+  .tch-say--talk .tch-say-text { font-style: italic; color: var(--color-text-secondary); }
+  .tch-dots { letter-spacing: 0.2em; animation: tch-wait 1.2s ease-in-out infinite; }
   .tch-btn:hover,
   .tch-btn:focus-visible {
     color: var(--color-text-primary);
@@ -258,4 +264,5 @@
 @media (prefers-reduced-motion: reduce) {
   .tch { transition: none; }
   .tch-load:not(.tch-fail) img { animation: none; }
+  .tch-dots { animation: none; }
 }

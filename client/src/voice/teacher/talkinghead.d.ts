@@ -54,6 +54,8 @@ declare module '@met4citizen/talkinghead' {
     setMood(mood: string): void
     makeEyeContact(ms: number): void
     lookAtCamera(ms: number): void
+    lookAt(x: number, y: number, ms: number): void
+    speakWithHands(delay?: number, prob?: number): void
     start(): void
     stop(): void
     dispose(): void

@@ -12,6 +12,7 @@ import { TEACHER_SPECS } from '../actions/teacherSpecs'
 import type { ActionSpec, VoiceAction } from '../actions/types'
 import { useVoicePrefs } from '../prefs'
 import { introduce } from './intro'
+import { startTalk } from '../talk'
 import { setTeacher, teacherMove, useTeacher } from './store'
 import { teacherById, teacherPortrait } from './teachers'
 import './teacher.css'
@@ -44,6 +45,10 @@ export function TeacherHost() {
       a('teacher.point', `${n}: point`, () => teacherMove('point')),
       a('teacher.hide', `Hide ${n}`, () => setTeacher({ hidden: true })),
       a('teacher.show', `Show ${n}`, () => setTeacher({ hidden: false })),
+      a('teacher.talk', `Talk with ${n}`, () => {
+        setTeacher({ hidden: false })
+        startTalk()
+      }),
       a('teacher.intro', `${n}: introduce yourself`, () => {
         setTeacher({ hidden: false })
         introduce(teacher)

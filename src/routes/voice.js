@@ -24,7 +24,7 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
   explain.ensureTables(db).catch((e) => logError("voice.explain.tables", e));
 
   router.post("/api/voice/guru", requireAuthenticatedUser, limiter, async (req, res) => {
-    const { text, page, hintsGiven, lang } = req.body || {};
+    const { text, page, hintsGiven, lang, teacher, talk, history } = req.body || {};
     const username = req.sessionUser?.username || "";
     const problemId = page && typeof page === "object" ? page.problemId : null;
     // Explain-back is a viva: no hints until it ends.
@@ -38,6 +38,10 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
         text,
         hintsGiven: Math.max(0, Math.min(10, Number(hintsGiven) || 0)),
         lang: lang === "hi-IN" ? "hi-IN" : "en-IN",
+        // Conversation mode with the virtual teacher: who is speaking, and what was said before.
+        teacher: typeof teacher === "string" ? teacher.slice(0, 20) : "",
+        talk: talk === true,
+        history: Array.isArray(history) ? history.slice(-8) : [],
       });
       // Any help on a problem makes a later explain-back of it "aided" for a day.
       if (problemId && out.source !== "rule" && out.source !== "none") explain.logHint(db, username, problemId).catch(() => {});

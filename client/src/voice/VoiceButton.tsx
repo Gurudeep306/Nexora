@@ -27,7 +27,10 @@ import { activeCode, type CodeHandle } from './code/active'
 import { applyCode } from './code/apply'
 import { parseCode, type CodeCommand } from './code/parse'
 import { activeBuilder, parseBuild } from './code/build'
-import { speak, stopSpeaking } from './speak'
+import { speak, stopSpeaking, useSpeaking } from './speak'
+import { endTalk, getTalk, onStartTalk, remember, saysGoodbye, setTalkStatus, useTalk } from './talk'
+import { teacherMove } from './teacher/store'
+import { teacherById } from './teacher/teachers'
 import { pageHints } from './hints'
 import { SpeakingChip } from './SpeakingChip'
 import './voice.css'
@@ -39,7 +42,7 @@ type Phase =
   | { kind: 'scene'; heard: string; title: string; say: string }
   | { kind: 'code'; heard: string; say: string; ok: boolean; undo?: () => void }
   | { kind: 'thinking'; heard: string }
-  | { kind: 'guru'; heard: string; say: string; step: number }
+  | { kind: 'guru'; heard: string; say: string; step: number; who?: string }
   | { kind: 'choose'; heard: string; options: { action: VoiceAction; match: Match }[] }
   | { kind: 'confirm'; heard: string; action: VoiceAction; match: Match }
   /** S6: the ears weren't sure, and acting on it would change something. */
@@ -88,6 +91,17 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
   const handle = useRef<ListenHandle | null>(null)
   const hideTimer = useRef<number | null>(null)
   const supported = useVoiceSupport()
+  const talk = useTalk()
+  const speaking = useSpeaking()
+  // Conversation mode: turns in a row where nothing was heard (two end it).
+  const misses = useRef(0)
+  /** True from the moment listening is asked for until it ends (listenOnce is async). */
+  const starting = useRef(false)
+  const startRef = useRef<() => void>(() => {})
+  const prefsRef = useRef(prefs)
+  useLayoutEffect(() => {
+    prefsRef.current = prefs
+  })
 
   // Expanded phrases, rebuilt only when the action list changes.
   const index = useMemo(() => new Map(actions.map((a) => [a.id, expand(a)])), [actions])
@@ -105,11 +119,26 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
     handle.current?.cancel()
   }, [])
 
+  /**
+   * Conversation mode: say it, and the mic opens again when the voice ends
+   * (the effect below). If no voice starts (sound off, voice unavailable),
+   * listen anyway after a moment.
+   */
+  const speakingNow = useRef(false)
+  const sayThenListen = useCallback((text: string) => {
+    speak(text, prefsRef.current.lang === 'hi-IN' ? 'hi-IN' : 'en-IN')
+    window.setTimeout(() => {
+      if (getTalk().on && !speakingNow.current && getTalk().status !== 'listening') startRef.current()
+    }, 1500)
+  }, [])
+
   const runAction = useCallback(
     (action: VoiceAction, match: Match, heard: string) => {
       setPhase({ kind: 'done', heard, said: describe(action, match) })
       hideSoon()
       void action.run(match.args)
+      // In a conversation, keep listening after doing what was asked ("go left").
+      if (getTalk().on) window.setTimeout(() => getTalk().on && !speakingNow.current && startRef.current(), 900)
     },
     [hideSoon],
   )
@@ -168,15 +197,32 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
       const page = shareContext ? full : { path: full.path }
       const item = String(page.gateQuestionId || page.problemId || page.path || '')
       try {
-        const r = await api.post<{ ok: boolean; say: string; step: number }>('/api/voice/guru', { text: heard, page, hintsGiven: hintsGiven.get(item) ?? 0, lang: prefs.lang })
+        const t = getTalk()
+        if (t.on) setTalkStatus('thinking')
+        const r = await api.post<{ ok: boolean; say: string; step: number }>('/api/voice/guru', {
+          text: heard,
+          page,
+          hintsGiven: hintsGiven.get(item) ?? 0,
+          lang: prefs.lang,
+          // With a virtual teacher, they answer as themselves; in conversation mode, remembering the talk.
+          teacher: prefs.teacher,
+          talk: t.on,
+          history: t.on ? t.history : [],
+        })
         if (r.step >= 1 && r.step <= 5) hintsGiven.set(item, r.step)
-        setPhase({ kind: 'guru', heard, say: r.say, step: r.step })
-        if (prefs.speak) speak(r.say, prefs.lang)
+        setPhase({ kind: 'guru', heard, say: r.say, step: r.step, who: teacherById(prefs.teacher)?.name })
+        if (getTalk().on) {
+          setTalkStatus('idle')
+          remember(heard, r.say)
+          sayThenListen(r.say)
+        } else if (prefs.speak) speak(r.say, prefs.lang)
       } catch (e) {
         setPhase({ kind: 'guru', heard, say: e instanceof Error && e.message ? e.message : 'Guru couldn’t answer just now. Try again in a moment.', step: 0 })
+        if (getTalk().on) setTalkStatus('idle')
+        if (getTalk().on) sayThenListen(prefs.lang === 'hi-IN' ? 'माफ़ करना, अभी जवाब नहीं दे पाया। फिर से बोलो?' : 'Sorry, I couldn’t answer that just now. Say it again?')
       }
     },
-    [pageContext, shareContext, prefs.lang, prefs.speak],
+    [pageContext, shareContext, prefs.lang, prefs.speak, prefs.teacher, sayThenListen],
   )
 
   /** Would acting on this text change something (an edit, Build mode, an action that isn't just looking)? */
@@ -196,6 +242,15 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
   const decide = useCallback(
     (heard: string, ears?: Heard) => {
       const pending = phase
+      // Conversation mode: "bye", "bas", "stop talking" ends it, with a wave.
+      if (getTalk().on && saysGoodbye(heard)) {
+        endTalk()
+        teacherMove('wave')
+        const bye = prefs.lang === 'hi-IN' ? 'ठीक है, फिर मिलते हैं!' : 'Okay, bye! See you soon.'
+        setPhase({ kind: 'done', heard, said: 'Conversation ended' })
+        speak(bye, prefs.lang)
+        return hideSoon(2400)
+      }
       // S6: two services heard different words — the student picks. Unsure words
       // that would change something are shown first ("Did you mean …?").
       if (pending.kind !== 'confirm' && ears?.alternatives && ears.alternatives.length > 1) {
@@ -254,21 +309,40 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
       handle.current?.stop()
       return
     }
+    starting.current = true
     setPhase({ kind: 'listening', text: '' })
+    if (getTalk().on) {
+      // The student is about to speak: the teacher stops and listens.
+      stopSpeaking()
+      setTalkStatus('listening')
+    }
     const code = activeCode()
     handle.current = await listenOnce({
       lang: prefs.lang,
       // An editor in use expects code; otherwise a command. The page's names help the server ears.
       mode: code ? 'code' : 'command',
       hints: pageHints(code, actions),
-      onText: (text) => setPhase((p) => (p.kind === 'listening' ? { kind: 'listening', text } : p)),
+      onText: (text) => {
+        setPhase((p) => (p.kind === 'listening' ? { kind: 'listening', text } : p))
+        if (getTalk().on) setTalkStatus('listening', text)
+      },
       onDone: (text, error, ears) => {
         handle.current = null
+        starting.current = false
+        if (getTalk().on) setTalkStatus('idle')
         if (!text) {
+          // In a conversation, one quiet turn listens again; two end it, so the mic is never left open.
+          if (getTalk().on && error !== 'not-allowed' && error !== 'unsupported' && ++misses.current < 2) {
+            setPhase({ kind: 'idle' })
+            window.setTimeout(() => startRef.current(), 300)
+            return
+          }
+          if (getTalk().on) endTalk()
           setPhase({ kind: 'error', error: error ?? 'no-speech' })
           hideSoon(4200)
           return
         }
+        misses.current = 0
         decide(text, ears)
       },
     })
@@ -278,6 +352,41 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
     if (!prefs.consent) return setConsentOpen(true)
     void start()
   }
+  useLayoutEffect(() => {
+    startRef.current = () => {
+      if (handle.current || starting.current) return
+      void start()
+    }
+  })
+
+  // Conversation mode: when the teacher finishes speaking, listen again.
+  useEffect(() => {
+    const was = speakingNow.current
+    speakingNow.current = speaking.on
+    if (talk.on && was && !speaking.on && !handle.current && !starting.current) {
+      const t = window.setTimeout(() => getTalk().on && !speakingNow.current && startRef.current(), 250)
+      return () => window.clearTimeout(t)
+    }
+  }, [speaking.on, talk.on])
+
+  // "Let's talk" (the teacher's Talk button or voice): greet, then listen.
+  useEffect(
+    () =>
+      onStartTalk(() => {
+        misses.current = 0
+        if (!prefsRef.current.consent) {
+          setConsentOpen(true)
+          return
+        }
+        const hi = prefsRef.current.lang === 'hi-IN'
+        sayThenListen(hi ? 'हाँ, बोलो! आज क्या पढ़ना है?' : 'Haan, bolo! What shall we study today?')
+      }),
+    [sayThenListen],
+  )
+  // Leaving the site's pages or closing the mic's answer ends nothing; turning voice off does.
+  useEffect(() => {
+    if (!prefs.consent && talk.on) endTalk()
+  }, [prefs.consent, talk.on])
 
   // Alt+M: talk without reaching for the mouse (hands-free exam, coding).
   const onMicRef = useRef(onMic)
@@ -330,7 +439,7 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
           >
             <Pill
               phase={phase}
-              onClose={() => { handle.current?.cancel(); stopSpeaking(); setPhase({ kind: 'idle' }) }}
+              onClose={() => { handle.current?.cancel(); stopSpeaking(); endTalk(); setPhase({ kind: 'idle' }) }}
               onRun={runAction}
               onAsk={(t) => { setPhase({ kind: 'idle' }); openAssistantEvent(t) }}
               onHint={() => void askGuru('next hint please')}
@@ -367,7 +476,7 @@ function Pill({ phase, onClose, onRun, onAsk, onHint, onListen, onUse }: { phase
           {phase.kind === 'scene' && phase.title}
           {phase.kind === 'code' && (phase.ok ? 'Code' : 'Couldn’t do that')}
           {phase.kind === 'thinking' && 'Guru is thinking…'}
-          {phase.kind === 'guru' && (phase.step >= 1 && phase.step <= 5 ? `Guru · hint ${phase.step}` : 'Guru')}
+          {phase.kind === 'guru' && `${phase.who ?? 'Guru'}${phase.step >= 1 && phase.step <= 5 ? ` · hint ${phase.step}` : ''}`}
           {phase.kind === 'choose' && 'Which one?'}
           {phase.kind === 'confirm' && `${phase.action.title}?`}
           {phase.kind === 'check' && (phase.options.length > 1 ? 'Which did you say?' : 'Did you mean this?')}
