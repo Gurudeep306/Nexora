@@ -151,7 +151,7 @@ tools, not drawn by us.
 - **Reduced motion:** it appears in its new place instead of gliding, and
   idle head movement is smaller.
 
-### 3.2.1 The teacher listens, not the website (2026-11-23, this PR)
+### 3.2.1 The teacher listens, not the website (2026-11-23, #257)
 
 The owner's ask: "I want the 3D model to listen, not the website." With a
 teacher on screen, every voice turn is hers (`VoiceButton.tsx`, `TEACHER_SHOWS`):
