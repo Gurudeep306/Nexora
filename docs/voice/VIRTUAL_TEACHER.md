@@ -275,7 +275,7 @@ with her lips. The causes, and what changed:
   - Guru training examples use many names, so a model trained on them
     answers to any name.
 
-### 3.2.6 A catalogue of voices, clearer and louder (2026-11-24, this PR)
+### 3.2.6 A catalogue of voices, clearer and louder (2026-11-24, #262)
 
 - **Voices** (`voice/voices.ts`): twelve of Kokoro's voices (Apache-2.0) on
   the student's device, women and men, American, British and Indian. Each
