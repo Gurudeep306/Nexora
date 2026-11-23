@@ -171,7 +171,7 @@ const S = process.argv[2] || require('os').tmpdir()
     ok('Settings offers natural voices for her (a one-time download)', await p.locator('button', { hasText: 'Get natural voices' }).isVisible().catch(() => false))
     // A voice of your own: nothing can be recorded or uploaded before consent; then the line to read appears.
     const ownVoice = p.locator('fieldset', { hasText: 'A voice of your own' })
-    const recordBtn = ownVoice.locator('button', { hasText: 'Record' })
+    const recordBtn = ownVoice.getByRole('button', { name: 'Record', exact: true })
     ok('"A voice of your own": Record is locked until the student confirms consent', (await recordBtn.isVisible().catch(() => false)) && (await recordBtn.isDisabled()))
     await ownVoice.locator('input[type=checkbox]').check()
     ok('after consent: the consent line and passage to read, and Record unlocked', /I agree that NexoraGuru may use my voice/.test(await ownVoice.innerText()) && (await recordBtn.isEnabled()))
