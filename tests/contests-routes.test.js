@@ -149,6 +149,28 @@ test('join with the password, start, and run code that counts', async () => {
   assert.equal((await call('POST', '/api/judge', host, { problem_id: problemId, contest_id: id, code: 'print(5)', language: 'python' })).body.contest.counted, false);
 });
 
+test('during a graded contest, Guru follows the exam rules — decided on the server, not by the browser', async () => {
+  const plan = (who, page) => call('POST', '/api/voice/guru/plan', who, { text: 'how do I solve this', page });
+  const isExam = (r) => r.status === 200 && r.body.local === false && /test chal raha hai|टेस्ट चल रहा है/i.test(r.body.say || '');
+  // Ann is inside the running contest: its paper, its GATE question and its coding problem are all exam pages for her,
+  // even though her browser claims nothing (and even if it claims the paper is under review).
+  assert.ok(isExam(await plan(ann, { path: `/contests/${id}/paper` })), 'the paper');
+  assert.ok(isExam(await plan(ann, { path: '/gate/practice', gateQuestionId: GATE_Q })), 'the contest GATE question, opened in practice');
+  assert.ok(isExam(await plan(ann, { path: `/solve/${problemId}`, problemId: String(problemId) })), 'the contest coding problem');
+  assert.ok(isExam(await plan(ann, { path: `/solve/custom/${wsId}`, problemId: String(wsId) })), 'the contest Workshop problem');
+  // The host is not taking part: no exam rules for them.
+  assert.ok(!isExam(await plan(host, { path: `/contests/${id}/paper` })), 'not taking part');
+  // "I answered it" from the browser is not believed: with no attempt on record the question stays unsolved, so it never goes to a device.
+  const claimed = await plan(host, { path: '/gate/practice', gateQuestionId: GATE_Q, gateAnswered: true });
+  assert.equal(claimed.status, 200);
+  assert.equal(claimed.body.local, false, 'an unanswered question never reaches the device');
+  // Once the solution is really revealed (an attempt on record), the same question counts as answered.
+  const rev = await call('POST', '/api/gate/attempts', host, { questionId: GATE_Q, response: null, revealed: true });
+  assert.equal(rev.status, 200, JSON.stringify(rev.body));
+  const after = await plan(host, { path: '/gate/practice', gateQuestionId: GATE_Q });
+  assert.equal(after.body.local, true, 'answered on record: Guru may run on the device');
+});
+
 test('questions are fixed once someone has started', async () => {
   assert.equal((await call('POST', `/api/hosted/${id}/items`, host, { kind: 'problem', ref: problemId })).status, 409);
   assert.equal((await call('PUT', `/api/hosted/${id}/questions/${qid}`, host, { data: { type: 'NAT', text: 'x', answer: { min: 1 } } })).status, 409);
