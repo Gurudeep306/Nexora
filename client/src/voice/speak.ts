@@ -161,50 +161,88 @@ async function naturalClip(text: string, lang: string, voice: string, signal: Ab
   }
 }
 
-/* ── Kokoro on the device (opt-in) ── */
+/* ── Kokoro on the device (opt-in), through HeadTTS ──
+   HeadTTS (MIT; client/public/headtts, scripts/teacher/vendor-headtts.sh) runs
+   the Kokoro model (Apache-2.0) in the browser, with no GPL parts, and returns
+   word times and mouth shapes for the teacher. Its worker loads from our own
+   address; transformers.js from jsDelivr (pinned) and the model from Hugging
+   Face, once, after the student agreed. WebGPU when the device has it, else
+   WebAssembly. Kokoro's Indian voices speak English and, written as sounds by
+   the server (/api/voice/phonetic), Hindi. */
 
-const KOKORO_URL = 'https://cdn.jsdelivr.net/npm/kokoro-js@1.2.1/+esm'
-const KOKORO_MODEL = 'onnx-community/Kokoro-82M-v1.0-ONNX'
-interface RawAudioLike {
-  toBlob?: () => Blob
-  data?: Float32Array
-  sampling_rate?: number
+const HEADTTS = '/headtts/modules/headtts.mjs'
+/** Kokoro's Indian voices (the same four the voice server uses). */
+const OWN_VOICE_IDS = ['hf_alpha', 'hf_beta', 'hm_omega', 'hm_psi']
+const TRANSFORMERS = 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.0.0/dist/transformers.min.js'
+interface HeadTtsAudio {
+  audio: AudioBuffer
+  words?: string[]
+  wtimes?: number[]
+  wdurations?: number[]
+  visemes?: string[]
+  vtimes?: number[]
+  vdurations?: number[]
 }
-interface KokoroLike {
-  generate(text: string, o: { voice: string }): Promise<RawAudioLike>
+interface HeadTtsLike {
+  connect(onprogress?: ((e: ProgressEvent) => void) | null): Promise<void>
+  setup(o: Record<string, unknown>): void
+  synthesize(o: { input: unknown }): Promise<{ type: string; data: HeadTtsAudio | { error?: string } }[]>
 }
-let kokoro: Promise<KokoroLike> | null = null
+let kokoro: Promise<HeadTtsLike> | null = null
+
+/** The one-time download, depending on the device: 163 MB with a GPU that can run it, else 92 MB. */
+export const KOKORO_MB = '90–165'
+
+/** Can this device's GPU run the half-precision model? (Many can't: then WebAssembly, which works everywhere.) */
+async function gpuHalf(): Promise<boolean> {
+  try {
+    const gpu = (navigator as unknown as { gpu?: { requestAdapter(): Promise<{ features: Set<string> } | null> } }).gpu
+    const adapter = gpu ? await gpu.requestAdapter() : null
+    return !!adapter?.features.has('shader-f16')
+  } catch {
+    return false
+  }
+}
 
 /**
- * Download and start Kokoro (only after the student agreed). `onProgress`
- * gets 0–1 while the model downloads; it is cached by the browser after.
+ * Download and start the voice model (only after the student agreed).
+ * `onProgress` gets 0–1 while it downloads; the browser keeps it after.
  */
-export function loadKokoro(onProgress?: (p: number) => void): Promise<KokoroLike> {
+export function loadKokoro(onProgress?: (p: number) => void): Promise<HeadTtsLike> {
   if (!kokoro) {
     kokoro = (async () => {
-      const mod = (await import(/* @vite-ignore */ KOKORO_URL)) as { KokoroTTS: { from_pretrained(id: string, o: Record<string, unknown>): Promise<KokoroLike> } }
-      const files = new Map<string, { loaded: number; total: number }>()
-      return mod.KokoroTTS.from_pretrained(KOKORO_MODEL, {
-        dtype: 'q8',
-        device: 'wasm',
-        progress_callback: (e: { status?: string; file?: string; loaded?: number; total?: number }) => {
-          if (e.status !== 'progress' || !e.file) return
-          files.set(e.file, { loaded: e.loaded ?? 0, total: e.total ?? 0 })
-          let l = 0
-          let t = 0
-          for (const f of files.values()) {
-            l += f.loaded
-            t += f.total
-          }
-          if (t) onProgress?.(Math.min(1, l / t))
-        },
+      const mod = (await import(/* @vite-ignore */ HEADTTS)) as { HeadTTS: new (o: Record<string, unknown>) => HeadTtsLike }
+      const tts = new mod.HeadTTS({
+        endpoints: (await gpuHalf()) ? ['webgpu', 'wasm'] : ['wasm'],
+        transformersModule: TRANSFORMERS,
+        dtypeWebgpu: 'fp16',
+        dtypeWasm: 'q8',
+        languages: ['en-us'],
+        defaultVoice: 'hf_alpha',
+        splitSentences: false,
       })
+      await tts.connect((e) => {
+        if (e.lengthComputable && e.total) onProgress?.(Math.min(1, e.loaded / e.total))
+      })
+      return tts
     })().catch((e) => {
       kokoro = null
       throw e
     })
   }
   return kokoro
+}
+
+/** Hindi written as sounds by the server (no AI); other text as it is. */
+async function phonetic(text: string): Promise<unknown> {
+  if (!/[\u0900-\u097F]/.test(text)) return text
+  try {
+    const r = await fetch(`${API_BASE}/api/voice/phonetic`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) })
+    const j = (await r.json()) as { input?: unknown }
+    return j.input ?? text
+  } catch {
+    return text
+  }
 }
 
 function wavBlob(data: Float32Array, rate: number): Blob {
@@ -231,14 +269,16 @@ function wavBlob(data: Float32Array, rate: number): Blob {
   return new Blob([buf], { type: 'audio/wav' })
 }
 
-async function kokoroClip(text: string): Promise<Clip | null> {
+async function kokoroClip(text: string, voice: string): Promise<Clip | null> {
   try {
     const tts = await loadKokoro()
-    const male = teacherById(getVoicePrefs().teacher)?.body === 'M'
-    const a = await tts.generate(text, { voice: male ? 'am_michael' : 'af_heart' })
-    if (a.toBlob) return { blob: a.toBlob() }
-    if (a.data && a.sampling_rate) return { blob: wavBlob(a.data, a.sampling_rate) }
-    return null
+    tts.setup({ voice, language: 'en-us', speed: 1, audioEncoding: 'wav' })
+    const out = await tts.synthesize({ input: await phonetic(text) })
+    const parts = out.filter((m) => m.type === 'audio').map((m) => m.data as HeadTtsAudio)
+    const first = parts[0]
+    if (!first?.audio) return null
+    const timing = { words: first.words, wtimes: first.wtimes, wdurations: first.wdurations, visemes: first.visemes, vtimes: first.vtimes, vdurations: first.vdurations }
+    return { blob: wavBlob(first.audio.getChannelData(0), first.audio.sampleRate), timing }
   } catch {
     return null
   }
@@ -308,10 +348,10 @@ function play(clip: Clip, my: number, text: string, lang: string): Promise<void>
   })
 }
 
-async function which(lang: string): Promise<{ engine: Engine; status: NaturalStatus | null }> {
+async function which(): Promise<{ engine: Engine; status: NaturalStatus | null }> {
   const p = getVoicePrefs()
   if (p.engine === 'device') return { engine: 'device', status: null }
-  const kokoroOk = p.kokoro && lang.startsWith('en')
+  const kokoroOk = p.kokoro
   if (p.engine === 'kokoro') return { engine: kokoroOk ? 'kokoro' : 'device', status: null }
   const status = await naturalVoices()
   if (status.available) return { engine: 'natural', status }
@@ -333,7 +373,7 @@ export function speak(text: string, lang: string) {
   const parts = splitSentences(text)
   if (!parts.length) return
   void (async () => {
-    const { engine, status } = await which(lang)
+    const { engine, status } = await which()
     if (my !== session) return
     if (engine === 'device') return deviceSay(parts, lang, my)
     const ctrl = new AbortController()
@@ -341,7 +381,8 @@ export function speak(text: string, lang: string) {
     const picked = getVoicePrefs().voice
     const known = status?.voices[lang]?.some((v) => v.id === picked)
     const voice = (known ? picked : '') || teacherVoice(lang, status?.engine ?? null)
-    const make = (s: string) => (engine === 'natural' ? naturalClip(s, lang, voice, ctrl.signal) : kokoroClip(s))
+    const kokoroVoice = OWN_VOICE_IDS.includes(picked) ? picked : (teacherById(getVoicePrefs().teacher)?.voice ?? 'hf_alpha')
+    const make = (s: string) => (engine === 'natural' ? naturalClip(s, lang, voice, ctrl.signal) : kokoroClip(s, kokoroVoice))
     const name = engine === 'kokoro' ? 'Kokoro' : voiceName(status, voice, lang)
     let next = make(parts[0])
     for (let i = 0; i < parts.length; i++) {

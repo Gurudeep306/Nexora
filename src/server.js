@@ -324,6 +324,8 @@ app.use(
           "'self'",
           "'unsafe-inline'", // Monaco loader needs this
           "'unsafe-eval'", // Monaco worker needs this
+          // The in-browser voice (Settings → Voice → Kokoro, opt-in): ONNX Runtime loads its WebAssembly glue from a blob: URL inside its worker.
+          "blob:",
           "https://cdn.jsdelivr.net",
           "https://cdnjs.cloudflare.com",
           "https://cdn.socket.io",

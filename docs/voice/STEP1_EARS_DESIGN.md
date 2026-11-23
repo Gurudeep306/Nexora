@@ -254,13 +254,18 @@ console; they change). The account is shared by all students, so:
 - Settings → Voice: best available / natural (voice picker) / Kokoro
   (opt-in download with progress, English only) / device voice, and "Try the
   voice".
-- **Kokoro, honestly:** kokoro-js (Apache-2.0) turns text into sounds with
-  `phonemizer`, which bundles eSpeak NG (GPL-3.0). So it is never bundled
-  into the site: after the student opts in, their browser loads kokoro-js
-  1.2.1 from its public npm copy on jsDelivr and the model from Hugging Face
-  (both allowed in the CSP). The owner should decide whether that is
-  acceptable; switching it off is one line. Not tested end to end here (the
-  build session's network blocks Hugging Face).
+- **Kokoro, now with no GPL part (2026-11-23):** kokoro-js was replaced by
+  HeadTTS (MIT), whose own English dictionary replaces eSpeak NG. Its files
+  ship in `client/public/headtts` (copied by
+  `scripts/teacher/vendor-headtts.sh`, pinned to 1.3.0); after the student
+  opts in, the browser loads transformers.js 4.0.0 from jsDelivr and the
+  model (fp16 163 MB on a GPU that supports it, else 8-bit 92 MB on
+  WebAssembly) from Hugging Face. It speaks with Kokoro's Indian voices,
+  English and Hindi (Hindi written as sounds by `/api/voice/phonetic`), and
+  returns exact mouth shapes for the teacher. The CSP's script-src gained
+  `blob:` (ONNX Runtime's WebAssembly glue loads from one). Tested end to end
+  in a browser on WebAssembly: about 6–7 s to the first sentence on a
+  container CPU without a GPU.
 - Lip sync with exact mouth shapes (Azure visemes) needs the Speech SDK's
   WebSocket, not the REST call used here; the teacher will read the audio's
   loudness instead (step 2).
