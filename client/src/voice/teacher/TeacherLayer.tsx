@@ -18,10 +18,11 @@
   - Reduced motion: it appears in its new place instead of gliding.
 */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { ArrowLeftRight, Armchair, EyeOff, PersonStanding, Square } from 'lucide-react'
+import { ArrowLeftRight, Armchair, EyeOff, MessageCircle, PersonStanding, Square } from 'lucide-react'
 import type { TalkingHead } from '@met4citizen/talkinghead'
 import { getVoicePrefs, type TeacherSize } from '../prefs'
 import { onSentence, stopSpeaking, useSpeaking } from '../speak'
+import { endTalk, startTalk, useTalk } from '../talk'
 import { toRoman, wordTimes } from './lipsync'
 import { onTeacherMove, setTeacher, useTeacher, type Move, type Side } from './store'
 import { teacherModel, teacherPortrait, type TeacherInfo } from './teachers'
@@ -57,6 +58,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
   const standUp = useRef(false)
   const st = useTeacher()
   const speaking = useSpeaking()
+  const talk = useTalk()
   const [caption, setCaption] = useState<string | null>(null)
   const [x, setX] = useState<number | null>(null)
   const [attempt, setAttempt] = useState(0)
@@ -179,6 +181,8 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         if (ctx.state === 'suspended') void ctx.resume()
         const silent = ctx.createBuffer(1, Math.max(1, Math.round((ctx.sampleRate * s.ms) / 1000)), ctx.sampleRate)
         head.stopSpeaking()
+        // Hands move a little while talking, like a person explaining (only when standing).
+        if (!reduced()) head.speakWithHands(0, 0.6)
         // With exact mouth shapes TalkingHead uses them instead of guessing from the words.
         head.speakAudio({ audio: silent, ...t, ...(hasShapes ? { visemes: exact!.visemes!, vtimes: exact!.vtimes!, vdurations: exact!.vdurations! } : {}) }, { lipsyncLang: 'en' })
       }),
@@ -204,6 +208,18 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       }),
     [],
   )
+
+  /* Conversation cues: look at the student while they speak, glance away while thinking. */
+  useEffect(() => {
+    const head = headRef.current
+    if (!head || st.status !== 'ready' || !talk.on) return
+    if (talk.status === 'listening') head.lookAtCamera(4000)
+    else if (talk.status === 'thinking') {
+      // Up and to one side, as people do when they think.
+      const r = stage.current?.getBoundingClientRect()
+      if (r) head.lookAt(r.left + r.width * (st.side === 'left' ? 0.9 : 0.1), r.top - r.height * 0.4, 1600)
+    }
+  }, [talk.on, talk.status, st.status, st.side])
 
   /* Sit and stand. */
   useEffect(() => {
@@ -261,6 +277,19 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       role="region"
       aria-label={`Virtual teacher ${teacher.name}`}
     >
+      {talk.on && !speaking.on && (talk.status === 'listening' || talk.status === 'thinking') && (
+        <div className="tch-say tch-say--talk" role="status">
+          <p className="tch-say-text">
+            {talk.status === 'listening' ? (talk.hearing ? <span lang={lang === 'hi-IN' ? 'hi' : 'en'}>“{talk.hearing}”</span> : 'Listening…') : <span className="tch-dots" aria-label="Thinking">…</span>}
+          </p>
+          <div className="tch-say-foot">
+            <span>Talking with {teacher.name}</span>
+            <button type="button" onClick={() => { endTalk(); stopSpeaking() }} aria-label={`End the conversation with ${teacher.name}`}>
+              <Square className="size-3" aria-hidden="true" /> End
+            </button>
+          </div>
+        </div>
+      )}
       {speaking.on && (
         <div className="tch-say" role="status">
           {caption && (
@@ -304,6 +333,17 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
 
       <div className="tch-bar">
         <span className="tch-name">{teacher.name}</span>
+        <button
+          type="button"
+          className="tch-btn"
+          data-on={talk.on ? '' : undefined}
+          aria-pressed={talk.on}
+          onClick={() => (talk.on ? (endTalk(), stopSpeaking()) : startTalk())}
+          aria-label={talk.on ? `End the conversation with ${teacher.name}` : `Talk with ${teacher.name}`}
+          title={talk.on ? 'End the conversation' : 'Talk (hands-free)'}
+        >
+          <MessageCircle aria-hidden="true" />
+        </button>
         <button type="button" className="tch-btn" onClick={() => setTeacher({ side: nextSide })} aria-label={`Move ${teacher.name} to the ${nextSide}`} title={`Move to the ${nextSide}`}>
           <ArrowLeftRight aria-hidden="true" />
         </button>

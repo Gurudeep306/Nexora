@@ -124,6 +124,12 @@
     { "say": "introduce yourself", "expect": "teacher.intro" },
     { "say": "what is your name", "expect": "teacher.intro" },
     { "say": "why does the left pointer move right", "expect": null },
-    { "say": "what is on the right side of the array", "expect": null }
+    { "say": "what is on the right side of the array", "expect": null },
+    { "say": "let's talk", "expect": "teacher.talk" },
+    { "say": "baat karte hain", "expect": "teacher.talk" },
+    { "say": "बात करते हैं", "expect": "teacher.talk" },
+    { "say": "talk to me", "expect": "teacher.talk" },
+    { "say": "can we talk about recursion", "expect": null },
+    { "say": "what is the time complexity of quicksort", "expect": null }
   ]
 }

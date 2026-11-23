@@ -85,6 +85,20 @@ tools, not drawn by us.
   show, introduce yourself. In English, Hinglish and Hindi
   (`voice/actions/teacherSpecs.ts`, in the command test set). When it moves
   it glides there with its body turned the way it goes.
+- **Conversation mode (talk like a person):** the teacher's Talk button, or
+  "let's talk" / "baat karte hain". The teacher greets you, then the mic
+  opens by itself each time they finish speaking, so you just talk, no
+  tapping (`client/src/voice/talk.ts`, `VoiceButton.tsx`). Each question goes
+  to Guru with the teacher's name and gender and the last 8 turns
+  (`src/voice/guru.js`: `personaFor`, `cleanHistory`, the `TALK` style: warm,
+  short, natural, reacts and remembers, a little small talk then back to
+  study, honest that it is an AI teacher; Hindi verb forms match the
+  teacher's gender). All of Guru's rules still hold (free models only, Leak
+  Guard, no help in a test). While you speak the teacher looks at you and
+  shows your words; while thinking it glances away ("…"); while speaking its
+  hands move. Commands still work mid-talk ("go left"). "Bye", "bas" or
+  "stop talking" ends it with a wave; two quiet turns in a row end it too, so
+  the mic is never left open.
 - **Never in the way:** the drawing lets every click through; only its name
   bar (move, sit/stand, hide) is clickable. Hidden, it leaves a small "Show
   Maya" button. Its place is remembered in the browser. It is not shown in

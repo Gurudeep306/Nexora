@@ -145,18 +145,52 @@ function spoken(text, max = 900) {
     .slice(0, max);
 }
 
-const SYSTEM = (lang) => `You are Guru, NexoraGuru's voice tutor: the senior who cleared GATE and now sits beside the student. Calm, quick, warm, never showing off.
+/**
+ * Who is speaking: the student's chosen virtual teacher (a name and a gender,
+ * for Hindi verb forms), or Guru. Only names from the site's teacher list.
+ */
+const TEACHER_NAMES = { priya: "Priya", kavya: "Kavya", neha: "Neha", ananya: "Ananya", arjun: "Arjun", rohan: "Rohan", dev: "Dev" };
+const MALE = new Set(["arjun", "rohan", "dev"]);
+function personaFor(teacher) {
+  const id = String(teacher || "").toLowerCase();
+  if (!TEACHER_NAMES[id]) return null;
+  return { name: TEACHER_NAMES[id], male: MALE.has(id) };
+}
+
+/** A gendered Hindi/Hinglish word for the speaker: "karta/karti", "karunga/karungi". */
+function g(persona, male, female) {
+  return persona && !persona.male ? female : male;
+}
+
+/** Earlier turns of this conversation: at most 8, plain text, short. */
+function cleanHistory(history) {
+  if (!Array.isArray(history)) return [];
+  return history
+    .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string" && m.content.trim())
+    .slice(-8)
+    .map((m) => ({ role: m.role, content: spoken(m.content, 600) }));
+}
+
+const TALK = (persona) => `This is a spoken conversation, face to face, like a real teacher sitting with the student${persona ? ` (you appear on screen as ${persona.name}, a 3D person)` : ""}.
+- Talk like a warm Indian teacher, not a chatbot: natural, relaxed sentences, contractions, words like "achha", "dekho", "bilkul" when the student uses Hinglish. Usually one to three sentences.
+- React to what they just said, and remember what was said earlier in this conversation.
+- When it helps, end with one short question back ("Samjha?", "Want to try one?").
+- Greetings, "how are you", feeling tired or stressed about exams: answer briefly and kindly like a person would, then gently bring it back to studying.
+- Never start with "Great question" or "As an AI". Don't repeat the question back.
+- In Hindi or Hinglish, speak about yourself as a ${persona && !persona.male ? "woman (\"main samjhati hoon\", \"karungi\")" : "man (\"main samjhata hoon\", \"karunga\")"}.`;
+
+const SYSTEM = (lang, persona) => `You are ${persona ? `${persona.name}, a teacher on NexoraGuru` : "Guru, NexoraGuru's voice tutor"}: the senior who cleared GATE and now sits beside the student. Calm, quick, warm, never showing off.
 Rules you never break:
 - Speak, don't write: short spoken sentences, at most 70 words, no lists, no markdown, no headings, no code blocks. Say symbols in words ("O of n log n", "i plus plus", "for all x").
 - Reply in the student's own mix of languages. ${lang === "hi-IN" ? "They chose Hindi: reply in simple Hindi (Devanagari), technical terms in English." : "If they write Hinglish, reply in Hinglish (Roman script); if English, in English."} Keep technical terms in English.
 - Only CS, GATE CSE, maths for CS, GATE aptitude and using NexoraGuru. Anything else: one polite line, then offer to continue studying.
 - Never invent facts, numbers, years or marks. Use the page and the verified material given. If something is not there, say you won't guess.
 - Never write the student's code for an unsolved problem. Never give the answer to an unanswered question unless the instruction for this turn says to.
-- If asked whether you are human, say you are NexoraGuru's AI.
+- If asked whether you are human, say honestly that you are NexoraGuru's AI teacher${persona ? `, shown as ${persona.name}` : ""}.
 - Encourage after mistakes, briefly. No flattery.`;
 
-/** The messages for one Guru turn. Pure. */
-function buildMessages({ pageText, verified, step, examActive, lang, text, unsolved }) {
+/** The messages for one Guru turn. Pure. `talk`: a spoken conversation with the virtual teacher. */
+function buildMessages({ pageText, verified, step, examActive, lang, text, unsolved, persona = null, talk = false, history = [] }) {
   const turn = examActive
     ? "A timed exam is running: do not give hints or answers about the exam questions. Say you'll review it together after the test."
     : unsolved
@@ -165,9 +199,11 @@ function buildMessages({ pageText, verified, step, examActive, lang, text, unsol
         ? `The student has attempted it. Give ${LADDER_TEXT[6]}`
         : "Answer the doubt directly and briefly, using the verified material.";
   return [
-    { role: "system", content: SYSTEM(lang) },
+    { role: "system", content: SYSTEM(lang, persona) },
+    ...(talk ? [{ role: "system", content: TALK(persona) }] : []),
     ...(pageText ? [{ role: "system", content: `On the student's screen:\n${pageText.slice(0, 12000)}` }] : []),
     ...(verified ? [{ role: "system", content: `Verified material (private reference — use it to be correct; reveal only what this turn allows):\n${verified.slice(0, 8000)}` }] : []),
+    ...cleanHistory(history),
     { role: "system", content: `This turn: ${turn}` },
     { role: "user", content: text },
   ];
@@ -205,7 +241,7 @@ function chain() {
 
 const NO_AI = {
   en: "I can't reach my thinking engine right now, so I won't guess.",
-  hi: "Abhi mera AI busy hai, toh main guess nahi karunga.",
+  hi: (persona) => `Abhi mera AI busy hai, toh main guess nahi ${g(persona, "karunga", "karungi")}.`,
 };
 
 function firstSentences(s, n = 3) {
@@ -216,14 +252,15 @@ function firstSentences(s, n = 3) {
  * One Guru turn. Returns { say, step, source }.
  * page: the AgentPage the client reports; hintsGiven: hints already given on this item.
  */
-async function askGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN" }) {
+async function askGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN", teacher = "", talk = false, history = [] }) {
+  const persona = personaFor(teacher);
   const username = user?.username || "";
   const question = String(text || "").trim().slice(0, 1200);
   if (!question) throw new AiError("Say something first", 400, "bad_request");
   const hinglish = lang !== "hi-IN";
 
   if (offTopic(question)) {
-    return { say: hinglish ? "Main sirf CS aur GATE mein help karta hoon. Chalo, kahan the hum?" : "मैं सिर्फ़ CS और GATE में मदद करता हूँ। चलो, पढ़ाई जारी रखें?", step: 0, source: "rule" };
+    return { say: hinglish ? `Main sirf CS aur GATE mein help ${g(persona, "karta", "karti")} hoon. Chalo, kahan the hum?` : `मैं सिर्फ़ CS और GATE में मदद ${g(persona, "करता", "करती")} हूँ। चलो, पढ़ाई जारी रखें?`, step: 0, source: "rule" };
   }
 
   const ctx = await runAs(username, () => agent.pageContext(page));
@@ -252,7 +289,7 @@ async function askGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN" }
   const wantsSolution = wantsSolutionRe.test(question);
   const step = unsolved ? ladderStep({ attempted: false, hintsGiven: stuckRe.test(question) || wantsSolution ? hintsGiven : Math.max(0, hintsGiven - 1), wantsSolution }) : wantsSolution ? 6 : 0;
 
-  const messages = buildMessages({ pageText: ctx.text, verified, step, examActive: false, lang, text: question, unsolved });
+  const messages = buildMessages({ pageText: ctx.text, verified, step, examActive: false, lang, text: question, unsolved, persona, talk, history });
   const tries = chain();
   let lastErr = null;
   for (const t of tries) {
@@ -276,7 +313,9 @@ async function askGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN" }
         }).catch(() => null);
         say = again ? spoken(again.content) : "";
         if (!say || leaks({ reply: say, answerKey, options }).leak) {
-          say = hinglish ? "Answer main abhi nahi bataunga — pehle tum try karo. Question ke key words dobara padho, aur har option ko ek example pe check karo." : "उत्तर अभी नहीं बताऊँगा — पहले तुम कोशिश करो। हर विकल्प को एक उदाहरण पर जाँचो।";
+          say = hinglish
+            ? `Answer main abhi nahi ${g(persona, "bataunga", "bataungi")} — pehle tum try karo. Question ke key words dobara padho, aur har option ko ek example pe check karo.`
+            : `उत्तर अभी नहीं ${g(persona, "बताऊँगा", "बताऊँगी")} — पहले तुम कोशिश करो। हर विकल्प को एक उदाहरण पर जाँचो।`;
           return { say, step, source: "guard" };
         }
       }
@@ -288,9 +327,9 @@ async function askGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN" }
   }
   // Every free provider is busy: answer from verified content, without AI.
   if (verified && !unsolved && step >= 6) return { say: spoken(firstSentences(verified.split("Verified solution:\n")[1] || verified, 4)), step, source: "verified" };
-  const base = hinglish ? NO_AI.en : NO_AI.hi;
+  const base = hinglish ? NO_AI.en : NO_AI.hi(persona);
   if (lastErr) console.warn("[guru] all free providers failed:", lastErr.message);
   return { say: `${base} ${hasTask ? (hinglish ? "Tab tak question ko chhote examples pe try karo." : "तब तक छोटे उदाहरणों पर कोशिश करो।") : ""}`.trim(), step, source: "none" };
 }
 
-module.exports = { askGuru, leaks, ladderStep, buildMessages, freeTargets, offTopic, spoken, chain, FREE_KINDS };
+module.exports = { askGuru, leaks, ladderStep, buildMessages, freeTargets, offTopic, spoken, chain, personaFor, cleanHistory, FREE_KINDS };
