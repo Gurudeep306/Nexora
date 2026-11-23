@@ -18,11 +18,12 @@
   - Reduced motion: it appears in its new place instead of gliding.
 */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { ArrowLeftRight, Armchair, EyeOff, MessageCircle, PenLine, PersonStanding, Square } from 'lucide-react'
+import { ArrowLeftRight, Armchair, Cpu, EyeOff, MessageCircle, PenLine, PersonStanding, Square } from 'lucide-react'
 import type { TalkingHead } from '@met4citizen/talkinghead'
 import { getVoicePrefs, type TeacherSize } from '../prefs'
 import { onSentence, stopSpeaking, useSpeaking } from '../speak'
 import { VoiceOffer } from './VoiceOffer'
+import { useBrain } from '../brain/brain'
 import { cancelListening, endTalk, getTalk, startTalk, teacherSays, useTalk } from '../talk'
 import { closeBoard, openBoard, pageTopic, useBoard } from './boardStore'
 import { toRoman, wordTimes } from './lipsync'
@@ -66,6 +67,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
   const st = useTeacher()
   const speaking = useSpeaking()
   const talk = useTalk()
+  const brain = useBrain()
   const board = useBoard()
   const speakingNowRef = useRef(false)
   useEffect(() => {
@@ -439,6 +441,11 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
 
       <div className="tch-bar">
         <span className="tch-name">{teacher.name}</span>
+        {brain.status === 'ready' && (
+          <span className="tch-chip" role="img" aria-label={`${teacher.name} is thinking on this device`} title="Thinking on this device (her own brain)">
+            <Cpu size={12} aria-hidden="true" />
+          </span>
+        )}
         <button
           type="button"
           className="tch-btn"

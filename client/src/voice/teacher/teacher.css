@@ -94,6 +94,11 @@
     font-weight: 600;
     color: var(--color-text-primary);
   }
+  .tch-chip {
+    display: inline-flex;
+    margin-right: 0.25rem;
+    color: var(--color-text-muted);
+  }
   .tch-btn {
     display: grid;
     place-items: center;

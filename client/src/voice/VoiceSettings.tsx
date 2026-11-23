@@ -166,7 +166,8 @@ function VoicePicker() {
 /** Guru on this device (docs/voice/BLUEPRINT.md §4.6): download once, answer here, private. */
 const size = (mb: number) => (mb >= 1000 ? `${(mb / 1000).toFixed(1)} GB` : `${mb} MB`)
 
-function OnDevice() {
+/** `who`: the teacher's name, when shown in the teacher's settings (her own brain). */
+export function OnDevice({ who }: { who?: string } = {}) {
   const { user } = useAuth()
   const [prefs, setPrefs] = useVoicePrefs(user?.username)
   const brain = useBrain()
@@ -214,9 +215,9 @@ function OnDevice() {
                 : ''
   return (
     <fieldset className="vc-field">
-      <legend>Guru on this device</legend>
+      <legend>{who ? `${who}’s own brain` : 'Guru on this device'}</legend>
       <p className="vc-note">
-        Answers your questions on this device: private, free, and it keeps working on a weak connection. Questions you haven’t solved yet still go to the server, so hints stay fair and the
+        {who ? `With it, ${who} thinks on this device instead of on a server, like a teacher with her own AI chip. ` : ''}Answers your questions on this device: private, free, and it keeps working on a weak connection. Questions you haven’t solved yet still go to the server, so hints stay fair and the
         answer never reaches your device.{tier ? ` This device can run ${tier.name}, built on Qwen3.5 (Apache licence): a one-time download of about ${size(info ? downloadMb(tier, info) : tier.mb)} (Wi-Fi recommended).` : ''}
       </p>
       <div className="vc-row">

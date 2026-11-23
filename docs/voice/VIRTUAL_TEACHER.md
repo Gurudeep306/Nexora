@@ -177,6 +177,26 @@ The exam console keeps its own mic and box.
   click-through so the page under her stays usable; her Talk button starts a
   conversation.
 
+### 3.2.2 She remembers you, and can think on your device (2026-11-23, this PR)
+
+- **Memory** (`src/voice/memory.js`, table `teacher_memory`, one row per student):
+  learned by rules from what the student says and the page they are on, no
+  AI. It keeps their name if they say it ("my name is…", "mera naam … hai",
+  "call me…"), their goal (GATE, placements…), up to six recent topics and
+  up to four things that felt hard, plus how many turns they've had.
+- **Privacy**: the AI is given study facts only (goal, topics, what was
+  hard), as one short system line. The name she remembers is used only in
+  greetings built on our server ("Welcome back, Asha! Last time we were on
+  heaps…") and spoken by our own voice; it is never added to an AI prompt
+  (checked by the browser sweep with a stand-in model).
+- **See and erase it**: Settings → Virtual teacher → "What she remembers"
+  lists everything, with "Forget all of it" (`DELETE /api/voice/teacher/memory`).
+- **Her own brain**: the same settings card offers the on-device Guru
+  (Qwen3.5, WebGPU, `voice/brain/`) as her brain, so she thinks on the
+  device instead of a server. While it is answering, a small chip shows in
+  her bar. The server still decides per turn: unsolved questions, tests and
+  Explain-back stay on the server so answer keys never reach a device.
+
 ### 3.3 Honest limits
 
 - **No walking legs yet.** It glides (turned sideways) rather than taking

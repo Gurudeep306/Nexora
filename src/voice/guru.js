@@ -255,7 +255,7 @@ Rules you never break:
 - Encourage after mistakes, briefly. No flattery.`;
 
 /** The messages for one Guru turn. Pure. `talk`: a spoken conversation with the virtual teacher. */
-function buildMessages({ pageText, verified, step, examActive, lang, text, unsolved, persona = null, talk = false, history = [] }) {
+function buildMessages({ pageText, verified, step, examActive, lang, text, unsolved, persona = null, talk = false, history = [], memory = "" }) {
   const turn = examActive
     ? "A timed exam is running: do not give hints or answers about the exam questions. Say you'll review it together after the test."
     : unsolved
@@ -266,6 +266,8 @@ function buildMessages({ pageText, verified, step, examActive, lang, text, unsol
   return [
     { role: "system", content: SYSTEM(lang, persona) },
     ...(talk ? [{ role: "system", content: TALK(persona) }] : []),
+    // What the teacher remembers about this student (study facts only, never the name: src/voice/memory.js).
+    ...(memory ? [{ role: "system", content: String(memory).slice(0, 600) }] : []),
     ...(pageText ? [{ role: "system", content: `On the student's screen:\n${pageText.slice(0, 12000)}` }] : []),
     ...(verified ? [{ role: "system", content: `Verified material (private reference — use it to be correct; reveal only what this turn allows):\n${verified.slice(0, 8000)}` }] : []),
     ...cleanHistory(history),
@@ -319,7 +321,7 @@ function firstSentences(s, n = 3) {
  * { kind: "say", say, step, source } for a reply that needs no model, or
  * { kind: "ask", messages, step, unsolved, … } for one that does.
  */
-async function planGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN", teacher = "", talk = false, history = [] }) {
+async function planGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN", teacher = "", talk = false, history = [], memory = "" }) {
   const persona = personaFor(teacher);
   const username = user?.username || "";
   const question = String(text || "").trim().slice(0, 1200);
@@ -356,7 +358,7 @@ async function planGuru({ user, page = {}, text, hintsGiven = 0, lang = "en-IN",
   const wantsSolution = wantsSolutionRe.test(question);
   const step = unsolved ? ladderStep({ attempted: false, hintsGiven: stuckRe.test(question) || wantsSolution ? hintsGiven : Math.max(0, hintsGiven - 1), wantsSolution }) : wantsSolution ? 6 : 0;
 
-  const messages = buildMessages({ pageText: ctx.text, verified, step, examActive: false, lang, text: question, unsolved, persona, talk, history });
+  const messages = buildMessages({ pageText: ctx.text, verified, step, examActive: false, lang, text: question, unsolved, persona, talk, history, memory });
   return { kind: "ask", messages, step, unsolved, answerKey, options, verified, hasTask, hinglish, persona, username };
 }
 
