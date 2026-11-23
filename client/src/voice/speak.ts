@@ -29,6 +29,39 @@ export interface Speaking {
   name: string
 }
 
+/**
+ * One sentence as it starts to sound: what is said and for how long (ms), so
+ * the virtual teacher can move its lips with it. `null` = speaking stopped.
+ */
+export interface SpokenSentence {
+  text: string
+  lang: string
+  ms: number
+}
+const sentenceListeners = new Set<(s: SpokenSentence | null) => void>()
+/** Hear each sentence as it starts (and `null` when speech stops). Returns an unsubscribe. */
+export function onSentence(fn: (s: SpokenSentence | null) => void): () => void {
+  sentenceListeners.add(fn)
+  return () => sentenceListeners.delete(fn)
+}
+function announce(s: SpokenSentence | null) {
+  for (const l of sentenceListeners) l(s)
+}
+/** About how long a device voice takes to say `text` (it reports no length). */
+export function estimateMs(text: string, rate = 1.02): number {
+  return Math.max(400, Math.round((text.length * 62) / rate))
+}
+
+/**
+ * The voice that suits the chosen teacher when the student picked no voice:
+ * the male teachers get a male voice. '' = the language's default.
+ */
+function teacherVoice(lang: string): string {
+  const t = getVoicePrefs().teacher
+  if (t !== 'kai' && t !== 'victor') return ''
+  return lang === 'hi-IN' ? 'hi-IN-MadhurNeural' : 'en-IN-PrabhatNeural'
+}
+
 const IDLE: Speaking = { on: false, engine: null, name: '' }
 let state: Speaking = IDLE
 const listeners = new Set<() => void>()
@@ -166,7 +199,8 @@ function wavBlob(data: Float32Array, rate: number): Blob {
 async function kokoroClip(text: string): Promise<Blob | null> {
   try {
     const tts = await loadKokoro()
-    const a = await tts.generate(text, { voice: 'af_heart' })
+    const t = getVoicePrefs().teacher
+    const a = await tts.generate(text, { voice: t === 'kai' || t === 'victor' ? 'am_michael' : 'af_heart' })
     if (a.toBlob) return a.toBlob()
     if (a.data && a.sampling_rate) return wavBlob(a.data, a.sampling_rate)
     return null
@@ -180,31 +214,54 @@ async function kokoroClip(text: string): Promise<Blob | null> {
 let session = 0
 let abort: AbortController | null = null
 
-function deviceSay(text: string, lang: string, my: number) {
-  if (!canSpeak() || !text) {
+function deviceSay(parts: string[], lang: string, my: number) {
+  if (!canSpeak() || !parts.length) {
     if (my === session) set(IDLE)
     return
   }
   const synth = window.speechSynthesis
   synth.cancel()
-  const u = new SpeechSynthesisUtterance(text)
-  u.lang = lang
   const voices = synth.getVoices()
-  u.voice = voices.find((v) => v.lang === lang) ?? voices.find((v) => v.lang.startsWith(lang.slice(0, 2))) ?? null
-  u.rate = 1.02
-  u.onend = u.onerror = () => {
-    if (my === session) set(IDLE)
-  }
+  const voice = voices.find((v) => v.lang === lang) ?? voices.find((v) => v.lang.startsWith(lang.slice(0, 2))) ?? null
   set({ on: true, engine: 'device', name: 'Device voice' })
-  synth.speak(u)
+  // One utterance per sentence: each start is announced for the teacher's lips,
+  // and long answers aren't cut off (some browsers stop one long utterance).
+  parts.forEach((text, i) => {
+    const u = new SpeechSynthesisUtterance(text)
+    u.lang = lang
+    u.voice = voice
+    u.rate = 1.02
+    u.onstart = () => {
+      if (my === session) announce({ text, lang, ms: estimateMs(text, u.rate) })
+    }
+    u.onerror = () => {
+      if (my === session) {
+        set(IDLE)
+        announce(null)
+      }
+    }
+    if (i === parts.length - 1) {
+      u.onend = () => {
+        if (my === session) {
+          set(IDLE)
+          announce(null)
+        }
+      }
+    }
+    synth.speak(u)
+  })
 }
 
-function play(blob: Blob, my: number): Promise<void> {
+function play(blob: Blob, my: number, text: string, lang: string): Promise<void> {
   return new Promise((resolve) => {
     if (my !== session) return resolve()
     const url = URL.createObjectURL(blob)
     const a = new Audio(url)
     playing = a
+    a.onplaying = () => {
+      a.onplaying = null
+      if (my === session) announce({ text, lang, ms: Number.isFinite(a.duration) && a.duration > 0 ? Math.round(a.duration * 1000) : estimateMs(text) })
+    }
     const done = () => {
       URL.revokeObjectURL(url)
       if (playing === a) playing = null
@@ -235,10 +292,10 @@ export function speak(text: string, lang: string) {
   void (async () => {
     const engine = await which(lang)
     if (my !== session) return
-    if (engine === 'device') return deviceSay(parts.join(' '), lang, my)
+    if (engine === 'device') return deviceSay(parts, lang, my)
     const ctrl = new AbortController()
     abort = ctrl
-    const voice = getVoicePrefs().voice
+    const voice = getVoicePrefs().voice || teacherVoice(lang)
     const make = (s: string) => (engine === 'natural' ? naturalClip(s, lang, voice, ctrl.signal) : kokoroClip(s))
     const name = engine === 'kokoro' ? 'Kokoro' : (voice.match(/-([A-Z][a-z]+)Neural$/)?.[1] ?? (lang === 'hi-IN' ? 'Swara' : 'Neerja'))
     let next = make(parts[0])
@@ -247,14 +304,17 @@ export function speak(text: string, lang: string) {
       if (my !== session) return
       if (!clip) {
         // This voice stopped working: the device voice says the rest.
-        return deviceSay(parts.slice(i).join(' '), lang, my)
+        return deviceSay(parts.slice(i), lang, my)
       }
       // Make the next sentence while this one plays.
       if (i + 1 < parts.length) next = make(parts[i + 1])
       set({ on: true, engine, name })
-      await play(clip, my)
+      await play(clip, my, parts[i], lang)
     }
-    if (my === session) set(IDLE)
+    if (my === session) {
+      set(IDLE)
+      announce(null)
+    }
   })()
 }
 
@@ -267,5 +327,8 @@ export function stopSpeaking() {
     playing = null
   }
   if (canSpeak()) window.speechSynthesis.cancel()
-  if (state.on) set(IDLE)
+  if (state.on) {
+    set(IDLE)
+    announce(null)
+  }
 }

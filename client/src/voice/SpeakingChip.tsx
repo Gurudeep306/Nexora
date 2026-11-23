@@ -6,10 +6,13 @@
 */
 import { Square, Volume2 } from 'lucide-react'
 import { stopSpeaking, useSpeaking } from './speak'
+import { useTeacher } from './teacher/store'
 
 export function SpeakingChip() {
   const s = useSpeaking()
-  if (!s.on) return null
+  const t = useTeacher()
+  // A teacher on screen shows the same label and Stop in its speech bubble.
+  if (!s.on || (t.status === 'ready' && !t.hidden)) return null
   const ai = s.engine === 'natural' || s.engine === 'kokoro'
   return (
     <div className="vc-speaking" role="status">

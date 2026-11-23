@@ -67,7 +67,8 @@ Live site last deployed at `6c04b8fe` (PR #226).
 
 | PR | What |
 |---|---|
-| (this PR) | Voice step 1e, **S9 measuring**: `scripts/voice/asr-eval.js` (WER, code-word error rate, command and code accuracy, p50/p95, the gates; every service separately within its free caps via `stt.transcribeWith`), 58-sentence clip list `docs/voice/tests/asr/clips.json` (expectations self-checked), Admin → Voice recognition → **Record test clips** (saved to your device only), recordings gitignored. Normaliser learns Hindi comparison order ("a of i key se chhota hai" → `a[i] < key`). |
+| #240 | **Virtual teacher T1**: four realistic 3D teachers (Maya, Elena, Kai, Victor; Microsoft Rocketbox, MIT; converted by `scripts/teacher/convert-rocketbox.py`) drawn with TalkingHead (MIT), chosen in Settings → Virtual teacher (off by default); lips follow every spoken sentence (`speak.ts` `onSentence`, Hindi via Roman spelling), speech bubble with the AI-voice label; by voice or its buttons it goes left/right/middle (glides, turned), turns around, sits and stands, waves, namaste, thumbs up, points, hides; never takes a click; lazy-loaded; not in the exam console. CSP `connect-src` gains `blob:` (model textures). `tests/voice-teacher.test.js`. |
+| #239 | Voice step 1e, **S9 measuring**: `scripts/voice/asr-eval.js` (WER, code-word error rate, command and code accuracy, p50/p95, the gates; every service separately within its free caps via `stt.transcribeWith`), 58-sentence clip list `docs/voice/tests/asr/clips.json` (expectations self-checked), Admin → Voice recognition → **Record test clips** (saved to your device only), recordings gitignored. Normaliser learns Hindi comparison order ("a of i key se chhota hai" → `a[i] < key`). |
 | #238 | Voice step 1d, **S8 natural voice**: Azure Speech neural voices (Neerja, Prabhat, Swara, Madhur) through the ears' Azure entry, free tier only (stops at 85% of 500,000 characters a month; cap can only be lowered; daily share per student; cache), Admin → Voice recognition → Natural voice; answers spoken sentence by sentence with the next made while one plays; "AI voice" label with Stop; Settings → Voice picker with **Kokoro** opt-in (loaded from jsDelivr/Hugging Face only after consent, never bundled, because its phonemizer bundles GPL eSpeak NG — owner to decide). |
 | #235 | Voice step 1c, **S6 confidence check**: unsure answers are cross-checked with the next service; in the mic, unsure words that would change something ask "Did you mean this?" (nothing changes until tapped), two different answers ask "Which did you say?", and what was heard always shows with **Fix** (type it). The consent screen now says honestly that, with server ears on, a short clip goes through NexoraGuru to a speech service (not kept). Fixed: "light mode" matched "night mode" (dark) because a one-letter slip could change the first letter; `sameWord` now keeps the first letter. |
 | #234 | Voice step 1b, **S5 normaliser** (`src/voice/normalise.js`, `src/voice/numwords.js`): cleans digits and the danda, joins spelt names ("b f s" → BFS), fixes known mishearings ("kyu" → queue) and, for commands and code, near-misses of the page's own names ("mit" → mid); code pages also get the speech as code ("low equals mid plus one" → `low = mid + 1`). 340-case set `docs/voice/tests/normalise.json` (100%, `tests/voice-normalise.test.js`). The browser sends the mode and the page's names (`client/src/voice/hints.ts`). Hindi answered in Urdu script → next service. **Bug fixed:** the 2% usage clean-up in `stt.js` used a case-blind LIKE and wrong cut-off, wiping the month and current-hour counters (free limits could be passed); now `pruneUsage()` with GLOB, tested. |
@@ -100,11 +101,11 @@ Live site last deployed at `6c04b8fe` (PR #226).
    (precise
    design: [`docs/voice/STEP1_EARS_DESIGN.md`](voice/STEP1_EARS_DESIGN.md); the owner
    has added a Groq key), then the
-   **virtual teacher**. The full plan, the honest limits and the research
-   answer for the owner's new brief (moving teacher with lip sync, every
-   language, about 1 s replies, "my voice") are in
-   [`docs/voice/VIRTUAL_TEACHER.md`](voice/VIRTUAL_TEACHER.md). Nothing of it
-   is built yet.
+   **virtual teacher**: T1 done (#240: 3D people, lip sync, body
+   commands). Next T2 (guide: places, point, click, tours, walk cycle), then
+   T3 (whiteboard). Plan and honest limits:
+   [`docs/voice/VIRTUAL_TEACHER.md`](voice/VIRTUAL_TEACHER.md) §3. After the
+   teacher: Phase 4 own models (ask the owner for Kaggle before training).
 2. **Owner reported "some problems are not fetched (an error)"**: still
    waiting for the problem link or a screenshot. Fix it on its own PR.
 3. **The owner's own steps:**

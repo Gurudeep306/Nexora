@@ -52,7 +52,8 @@ const actions = (f) => import(pathToFileURL(path.join(ROOT, "client", "src", "vo
 /** The site-wide spoken commands (the same list the top-bar mic uses). */
 async function commandSpecs() {
   const G = await actions("globalSpecs.ts");
-  return [G.placeSpec([...NAV, ...G.EXTRA_PLACES]), ...G.GLOBAL_SPECS];
+  const T = await actions("teacherSpecs.ts");
+  return [G.placeSpec([...NAV, ...G.EXTRA_PLACES]), ...G.GLOBAL_SPECS, ...T.TEACHER_SPECS];
 }
 
 function args(argv) {

@@ -32,9 +32,17 @@ export interface VoicePrefs {
   voice: string
   /** Agreed to download Kokoro (a large one-time download) on this device. */
   kokoro: boolean
+  /** The virtual teacher on screen ('' = off, the default; ids in teacher/teachers.ts). */
+  teacher: TeacherId | ''
+  /** How big the teacher is drawn. */
+  teacherSize: TeacherSize
 }
 
-export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true, engine: 'auto', voice: '', kokoro: false }
+export type TeacherId = 'maya' | 'elena' | 'kai' | 'victor'
+export type TeacherSize = 's' | 'm' | 'l'
+const TEACHER_IDS: readonly string[] = ['maya', 'elena', 'kai', 'victor']
+
+export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true, engine: 'auto', voice: '', kokoro: false, teacher: '', teacherSize: 'm' }
 const LOCAL = 'nexora:voice'
 const KEY = 'voice_prefs'
 
@@ -53,6 +61,8 @@ function sanitize(raw: unknown): VoicePrefs {
     engine: r.engine === 'natural' || r.engine === 'kokoro' || r.engine === 'device' ? r.engine : 'auto',
     voice: typeof r.voice === 'string' && /^[a-z]{2}-[A-Z]{2}-[A-Za-z]+Neural$/.test(r.voice) ? r.voice : '',
     kokoro: r.kokoro === true,
+    teacher: typeof r.teacher === 'string' && TEACHER_IDS.includes(r.teacher) ? (r.teacher as TeacherId) : '',
+    teacherSize: r.teacherSize === 's' || r.teacherSize === 'l' ? r.teacherSize : 'm',
   }
 }
 

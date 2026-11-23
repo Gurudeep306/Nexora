@@ -12,6 +12,7 @@ import { RouteProgress } from './RouteProgress'
 import { LookSync } from '../look/LookSync'
 import { DockSync } from './DockSync'
 import { GlobalActions } from '@/voice/actions/GlobalActions'
+import { TeacherHost } from '@/voice/teacher/TeacherHost'
 import { AgentPanel } from './AgentPanel'
 import { AgentProvider } from '@/context/AgentContext'
 import { cn } from '@/lib/utils'
@@ -98,6 +99,7 @@ export function AppLayout() {
       </div>
       <MobileTabBar />
       <Deck />
+      <TeacherHost />
       {featureOn('ai_tutor') && <AgentPanel />}
     </div>
     </AgentProvider>

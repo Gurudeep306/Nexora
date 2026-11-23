@@ -350,7 +350,8 @@ app.use(
         mediaSrc: ["'self'", "https:", "blob:", "data:"],
         // The AI course lessons run Python in the browser (Pyodide, from jsDelivr, pinned in client/src/learn/python/runtime.ts).
         // Kokoro (Settings → Voice, opt-in): its model files come from Hugging Face and its CDN.
-        connectSrc: ["'self'", "wss:", "ws:", "https://cdn.jsdelivr.net", "https://huggingface.co", "https://*.huggingface.co", "https://*.hf.co"],
+        // The virtual teacher (Settings → Virtual teacher): the 3D loader unpacks the model's own textures from blob: URLs.
+        connectSrc: ["'self'", "blob:", "wss:", "ws:", "https://cdn.jsdelivr.net", "https://huggingface.co", "https://*.huggingface.co", "https://*.hf.co"],
         workerSrc: ["'self'", "blob:"],
         frameSrc: ["'self'", "https://www.youtube.com", "https://www.youtube-nocookie.com", "https://player.vimeo.com"],
         objectSrc: ["'none'"],

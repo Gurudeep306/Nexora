@@ -1,0 +1,261 @@
+/* The virtual teacher (TeacherLayer.tsx, TeacherHost.tsx). Tokens only; no
+   shadows-as-glow, no gradients. The drawing never takes a click. */
+@layer components {
+  .tch {
+    --tch-w: 13rem;
+    position: fixed;
+    left: 0;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 5.25rem);
+    z-index: 55;
+    width: var(--tch-w);
+    display: grid;
+    justify-items: center;
+    pointer-events: none;
+    transition: transform 1.5s cubic-bezier(0.45, 0, 0.55, 1);
+  }
+  .tch[data-size='s'] { --tch-w: 9.5rem; }
+  .tch[data-size='l'] { --tch-w: 17rem; }
+  @media (max-width: 640px) {
+    .tch { --tch-w: 8.5rem; }
+    .tch[data-size='l'] { --tch-w: 11rem; }
+    .tch[data-size='s'] { --tch-w: 7rem; }
+  }
+
+  /* 40% wider than the teacher's box (transparent), so a raised hand isn't cut off. */
+  .tch-stage {
+    width: 140%;
+    margin-inline: -20%;
+    aspect-ratio: 21 / 20;
+    position: relative;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  /* Out of the flow: the canvas sizes itself to the stage, so the stage must never size itself to the canvas. */
+  .tch-stage canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none;
+  }
+
+  /* While loading or when it can't draw: the portrait in the stage's place. */
+  .tch-load {
+    position: absolute;
+    inset: auto 0 2.25rem;
+    display: grid;
+    justify-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    pointer-events: auto;
+  }
+  .tch-load img {
+    width: 4.5rem;
+    height: auto;
+    border-radius: 999px 999px 0.75rem 0.75rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-surface);
+    opacity: 0.9;
+  }
+  .tch-load:not(.tch-fail) img { animation: tch-wait 1.6s ease-in-out infinite; }
+  .tch-fail {
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.75rem);
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+  }
+  .tch-link {
+    font-size: 0.75rem;
+    color: var(--color-text-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+
+  /* Name and the three small buttons, under the teacher. */
+  .tch-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    margin-top: -0.25rem;
+    padding: 0.125rem 0.25rem 0.125rem 0.625rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-bg-surface);
+    pointer-events: auto;
+  }
+  .tch-name {
+    margin-right: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .tch-btn {
+    display: grid;
+    place-items: center;
+    width: 1.625rem;
+    height: 1.625rem;
+    border-radius: 999px;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+  .tch-btn svg { width: 0.875rem; height: 0.875rem; }
+  .tch-btn:hover,
+  .tch-btn:focus-visible {
+    color: var(--color-text-primary);
+    background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+  }
+
+  /* What is being said, in a speech bubble above the teacher. */
+  .tch-say {
+    position: absolute;
+    bottom: calc(100% - 0.5rem);
+    width: max-content;
+    max-width: min(17rem, calc(100vw - 2rem));
+    display: grid;
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.75rem);
+    background: var(--color-bg-surface);
+    pointer-events: auto;
+  }
+  .tch[data-side='right'] .tch-say { right: 0; }
+  .tch[data-side='left'] .tch-say { left: 0; }
+  .tch[data-side='centre'] .tch-say { left: 50%; transform: translateX(-50%); }
+  .tch-say-text {
+    margin: 0;
+    max-height: 6.5rem;
+    overflow-y: auto;
+    font-family: var(--kit-read, inherit);
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--color-text-primary);
+  }
+  .tch-say-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+  .tch-say-foot strong { color: var(--color-text-primary); font-weight: 600; }
+  .tch-say-foot button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    color: var(--color-text-primary);
+    cursor: pointer;
+  }
+  .tch-say-foot button:hover,
+  .tch-say-foot button:focus-visible {
+    background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+  }
+
+  /* A hidden teacher leaves a small "Show" button at its side. */
+  .tch-peek {
+    position: fixed;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 5.25rem);
+    right: 1rem;
+    z-index: 55;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-bg-surface);
+    font-size: 0.8125rem;
+    color: var(--color-text-primary);
+    cursor: pointer;
+  }
+  .tch-peek[data-side='left'] { right: auto; left: 1rem; }
+  .tch-peek img {
+    width: 2rem;
+    height: 2rem;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 999px;
+  }
+  .tch-peek:hover,
+  .tch-peek:focus-visible {
+    background: color-mix(in oklab, var(--color-text-primary) 6%, var(--color-bg-surface));
+  }
+
+  /* Settings → Virtual teacher: the four faces to choose from. */
+  .tch-pick {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .tch-pick legend {
+    margin-bottom: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .tch-opt {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.375rem 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.75rem);
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+  .tch-opt input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .tch-opt img,
+  .tch-opt .tch-off {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: top;
+    border-radius: calc(var(--kit-card-radius-sm, 0.75rem) - 0.25rem);
+    background: color-mix(in oklab, var(--color-text-primary) 5%, transparent);
+  }
+  .tch-off {
+    display: grid;
+    place-items: center;
+    color: var(--color-text-muted);
+  }
+  .tch-opt:has(input:checked) {
+    border-color: var(--color-accent-brand);
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+  .tch-opt:has(input:focus-visible) {
+    outline: 2px solid var(--color-accent-brand);
+    outline-offset: 2px;
+  }
+}
+
+@keyframes tch-wait {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 0.55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tch { transition: none; }
+  .tch-load:not(.tch-fail) img { animation: none; }
+}

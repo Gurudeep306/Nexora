@@ -33,62 +33,78 @@ plan. Read with `docs/voice/BLUEPRINT.md` (the voice plan this extends) and
 | Speak in a chosen voice from a short sample | **Yes, with open models.** | Needs a GPU to generate. Fine for clips made once and saved (revision notes, lesson replays); expensive for every live reply. |
 | "Anyone's voice" | **Only your own voice, or with that person's recorded consent.** | Copying someone's voice without consent is impersonation. India's 2026 IT rules require synthetic audio to be labelled. We must block it (§4.3). |
 
-## 3. The virtual teacher (build first: it is all our own code, ₹0)
+## 3. The virtual teacher (a realistic 3D person, ₹0)
 
-### 3.1 What it looks like
+The owner chose a **real-looking 3D human**, not a cartoon (2026-11-22):
+"it can move left, right, turn around… sit down… talks and interacts well…
+multiple ones so that it can be selected". It is built from existing open
+tools, not drawn by us.
 
-- A small character, about 56–72 px, drawn as SVG in the site's ink, with a
-  clay detail only on the one thing it points at. It fits every theme
-  because it uses the theme tokens.
-- **Idle**: sits in a corner, blinks, breathes gently. With
-  `prefers-reduced-motion` it doesn't fly: it fades from place to place.
-- **Moving**: flies along a soft curve (spring motion) to the target,
-  lands beside it, and points with a little hand. The target gets a quiet
-  outline, never a glow.
-- **Talking**: the mouth changes between 6–8 mouth shapes in step with the
-  words, and the words appear in a small speech bubble (always shown, so it
-  works with sound off and for deaf students).
-- **"Replace my cursor" option**: the teacher follows the pointer like a
-  cursor pet when idle, and the real cursor stays visible for accuracy.
-  Hiding the real cursor completely makes clicking hard, so we never do it.
-- Settings: off by default; Settings → Voice → "Virtual teacher": on/off,
-  size (small/medium), "follows my cursor" on/off, voice choice.
+### 3.1 What it is made from (all free and open)
 
-### 3.2 How it knows where to go (no guessing)
+- **People:** the Microsoft Rocketbox Avatar Library (MIT licence, 115
+  rigged, realistic humans with face shapes for speech). Four ship now:
+  Maya, Elena, Kai and Victor (`client/public/teachers/`, 3–5 MB each, with
+  the MIT notice in `LICENSE-rocketbox.md`).
+- **Converter:** `scripts/teacher/convert-rocketbox.py` runs Blender as a
+  Python module: it poses each avatar, rebuilds the skeleton with standard
+  (Mixamo) bone names, keeps 69 face shapes renamed to the Oculus visemes and
+  ARKit names, resizes the textures and writes one GLB. Usage is in the file.
+- **Runtime:** TalkingHead 1.8.2 (MIT, `@met4citizen/talkinghead`) on
+  three.js, in a transparent canvas. It gives idle breathing, blinking, eye
+  contact, hand gestures, poses and lip shapes. Its lip-sync rules are
+  imported by us (`lipsync-en.mjs`), never fetched at run time.
+- Ready Player Me (the usual avatar source) shut down on 2026-01-31, so it
+  is not used.
 
-1. Every place the teacher can visit is named on the page:
-   `data-guide="solve.dryrun"` plus a one-line description. Pages already
-   register actions with `useVoiceAction` (the Action Graph); a place is the
-   same idea for "show me" instead of "do it".
-2. A spoken sentence goes through the existing router: a command ("go to
-   dry run") resolves by rules in under 400 ms with no AI. A doubt goes to
-   Guru, whose answer may include steps like
-   `{"show": "solve.dryrun", "say": "…"}`. **The server only accepts place
-   names that exist on that page**; anything else is dropped.
-3. The teacher plays the steps: fly → point → speak → next. The student can
-   interrupt at any time by talking or pressing Esc.
+### 3.2 What it does now (T1, built)
 
-### 3.3 Lip sync
+- **Choose:** Settings → Preferences → Virtual teacher: Off (default) or one
+  of four faces, and a size (small, medium, large). "Say hello" makes the
+  teacher introduce itself.
+- **Talks:** every sentence the site says aloud (`speak.ts`) is announced
+  with its length (`onSentence`). The teacher plays silent audio of that
+  length with each word's timing, so its lips follow our real voice (natural
+  voice, Kokoro or the device's voice). Hindi is written in Roman letters
+  first (`teacher/lipsync.ts`). A speech bubble shows the sentence, with the
+  "AI voice" label and Stop (it replaces the separate chip while shown). The
+  male teachers get a male voice when the student picked none.
+- **Body, by voice or its buttons:** go left, go right, come here (middle),
+  turn around, sit down, stand up, wave, namaste, thumbs up, point, hide,
+  show, introduce yourself. In English, Hinglish and Hindi
+  (`voice/actions/teacherSpecs.ts`, in the command test set). When it moves
+  it glides there with its body turned the way it goes.
+- **Never in the way:** the drawing lets every click through; only its name
+  bar (move, sit/stand, hide) is clickable. Hidden, it leaves a small "Show
+  Maya" button. Its place is remembered in the browser. It is not shown in
+  the exam console. It stops drawing while the tab is in the background.
+- **Loads only when on:** three.js, TalkingHead and the model are lazy
+  (`TeacherHost.tsx` → `TeacherLayer.tsx`); a portrait shows while it loads.
+  Without WebGL 2 it says so plainly.
+- **Reduced motion:** it appears in its new place instead of gliding, and
+  idle head movement is smaller.
 
-- With Azure Speech (free tier, 0.5 million characters a month), the voice
-  comes with "viseme" events: exact mouth shapes with times. Best result.
-- With browser or open voices (Kokoro, Piper), we read the loudness and the
-  letters of each word and pick mouth shapes ourselves (a small, open-source
-  method that runs in the browser). Good enough for a small face.
-- Our own improvement (from scratch, small): a tiny model that maps sound to
-  mouth shapes, trained on our own recordings with consent. Optional; the
-  rule-based version ships first.
+### 3.3 Honest limits
 
-### 3.4 Files (planned)
+- **No walking legs yet.** It glides (turned sideways) rather than taking
+  steps. Mixamo's walk animations may not be redistributed, so a walk cycle
+  needs our own keyframes or a CC0 source (T2).
+- Lip shapes come from the words' spelling and timing, not from the sound
+  itself. Azure's exact viseme events are a later improvement.
+- The browser picture is a little less rich than an offline render. On older
+  phones the first load is 3–5 MB plus 1 MB of 3D code, and drawing costs
+  battery; it is off by default for that reason.
+- The site's security policy allows `blob:` connections, because the 3D
+  loader unpacks the model's own textures that way.
 
-- `client/src/voice/teacher/Teacher.tsx`: the character, motion, bubble.
-- `client/src/voice/teacher/places.ts`: `useGuidePlace()` and the registry.
-- `client/src/voice/teacher/lipsync.ts`: visemes from events or from audio.
-- `client/src/voice/teacher/teacher.css`: tokens only, light and dark.
-- `src/voice/guru.js`: Guru may return `show` steps; the server checks names.
-- Tests: place names validated, unknown places dropped, reduced motion,
-  axe 0, phone width (the teacher docks to the corner and never covers
-  buttons).
+### 3.4 Next
+
+- **T2 — guide:** a places registry (`data-guide` names on each page), fly
+  to a button and point at it (TalkingHead `touchAt`/IK), click it for the
+  student, page tours, "point at line 12", "what's on your right", and a real
+  walk cycle. The server only accepts place names that exist on the page.
+- **T3 — whiteboard:** the teacher opens a board and writes and draws a
+  diagram step by step while explaining, from Guru's structured steps.
 
 ## 4. Ears, speed and voices
 
@@ -185,15 +201,15 @@ are ours, and they make the biggest difference:
 
 ## 7. Build order
 
-1. **Ears and natural voice** (chosen by the owner 2026-11-22, not started):
+1. **Ears and natural voice** (chosen by the owner 2026-11-22, done #233–#239):
    - a Groq Whisper server link (`POST /api/voice/stt`, audio never stored);
    - the normaliser for code words;
    - natural voice links (Azure free tier, then Kokoro in the browser);
    - the speed measurements.
    It needs the owner's free Groq key (Admin → AI models → Add provider →
    Groq).
-2. **Virtual teacher** (§3): places registry, character, flight and point,
-   bubble, lip sync from audio, settings toggle. ₹0.
+2. **Virtual teacher** (§3): T1 done (3D people, choose one, lip sync,
+   body commands); T2 guide and T3 whiteboard next. ₹0.
 3. **Streaming doubts** (§4.2): partial-sentence start, answer cache, `show`
    steps from Guru, sources shown.
 4. **Bharat Code Speech** collection (consent flow exists) and the first
@@ -208,6 +224,6 @@ are ours, and they make the biggest difference:
 2. Optional: an Azure account for the free Speech tier (best Indian voices
    and exact lip-sync events). It needs a card for sign-up but has a free
    monthly allowance.
-3. Decide: the teacher's look (a few sketches can be made to choose from).
+3. The teacher's look is chosen: realistic 3D people (Rocketbox, MIT).
 4. For lessons in your own voice: record 10–20 minutes of clean speech and
    sign a consent note.
