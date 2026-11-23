@@ -55,3 +55,32 @@ test('mixed Hinglish: Hindi runs become sounds with their own words as subtitles
   assert.equal(hasDevanagari('mid'), false);
   assert.equal(hasDevanagari('मिड'), true);
 });
+
+test('numbers beside Hindi words are said in Hindi, every number 0–9,999, with Kokoro’s symbols only', (t) => {
+  const bad = [];
+  for (let n = 0; n <= 9999; n++) {
+    const items = toVoiceInput(`कुल ${n} सवाल हैं।`);
+    if (items.length !== 1 || items[0].type !== 'phonetic') bad.push(`${n}: not one Hindi piece ${JSON.stringify(items)}`);
+    else {
+      if (items[0].subtitles !== `कुल ${n} सवाल हैं।`) bad.push(`${n}: captions changed`);
+      if (/\d/.test(items[0].value)) bad.push(`${n}: digits left in the sounds`);
+      for (const ch of items[0].value) if (!KOKORO.has(ch)) bad.push(`${n}: "${ch}"`);
+    }
+  }
+  t.diagnostic('numbers spoken in Hindi: 10000');
+  assert.equal(bad.length, 0, bad.slice(0, 20).join('\n'));
+});
+
+test('how numbers sound in Hindi speech; code stays code', () => {
+  const sound = (s) => toVoiceInput(s).filter((i) => i.type === 'phonetic').map((i) => i.value).join(' | ');
+  assert.match(sound('मेरे पास 47 किताबें'), /sɛːntaːliːs/);
+  assert.match(sound('साल 2026 में'), /doː həzaːɾ ʧʰəbbiːs/);
+  assert.match(sound('पाई लगभग 3.14 है'), /tiːn dəʃəmləʋ eːk ʧaːɾ/);
+  assert.match(sound('कुल ४७ सवाल'), /sɛːntaːliːs/);
+  assert.match(sound('1,024 बाइट'), /eːk həzaːɾ ʧɔːbiːs/);
+  // Inside code, or with no Hindi word beside it, a number is left for the English rules.
+  assert.deepEqual(toVoiceInput('a[47] को देखो')[0], { type: 'text', value: 'a[47] ' });
+  assert.deepEqual(toVoiceInput('x2 मान है')[0], { type: 'text', value: 'x2 ' });
+  assert.deepEqual(toVoiceInput('answer is 42'), [{ type: 'text', value: 'answer is 42' }]);
+  assert.deepEqual(toVoiceInput('4.5f देखो')[0], { type: 'text', value: '4.5f ' });
+});

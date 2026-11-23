@@ -10,11 +10,15 @@
     "səmʤʰnaː"), the common schwa-deletion rule;
   - anusvara (ं) is a nasal: n/m/ŋ/ɳ/ɲ before a stop of that place, otherwise
     it nasalises the vowel (̃); chandrabindu (ँ) always nasalises.
-  Roman letters and digits in the text are left for the English rules.
+  Roman letters are left for the English rules. A number beside Hindi words
+  is said in Hindi ("47" → "सैंतालीस", "3.5" → "तीन दशमलव पाँच"); a number
+  inside code ("a[47]", "x2") is not touched.
 
   Only symbols in Kokoro's vocabulary are produced (checked in
   tests/voice-hindi-ipa.test.js).
 */
+
+const { spellHindi } = require("./numwords");
 
 const C = {
   क: "k", ख: "kʰ", ग: "ɡ", घ: "ɡʰ", ङ: "ŋ",
@@ -132,9 +136,13 @@ function hasDevanagari(text) {
  */
 function toVoiceInput(text) {
   const items = [];
-  const re = /([ऀ-ॿ]+(?:[\s।॥]+[ऀ-ॿ]+)*[।॥]?)/g;
+  // A run is Hindi words and plain numbers ("मेरे पास 47 किताबें"); a number inside code ("a[47]", "x2", "4.5f") isn't one.
+  const NUM = String.raw`(?<![\w\[\].])\d[\d,]*(?:\.\d+)?(?![\w\]])`;
+  const re = new RegExp(`((?:[ऀ-ॿ]+|${NUM})(?:[\\s।॥]+(?:[ऀ-ॿ]+|${NUM}))*[।॥]?)`, "g");
   let last = 0;
   for (const m of String(text).matchAll(re)) {
+    // Numbers alone, with no Hindi word beside them, stay for the English rules.
+    if (!hasDevanagari(m[0].replace(/[०-९]/g, ""))) continue;
     if (m.index > last) items.push({ type: "text", value: text.slice(last, m.index) });
     items.push({ type: "phonetic", value: phrase(m[0]), subtitles: m[0] });
     last = m.index + m[0].length;
@@ -143,7 +151,16 @@ function toVoiceInput(text) {
   return items.filter((x) => String(x.value).trim());
 }
 
-/** A run of Hindi words (with danda) as IPA, digits read in Hindi as digits. */
+/** A number as Hindi words: "3.5" → "तीन दशमलव पाँच", "1,024" → "एक हज़ार चौबीस". Null if it can't be said. */
+function hindiNumber(token) {
+  const [whole, frac] = token.replace(/,/g, "").split(".");
+  const w = spellHindi(Number(whole));
+  if (w == null) return null;
+  if (!frac) return w;
+  return `${w} दशमलव ${frac.split("").map((d) => spellHindi(Number(d))).join(" ")}`;
+}
+
+/** A run of Hindi words and numbers (with danda) as IPA; numbers are said in Hindi. */
 function phrase(s) {
   return s
     .split(/\s+/)
@@ -151,6 +168,10 @@ function phrase(s) {
     .map((w) => {
       const end = /[।॥]$/.test(w) ? "." : "";
       const core = w.replace(/[।॥]/g, "").replace(/[०-९]/g, (d) => String(DIGITS.indexOf(d)));
+      if (/^\d[\d,]*(\.\d+)?$/.test(core)) {
+        const said = hindiNumber(core);
+        if (said) return said.split(" ").map(wordToIpa).join(" ") + end;
+      }
       return wordToIpa(core) + end;
     })
     .join(" ");
