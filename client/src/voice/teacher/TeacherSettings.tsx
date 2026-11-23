@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react'
 import { api } from '@/lib/api'
 import { useVoicePrefs, type TeacherSize } from '../prefs'
 import { OnDevice } from '../VoiceSettings'
+import { OwnVoice } from '../clone/OwnVoice'
 import { KOKORO_MB, loadKokoro, previewVoice } from '../speak'
 import { pickVoice, VOICES } from '../voices'
 import { introduce } from './intro'
@@ -69,6 +70,7 @@ export function TeacherSettings() {
           <div className="vc-consent">
             <NameField key={chosen.id} id={chosen.id} male={chosen.body === 'M'} />
             <VoicePicker male={chosen.body === 'M'} name={chosen.name} />
+            <OwnVoice name={chosen.name} />
             <fieldset className="vc-field">
               <legend>Size</legend>
               <div className="flex flex-wrap gap-4">

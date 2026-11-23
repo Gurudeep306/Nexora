@@ -37,6 +37,8 @@ export interface VoicePrefs {
   kokoro: boolean
   /** The on-device voice the student chose (ids in voices.ts; '' = the clearest for the teacher). */
   kokoroVoice: string
+  /** Speak in the voice the student gave (kept on this device only; clone/clone.ts). */
+  ownVoice: boolean
   /** Guru answers on this device when it can (the student agreed to the download; Settings → Voice). */
   brain: boolean
   /** The virtual teacher on screen ('' = off, the default; ids in teacher/teachers.ts). */
@@ -50,7 +52,7 @@ export interface VoicePrefs {
 export type TeacherSize = 's' | 'm' | 'l'
 const TEACHER_IDS: readonly string[] = TEACHERS.map((t) => t.id)
 
-export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true, engine: 'auto', voice: '', kokoro: false, kokoroVoice: '', brain: false, teacher: '', teacherSize: 'm', teacherNames: {} }
+export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true, engine: 'auto', voice: '', kokoro: false, kokoroVoice: '', ownVoice: false, brain: false, teacher: '', teacherSize: 'm', teacherNames: {} }
 const LOCAL = 'nexora:voice'
 const KEY = 'voice_prefs'
 
@@ -69,6 +71,7 @@ function sanitize(raw: unknown): VoicePrefs {
     engine: r.engine === 'natural' || r.engine === 'kokoro' || r.engine === 'device' ? r.engine : 'auto',
     voice: typeof r.voice === 'string' && /^[a-z]{2}-[A-Z]{2}-[A-Za-z]+Neural$/.test(r.voice) ? r.voice : '',
     kokoro: r.kokoro === true,
+    ownVoice: r.ownVoice === true,
     kokoroVoice: typeof r.kokoroVoice === 'string' && voiceById(r.kokoroVoice) ? r.kokoroVoice : '',
     brain: r.brain === true,
     teacher: teacherPref(r.teacher),
