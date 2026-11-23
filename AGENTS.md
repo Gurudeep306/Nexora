@@ -320,7 +320,7 @@ from a range, since test files run in parallel and a clash fails the run.
   run })`; the ⌘K palette, the shortcut sheet and voice commands all read it.
   The mic (top bar) uses the browser's free speech recognition plus the
   rule matcher (`voice/actions/match.ts`, test set
-  `docs/voice/tests/commands.json`, ≥ 95%); irreversible actions need a
+  `docs/voice/tests/commands.json`, ≥ 95%, and `tests/voice-commands-corpus.test.js`: questions never fire orders, no real GATE sentence fires a command; after adding commands or much new material, run `node scripts/voice/build-real-words.mjs`); irreversible actions need a
   spoken or tapped confirm. **Scene Voice** (`voice/scene/`): with an animation
   on screen, the mic drives it — "swap pe ruko", "go to when low equals high",
   "what if sorted", "why did i become 4", "mid kya hai", predict mode. Every
