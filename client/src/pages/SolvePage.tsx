@@ -999,6 +999,7 @@ export default function SolvePage({ custom: customProp = false, learn = false }:
     statement={statementApi.data}
     statementLoading={statementApi.loading}
     statementError={statementApi.error}
+    onRetryStatement={custom ? undefined : platformStatementApi.refetch}
     submissions={submissions}
     analysis={problemApi.data?.analysis ?? null}
     onImportSample={(i) => void importSamples([i])}

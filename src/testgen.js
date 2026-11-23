@@ -201,8 +201,8 @@ function makePlan(count, seedBase = 1009) {
 async function generateTests(problem, { count = 24, plan: planFn, repair = null, onProgress = () => {} } = {}) {
   const samples = (problem.samples || []).filter((s) => String(s.input || "").trim() || String(s.output || "").trim());
   onProgress("Reading the problem and writing a generator");
-  const plan = await planFn(problem);
-  if (!plan.generator.trim() && !plan.edgeCases.length) throw Object.assign(new Error("The AI didn't produce a generator — try again"), { status: 502 });
+  let plan = await planFn(problem);
+  if (!plan.generator.trim() && !plan.edgeCases.length) throw Object.assign(new Error("The AI didn't write a test maker this time, so no tests were made. Press Try again — it usually works the second time."), { status: 502 });
 
   onProgress("Generating inputs");
   // De-duplicate, drop the official samples, keep the total size bounded.
@@ -211,7 +211,11 @@ async function generateTests(problem, { count = 24, plan: planFn, repair = null,
   let genStats = { generated: 0, rejected: 0, validated: false, errors: [] };
   const generate = async (n, seedBase) => {
     const gen = await runPython(generatorHarness(plan.generator, plan.validator, makePlan(n, seedBase), seedBase === 1009 ? plan.edgeCases : []));
-    if (gen.fatal) throw Object.assign(new Error(`The generated generator didn't run (${gen.fatal}) — try again`), { status: 502 });
+    if (gen.fatal) {
+      // The details are for us, not the student (a Python traceback helps no one solving a problem).
+      console.warn("[testgen] the generator didn't run:", String(gen.fatal).slice(0, 300));
+      throw Object.assign(new Error("The AI's test maker had a mistake in it, so no tests were made. Press Try again — it usually works the second time."), { status: 502, fatal: true });
+    }
     genStats = { generated: genStats.generated + (gen.tests || []).length, rejected: genStats.rejected + (gen.rejected || 0), validated: genStats.validated || !!gen.validated, errors: [...genStats.errors, ...(gen.errors || [])].slice(0, 8) };
     const fresh = [];
     for (const t of gen.tests || []) {
@@ -223,8 +227,17 @@ async function generateTests(problem, { count = 24, plan: planFn, repair = null,
     }
     return fresh;
   };
-  const inputs = await generate(count, 1009);
-  if (!inputs.length) throw Object.assign(new Error("No valid inputs came out of the generator — try again"), { status: 502 });
+  // A test maker that doesn't run is written again once, before the student sees anything.
+  let inputs;
+  try {
+    inputs = await generate(count, 1009);
+  } catch (e) {
+    if (!e.fatal) throw e;
+    onProgress("The first test maker had a mistake; writing it again");
+    plan = await planFn(problem);
+    inputs = await generate(count, 1009);
+  }
+  if (!inputs.length) throw Object.assign(new Error("The AI's test maker made no usable inputs this time. Press Try again — it usually works the second time."), { status: 502 });
 
   onProgress("Checking both reference solutions on the official samples");
   let [bruteCheck, solCheck] = await Promise.all([checkOnSamples(plan.brute || "", samples), checkOnSamples(plan.solution || "", samples)]);

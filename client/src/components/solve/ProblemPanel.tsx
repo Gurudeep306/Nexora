@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { TopicChips } from '@/components/topics/TopicChips'
-import { Check, Copy, ExternalLink, FileDown, FileText, Languages, Loader2, Plug, Sigma, ImageOff, Play, Footprints } from 'lucide-react'
+import { Check, Copy, ExternalLink, FileDown, FileText, Languages, Loader2, Plug, Sigma, ImageOff, Play, Footprints, RotateCw } from 'lucide-react'
 import { LoadingBlock, Tabs } from '@/components/ui'
 import { sanitizeHtml } from '@/lib/sanitize'
 import { prepareMathHtml, renderMathIn } from '@/lib/math'
@@ -24,6 +24,8 @@ interface Props {
   statement: StatementResponse | null
   statementLoading: boolean
   statementError: string | null
+  /** Ask for the statement again (after a slow judge or a failed load). */
+  onRetryStatement?: () => void
   submissions: SubmissionRow[]
   /** Your record on this problem (attempts, first Accepted, best time). */
   analysis?: ProblemAnalysis | null
@@ -140,6 +142,7 @@ export function ProblemPanel({
   problem,
   statement,
   statementLoading,
+  onRetryStatement,
   statementError,
   submissions,
   analysis,
@@ -267,11 +270,18 @@ export function ProblemPanel({
               <div className="stmt-away">
                 <h2 className="stmt-away-title">The statement didn&apos;t load</h2>
                 <p className="stmt-away-text">{statementError}</p>
-                {problem?.url && (
-                  <a href={problem.url} target="_blank" rel="noopener noreferrer" className="stmt-away-btn">
-                    Open on {sourceName} <ExternalLink className="size-3.5" aria-hidden="true" />
-                  </a>
-                )}
+                <div className="stmt-away-actions">
+                  {onRetryStatement && (
+                    <button type="button" className="stmt-away-btn" onClick={onRetryStatement}>
+                      <RotateCw className="size-3.5" aria-hidden="true" /> Try again
+                    </button>
+                  )}
+                  {problem?.url && (
+                    <a href={problem.url} target="_blank" rel="noopener noreferrer" className="stmt-away-btn">
+                      Open on {sourceName} <ExternalLink className="size-3.5" aria-hidden="true" />
+                    </a>
+                  )}
+                </div>
               </div>
             )}
             {statement?.unavailable && !statementLoading && (
@@ -279,15 +289,33 @@ export function ProblemPanel({
                 <span className="stmt-away-icon" aria-hidden="true">
                   <FileText className="size-5" />
                 </span>
-                <h2 className="stmt-away-title">Read this problem on {sourceName}</h2>
-                <p className="stmt-away-text">
-                  {sourceName} doesn&apos;t let other sites load its statements, so it opens there in a new tab. You can still write, run and test your solution here — add the examples as tests.
-                </p>
-                {(statement.url || problem?.url) && (
-                  <a href={statement.url || problem?.url} target="_blank" rel="noopener noreferrer" className="stmt-away-btn">
-                    Open on {sourceName} <ExternalLink className="size-3.5" aria-hidden="true" />
-                  </a>
+                {statement.pending ? (
+                  <>
+                    <h2 className="stmt-away-title">Still getting this problem from {sourceName}</h2>
+                    <p className="stmt-away-text">
+                      {sourceName} is answering slowly. We keep fetching it, so it&apos;ll be here in a minute and every time after. Try again soon, or read it on {sourceName} now.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h2 className="stmt-away-title">Read this problem on {sourceName}</h2>
+                    <p className="stmt-away-text">
+                      {sourceName} doesn&apos;t let other sites load its statements, so it opens there in a new tab. You can still write, run and test your solution here — add the examples as tests.
+                    </p>
+                  </>
                 )}
+                <div className="stmt-away-actions">
+                  {statement.pending && onRetryStatement && (
+                    <button type="button" className="stmt-away-btn" onClick={onRetryStatement}>
+                      <RotateCw className="size-3.5" aria-hidden="true" /> Try again
+                    </button>
+                  )}
+                  {(statement.url || problem?.url) && (
+                    <a href={statement.url || problem?.url} target="_blank" rel="noopener noreferrer" className="stmt-away-btn">
+                      Open on {sourceName} <ExternalLink className="size-3.5" aria-hidden="true" />
+                    </a>
+                  )}
+                </div>
               </div>
             )}
             {statement && !statement.unavailable && !statementLoading && (

@@ -73,6 +73,8 @@ export interface StatementResponse {
   source: 'local' | 'cache' | 'http' | 'live' | 'fallback' | 'unavailable' | string
   /** The judge wouldn't give its statement to other sites: read it there. */
   unavailable?: boolean
+  /** The judge is slow: the server is still fetching it and will keep it for next time. */
+  pending?: boolean
   url?: string
   /** Details beyond the HTML, when the source provides them. */
   extra?: StatementExtra
