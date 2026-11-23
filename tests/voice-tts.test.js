@@ -174,3 +174,29 @@ test('a bad answer from the voice server is never passed on: no audio, odd shape
   assert.deepEqual([down.ok, down.fallback, down.reason], [false, 'browser', "voice server didn't answer"]);
   await tts.saveTtsConfig({ ownUrl: '', clearOwnKey: true }, 'test');
 });
+
+test('the in-browser voice gets Hindi as sounds from the server (no AI), and English as it is', async () => {
+  const express = require('express');
+  const app = express();
+  app.use((req, _res, next) => { req.sessionUser = { username: 'stu' }; next(); });
+  app.use(tts.createTtsRouter({ requireAuthenticatedUser: (_q, _s, n) => n(), isTrustedOrigin: () => true, loadSttConfig: azure(false) }));
+  const srv = app.listen(0);
+  const base = `http://127.0.0.1:${srv.address().port}`;
+  try {
+    const hi = await (await fetch(`${base}/api/voice/phonetic`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text: 'नमस्ते! mid देखो।' }) })).json();
+    assert.deepEqual(hi.input[0], { type: 'phonetic', value: 'nəməsteː', subtitles: 'नमस्ते' });
+    const en = await (await fetch(`${base}/api/voice/phonetic`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text: '**Mid** is four.' }) })).json();
+    assert.equal(en.input, 'Mid is four.');
+  } finally {
+    srv.close();
+  }
+});
+
+test('the in-browser voice ships HeadTTS (MIT) at a pinned version, and no GPL phonemizer', () => {
+  const dir = path.join(__dirname, '..', 'client', 'public', 'headtts');
+  assert.match(fs.readFileSync(path.join(dir, 'LICENSE'), 'utf8'), /MIT License/);
+  assert.equal(fs.readFileSync(path.join(dir, 'VERSION'), 'utf8').trim(), '1.3.0');
+  for (const f of ['headtts.mjs', 'worker-tts.mjs', 'language-en-us.mjs']) assert.ok(fs.existsSync(path.join(dir, 'modules', f)), f);
+  const speak = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'voice', 'speak.ts'), 'utf8');
+  assert.doesNotMatch(speak, /kokoro-js|phonemizer/, 'the GPL path is gone');
+});

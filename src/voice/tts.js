@@ -352,6 +352,11 @@ function createTtsRouter({ requireAuthenticatedUser, isTrustedOrigin, loadSttCon
     await saveTtsConfig(req.body || {}, req.sessionUser.username);
     res.json({ ok: true, ...(await adminTtsView(loadSttConfig)) });
   });
+  // Hindi written as sounds, for the in-browser voice (HeadTTS speaks English only on its own). No AI, no service.
+  router.post("/api/voice/phonetic", requireAuthenticatedUser, limiter, express.json({ limit: "8kb" }), (req, res) => {
+    const text = speakable(req.body?.text);
+    res.json({ ok: true, input: text && hasDevanagari(text) ? toVoiceInput(text) : text });
+  });
   // Say one test sentence with the current settings (not counted against any student).
   router.post("/api/admin/voice-tts/test", trusted, requirePerm("ai.manage"), express.json({ limit: "4kb" }), async (req, res) => {
     const t0 = Date.now();

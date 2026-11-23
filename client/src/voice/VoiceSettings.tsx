@@ -8,7 +8,7 @@ import { Button, Card, CardContent } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
 import { useVoiceSupport } from './speech'
 import { useVoicePrefs } from './prefs'
-import { loadKokoro, naturalVoices, speak } from './speak'
+import { KOKORO_MB, loadKokoro, naturalVoices, speak } from './speak'
 import './voice.css'
 
 export function VoiceSettings() {
@@ -130,11 +130,14 @@ function VoicePicker() {
           </select>
         </label>
       )}
-      <label className={prefs.lang === 'hi-IN' ? 'opacity-60' : undefined}>
-        <input type="radio" name="vs-engine" disabled={prefs.lang === 'hi-IN' || (!prefs.kokoro && kokoro.state !== 'ready')} checked={prefs.engine === 'kokoro'} onChange={() => setPrefs({ engine: 'kokoro' })} />
-        <span>Kokoro on this device (AI voice, English only). Free and private: it runs in your browser after a one-time download of about 90 MB (Wi-Fi recommended).</span>
+      <label>
+        <input type="radio" name="vs-engine" disabled={!prefs.kokoro && kokoro.state !== 'ready'} checked={prefs.engine === 'kokoro'} onChange={() => setPrefs({ engine: 'kokoro' })} />
+        <span>
+          Kokoro on this device (AI voice, Indian voices, English and Hindi). Free and private: it runs in your browser after a one-time download of about {KOKORO_MB} MB (Wi-Fi
+          recommended). Best on a laptop or desktop; it can be slow on phones.
+        </span>
       </label>
-      {prefs.lang !== 'hi-IN' && !prefs.kokoro && kokoro.state !== 'ready' && (
+      {!prefs.kokoro && kokoro.state !== 'ready' && (
         <div className="vc-row">
           <Button size="sm" variant="secondary" onClick={() => void download()} loading={kokoro.state === 'loading'}>
             Download Kokoro
