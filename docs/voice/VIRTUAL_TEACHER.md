@@ -197,7 +197,7 @@ The exam console keeps its own mic and box.
   her bar. The server still decides per turn: unsolved questions, tests and
   Explain-back stay on the server so answer keys never reach a device.
 
-### 3.2.3 She reacts to your results, and a studio light (2026-11-23, this PR)
+### 3.2.3 She reacts to your results, and a studio light (2026-11-23, #259)
 
 - **Reactions** (`voice/teacher/reactions.ts`, `teacherReact` in `store.ts`):
   - When the judge returns a verdict on the Solve page (not in a contest), or
