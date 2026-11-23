@@ -22,7 +22,8 @@ let available: Promise<boolean> | null = null
 export function serverEars(): Promise<boolean> {
   if (!canRecord()) return Promise.resolve(false)
   if (!available) {
-    const p = fetch(`${API_BASE}/api/voice/stt/status`, { credentials: 'include' })
+    // A slow or stuck answer must never leave the mic dead: after 4 s, the browser's own recogniser is used.
+    const p = fetch(`${API_BASE}/api/voice/stt/status`, { credentials: 'include', signal: AbortSignal.timeout(4000) })
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => !!j?.available)
       .catch(() => false)
@@ -222,7 +223,8 @@ export async function transcribe(clip: Blob, lang: string, hints: string[] = [],
   try {
     const q = new URLSearchParams({ lang, mode })
     if (hints.length) q.set('hints', hints.slice(0, 60).join(','))
-    const r = await fetch(`${API_BASE}/api/voice/stt?${q}`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'audio/wav' }, body: clip })
+    // At most 15 s: then the browser's own words are used, so a turn never hangs.
+    const r = await fetch(`${API_BASE}/api/voice/stt?${q}`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'audio/wav' }, body: clip, signal: AbortSignal.timeout(15_000) })
     if (!r.ok) return { ok: false }
     const j = await r.json()
     if (!j?.ok) return { ok: false }
