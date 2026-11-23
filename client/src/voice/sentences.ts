@@ -40,11 +40,19 @@ export function splitSentences(text: string, max = 220): string[] {
   return out
 }
 
-/** The pause after a sentence, in ms: people pause longer after a question or a full stop than after a dash. */
-export function gapAfter(sentence: string): number {
-  const t = sentence.trim()
-  if (/[?？]$/.test(t)) return 360
-  if (/[!.।]$/.test(t)) return 230
-  if (/[,;:—–-]$/.test(t)) return 120
-  return 180
+/**
+ * Sentences grouped into the pieces a voice says in one go. A voice sounds
+ * natural inside a piece (its own rhythm and pauses) and a little less so at
+ * the seams between pieces, so short sentences are joined: fewer seams, no
+ * stop-start. The first piece stays short so the voice starts quickly.
+ */
+export function speechChunks(text: string, max = 180, first = 90): string[] {
+  const out: string[] = []
+  for (const s of splitSentences(text)) {
+    const last = out[out.length - 1]
+    const limit = out.length === 1 ? first : max
+    if (last !== undefined && last.length + 1 + s.length <= limit) out[out.length - 1] = `${last} ${s}`
+    else out.push(s)
+  }
+  return out
 }

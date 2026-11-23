@@ -21,7 +21,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { ArrowLeftRight, Armchair, Cpu, EyeOff, MessageCircle, PenLine, PersonStanding, Square } from 'lucide-react'
 import type { TalkingHead } from '@met4citizen/talkinghead'
 import { getVoicePrefs, type TeacherSize } from '../prefs'
-import { onSentence, speak, stopSpeaking, useSpeaking } from '../speak'
+import { onSentence, onWord, speak, stopSpeaking, useSpeaking } from '../speak'
 import { VoiceOffer } from './VoiceOffer'
 import { useBrain } from '../brain/brain'
 import { cancelListening, endTalk, getTalk, startTalk, teacherSays, useTalk } from '../talk'
@@ -214,6 +214,24 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         else if (!reduced()) head.speakWithHands(0, 0.6)
         // With exact mouth shapes TalkingHead uses them instead of guessing from the words.
         head.speakAudio({ audio: silent, ...t, ...(hasShapes ? { visemes: exact!.visemes!, vtimes: exact!.vtimes!, vdurations: exact!.vdurations! } : {}) }, { lipsyncLang: 'en' })
+      }),
+    [],
+  )
+
+  /* The device voice says where each word starts: the lips follow each word as it is said, so they never drift from the sound. */
+  useEffect(
+    () =>
+      onWord((w) => {
+        const head = headRef.current
+        if (!head) return
+        const words = toRoman(w.word).split(/\s+/).filter(Boolean)
+        if (!words.length) return
+        const ctx = head.audioCtx
+        if (ctx.state === 'suspended') void ctx.resume()
+        const silent = ctx.createBuffer(1, Math.max(1, Math.round((ctx.sampleRate * w.ms) / 1000)), ctx.sampleRate)
+        const each = w.ms / words.length
+        head.stopSpeaking()
+        head.speakAudio({ audio: silent, words, wtimes: words.map((_, i) => i * each), wdurations: words.map(() => each) }, { lipsyncLang: 'en' })
       }),
     [],
   )

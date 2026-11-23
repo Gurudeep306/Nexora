@@ -23,7 +23,7 @@ http.createServer((req, res) => {
     }
     // Memory checks: what the system messages carry (study facts yes, the remembered name never).
     const mem = /What you remember about this student/.test(sys) ? ` [memory: ${/preparing for GATE/.test(sys) ? 'goal' : 'no-goal'}${/Asha/.test(sys) ? ', NAME-IN-PROMPT' : ''}]` : ''
-    const reply = `Achha, I am ${who}. You said: ${last}. I remember ${turns} earlier turns${talk ? ', talking' : ''}.${mem}`
+    const reply = `Okay, I am ${who}. You said: ${last}. I remember ${turns} earlier turns${talk ? ', talking' : ''}.${mem}`
     res.writeHead(200, { 'content-type': 'application/json' })
     res.end(JSON.stringify({ id: 'x', choices: [{ index: 0, message: { role: 'assistant', content: reply }, finish_reason: 'stop' }], usage: { prompt_tokens: 10, completion_tokens: 10, total_tokens: 20 } }))
   })

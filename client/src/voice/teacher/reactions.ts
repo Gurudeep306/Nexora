@@ -47,7 +47,7 @@ export function resultFromVerdict(verdict: string, examplesOnly = false): Result
 type Lines = { en: string[]; hi: string[] }
 const LINES: Record<Result, Lines> = {
   solved: {
-    en: ['Yes! Solved. Well done.', 'Accepted! That was neat work.', 'There it is, all tests passed. Shabaash!', 'Solved it. Nicely done.'],
+    en: ['Yes! Solved. Well done.', 'Accepted! That was neat work.', 'There it is, all tests passed. Brilliant!', 'Solved it. Nicely done.'],
     hi: ['हाँ! सॉल्व हो गया। शाबाश!', 'Accepted! बहुत बढ़िया काम।', 'सारे टेस्ट पास। बहुत अच्छे!'],
   },
   examples: {
@@ -75,7 +75,7 @@ const LINES: Record<Result, Lines> = {
     hi: ['मेमोरी ज़्यादा लग रही है। कम चीज़ें रख सकते हैं?'],
   },
   correct: {
-    en: ['Correct! Well done.', 'Yes, that’s right. Nice.', 'Right answer. Shabaash!', 'Correct. You’re getting good at these.'],
+    en: ['Correct! Well done.', 'Yes, that’s right. Nice.', 'Right answer. Brilliant!', 'Correct. You’re getting good at these.'],
     hi: ['बिल्कुल सही! शाबाश।', 'सही जवाब। बहुत बढ़िया!', 'हाँ, सही है। अच्छे!'],
   },
   incorrect: {

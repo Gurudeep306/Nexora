@@ -130,12 +130,39 @@ test('the guide finds things by the names people see, prefers what is on screen,
   for (const n of ['Run', 'Settings', 'Next', 'Dark mode']) assert.ok(!risky(n), n);
 });
 
-test('natural speech: a breath between sentences, longer after a question', async () => {
-  const { gapAfter } = await import(pathToFileURL(path.join(__dirname, '..', 'client', 'src', 'voice', 'sentences.ts')).href);
-  assert.ok(gapAfter('Samjha?') > gapAfter('Yeh dekho.'));
-  assert.ok(gapAfter('Yeh dekho.') > gapAfter('pehle yeh —'));
-  assert.equal(gapAfter('बहुत अच्छा।'), gapAfter('Very good.'));
-  for (const s of ['a?', 'b.', 'c,', 'd']) assert.ok(gapAfter(s) >= 100 && gapAfter(s) <= 400, s);
+test('natural speech: short sentences said in one go, few seams, a quick first piece', async () => {
+  const { speechChunks } = await import(pathToFileURL(path.join(__dirname, '..', 'client', 'src', 'voice', 'sentences.ts')).href);
+  const text = 'Okay, got it. A heap is a tree. The parent is always smaller. So the smallest is on top. Want to try one?';
+  const chunks = speechChunks(text);
+  assert.equal(chunks.join(' '), text, 'nothing lost or reordered');
+  assert.ok(chunks.length < 5, `joined into fewer pieces than sentences: ${chunks.length}`);
+  assert.ok(chunks[0].length <= 90, 'the first piece is short so she starts at once');
+  for (const c of chunks.slice(1)) assert.ok(c.length <= 180, c);
+  assert.deepEqual(speechChunks(''), []);
+});
+
+test('the device voice: the most natural one for the language and the teacher, never a novelty voice', async () => {
+  const { bestVoice, voiceScore } = await import(pathToFileURL(path.join(__dirname, '..', 'client', 'src', 'voice', 'deviceVoice.ts')).href);
+  const mac = [
+    { name: 'Rishi', lang: 'en-IN' },
+    { name: 'Zarvox', lang: 'en-US' },
+    { name: 'Veena', lang: 'en-IN' },
+    { name: 'Veena (Enhanced)', lang: 'en-IN' },
+    { name: 'Samantha', lang: 'en-US' },
+    { name: 'Lekha', lang: 'hi-IN' },
+  ];
+  assert.equal(bestVoice(mac, 'en-IN').name, 'Veena (Enhanced)');
+  assert.equal(bestVoice(mac, 'hi-IN').name, 'Lekha');
+  const edge = [
+    { name: 'Microsoft Ravi - English (India)', lang: 'en-IN' },
+    { name: 'Microsoft Neerja Online (Natural) - English (India)', lang: 'en-IN' },
+    { name: 'Microsoft Prabhat Online (Natural) - English (India)', lang: 'en-IN' },
+  ];
+  assert.match(bestVoice(edge, 'en-IN').name, /Neerja/, 'a woman teacher gets the natural woman voice');
+  assert.match(bestVoice(edge, 'en-IN', true).name, /Prabhat/, 'a man teacher gets the natural man voice');
+  assert.ok(voiceScore({ name: 'Zarvox', lang: 'en-IN' }, 'en-IN') < voiceScore({ name: 'Samantha', lang: 'en-US' }, 'en-IN'), 'a robot voice loses even to another accent');
+  assert.equal(bestVoice([{ name: 'Thomas', lang: 'fr-FR' }], 'en-IN'), null, 'no voice in another language');
+  assert.equal(bestVoice([{ name: 'Google English', lang: 'en_IN' }], 'en-IN').name, 'Google English', 'Android writes en_IN');
 });
 
 test('interrupting the teacher: only a clear, sustained voice above what the mic hears while she talks', async () => {
