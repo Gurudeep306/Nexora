@@ -12,8 +12,10 @@ def publish(folder, name):
     """Upload results to the owner's Hugging Face (private) when the HF_TOKEN Kaggle secret is attached: lets an
     interactive run (no queue) hand its results back, since only saved batch runs are reachable through the Kaggle API."""
     try:
-        from kaggle_secrets import UserSecretsClient
-        token = UserSecretsClient().get_secret("HF_TOKEN")
+        token = os.environ.get("HF_TOKEN")  # Colab: set from its Secrets panel
+        if not token:
+            from kaggle_secrets import UserSecretsClient
+            token = UserSecretsClient().get_secret("HF_TOKEN")
     except Exception as e:
         print("No HF_TOKEN secret attached: results stay in /kaggle/working only.", e, flush=True)
         return
