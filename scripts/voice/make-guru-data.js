@@ -59,12 +59,19 @@ function readJobs(file) {
 }
 
 async function chat({ baseUrl, model, apiKey, messages }) {
-  const res = await fetch(`${baseUrl.replace(/\/$/, "")}/chat/completions`, {
-    method: "POST",
-    headers: { "content-type": "application/json", ...(apiKey ? { authorization: `Bearer ${apiKey}` } : {}) },
-    body: JSON.stringify({ model, messages, temperature: 0.7, max_tokens: 900 }),
-    signal: AbortSignal.timeout(120000),
-  });
+  let res;
+  // Free hosted teachers have per-minute limits: wait as long as they ask, then try again (at most 8 times).
+  for (let attempt = 0; attempt < 8; attempt++) {
+    res = await fetch(`${baseUrl.replace(/\/$/, "")}/chat/completions`, {
+      method: "POST",
+      headers: { "content-type": "application/json", ...(apiKey ? { authorization: `Bearer ${apiKey}` } : {}) },
+      body: JSON.stringify({ model, messages, temperature: 0.7, max_tokens: 900, ...(process.env.TEACHER_EXTRA ? JSON.parse(process.env.TEACHER_EXTRA) : {}) }),
+      signal: AbortSignal.timeout(120000),
+    });
+    if (res.status !== 429 && res.status < 500) break;
+    const wait = Number(res.headers.get("retry-after")) || 5 * (attempt + 1);
+    await new Promise((r) => setTimeout(r, Math.min(90, wait) * 1000));
+  }
   if (!res.ok) throw new Error(`teacher answered ${res.status}`);
   const j = await res.json();
   return j.choices?.[0]?.message?.content || "";
@@ -113,6 +120,19 @@ async function main() {
     return;
   }
   fs.mkdirSync(a.outDir, { recursive: true });
+  // Resume: conversations already in the out-dir (from an earlier, stopped run) are not asked for again.
+  const done = new Set();
+  for (const sp of ["train", "val", "test"]) {
+    const f = path.join(a.outDir, `${sp}.jsonl`);
+    if (!fs.existsSync(f)) continue;
+    for (const line of fs.readFileSync(f, "utf8").split("\n")) if (line.trim()) done.add(JSON.parse(line).id.replace(/#\d+$/, ""));
+  }
+  const jobKey = (j) => `${j.kind}:${j.item.id}:${j.lang}:${j.teacher || "guru"}`;
+  if (done.size && !a.ingest) {
+    const before = jobs.length;
+    jobs.splice(0, jobs.length, ...jobs.filter((j) => !done.has(jobKey(j))));
+    console.error(`resuming: ${before - jobs.length} conversations already made, ${jobs.length} to go`);
+  }
   const files = Object.fromEntries(["train", "val", "test"].map((s) => [s, fs.createWriteStream(path.join(a.outDir, `${s}.jsonl`), { flags: "a" })]));
   const stats = { asked: 0, kept: 0, unreadable: 0, failed: 0, rejected: {}, examples: { train: 0, val: 0, test: 0 }, byKind: {} };
   const seen = new Set();

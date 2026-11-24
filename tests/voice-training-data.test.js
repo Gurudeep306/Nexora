@@ -184,3 +184,23 @@ test('batch mode for a GPU that cannot be reached: export the questions, ingest 
   // Refuses a closed teacher on ingest.
   assert.throws(() => execFileSync(process.execPath, [script, '--ingest', answers, '--jobs', jobsFile, '--out-dir', out], { env: { ...process.env, TEACHER_MODEL: 'gpt-4o' }, stdio: 'pipe' }));
 });
+
+test('teacher answers that echo the instructions or stop half-way are thrown away (seen from real teacher models)', () => {
+  const ok = JSON.stringify({ student: 'sir kahan se start karun?', replies: ['a b c', 'b c d', 'c d e'] });
+  assert.ok(D.parseTeacher(ok, 3));
+  for (const student of ['how the student asks for help on this question', "Today's topic: Data per service", 'Question (MCQ, dl):\nConsider a 4-bit Johnson counter', 'x'.repeat(301)]) {
+    assert.equal(D.parseTeacher(JSON.stringify({ student, replies: ['a b c', 'b c d', 'c d e'] }), 3), null, student.slice(0, 40));
+  }
+  const item = { answer: 'B', options: [] };
+  for (const reply of ['Start at s and read a, then s→? and so on.', 'Read the first symbol … then decide.', 'Then apply [step two] to it.']) {
+    assert.equal(D.rejectReason('concept', item, 'en', reply), 'unfinished', reply);
+  }
+  assert.equal(D.rejectReason('concept', item, 'en', 'A stack keeps the last item on top, so pop gives it back first.'), '');
+  assert.match(D.teacherMessages('hint', { text: 'q', options: [], answer: 'A', type: 'MCQ' }, 'hg', null)[0].content, /never these instructions/);
+});
+
+test('maths written as code is not spoken style: Guru says it in words', () => {
+  const item = { answer: '0.25', options: [] };
+  for (const reply of ['So P(\\bar T) is 0.6 here.', 'Multiply 0.3*0.4 first.', 'The cost grows like $n^2$.']) assert.equal(D.rejectReason('concept', item, 'en', reply), 'not spoken style', reply);
+  assert.equal(D.rejectReason('concept', item, 'en', 'Multiply zero point three by zero point four first.'), '');
+});

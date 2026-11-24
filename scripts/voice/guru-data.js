@@ -61,9 +61,16 @@ const LANG_RULE = {
 const STYLE =
   "Spoken style: short sentences, no markdown, no lists, no code blocks, symbols said in words. Warm and plain, like a good teacher sitting next to the student.";
 
+/** What a student's own line looks like, per language (so the teacher model writes one, never the instruction). */
+const STUDENT_EXAMPLE = {
+  en: "I'm stuck on this one, where do I even start?",
+  hg: "sir ye question samajh nahi aa raha, kahan se start karun?",
+  hi: "ये सवाल समझ नहीं आ रहा, कहाँ से शुरू करूँ?",
+};
+
 function teacherMessages(kind, item, lang, persona) {
   const who = persona ? `${persona.name} (${persona.male ? "male" : "female"} teacher)` : "Guru";
-  const base = `You write training examples for ${who}, NexoraGuru's voice tutor for GATE CSE and DSA in India. ${STYLE} ${LANG_RULE[lang]} Reply with JSON only.`;
+  const base = `You write training examples for ${who}, NexoraGuru's voice tutor for GATE CSE and DSA in India. ${STYLE} ${LANG_RULE[lang]} The "student" field is ONE short line in the student's own words, in that language (like "${STUDENT_EXAMPLE[lang]}"), never these instructions and never the question text. Every reply is complete: no "…", no placeholders. Reply with JSON only.`;
   if (kind === "hint") {
     return [
       { role: "system", content: `${base} Return {"student": "...", "replies": ["hint 1", "hint 2", "hint 3"]}. student: how the student asks for help on this question. Hints climb a ladder: 1 a question pointing at the key idea; 2 the idea named; 3 the first step worked. Each under 60 words. NEVER reveal the option letter, the final number or the final answer, not even in words.` },
@@ -88,6 +95,12 @@ function teacherMessages(kind, item, lang, persona) {
   ];
 }
 
+/** A "student" line that is really the prompt echoed back (seen from real teacher models): unusable. */
+function badStudent(text) {
+  const t = String(text).trim();
+  return t.length > 300 || /how the student|^student\b|^question\s*\(|today'?s topic|^topic\s*:|answer key|\boptions?\s*:/i.test(t);
+}
+
 function parseTeacher(content, n) {
   const m = String(content || "").match(/\{[\s\S]*\}/);
   if (!m) return null;
@@ -95,6 +108,8 @@ function parseTeacher(content, n) {
     const j = JSON.parse(m[0]);
     const replies = Array.isArray(j.replies) ? j.replies.map((r) => String(r).trim()).filter(Boolean) : [];
     if (typeof j.student !== "string" || !j.student.trim() || replies.length < n) return null;
+    // The student's line must be what a student says, not the instruction or the question pasted back.
+    if (badStudent(j.student)) return null;
     return { student: j.student.trim().slice(0, 400), replies: replies.slice(0, n).map((r) => r.slice(0, 900)) };
   } catch {
     return null;
@@ -112,8 +127,12 @@ const devanagariShare = (s) => {
 /** Why a reply can't be used, or "" if it can. */
 function rejectReason(kind, item, lang, reply) {
   if (/```|^\s*[-*#>]|\*\*|^\s*\d+\.\s/m.test(reply)) return "not spoken style";
+  // Maths written as code ("P(\bar T)", "0.3*0.4", "$x^2$") can't be read aloud: Guru says it in words.
+  if (/\\[a-zA-Z]+|\$|\^|\d\s*\*\s*\d/.test(reply)) return "not spoken style";
   if (words(reply) > (kind === "hint" ? 70 : kind === "talk" ? 45 : 120)) return "too long";
   if (words(reply) < 3) return "too short";
+  // Unfinished or placeholder text ("s→?", "…", "[step]"): a teacher model that gave up mid-way.
+  if (/…|\.\.\.|→\s*\?|\?\s*;|\[[^\]]{0,20}\]|\bTODO\b|<[^>]+>/.test(reply)) return "unfinished";
   const dev = devanagariShare(reply);
   if (lang === "hi" && dev < 0.5) return "not Hindi";
   if (lang !== "hi" && dev > 0.1) return "not Roman script";
