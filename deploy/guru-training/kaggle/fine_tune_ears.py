@@ -17,7 +17,7 @@ def publish(folder, name):
             from kaggle_secrets import UserSecretsClient
             token = UserSecretsClient().get_secret("HF_TOKEN")
     except Exception as e:
-        print("No HF_TOKEN secret attached: results stay in /kaggle/working only.", e, flush=True)
+        print("No HF_TOKEN secret attached: results stay in the output folder only.", e, flush=True)
         return
     subprocess.run([sys.executable, "-m", "pip", "install", "-q", "huggingface_hub"], check=True)
     from huggingface_hub import HfApi
@@ -138,6 +138,6 @@ model.save_pretrained(f"{OUT}/ears-turbo-hi", safe_serialization=True)
 proc.save_pretrained(f"{OUT}/ears-turbo-hi")
 json.dump({"before": before, "after": after, "train_clips": len(train)}, open(f"{OUT}/ears_report.json", "w"), ensure_ascii=False, indent=1)
 import shutil
-shutil.copy(f"{OUT}/ears_report.json", "/kaggle/working/ears-turbo-hi/ears_report.json")
+shutil.copy(f"{OUT}/ears_report.json", f"{OUT}/ears-turbo-hi/ears_report.json")
 publish(f"{OUT}/ears-turbo-hi", "nexora-ears-turbo-hi")
 print("done", flush=True)
