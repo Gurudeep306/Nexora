@@ -18,15 +18,17 @@
   - Reduced motion: it appears in its new place instead of gliding.
 */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { ArrowLeftRight, Armchair, Cpu, EyeOff, MessageCircle, PenLine, PersonStanding, Square } from 'lucide-react'
+import { ArrowLeftRight, Armchair, Cpu, EyeOff, Keyboard, MessageCircle, PenLine, PersonStanding, Send, Square, X } from 'lucide-react'
 import type { TalkingHead } from '@met4citizen/talkinghead'
 import { getVoicePrefs, type TeacherSize } from '../prefs'
-import { onSentence, onWord, speak, stopSpeaking, useSpeaking } from '../speak'
+import { onSentence, onWord, speak, stopSpeaking, useSpeaking, type SpokenSentence } from '../speak'
 import { VoiceOffer } from './VoiceOffer'
 import { useBrain } from '../brain/brain'
-import { cancelListening, endTalk, getTalk, startTalk, teacherSays, useTalk } from '../talk'
+import { askTyped, cancelListening, endTalk, getTalk, startTalk, teacherSays, useTalk } from '../talk'
+import { onMicLevel } from '../capture'
 import { closeBoard, openBoard, pageTopic, useBoard } from './boardStore'
-import { toRoman, wordTimes } from './lipsync'
+import { captionStarts, sameWord, toRoman, wordAt, wordTimes, wordTimesByEnergy, type WordTimes } from './lipsync'
+import { nodder, presenceFor, PRESENCE_SHAPES, type Presence } from './presence'
 import { gestureFor, moodFor, soundsWorried } from './expressions'
 import { countResult, reactionFor } from './reactions'
 import { pixelRatio, polish } from './look'
@@ -54,6 +56,117 @@ function xFor(side: Side, w: number, atX: number | null = null): number {
   return Math.max(GAP, vw - w - GAP)
 }
 
+/** A sentence on screen: its words, and when each starts (null = the device voice, which reports words as it says them). */
+interface Shown {
+  tokens: string[]
+  starts: number[] | null
+  at: number
+}
+
+/** The words as written, each with the start of its spoken word (lipsync.ts). */
+function shownFor(s: SpokenSentence, t: WordTimes | null): Shown {
+  const tokens = s.text.split(/\s+/).filter(Boolean)
+  return { tokens, starts: t?.words.length ? captionStarts(tokens, t) : null, at: performance.now() }
+}
+
+/** The sentence being said, lit word by word as she says it. Scrolls itself, never the page. */
+function Caption({ shown, liveIdx, lang }: { shown: Shown; liveIdx: number; lang: string }) {
+  const box = useRef<HTMLParagraphElement>(null)
+  const [timedIdx, setTimedIdx] = useState(-1)
+  useEffect(() => {
+    const starts = shown.starts
+    if (!starts) return
+    let raf = 0
+    const tick = () => {
+      setTimedIdx(wordAt(starts, performance.now() - shown.at))
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [shown])
+  const idx = shown.starts ? timedIdx : liveIdx
+  useEffect(() => {
+    const p = box.current
+    const el = p?.children[idx] as HTMLElement | undefined
+    if (!p || !el) return
+    if (el.offsetTop + el.offsetHeight > p.scrollTop + p.clientHeight || el.offsetTop < p.scrollTop) p.scrollTop = Math.max(0, el.offsetTop - 4)
+  }, [idx])
+  return (
+    <p className="tch-say-text tch-cap" ref={box} aria-hidden="true" lang={lang === 'hi-IN' ? 'hi' : 'en'}>
+      {shown.tokens.map((w, i) => (
+        <span key={i} data-w={i < idx ? 'said' : i === idx ? 'now' : undefined}>
+          {w}{' '}
+        </span>
+      ))}
+    </p>
+  )
+}
+
+/** How loud the student is, as five small bars (or, with the browser's own ears, a pulse each time words arrive). */
+function MicMeter({ pulse }: { pulse: string }) {
+  const [level, setLevel] = useState(0)
+  const fromMic = useRef(0)
+  useEffect(
+    () =>
+      onMicLevel((l) => {
+        fromMic.current = performance.now()
+        setLevel((v) => (l > v ? l : v * 0.6 + l * 0.4))
+      }),
+    [],
+  )
+  useEffect(() => {
+    if (!pulse || performance.now() - fromMic.current < 1000) return
+    setLevel(0.85)
+    const t = window.setTimeout(() => setLevel(0.25), 260)
+    return () => window.clearTimeout(t)
+  }, [pulse])
+  return (
+    <span className="tch-meter" aria-hidden="true">
+      {[0.5, 0.8, 1, 0.8, 0.5].map((k, i) => (
+        <i key={i} style={{ transform: `scaleY(${Math.max(0.18, Math.min(1, level * k * 1.25))})` }} />
+      ))}
+    </span>
+  )
+}
+
+/** Type to the teacher instead of speaking: handled exactly like spoken words. */
+function TypeBox({ name, said, lang, onAsk, onClose }: { name: string; said: string; lang: string; onAsk: (text: string) => void; onClose: () => void }) {
+  const [text, setText] = useState('')
+  const input = useRef<HTMLInputElement>(null)
+  useEffect(() => input.current?.focus(), [])
+  return (
+    <form
+      className="tch-say tch-type"
+      onSubmit={(e) => {
+        e.preventDefault()
+        if (!text.trim()) return
+        onAsk(text.trim())
+        setText('')
+      }}
+      onKeyDown={(e) => e.key === 'Escape' && onClose()}
+    >
+      {/* Her answer stays above the box when the voice is off, like a chat. */}
+      {said && (
+        <p className="tch-say-text" role="status" lang={lang === 'hi-IN' ? 'hi' : 'en'}>
+          {said}
+        </p>
+      )}
+      <label className="tch-type-row">
+        <span className="sr-only">Type to {name}</span>
+        <input ref={input} className="tch-type-input" value={text} onChange={(e) => setText(e.target.value)} placeholder={`Ask ${name} anything…`} maxLength={500} autoComplete="off" enterKeyHint="send" />
+      </label>
+      <div className="tch-say-foot">
+        <button type="button" onClick={onClose} aria-label="Close typing">
+          <X className="size-3" aria-hidden="true" /> Close
+        </button>
+        <button type="submit" className="tch-send" disabled={!text.trim()} aria-label={`Send to ${name}`}>
+          <Send className="size-3" aria-hidden="true" /> Send
+        </button>
+      </div>
+    </form>
+  )
+}
+
 const ease = (k: number) => (k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2)
 
 export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; size: TeacherSize }) {
@@ -63,6 +176,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
   const turnRaf = useRef(0)
   const lastX = useRef<number | null>(null)
   const moodTimer = useRef(0)
+  const browTimer = useRef(0)
   const lastHeard = useRef('')
   /** Was the teacher sitting (so "stand" has something to do)? */
   const standUp = useRef(false)
@@ -75,7 +189,42 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
   useEffect(() => {
     speakingNowRef.current = speaking.on
   }, [speaking.on])
-  const [caption, setCaption] = useState<string | null>(null)
+  const [shown, setShown] = useState<Shown | null>(null)
+  const [liveIdx, setLiveIdx] = useState(-1)
+  const [typing, setTyping] = useState(false)
+  const [dragX, setDragX] = useState<number | null>(null)
+  const shownRef = useRef<Shown | null>(null)
+  useEffect(() => {
+    shownRef.current = shown
+  }, [shown])
+  const drag = useRef<{ id: number; from: number; x0: number; moved: boolean } | null>(null)
+
+  /* Drag her by her name bar to any side of the screen (the move button does the same from the keyboard). */
+  const onBarDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if ((e.target as HTMLElement).closest('button') || x === null || e.button !== 0) return
+    drag.current = { id: e.pointerId, from: e.clientX, x0: x, moved: false }
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }
+  const onBarMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current
+    if (!d || d.id !== e.pointerId) return
+    const dx = e.clientX - d.from
+    if (!d.moved && Math.abs(dx) < 6) return
+    d.moved = true
+    const w = root.current?.offsetWidth ?? 0
+    setDragX(Math.round(Math.max(GAP, Math.min(document.documentElement.clientWidth - w - GAP, d.x0 + dx))))
+  }
+  const onBarUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = drag.current
+    drag.current = null
+    if (!d || d.id !== e.pointerId || !d.moved || dragX === null) return setDragX(null)
+    const w = root.current?.offsetWidth ?? 0
+    const mid = (dragX + w / 2) / document.documentElement.clientWidth
+    // She settles on the nearest side, gliding from where she was let go.
+    lastX.current = dragX
+    setDragX(null)
+    setTeacher({ side: mid < 1 / 3 ? 'left' : mid > 2 / 3 ? 'right' : 'centre' })
+  }
   const [x, setX] = useState<number | null>(null)
   const [attempt, setAttempt] = useState(0)
   // The name only words the failure message: renaming the teacher must not reload the 3D model.
@@ -194,23 +343,36 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       onSentence((s) => {
         const head = headRef.current
         if (!s) {
-          setCaption(null)
+          setShown(null)
           head?.stopSpeaking()
           // Back to a calm face a moment after speaking.
           window.clearTimeout(moodTimer.current)
           moodTimer.current = window.setTimeout(() => headRef.current?.setMood('neutral'), 1800)
           return
         }
-        setCaption(s.text)
+        const exact = s.timing
+        const hasShapes = !!exact?.visemes?.length && exact.visemes.length === exact.vtimes?.length && exact.visemes.length === exact.vdurations?.length
+        const hasWords = !!exact?.words?.length && exact.words.length === exact.wtimes?.length && exact.words.length === exact.wdurations?.length
+        // Word times: the voice's own; else from the sound itself (the mouth rests in pauses); else shared by length.
+        const t: WordTimes = hasWords
+          ? { words: exact!.words!, wtimes: exact!.wtimes!, wdurations: exact!.wdurations! }
+          : s.energy?.length
+            ? wordTimesByEnergy(toRoman(s.text), s.ms, s.energy)
+            : wordTimes(toRoman(s.text), s.ms)
+        const next = shownFor(s, s.live ? null : t)
+        shownRef.current = next
+        setShown(next)
+        setLiveIdx(-1)
         if (!head) return
         // Face and hands follow the words: a smile for greetings and praise, a thumbs up, a shrug…
         window.clearTimeout(moodTimer.current)
         head.setMood(moodFor(s.text))
         const g = reduced() ? null : gestureFor(s.text)
-        const exact = s.timing
-        const hasShapes = !!exact?.visemes?.length && exact.visemes.length === exact.vtimes?.length && exact.visemes.length === exact.vdurations?.length
-        const hasWords = !!exact?.words?.length && exact.words.length === exact.wtimes?.length && exact.words.length === exact.wdurations?.length
-        const t = hasWords ? { words: exact!.words!, wtimes: exact!.wtimes!, wdurations: exact!.wdurations! } : wordTimes(toRoman(s.text), s.ms)
+        // A question ends with raised brows, as people ask.
+        if (/[?？]\s*$/.test(s.text)) {
+          window.clearTimeout(browTimer.current)
+          browTimer.current = window.setTimeout(() => headRef.current?.setValue('browInnerUp', 0.4, 900), Math.max(0, s.ms * 0.65))
+        }
         if (!t.words.length && !hasShapes) return
         const ctx = head.audioCtx
         if (ctx.state === 'suspended') void ctx.resume()
@@ -229,6 +391,14 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
   useEffect(
     () =>
       onWord((w) => {
+        // The caption lights the word the device voice has reached (the next one that matches, a little ahead at most).
+        const cur = shownRef.current
+        if (cur && !cur.starts) {
+          setLiveIdx((i) => {
+            for (let j = i + 1; j < Math.min(cur.tokens.length, i + 5); j++) if (sameWord(cur.tokens[j], w.word)) return j
+            return Math.min(cur.tokens.length - 1, i + 1)
+          })
+        }
         const head = headRef.current
         if (!head) return
         const words = toRoman(w.word).split(/\s+/).filter(Boolean)
@@ -320,10 +490,43 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
 
   /* While the student speaks, small nods now and then ("mm-hm, go on"), as a listener does. */
   const lastNod = useRef(0)
+  const micAt = useRef(-Infinity)
+  /* With our own ears the mic level is known: she nods as the student starts each phrase, like a listener. */
+  useEffect(() => {
+    const nod = nodder()
+    return onMicLevel((level) => {
+      const head = headRef.current
+      micAt.current = performance.now()
+      if (!head || reduced() || getTalk().status !== 'listening' || !nod(level, performance.now())) return
+      const r = stage.current?.getBoundingClientRect()
+      if (!r) return
+      head.lookAt(r.left + r.width / 2, r.bottom + r.height * 0.35, 220)
+      window.setTimeout(() => headRef.current?.lookAtCamera(1600), 240)
+    })
+  }, [])
+
+  /* How she holds herself: leaning in to listen, lips pressed while thinking (presence.ts). Held a moment at a time, so nothing sticks. */
+  const presence: Presence = speaking.on ? 'speaking' : talk.status === 'listening' ? 'listening' : talk.status === 'thinking' ? 'thinking' : 'idle'
+  useEffect(() => {
+    if (st.status !== 'ready') return
+    const body = new Set(['bodyRotateX', 'headRotateZ'])
+    const hold = Object.entries(presenceFor(presence, st.side)).filter(([k]) => !(reduced() && body.has(k)))
+    const apply = () => {
+      const head = headRef.current
+      if (head) for (const [k, v] of hold) head.setValue(k, v, 900)
+    }
+    apply()
+    const t = window.setInterval(apply, 600)
+    return () => {
+      window.clearInterval(t)
+      const head = headRef.current
+      if (head) for (const k of PRESENCE_SHAPES) head.setValue(k, null)
+    }
+  }, [presence, st.status, st.side])
   useEffect(() => {
     const head = headRef.current
     const r = stage.current?.getBoundingClientRect()
-    if (!head || !r || talk.status !== 'listening' || !talk.hearing || reduced()) return
+    if (!head || !r || talk.status !== 'listening' || !talk.hearing || reduced() || performance.now() - micAt.current < 1500) return
     const now = Date.now()
     if (now - lastNod.current < 1800) return
     lastNod.current = now
@@ -420,52 +623,88 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       data-side={st.side}
       data-ready={st.status === 'ready' ? '' : undefined}
       data-sitting={st.sitting ? '' : undefined}
-      style={x === null ? { visibility: 'hidden' } : { transform: `translateX(${x}px)` }}
+      data-state={presence}
+      data-dragging={dragX !== null ? '' : undefined}
+      style={x === null ? { visibility: 'hidden' } : { transform: `translateX(${dragX ?? x}px)` }}
       role="region"
       aria-label={teacher.name === UNNAMED ? 'Virtual teacher' : `Virtual teacher ${teacher.name}`}
     >
       {/* The teacher listens, thinks and answers here — not a box on the website. */}
-      {!speaking.on && (talk.status === 'listening' || talk.status === 'thinking') && (
-        <div className="tch-say tch-say--talk" role="status">
-          <p className="tch-say-text">
-            {talk.status === 'listening' ? (talk.hearing ? <span lang={lang === 'hi-IN' ? 'hi' : 'en'}>“{talk.hearing}”</span> : `${teacher.name} is listening…`) : <span className="tch-dots" aria-label="Thinking">…</span>}
-          </p>
+      {!speaking.on && talk.status === 'listening' && (
+        <div className="tch-say tch-say--talk" role="status" key="listening">
+          <div className="tch-say-head">
+            <MicMeter pulse={talk.hearing} />
+            <span>{talk.on ? `Talking with ${teacher.name}` : 'Listening'}</span>
+          </div>
+          <p className="tch-say-text">{talk.hearing ? <span lang={lang === 'hi-IN' ? 'hi' : 'en'}>“{talk.hearing}”</span> : `Go ahead, I’m listening.`}</p>
           <div className="tch-say-foot">
-            <span>{talk.on ? `Talking with ${teacher.name}` : talk.status === 'listening' ? 'Speak now' : 'Thinking'}</span>
+            <span>Speak now</span>
             {talk.on ? (
               <button type="button" onClick={() => { endTalk(); stopSpeaking() }} aria-label={`End the conversation with ${teacher.name}`}>
                 <Square className="size-3" aria-hidden="true" /> End
               </button>
             ) : (
-              talk.status === 'listening' && (
-                <button type="button" onClick={cancelListening} aria-label={`Stop ${teacher.name} listening`}>
-                  <Square className="size-3" aria-hidden="true" /> Cancel
-                </button>
-              )
+              <button type="button" onClick={cancelListening} aria-label={`Stop ${teacher.name} listening`}>
+                <Square className="size-3" aria-hidden="true" /> Cancel
+              </button>
             )}
           </div>
         </div>
       )}
-      {!speaking.on && talk.status === 'idle' && talk.says && (
-        <div className="tch-say" role="status">
+      {!speaking.on && talk.status === 'thinking' && (
+        <div className="tch-say tch-say--talk" role="status" key="thinking">
+          {talk.asked && (
+            <p className="tch-asked" lang={lang === 'hi-IN' ? 'hi' : 'en'}>
+              “{talk.asked}”
+            </p>
+          )}
+          <p className="tch-think">
+            <span className="tch-dots" aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+            {teacher.name} is thinking
+          </p>
+          {talk.on && (
+            <div className="tch-say-foot">
+              <span>Talking with {teacher.name}</span>
+              <button type="button" onClick={() => { endTalk(); stopSpeaking() }} aria-label={`End the conversation with ${teacher.name}`}>
+                <Square className="size-3" aria-hidden="true" /> End
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      {!speaking.on && talk.status === 'idle' && talk.says && !typing && (
+        <div className="tch-say" role="status" key="says">
           <p className="tch-say-text" lang={lang === 'hi-IN' ? 'hi' : 'en'}>
             {talk.says}
           </p>
           <div className="tch-say-foot">
             <span>{teacher.name}</span>
             <button type="button" onClick={() => teacherSays('')} aria-label="Close">
-              <Square className="size-3" aria-hidden="true" /> Close
+              <X className="size-3" aria-hidden="true" /> Close
             </button>
           </div>
         </div>
       )}
+      {!speaking.on && talk.status === 'idle' && typing && (
+        <TypeBox
+          key="type"
+          name={teacher.name}
+          said={talk.says}
+          lang={lang}
+          onClose={() => setTyping(false)}
+          onAsk={(text) => {
+            teacherSays('')
+            if (!askTyped(text)) teacherSays(`I can’t answer here right now. Try again in a moment.`, 5000)
+          }}
+        />
+      )}
       {speaking.on && !board.open && (
-        <div className="tch-say" role="status">
-          {caption && (
-            <p className="tch-say-text" aria-hidden="true" lang={lang === 'hi-IN' ? 'hi' : 'en'}>
-              {caption}
-            </p>
-          )}
+        <div className="tch-say" role="status" key="speaking">
+          {shown && <Caption shown={shown} liveIdx={liveIdx} lang={lang} />}
           <div className="tch-say-foot">
             <span>
               {ai ? <strong>AI voice</strong> : null}
@@ -478,7 +717,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         </div>
       )}
 
-      {st.status === 'ready' && !speaking.on && talk.status === 'idle' && !talk.says && !board.open && <VoiceOffer name={teacher.name} />}
+      {st.status === 'ready' && !speaking.on && talk.status === 'idle' && !talk.says && !typing && !board.open && <VoiceOffer name={teacher.name} />}
       <div className="tch-stage" ref={stage} aria-hidden="true" />
 
       {st.status === 'loading' && (
@@ -501,7 +740,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         </div>
       )}
 
-      <div className="tch-bar">
+      <div className="tch-bar" onPointerDown={onBarDown} onPointerMove={onBarMove} onPointerUp={onBarUp} onPointerCancel={onBarUp} title="Drag to move">
         <span className="tch-name">{teacher.name}</span>
         {brain.status === 'ready' && (
           <span className="tch-chip" role="img" aria-label={`${teacher.name} is thinking on this device`} title={`Thinking on this device (${teacher.body === 'M' ? 'his' : 'her'} own brain)`}>
@@ -518,6 +757,17 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
           title={talk.on ? 'End the conversation' : 'Talk (hands-free)'}
         >
           <MessageCircle aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          className="tch-btn"
+          data-on={typing ? '' : undefined}
+          aria-pressed={typing}
+          onClick={() => setTyping((v) => !v)}
+          aria-label={typing ? 'Close typing' : `Type to ${teacher.name}`}
+          title={typing ? 'Close typing' : 'Type instead of speaking'}
+        >
+          <Keyboard aria-hidden="true" />
         </button>
         <button
           type="button"

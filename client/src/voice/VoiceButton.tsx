@@ -29,7 +29,7 @@ import { parseCode, type CodeCommand } from './code/parse'
 import { activeBuilder, parseBuild } from './code/build'
 import { aboutToSpeak, speak, stopSpeaking, useSpeaking } from './speak'
 import { bargeInOn, bargeInResult, listenForInterruption } from './bargeIn'
-import { endTalk, getTalk, onCancelListening, onStartTalk, remember, saysGoodbye, setTalkStatus, teacherSays, useTalk } from './talk'
+import { endTalk, getTalk, onAskTyped, onCancelListening, onStartTalk, remember, saysGoodbye, setTalkStatus, teacherSays, useTalk } from './talk'
 import { teacherMove, teacherShowing, useTeacher } from './teacher/store'
 import { teacherById } from './teacher/teachers'
 import { askOnDevice, getBrain, startBrain } from './brain/brain'
@@ -429,6 +429,23 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
       startRef.current()
     })
   }, [talk.on, speaking.on])
+
+  // Typed to the teacher (her keyboard button): handled like spoken words; the exam console's mic never takes it.
+  const decideRef = useRef(decide)
+  useEffect(() => {
+    decideRef.current = decide
+  }, [decide])
+  useEffect(() => {
+    if (layer === 'top') return
+    return onAskTyped((text) => {
+      handle.current?.cancel()
+      handle.current = null
+      starting.current = false
+      stopSpeaking()
+      setTalkStatus('idle')
+      decideRef.current(text)
+    })
+  }, [layer])
 
   // "Cancel" on the teacher's bubble stops the mic.
   useEffect(

@@ -231,3 +231,91 @@ test('no Hindi words in English lines the teacher speaks by rule', async () => {
   const vb = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'voice', 'VoiceButton.tsx'), 'utf8');
   assert.doesNotMatch(vb, /'Haan, bolo/);
 });
+
+test('lips follow the sound: words share only the time the voice sounds, never stretch across a pause', async () => {
+  const { energyEnvelope, voicedSpans, wordTimesByEnergy, wordTimes } = await T('lipsync.ts');
+  const rate = 16000;
+  const x = new Float32Array(rate * 2);
+  // Voice for 0–600 ms, a pause, voice again for 1100–2000 ms.
+  for (let i = 0; i < x.length; i++) {
+    const ms = (i / rate) * 1000;
+    if (ms < 600 || ms >= 1100) x[i] = 0.3 * Math.sin(i / 7);
+  }
+  const env = energyEnvelope(x, rate);
+  assert.deepEqual(voicedSpans(env), [[0, 600], [1100, 2000]]);
+  const r = wordTimesByEnergy('Hello there, now look at mid', 2000, env);
+  assert.deepEqual(r.words, ['Hello', 'there', 'now', 'look', 'at', 'mid']);
+  for (let i = 0; i < r.words.length; i++) {
+    const s = r.wtimes[i];
+    const e = s + r.wdurations[i];
+    assert.ok(e <= 600 || s >= 1100, `"${r.words[i]}" (${s}–${e} ms) is not said in the pause`);
+    if (i) assert.ok(s >= r.wtimes[i - 1] + r.wdurations[i - 1], 'no overlap');
+  }
+  assert.ok(r.wtimes.at(-1) + r.wdurations.at(-1) <= 2000);
+  // A nearly silent clip (or none) falls back to sharing the time by length.
+  assert.deepEqual(wordTimesByEnergy('one two', 800, new Array(40).fill(0)), wordTimes('one two', 800));
+});
+
+test('captions light the right written word, in English and in Hindi', async () => {
+  const { captionStarts, sameWord, wordAt, wordTimes, toRoman } = await T('lipsync.ts');
+  const tokens = 'Look — mid is 4, okay?'.split(' ');
+  const t = wordTimes(tokens.join(' '), 2000);
+  const starts = captionStarts(tokens, t);
+  assert.equal(starts.length, tokens.length);
+  assert.equal(starts[1], starts[0], 'a lone dash takes the time of the word before');
+  for (let i = 1; i < starts.length; i++) assert.ok(starts[i] >= starts[i - 1]);
+  assert.equal(wordAt(starts, -1), -1);
+  assert.equal(wordAt(starts, starts[3] + 1), 3);
+  // A voice that counts words differently is matched by position, never out of range.
+  const odd = captionStarts(['a', 'b', 'c', 'd'], { words: ['ab', 'cd'], wtimes: [0, 500], wdurations: [400, 400] });
+  assert.deepEqual(odd, [0, 500, 500, 500]);
+  const hi = 'बाइनरी सर्च में mid बदलो।'.split(' ');
+  const th = wordTimes(toRoman(hi.join(' ')), 2000);
+  assert.equal(captionStarts(hi, th).length, hi.length);
+  assert.ok(sameWord('Hello,', 'hello'));
+  assert.ok(sameWord('नमस्ते!', 'namaste'));
+  assert.ok(!sameWord('—', ''));
+});
+
+test('she leans in to listen and presses her lips to think, with face shapes every teacher has', async () => {
+  const { presenceFor, PRESENCE_SHAPES, nodder } = await T('presence.ts');
+  assert.deepEqual(presenceFor('idle'), {});
+  assert.deepEqual(presenceFor('speaking'), {});
+  const right = presenceFor('listening', 'right');
+  const left = presenceFor('listening', 'left');
+  assert.ok(right.bodyRotateX > 0 && right.browInnerUp > 0, 'leans in, brows lifted');
+  assert.equal(Math.sign(right.headRotateZ), -Math.sign(left.headRotateZ), 'tilts towards the page from either side');
+  for (const v of [...Object.values(right), ...Object.values(presenceFor('thinking'))]) assert.ok(Math.abs(v) <= 0.3, 'small and natural');
+  // Every face shape held is in every model (the turns and mouthSmile are TalkingHead's own).
+  const own = new Set(['bodyRotateX', 'headRotateZ', 'mouthSmile']);
+  const { TEACHERS } = await T('teachers.ts');
+  for (const t of TEACHERS) {
+    const g = glbJson(path.join(DIR, `${t.id}.glb`));
+    const targets = new Set(g.meshes.flatMap((m) => m.extras?.targetNames ?? []));
+    for (const k of PRESENCE_SHAPES) if (!own.has(k)) assert.ok(targets.has(k), `${t.id}: face shape ${k}`);
+  }
+  // Nods come at the start of a phrase, not on every loud moment, at most one every 1.6 s.
+  const nod = nodder();
+  const at = (level, ms) => nod(level, ms);
+  assert.equal(at(0.5, 10000), true, 'starts speaking: nod');
+  assert.equal(at(0.5, 10100), false, 'still the same phrase');
+  assert.equal(at(0, 10200), false);
+  assert.equal(at(0.5, 10700), false, 'new phrase but too soon');
+  assert.equal(at(0, 11000), false);
+  assert.equal(at(0.5, 12000), true, 'next phrase after a pause');
+});
+
+test('typing to the teacher is handled like speaking, and remembered while she thinks', async () => {
+  const talk = await import(pathToFileURL(path.join(__dirname, '..', 'client', 'src', 'voice', 'talk.ts')).href);
+  assert.equal(talk.askTyped('what is paging'), false, 'nothing listening: false, nothing lost silently');
+  const got = [];
+  const off = talk.onAskTyped((t) => got.push(t));
+  assert.equal(talk.askTyped('  what is paging?  '), true);
+  assert.equal(talk.askTyped('   '), false, 'blank is ignored');
+  assert.deepEqual(got, ['what is paging?']);
+  assert.equal(talk.getTalk().asked, 'what is paging?');
+  talk.setTalkStatus('listening', 'deadlock kya hai');
+  talk.setTalkStatus('thinking');
+  assert.equal(talk.getTalk().asked, 'deadlock kya hai', 'what was heard stays while she thinks');
+  off();
+});

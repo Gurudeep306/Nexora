@@ -360,6 +360,45 @@ Checked and fine:
 - The guide never presses risky buttons.
 - Memory never puts the name in a prompt.
 
+### 3.2.9 She listens like a person, and her words light up as she says them (2026-11-24)
+
+- **Lips follow the real sound.** Voices that give no word times (the
+  student's own voice, Azure's) now send their loudness every 20 ms
+  (`energyEnvelope` in `lipsync.ts`, from the clip in `speak.ts`). The words
+  share only the time the voice is sounding (`wordTimesByEnergy`), so the
+  mouth rests in every pause and a word never stretches across one. Voices
+  with exact mouth shapes (our voice server, the on-device voices) keep them.
+- **Captions lit word by word.** The sentence in her bubble shows the words
+  already said in full ink, the current word underlined in the accent, and
+  the rest quieter (`Caption`, `captionStarts`, `wordAt`). It follows the
+  voice's own word times; with the device voice it follows each word the
+  voice reports (`sameWord`). It scrolls itself, never the page.
+- **Listening body language** (`presence.ts`): she leans in a little, tilts
+  her head towards the page, lifts her brows, half-smiles; with our own ears
+  she nods as the student starts each phrase (`nodder`, from the mic level
+  `onMicLevel` in `capture.ts`). Thinking: lips pressed, brows drawn a
+  touch, eyes up and aside. Held a moment at a time, so nothing sticks;
+  reduced motion keeps the face and drops the lean and tilt. A question she
+  asks ends with raised brows.
+- **A mic meter** in her listening bubble: five bars that rise with the
+  student's voice (with the browser's own ears, a pulse as words arrive).
+- **Thinking shows what was asked** ("“what is a stack”", then three soft
+  dots), said or typed (`talk.asked`).
+- **Type to her** (the keyboard button on her bar): handled exactly like
+  spoken words (`askTyped` in `talk.ts`, taken by the top-bar mic's
+  `decide`; never by the exam console's). With the voice off her answer
+  stays above the box, like a chat.
+- **Drag her** by her name bar; she settles on the nearest side (left,
+  middle, right). The move button still does it from the keyboard.
+- **Bubble**: a tail towards her, sits just above her head, a short fade-in
+  (none with reduced motion). On phones the bar now always fits beside her
+  (her grid column is exactly her width).
+
+Tests: `tests/voice-teacher.test.js` (sound-following lips, captions in
+English and Hindi, presence shapes present in every model, nods, typing).
+Browser: typing, thinking, the answer, dragging, captions moving word by
+word, axe 0 in light, dark and at 360 px, no sideways scroll.
+
 ### 3.3 Honest limits
 
 - **No walking legs yet.** It glides (turned sideways) rather than taking
