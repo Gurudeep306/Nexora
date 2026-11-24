@@ -32,6 +32,8 @@ try:
 except FileNotFoundError:
     sys.exit("No GPU: in the notebook editor choose Accelerator → GPU T4 x2 (or GPU P100), then Run All.")
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "transformers>=4.57", "peft>=0.17", "accelerate", "soundfile", "librosa", "pyarrow"], check=True)
+# Colab ships an old torchao that the new peft refuses to load: LoRA here doesn't need it.
+subprocess.run([sys.executable, "-m", "pip", "uninstall", "-y", "-q", "torchao"], check=False)
 import numpy as np, pyarrow.parquet as pq, soundfile as sf, librosa, torch
 from peft import LoraConfig, get_peft_model
 from transformers import WhisperForConditionalGeneration, WhisperProcessor, Seq2SeqTrainer, Seq2SeqTrainingArguments
@@ -79,7 +81,7 @@ def evaluate(model, tag):
         chunk = test[k : k + 8]
         feats = proc.feature_extractor([audio16k(r["audio_filepath"]["bytes"]) for r in chunk], sampling_rate=16000, return_tensors="pt").input_features.to(model.device, torch.float16)
         with torch.no_grad():
-            ids = model.generate(input_features=feats, language="hindi", task="transcribe", max_new_tokens=200)
+            ids = model.generate(input_features=feats, language="hindi", task="transcribe", max_new_tokens=200, max_length=None)
         for r, h in zip(chunk, proc.batch_decode(ids, skip_special_tokens=True)):
             ref, hyp = norm(r["text"]), norm(h)
             rows.append({"lang": r["native_language"], "gender": r["gender"], "wer": ed(ref.split(), hyp.split()) / max(1, len(ref.split())), "cer": ed(ref, hyp) / max(1, len(ref))})
