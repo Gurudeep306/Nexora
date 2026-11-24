@@ -334,6 +334,32 @@ the teacher to speak in, with no cost at all.
   - The free Oracle server: it has no GPU and is too slow (measured above).
   - IndicF5: its licence for commercial use is unclear.
 
+### 3.2.8 Full audit (2026-11-24, #265)
+
+I read every file of the teacher (layer, host, store, talk, mic, speech,
+board, guide, voices, own voice, memory) and checked each behaviour in a
+real browser. What was wrong, and the fix:
+
+| Flaw | Fix |
+|---|---|
+| Renaming the teacher reloaded the whole 3D model (the loader depended on the name) | The name only words messages (a ref); a sweep check marks the canvas and confirms it survives a rename |
+| She showed (and could talk) in timed tests and contest papers: only `/gate/cbt` hid her | The exam console sets `exam` in the teacher store for its whole life; the host hides her |
+| In a conversation the mic opened after 1.5 s even if her voice hadn't started yet (natural or own voice), cutting her first words | `aboutToSpeak()` in `speak.ts`; the conversation waits for the voice to start (at most 20 s) |
+| English greetings still said "Haan, bolo!" (an English voice says Hindi words badly) | Plain English; a test checks the rule greetings |
+| After a page reload the student's own voice wasn't used until Settings was opened (the saved sample was only looked up there) | `checkSavedOnce()` before speaking |
+| The own voice's first-time checks (voice print, speed test) could wait forever | Each has a 60 s limit; then her usual voice, with the reason in Settings |
+| Whiteboard "say it again" / "start again" on the same step did nothing while playing | A replay counter re-runs the step |
+| Unnamed teacher: "I'm Teacher", "Virtual teacher Teacher", "What Teacher remembers" | "Your teacher" in sentences, and "your NexoraGuru teacher" when she introduces herself |
+| "Her own brain / her own AI chip" for men teachers too | His or her, by the teacher |
+| Phones: her button bar ran off the right edge, and the assistant's round button sat on it | On phones she stands above that button; the bar aligns with her screen edge and keeps only its buttons (the name stays in the region's label) |
+
+Checked and fine:
+- Layering: dialogs, menus and tooltips all sit above her.
+- The board's server-side checks: known shapes only, numbers kept inside the
+  board, text limits, the Leak Guard.
+- The guide never presses risky buttons.
+- Memory never puts the name in a prompt.
+
 ### 3.3 Honest limits
 
 - **No walking legs yet.** It glides (turned sideways) rather than taking

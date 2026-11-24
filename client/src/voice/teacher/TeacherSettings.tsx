@@ -29,6 +29,8 @@ export function TeacherSettings() {
   const { user } = useAuth()
   const [prefs, setPrefs] = useVoicePrefs(user?.username)
   const chosen = teacherById(prefs.teacher)
+  // In sentences: the name the student gave, or "Your teacher" before they name them.
+  const said = chosen && chosen.name !== UNNAMED ? chosen.name : 'Your teacher'
   return (
     <Card>
       <CardContent className="grid gap-4 px-5 py-4">
@@ -70,7 +72,7 @@ export function TeacherSettings() {
           <div className="vc-consent">
             <NameField key={chosen.id} id={chosen.id} male={chosen.body === 'M'} />
             <VoicePicker male={chosen.body === 'M'} name={chosen.name} />
-            <OwnVoice name={chosen.name} />
+            <OwnVoice name={said} />
             <fieldset className="vc-field">
               <legend>Size</legend>
               <div className="flex flex-wrap gap-4">
@@ -85,10 +87,10 @@ export function TeacherSettings() {
               <Button size="sm" variant="ghost" onClick={() => introduce(chosen)}>
                 <Volume2 aria-hidden="true" /> Say hello
               </Button>
-              {!prefs.speak && <span className="vc-note">Reading answers aloud is off (Voice, above), so {chosen.name} only speaks when you ask.</span>}
+              {!prefs.speak && <span className="vc-note">Reading answers aloud is off (Voice, above), so {said} only speaks when you ask.</span>}
             </div>
-            <Memory name={chosen.name} />
-            <OnDevice who={chosen.name} />
+            <Memory name={said} />
+            <OnDevice who={said} male={chosen.body === 'M'} />
           </div>
         )}
         <p className="mb-0 text-[11.5px] text-text-muted">3D people from the Microsoft Rocketbox Avatar Library (MIT licence), animated with TalkingHead (MIT); voices by Kokoro (Apache licence).</p>

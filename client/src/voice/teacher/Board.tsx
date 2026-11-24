@@ -106,6 +106,8 @@ export default function Board() {
   const speaking = useSpeaking()
   const [step, setStep] = useState(0)
   const [playing, setPlaying] = useState(true)
+  // Bumped to play the same step again ("say it again", "start again" on step 1): the step alone wouldn't change.
+  const [replay, setReplay] = useState(0)
   const panel = useRef<HTMLDivElement>(null)
   const svg = useRef<SVGSVGElement>(null)
   const lesson = b.lesson
@@ -147,11 +149,14 @@ export default function Board() {
     return () => {
       alive = false
     }
-  }, [lesson, step, playing, lang])
+  }, [lesson, step, playing, lang, replay])
 
   const go = (n: number) => {
     stopSpeaking()
-    setStep(Math.max(0, Math.min(total - 1, n)))
+    const to = Math.max(0, Math.min(total - 1, n))
+    // The same step again (repeat, or "start again" on the first step) is replayed, not skipped.
+    if (to === step) setReplay((r) => r + 1)
+    setStep(to)
   }
   const toggle = () => {
     if (playing) stopSpeaking()

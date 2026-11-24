@@ -9,8 +9,8 @@
     own voice. Our voice server sends the exact mouth shapes and word times;
     for other voices the words share the sentence's time by length (Hindi is
     written in Roman letters first).
-  - Light: a warm key light and a soft fill, slightly lower exposure, so skin
-    keeps its colour and shape instead of looking washed out.
+  - Look: a warm key light, a soft fill and a cool back light; tone mapping,
+    matte skin and clean hair edges are set in look.ts.
   - Body: goes left, right or to the middle (glides there, turned the way it
     goes), sits and stands, turns around, waves, namaste, thumbs up, points.
   - It never takes a click: the drawing lets every click through to the page;
@@ -31,7 +31,7 @@ import { gestureFor, moodFor, soundsWorried } from './expressions'
 import { countResult, reactionFor } from './reactions'
 import { pixelRatio, polish } from './look'
 import { getTeacher, onTeacherMove, onTeacherPoint, onTeacherReact, setTeacher, useTeacher, type Move, type PointAt, type Side } from './store'
-import { teacherModel, teacherPortrait, type TeacherInfo } from './teachers'
+import { teacherModel, teacherPortrait, UNNAMED, type TeacherInfo } from './teachers'
 import './teacher.css'
 
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -78,6 +78,11 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
   const [caption, setCaption] = useState<string | null>(null)
   const [x, setX] = useState<number | null>(null)
   const [attempt, setAttempt] = useState(0)
+  // The name only words the failure message: renaming the teacher must not reload the 3D model.
+  const nameRef = useRef(teacher.name)
+  useEffect(() => {
+    nameRef.current = teacher.name
+  }, [teacher.name])
 
   /* Turn the body to `to` radians over `ms` (0 = facing the student). */
   const turnTo = (to: number, ms: number, then?: () => void) => {
@@ -146,7 +151,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       headRef.current = head
       setTeacher({ status: 'ready', progress: 1 })
     })().catch(() => {
-      if (!dead) setTeacher({ status: 'failed', why: `${teacher.name} didn’t load. Check the connection and try again.` })
+      if (!dead) setTeacher({ status: 'failed', why: `${nameRef.current} didn’t load. Check the connection and try again.` })
     })
     return () => {
       dead = true
@@ -155,7 +160,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       head?.dispose()
       setTeacher({ status: 'off', sitting: false })
     }
-  }, [teacher.id, teacher.body, teacher.name, attempt])
+  }, [teacher.id, teacher.body, attempt])
 
   /* Browsers start sound only after a tap: wake the teacher's audio clock on the first one. */
   useEffect(() => {
@@ -417,7 +422,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       data-sitting={st.sitting ? '' : undefined}
       style={x === null ? { visibility: 'hidden' } : { transform: `translateX(${x}px)` }}
       role="region"
-      aria-label={`Virtual teacher ${teacher.name}`}
+      aria-label={teacher.name === UNNAMED ? 'Virtual teacher' : `Virtual teacher ${teacher.name}`}
     >
       {/* The teacher listens, thinks and answers here — not a box on the website. */}
       {!speaking.on && (talk.status === 'listening' || talk.status === 'thinking') && (
@@ -499,7 +504,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       <div className="tch-bar">
         <span className="tch-name">{teacher.name}</span>
         {brain.status === 'ready' && (
-          <span className="tch-chip" role="img" aria-label={`${teacher.name} is thinking on this device`} title="Thinking on this device (her own brain)">
+          <span className="tch-chip" role="img" aria-label={`${teacher.name} is thinking on this device`} title={`Thinking on this device (${teacher.body === 'M' ? 'his' : 'her'} own brain)`}>
             <Cpu size={12} aria-hidden="true" />
           </span>
         )}

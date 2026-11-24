@@ -212,3 +212,22 @@ test('reactions are never sent during a contest or a timed test', () => {
   const q = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'gate', 'QuestionView.tsx'), 'utf8');
   assert.match(q, /mode !== 'test' && \(o === 'correct'/);
 });
+
+test('the teacher steps away for every exam: the exam console tells her, the host hides her', () => {
+  const read = (...p) => fs.readFileSync(path.join(__dirname, '..', 'client', 'src', ...p), 'utf8');
+  assert.match(read('gate', 'cbt', 'CbtConsole.tsx'), /setTeacher\(\{ exam: true \}\)[\s\S]*return \(\) => setTeacher\(\{ exam: false \}\)/);
+  assert.match(read('voice', 'teacher', 'TeacherHost.tsx'), /const allowed = !!teacher && !st\.exam/);
+  for (const page of [['pages', 'gate', 'GateTestPage.tsx'], ['pages', 'contests', 'HostedPaperPage.tsx'], ['gate', 'GateCbtExam.tsx']]) assert.match(read(...page), /CbtConsole/, page.join('/'));
+});
+
+test('renaming the teacher never reloads the 3D model; the name only words messages', () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'voice', 'teacher', 'TeacherLayer.tsx'), 'utf8');
+  assert.match(src, /\}, \[teacher\.id, teacher\.body, attempt\]\)/);
+});
+
+test('no Hindi words in English lines the teacher speaks by rule', async () => {
+  const M = require('../src/voice/memory.js');
+  for (const mem of [null, { name: 'Asha', turns: 0 }, { turns: 3, topics: ['heaps'] }]) assert.doesNotMatch(M.greeting(mem, 'en-IN'), /\b(haan|bolo|achha|chalo)\b/i);
+  const vb = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'voice', 'VoiceButton.tsx'), 'utf8');
+  assert.doesNotMatch(vb, /'Haan, bolo/);
+});

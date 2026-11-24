@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { ChevronLeft, ChevronRight, FileText, LayoutGrid, Maximize, Minimize, Send, User, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Markdown } from '@/learn/md'
+import { setTeacher } from '@/voice/teacher/store'
 import { useAgentPageContext } from '@/context/AgentContext'
 import { useVoiceActions } from '@/voice/actions/useVoiceAction'
 import { spokenNumber } from '@/voice/actions/number'
@@ -195,6 +196,12 @@ export function CbtConsole({
     window.addEventListener('beforeunload', onBefore)
     return () => window.removeEventListener('beforeunload', onBefore)
   }, [running])
+
+  // The virtual teacher steps away for the whole exam (and comes back when it closes).
+  useEffect(() => {
+    setTeacher({ exam: true })
+    return () => setTeacher({ exam: false })
+  }, [])
 
   useAgentPageContext({
     examActive: true,
