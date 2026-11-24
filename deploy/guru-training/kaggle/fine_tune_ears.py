@@ -8,7 +8,27 @@
 # the same 120 Lahaja clips the site's current ears were measured on, by mother tongue).
 import glob, io, json, os, random, re, subprocess, sys, unicodedata, collections
 
-print(subprocess.run(["nvidia-smi"], capture_output=True, text=True).stdout, flush=True)
+def publish(folder, name):
+    """Upload results to the owner's Hugging Face (private) when the HF_TOKEN Kaggle secret is attached: lets an
+    interactive run (no queue) hand its results back, since only saved batch runs are reachable through the Kaggle API."""
+    try:
+        from kaggle_secrets import UserSecretsClient
+        token = UserSecretsClient().get_secret("HF_TOKEN")
+    except Exception as e:
+        print("No HF_TOKEN secret attached: results stay in /kaggle/working only.", e, flush=True)
+        return
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q", "huggingface_hub"], check=True)
+    from huggingface_hub import HfApi
+    api = HfApi(token=token)
+    repo = f"{api.whoami()['name']}/{name}"
+    api.create_repo(repo, private=True, exist_ok=True)
+    api.upload_folder(folder_path=folder, repo_id=repo, commit_message="From the Kaggle run")
+    print("Uploaded to https://huggingface.co/" + repo, flush=True)
+
+try:
+    print(subprocess.run(["nvidia-smi"], capture_output=True, text=True).stdout, flush=True)
+except FileNotFoundError:
+    sys.exit("No GPU: in the notebook editor choose Accelerator → GPU T4 x2 (or GPU P100), then Run All.")
 subprocess.run([sys.executable, "-m", "pip", "install", "-q", "transformers>=4.57", "peft>=0.17", "accelerate", "soundfile", "librosa", "pyarrow"], check=True)
 import numpy as np, pyarrow.parquet as pq, soundfile as sf, librosa, torch
 from peft import LoraConfig, get_peft_model
@@ -112,4 +132,7 @@ after = evaluate(model, "nexora-ears-turbo-hi")
 model.save_pretrained("/kaggle/working/ears-turbo-hi", safe_serialization=True)
 proc.save_pretrained("/kaggle/working/ears-turbo-hi")
 json.dump({"before": before, "after": after, "train_clips": len(train)}, open("/kaggle/working/ears_report.json", "w"), ensure_ascii=False, indent=1)
+import shutil
+shutil.copy("/kaggle/working/ears_report.json", "/kaggle/working/ears-turbo-hi/ears_report.json")
+publish("/kaggle/working/ears-turbo-hi", "nexora-ears-turbo-hi")
 print("done", flush=True)

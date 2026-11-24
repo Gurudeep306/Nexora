@@ -11,6 +11,23 @@
 # The teacher is an open-licence model (Qwen3, Apache-2.0), on 2 x T4 with vLLM.
 import glob, json, os, subprocess, sys, time
 
+def publish(folder, name):
+    """Upload results to the owner's Hugging Face (private) when the HF_TOKEN Kaggle secret is attached: lets an
+    interactive run (no queue) hand its results back, since only saved batch runs are reachable through the Kaggle API."""
+    try:
+        from kaggle_secrets import UserSecretsClient
+        token = UserSecretsClient().get_secret("HF_TOKEN")
+    except Exception as e:
+        print("No HF_TOKEN secret attached: results stay in /kaggle/working only.", e, flush=True)
+        return
+    subprocess.run([sys.executable, "-m", "pip", "install", "-q", "huggingface_hub"], check=True)
+    from huggingface_hub import HfApi
+    api = HfApi(token=token)
+    repo = f"{api.whoami()['name']}/{name}"
+    api.create_repo(repo, private=True, exist_ok=True)
+    api.upload_folder(folder_path=folder, repo_id=repo, commit_message="From the Kaggle run")
+    print("Uploaded to https://huggingface.co/" + repo, flush=True)
+
 print(subprocess.run(["nvidia-smi", "--query-gpu=name,memory.total,compute_cap", "--format=csv"], capture_output=True, text=True).stdout, flush=True)
 gpus = [l for l in subprocess.run(["nvidia-smi", "--query-gpu=compute_cap", "--format=csv,noheader"], capture_output=True, text=True).stdout.split() if l]
 if not gpus or float(gpus[0]) < 7.0:
@@ -42,4 +59,8 @@ with open(out_path, "a") as out:
             out.write(json.dumps({"i": j["i"], "content": r.outputs[0].text}, ensure_ascii=False) + "\n")
         out.flush()
         print(f"{k + len(chunk)}/{len(todo)} in {time.time() - t0:.0f}s", flush=True)
+os.makedirs("/kaggle/working/out", exist_ok=True)
+import shutil
+shutil.copy(out_path, "/kaggle/working/out/answers.jsonl")
+publish("/kaggle/working/out", "nexora-guru-answers")
 print("done", flush=True)
