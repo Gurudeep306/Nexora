@@ -53,6 +53,7 @@ export const GLOBAL_SPECS: ActionSpec[] = [
   { id: 'shortcuts.open', risk: 'safe', say: { en: ['keyboard shortcuts', 'show shortcuts', 'shortcuts'], hi: ['shortcuts show'] } },
   { id: 'assistant.open', risk: 'safe', say: { en: ['open assistant', 'ask ai', 'open ai', 'ai assistant', 'ask guru'], hi: ['ai open', 'assistant open'] } },
   { id: 'problem.random', risk: 'safe', say: { en: ['random problem', 'surprise me', 'give me a random problem', 'any problem'], hi: ['koi bhi problem', 'koi random problem'] } },
+  { id: 'teacher.studio', risk: 'safe', say: { en: ['teacher studio', 'open teacher studio', 'open the teacher studio', 'teacher settings', 'change my teacher', 'customise my teacher', 'customize my teacher'], hi: ['teacher studio kholo', 'teacher studio open', 'teacher badlo', 'teacher settings kholo'] } },
   { id: 'profile.open', risk: 'safe', say: { en: ['my profile', 'open my profile', 'show my profile'], hi: ['my profile show'] } },
   { id: 'auth.logout', risk: 'irreversible', say: { en: ['log out', 'logout', 'sign out'], hi: ['logout karo'] } },
 ]

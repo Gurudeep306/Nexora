@@ -18,9 +18,10 @@
   - Reduced motion: it appears in its new place instead of gliding.
 */
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { ArrowLeftRight, Armchair, Cpu, EyeOff, Keyboard, MessageCircle, PenLine, PersonStanding, Send, Square, X } from 'lucide-react'
+import { ArrowLeftRight, Armchair, Cpu, EyeOff, Hand, Keyboard, MessageCircle, MoreHorizontal, PenLine, PersonStanding, Send, SlidersHorizontal, Square, X, type LucideIcon } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import type { TalkingHead } from '@met4citizen/talkinghead'
-import { getVoicePrefs, type TeacherSize } from '../prefs'
+import { getVoicePrefs, useVoicePrefs, type TeacherSize } from '../prefs'
 import { onSentence, onWord, speak, stopSpeaking, useSpeaking, type SpokenSentence } from '../speak'
 import { VoiceOffer } from './VoiceOffer'
 import { useBrain } from '../brain/brain'
@@ -32,7 +33,7 @@ import { nodder, presenceFor, PRESENCE_SHAPES, type Presence } from './presence'
 import { gestureFor, moodFor, soundsWorried } from './expressions'
 import { countResult, reactionFor } from './reactions'
 import { pixelRatio, polish } from './look'
-import { getTeacher, onTeacherMove, onTeacherPoint, onTeacherReact, setTeacher, useTeacher, type Move, type PointAt, type Side } from './store'
+import { getTeacher, onTeacherMove, onTeacherPoint, onTeacherReact, setTeacher, teacherMove, useTeacher, type Move, type PointAt, type Side } from './store'
 import { teacherModel, teacherPortrait, UNNAMED, type TeacherInfo } from './teachers'
 import './teacher.css'
 
@@ -167,6 +168,78 @@ function TypeBox({ name, said, lang, onAsk, onClose }: { name: string; said: str
   )
 }
 
+interface MenuItem {
+  id: string
+  label: string
+  icon: LucideIcon
+  run: () => void
+}
+
+/** Everything else she can do, in one small menu above her bar (arrow keys move, Escape closes). */
+function TeacherMenu({ name, items }: { name: string; items: MenuItem[] }) {
+  const [open, setOpen] = useState(false)
+  const btn = useRef<HTMLButtonElement>(null)
+  const list = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!open) return
+    list.current?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.focus()
+    const away = (e: PointerEvent) => {
+      if (!list.current?.contains(e.target as Node) && !btn.current?.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('pointerdown', away, true)
+    return () => document.removeEventListener('pointerdown', away, true)
+  }, [open])
+  const onKey = (e: React.KeyboardEvent) => {
+    const all = [...(list.current?.querySelectorAll<HTMLButtonElement>('[role="menuitem"]') ?? [])]
+    const i = all.indexOf(document.activeElement as HTMLButtonElement)
+    const go = e.key === 'ArrowDown' ? (i + 1) % all.length : e.key === 'ArrowUp' ? (i - 1 + all.length) % all.length : e.key === 'Home' ? 0 : e.key === 'End' ? all.length - 1 : -1
+    if (go >= 0) {
+      e.preventDefault()
+      all[go]?.focus()
+    } else if (e.key === 'Escape' || e.key === 'Tab') {
+      if (e.key === 'Escape') e.preventDefault()
+      setOpen(false)
+      btn.current?.focus()
+    }
+  }
+  return (
+    <>
+      <button
+        ref={btn}
+        type="button"
+        className="tch-btn"
+        data-on={open ? '' : undefined}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={`More with ${name}`}
+        title="More"
+        onClick={() => setOpen((v) => !v)}
+      >
+        <MoreHorizontal aria-hidden="true" />
+      </button>
+      {open && (
+        <div ref={list} className="tch-menu" role="menu" aria-label={`More with ${name}`} onKeyDown={onKey}>
+          {items.map((it) => (
+            <button
+              key={it.id}
+              type="button"
+              role="menuitem"
+              tabIndex={-1}
+              onClick={() => {
+                setOpen(false)
+                it.run()
+              }}
+            >
+              <it.icon aria-hidden="true" />
+              {it.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </>
+  )
+}
+
 const ease = (k: number) => (k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2)
 
 export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; size: TeacherSize }) {
@@ -185,6 +258,10 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
   const talk = useTalk()
   const brain = useBrain()
   const board = useBoard()
+  const prefs = useVoicePrefs(null)[0]
+  const navigate = useNavigate()
+  const view = prefs.teacherView
+  const anchored = !!st.anchor
   const speakingNowRef = useRef(false)
   useEffect(() => {
     speakingNowRef.current = speaking.on
@@ -201,7 +278,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
 
   /* Drag her by her name bar to any side of the screen (the move button does the same from the keyboard). */
   const onBarDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLElement).closest('button') || x === null || e.button !== 0) return
+    if ((e.target as HTMLElement).closest('button') || x === null || anchored || e.button !== 0) return
     drag.current = { id: e.pointerId, from: e.clientX, x0: x, moved: false }
     e.currentTarget.setPointerCapture(e.pointerId)
   }
@@ -357,7 +434,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         const t: WordTimes = hasWords
           ? { words: exact!.words!, wtimes: exact!.wtimes!, wdurations: exact!.wdurations! }
           : s.energy?.length
-            ? wordTimesByEnergy(toRoman(s.text), s.ms, s.energy)
+            ? wordTimesByEnergy(toRoman(s.text), s.ms, s.energy, s.frameMs ?? 20)
             : wordTimes(toRoman(s.text), s.ms)
         const next = shownFor(s, s.live ? null : t)
         shownRef.current = next
@@ -379,8 +456,10 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         const silent = ctx.createBuffer(1, Math.max(1, Math.round((ctx.sampleRate * s.ms) / 1000)), ctx.sampleRate)
         head.stopSpeaking()
         // Hands: a gesture that fits the sentence, else they move a little while talking (only standing).
-        if (g && !getTeacher().sitting) head.playGesture(g, 2.2, g === 'index')
-        else if (!reduced()) head.speakWithHands(0, 0.6)
+        if (getVoicePrefs().teacherGestures) {
+          if (g && !getTeacher().sitting) head.playGesture(g, 2.2, g === 'index')
+          else if (!reduced()) head.speakWithHands(0, 0.6)
+        }
         // With exact mouth shapes TalkingHead uses them instead of guessing from the words.
         head.speakAudio({ audio: silent, ...t, ...(hasShapes ? { visemes: exact!.visemes!, vtimes: exact!.vtimes!, vdurations: exact!.vdurations! } : {}) }, { lipsyncLang: 'en' })
       }),
@@ -447,9 +526,9 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         const misses = countResult(result)
         const now = Date.now()
         // One reaction at a time, and never over her own talking or a conversation turn.
-        if (!head || now - lastReact.current < 5000 || speakingNowRef.current || getTalk().status !== 'idle') return
-        lastReact.current = now
         const prefs = getVoicePrefs()
+        if (!head || !prefs.teacherReacts || now - lastReact.current < 5000 || speakingNowRef.current || getTalk().status !== 'idle') return
+        lastReact.current = now
         const r = reactionFor(result, { misses, lang: prefs.lang, seed: now / 1000 })
         window.clearTimeout(moodTimer.current)
         head.setMood(r.mood)
@@ -475,7 +554,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
     const onMove = (e: PointerEvent) => {
       const head = headRef.current
       const now = performance.now()
-      if (!head || now - last < 2500 || speakingNowRef.current || getTalk().status !== 'idle' || Math.random() > 0.35) return
+      if (!head || !getVoicePrefs().teacherGlance || now - last < 2500 || speakingNowRef.current || getTalk().status !== 'idle' || Math.random() > 0.35) return
       last = now
       head.lookAt(e.clientX, e.clientY, 900)
     }
@@ -577,19 +656,19 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
     if (st.sitting) {
       // Held for an hour (until "stand up"); the camera drops with her so she stays in view.
       void head.playPose('sitting', null, 3600)
-      head.setView('upper', { cameraY: 2.2 })
-    } else if (standUp.current) {
+      head.setView(view === 'mid' ? 'upper' : view, { cameraY: 2.2 })
+    } else {
       // Stand up into the usual standing pose (stopPose alone keeps the last pose until an idle timer changes it).
-      void head.playPose(teacher.body === 'M' ? 'wide' : 'side', null, 4)
-      head.setView('upper', { cameraY: 0 })
+      if (standUp.current) void head.playPose(teacher.body === 'M' ? 'wide' : 'side', null, 4)
+      head.setView(view, { cameraY: 0 })
     }
     standUp.current = st.sitting
-  }, [st.sitting, st.status, teacher.body])
+  }, [st.sitting, st.status, teacher.body, view])
 
   /* Place: glide to the new side, turned the way it walks. */
   useLayoutEffect(() => {
     const el = root.current
-    if (!el) return
+    if (!el || anchored) return
     const place = () => {
       lastX.current = xFor(st.side, el.offsetWidth, st.atX)
       setX(lastX.current)
@@ -609,8 +688,14 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       window.removeEventListener('resize', place)
       if (back) el.removeEventListener('transitionend', back)
     }
-  }, [st.side, st.atX, size])
+  }, [st.side, st.atX, size, anchored])
 
+  const a = st.anchor
+  const placed = a
+    ? ({ transform: `translate(${a.x}px, ${a.y}px)`, ['--tch-w' as string]: `${a.w}px`, visibility: a.shown ? undefined : 'hidden' } as React.CSSProperties)
+    : x === null
+      ? { visibility: 'hidden' as const }
+      : { transform: `translateX(${dragX ?? x}px)` }
   const ai = speaking.engine === 'natural' || speaking.engine === 'kokoro'
   const lang = getVoicePrefs().lang
   const nextSide: Side = st.side === 'right' ? 'left' : 'right'
@@ -625,7 +710,8 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       data-sitting={st.sitting ? '' : undefined}
       data-state={presence}
       data-dragging={dragX !== null ? '' : undefined}
-      style={x === null ? { visibility: 'hidden' } : { transform: `translateX(${dragX ?? x}px)` }}
+      data-anchored={a ? '' : undefined}
+      style={placed}
       role="region"
       aria-label={teacher.name === UNNAMED ? 'Virtual teacher' : `Virtual teacher ${teacher.name}`}
     >
@@ -704,7 +790,7 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
       )}
       {speaking.on && !board.open && (
         <div className="tch-say" role="status" key="speaking">
-          {shown && <Caption shown={shown} liveIdx={liveIdx} lang={lang} />}
+          {shown && prefs.teacherCaptions && <Caption shown={shown} liveIdx={liveIdx} lang={lang} />}
           <div className="tch-say-foot">
             <span>
               {ai ? <strong>AI voice</strong> : null}
@@ -769,34 +855,21 @@ export default function TeacherLayer({ teacher, size }: { teacher: TeacherInfo; 
         >
           <Keyboard aria-hidden="true" />
         </button>
-        <button
-          type="button"
-          className="tch-btn"
-          data-on={board.open ? '' : undefined}
-          aria-pressed={board.open}
-          onClick={() => (board.open ? (stopSpeaking(), closeBoard(), setTeacher({ atX: null })) : void openBoard(pageTopic()))}
-          aria-label={board.open ? 'Close the whiteboard' : `${teacher.name}: explain this page on the whiteboard`}
-          title={board.open ? 'Close the whiteboard' : 'Whiteboard'}
-        >
-          <PenLine aria-hidden="true" />
-        </button>
-        <button type="button" className="tch-btn" onClick={() => setTeacher({ side: nextSide })} aria-label={`Move ${teacher.name} to the ${nextSide}`} title={`Move to the ${nextSide}`}>
-          <ArrowLeftRight aria-hidden="true" />
-        </button>
-        {st.status === 'ready' && (
-          <button
-            type="button"
-            className="tch-btn"
-            onClick={() => setTeacher({ sitting: !st.sitting })}
-            aria-label={st.sitting ? `Stand ${teacher.name} up` : `Sit ${teacher.name} down`}
-            title={st.sitting ? 'Stand up' : 'Sit down'}
-          >
-            {st.sitting ? <PersonStanding aria-hidden="true" /> : <Armchair aria-hidden="true" />}
-          </button>
-        )}
-        <button type="button" className="tch-btn" onClick={() => setTeacher({ hidden: true })} aria-label={`Hide ${teacher.name}`} title="Hide">
-          <EyeOff aria-hidden="true" />
-        </button>
+        <TeacherMenu
+          name={teacher.name}
+          items={[
+            { id: 'board', label: board.open ? 'Close the whiteboard' : 'Explain this page on the whiteboard', icon: PenLine, run: () => (board.open ? (stopSpeaking(), closeBoard(), setTeacher({ atX: null })) : void openBoard(pageTopic())) },
+            ...(anchored ? [] : [{ id: 'move', label: `Move to the ${nextSide}`, icon: ArrowLeftRight, run: () => setTeacher({ side: nextSide }) }]),
+            ...(st.status === 'ready'
+              ? [
+                  { id: 'sit', label: st.sitting ? 'Stand up' : 'Sit down', icon: st.sitting ? PersonStanding : Armchair, run: () => setTeacher({ sitting: !st.sitting }) },
+                  { id: 'wave', label: 'Wave hello', icon: Hand, run: () => teacherMove('wave') },
+                ]
+              : []),
+            ...(anchored ? [] : [{ id: 'studio', label: 'Teacher studio', icon: SlidersHorizontal, run: () => navigate('/teacher') }]),
+            ...(anchored ? [] : [{ id: 'hide', label: 'Hide', icon: EyeOff, run: () => setTeacher({ hidden: true }) }]),
+          ]}
+        />
       </div>
     </div>
   )

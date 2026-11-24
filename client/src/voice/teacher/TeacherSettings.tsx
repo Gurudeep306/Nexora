@@ -1,106 +1,61 @@
 /*
-  Settings → Preferences → Virtual teacher: off by default. A catalogue of
-  looks (teachers have no names of their own): pick one, give them a name,
-  choose how big they are drawn, and say hello.
+  Settings → Preferences → Virtual teacher: a short card that opens the
+  Teacher studio (/teacher, TeacherStudio.tsx), plus the parts the studio is
+  built from: the name field, the voice catalogue and what the teacher
+  remembers.
 */
-import { GraduationCap, Play, UserX, Volume2 } from 'lucide-react'
-import { Button, Card, CardContent } from '@/components/ui'
+import { GraduationCap, Play } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Button, buttonVariants, Card, CardContent } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
 import { useEffect, useRef, useState } from 'react'
 import { api } from '@/lib/api'
-import { useVoicePrefs, type TeacherSize } from '../prefs'
-import { OnDevice } from '../VoiceSettings'
-import { OwnVoice } from '../clone/OwnVoice'
+import { useVoicePrefs } from '../prefs'
 import { KOKORO_MB, loadKokoro, previewVoice } from '../speak'
 import { pickVoice, VOICES } from '../voices'
-import { introduce } from './intro'
-import { setTeacher } from './store'
-import { cleanName, TEACHERS, teacherById, teacherPortrait, UNNAMED, type TeacherId } from './teachers'
+import { cleanName, teacherById, teacherPortrait, UNNAMED, type TeacherId } from './teachers'
 import './teacher.css'
 import '../voice.css'
-
-const SIZES: { id: TeacherSize; label: string }[] = [
-  { id: 's', label: 'Small' },
-  { id: 'm', label: 'Medium' },
-  { id: 'l', label: 'Large' },
-]
 
 export function TeacherSettings() {
   const { user } = useAuth()
   const [prefs, setPrefs] = useVoicePrefs(user?.username)
   const chosen = teacherById(prefs.teacher)
-  // In sentences: the name the student gave, or "Your teacher" before they name them.
-  const said = chosen && chosen.name !== UNNAMED ? chosen.name : 'Your teacher'
   return (
     <Card>
-      <CardContent className="grid gap-4 px-5 py-4">
-        <div className="min-w-0">
-          <p className="mb-0 flex items-center gap-2 text-sm font-semibold text-text-primary">
-            <GraduationCap className="size-4 text-text-muted" aria-hidden="true" /> Virtual teacher
-          </p>
+      <CardContent className="flex flex-wrap items-center gap-4 px-5 py-4">
+        {chosen ? (
+          <img className="tch-card-face" src={teacherPortrait(chosen.id)} alt="" width={48} height={60} />
+        ) : (
+          <span className="tch-card-face tch-off" aria-hidden="true">
+            <GraduationCap className="size-5" />
+          </span>
+        )}
+        <div className="min-w-0 flex-1">
+          <p className="mb-0 text-sm font-semibold text-text-primary">Virtual teacher</p>
           <p className="mb-0 text-[12.5px] text-text-muted">
-            A 3D teacher who stands beside the page and says the answers with you, in an Indian voice, in English or Hindi. Say “go left”, “sit down”, “turn around” or
-            “namaste”. Each teacher is a one-time download of 3–5 MB; it needs a browser that can draw 3D.
+            {chosen
+              ? `${chosen.name === UNNAMED ? 'Your teacher' : chosen.name} is on. Choose the look, name, voice, speed and how ${chosen.body === 'M' ? 'he' : 'she'} behaves in the Teacher studio.`
+              : 'A 3D teacher who stands beside the page, listens and answers aloud. Off for now.'}
           </p>
         </div>
-        <fieldset className="tch-pick">
-          <legend>Choose a look</legend>
-          <label className="tch-opt">
-            <input type="radio" name="tch-who" checked={!chosen} onChange={() => setPrefs({ teacher: '' })} />
-            <span className="tch-off" aria-hidden="true">
-              <UserX className="size-5" />
-            </span>
-            Off
-          </label>
-          {TEACHERS.map((t) => (
-            <label key={t.id} className="tch-opt">
-              <input
-                type="radio"
-                name="tch-who"
-                checked={chosen?.id === t.id}
-                onChange={() => {
-                  setTeacher({ hidden: false })
-                  setPrefs({ teacher: t.id })
-                }}
-              />
-              <img src={teacherPortrait(t.id)} alt="" width={96} height={120} loading="lazy" />
-              <span className="tch-look">{prefs.teacherNames[t.id] || t.look}</span>
-            </label>
-          ))}
-        </fieldset>
-        {chosen && (
-          <div className="vc-consent">
-            <NameField key={chosen.id} id={chosen.id} male={chosen.body === 'M'} />
-            <VoicePicker male={chosen.body === 'M'} name={chosen.name} />
-            <OwnVoice name={said} />
-            <fieldset className="vc-field">
-              <legend>Size</legend>
-              <div className="flex flex-wrap gap-4">
-                {SIZES.map((s) => (
-                  <label key={s.id}>
-                    <input type="radio" name="tch-size" checked={prefs.teacherSize === s.id} onChange={() => setPrefs({ teacherSize: s.id })} /> {s.label}
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-            <div className="flex flex-wrap items-center gap-2">
-              <Button size="sm" variant="ghost" onClick={() => introduce(chosen)}>
-                <Volume2 aria-hidden="true" /> Say hello
-              </Button>
-              {!prefs.speak && <span className="vc-note">Reading answers aloud is off (Voice, above), so {said} only speaks when you ask.</span>}
-            </div>
-            <Memory name={said} />
-            <OnDevice who={said} male={chosen.body === 'M'} />
-          </div>
-        )}
-        <p className="mb-0 text-[11.5px] text-text-muted">3D people from the Microsoft Rocketbox Avatar Library (MIT licence), animated with TalkingHead (MIT); voices by Kokoro (Apache licence).</p>
+        <div className="flex flex-wrap items-center gap-2">
+          {chosen && (
+            <Button size="sm" variant="ghost" onClick={() => setPrefs({ teacher: '' })}>
+              Turn off
+            </Button>
+          )}
+          <Link to="/teacher" className={buttonVariants({ size: 'sm', variant: chosen ? 'secondary' : 'primary' })}>
+            {chosen ? 'Open Teacher studio' : 'Choose a teacher'}
+          </Link>
+        </div>
       </CardContent>
     </Card>
   )
 }
 
 /** The teacher's voice: a catalogue of on-device voices, each with a play button. */
-function VoicePicker({ male, name }: { male: boolean; name: string }) {
+export function VoicePicker({ male, name }: { male: boolean; name: string }) {
   const { user } = useAuth()
   const [prefs, setPrefs] = useVoicePrefs(user?.username)
   const [get, setGet] = useState<{ phase: 'idle' | 'loading' | 'failed'; p: number }>({ phase: 'idle', p: 0 })
@@ -168,7 +123,7 @@ function VoicePicker({ male, name }: { male: boolean; name: string }) {
 }
 
 /** The student names their teacher; saved when they leave the field or press Enter. */
-function NameField({ id, male }: { id: TeacherId; male: boolean }) {
+export function NameField({ id, male }: { id: TeacherId; male: boolean }) {
   const { user } = useAuth()
   const [prefs, setPrefs] = useVoicePrefs(user?.username)
   const saved = prefs.teacherNames[id] ?? ''
@@ -213,7 +168,7 @@ interface Remembered {
 }
 
 /** What the teacher remembers about you (src/voice/memory.js), and a way to erase it. */
-function Memory({ name }: { name: string }) {
+export function Memory({ name, male = false }: { name: string; male?: boolean }) {
   const [mem, setMem] = useState<Remembered | null>(null)
   const [busy, setBusy] = useState(false)
   useEffect(() => {
@@ -241,8 +196,8 @@ function Memory({ name }: { name: string }) {
       <legend>What {name} remembers</legend>
       <p className="vc-note">
         {facts.length
-          ? `${name} remembers ${facts.join('; ')}. It stays on NexoraGuru, and the name she remembers is never sent to an AI service.`
-          : `Nothing yet. As you talk, ${name} remembers your goal, recent topics and what felt hard, so the next session starts where you left off. The name she remembers is never sent to an AI service.`}
+          ? `${name} remembers ${facts.join('; ')}. It stays on NexoraGuru, and the name ${male ? 'he' : 'she'} remembers is never sent to an AI service.`
+          : `Nothing yet. As you talk, ${name} remembers your goal, recent topics and what felt hard, so the next session starts where you left off. The name ${male ? 'he' : 'she'} remembers is never sent to an AI service.`}
       </p>
       {facts.length > 0 && (
         <Button size="sm" variant="ghost" onClick={() => void forget()} loading={busy}>

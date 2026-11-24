@@ -17,6 +17,9 @@
   }
   /* Following the finger while dragged by the name bar. */
   .tch[data-dragging] { transition: none; }
+  /* Standing in the Teacher studio's preview box: placed from the top, following the box exactly. */
+  .tch[data-anchored] { top: 0; bottom: auto; transition: none; z-index: 30; }
+  .tch[data-anchored] .tch-bar { cursor: default; }
   .tch[data-size='s'] { --tch-w: 9.5rem; }
   .tch[data-size='l'] { --tch-w: 17rem; }
   @media (max-width: 640px) {
@@ -92,9 +95,45 @@
     border-radius: 999px;
     background: var(--color-bg-surface);
     pointer-events: auto;
+    position: relative;
     cursor: grab;
     touch-action: none;
     user-select: none;
+  }
+
+  /* Her "More" menu: opens above the bar, lined up with the side she stands on. */
+  .tch-menu {
+    position: absolute;
+    bottom: calc(100% + 0.375rem);
+    right: 0;
+    z-index: 2;
+    display: grid;
+    min-width: 13.5rem;
+    padding: 0.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.75rem);
+    background: var(--color-bg-surface);
+    box-shadow: var(--elev-2);
+    animation: tch-pop 0.14s ease-out both;
+  }
+  .tch[data-side='left'] .tch-menu { right: auto; left: 0; }
+  .tch-menu button {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.4375rem 0.625rem;
+    border-radius: calc(var(--kit-card-radius-sm, 0.75rem) - 0.25rem);
+    font-size: 0.8125rem;
+    color: var(--color-text-primary);
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .tch-menu button svg { width: 0.9375rem; height: 0.9375rem; color: var(--color-text-muted); flex-shrink: 0; }
+  .tch-menu button:hover,
+  .tch-menu button:focus-visible {
+    background: color-mix(in oklab, var(--color-text-primary) 7%, transparent);
+    outline: none;
   }
   .tch[data-dragging] .tch-bar { cursor: grabbing; }
   /* The bar is wider than a small teacher: it lines up with the screen edge she stands at, so it never runs off screen. */
@@ -346,6 +385,7 @@
     padding: 0.375rem 0.375rem 0.5rem;
     border: 1px solid var(--color-border);
     border-radius: var(--kit-card-radius-sm, 0.75rem);
+    background: var(--color-bg-surface);
     font-size: 0.8125rem;
     color: var(--color-text-secondary);
     cursor: pointer;
@@ -490,7 +530,7 @@
 @media (prefers-reduced-motion: reduce) {
   .tch { transition: none; }
   .tch-load:not(.tch-fail) img { animation: none; }
-  .tch-dots i, .tch-say { animation: none; }
+  .tch-dots i, .tch-say, .tch-menu { animation: none; }
   .tch-meter i, .tch-cap span { transition: none; }
 }
 

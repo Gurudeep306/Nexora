@@ -61,6 +61,7 @@ export const pageLoaders = {
   SettingsPage: () => import('@/pages/SettingsPage'),
   WelcomePage: () => import('@/pages/WelcomePage'),
   ThemeCentrePage: () => import('@/pages/ThemeCentrePage'),
+  TeacherStudio: () => import('@/voice/teacher/TeacherStudio'),
   AiLabPage: () => import('@/pages/AiLabPage'),
   NotFoundPage: () => import('@/pages/NotFoundPage'),
   AdminPage: () => import('@/pages/AdminPage'),

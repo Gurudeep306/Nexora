@@ -44,8 +44,10 @@ export interface SpokenSentence {
   ms: number
   /** Exact word times and mouth shapes, when the voice server sent them (our own voice server does). */
   timing?: VoiceTiming | null
-  /** Loudness every 20 ms (0–1), when there are no word times: the lips rest in the pauses. */
+  /** Loudness every `frameMs` (0–1), when there are no word times: the lips rest in the pauses. */
   energy?: number[]
+  /** How long each loudness value covers, in ms (20, less when played faster). */
+  frameMs?: number
   /** The device voice: word starts follow as `onWord` events where the voice reports them. */
   live?: boolean
 }
@@ -162,6 +164,18 @@ interface Clip {
   timing?: VoiceTiming | null
   /** Loudness every 20 ms, when the voice gives no word times: the teacher's lips follow the sound (lipsync.ts). */
   energy?: number[]
+  /** Played this much faster (the student's speaking speed), when the voice couldn't make it at that speed itself. */
+  stretch?: number
+}
+
+/** The student's speaking speed (Teacher studio): 1 = the voice's own pace. */
+const rate = () => getVoicePrefs().rate || 1
+
+/** Word and mouth times of a clip played `k` times as fast. */
+function faster(t: VoiceTiming | null | undefined, k: number): VoiceTiming | null | undefined {
+  if (!t || k === 1) return t
+  const d = (xs?: number[]) => xs?.map((x) => Math.round(x / k))
+  return { ...t, wtimes: d(t.wtimes), wdurations: d(t.wdurations), vtimes: d(t.vtimes), vdurations: d(t.vdurations) }
 }
 
 /** Add the loudness of a clip that has no word times of its own (Azure's voices): decoded once, off the main sound. */
@@ -201,7 +215,7 @@ async function naturalClip(text: string, lang: string, voice: string, signal: Ab
     const j = (await r.json()) as { ok?: boolean; audio?: string; mime?: string; timing?: VoiceTiming | null }
     if (!j.ok || !j.audio) return null
     const blob = b64Blob(j.audio, j.mime === 'audio/wav' ? 'audio/wav' : 'audio/mpeg')
-    return blob.size ? { blob, timing: j.timing ?? null } : null
+    return blob.size ? { blob, timing: j.timing ?? null, stretch: rate() } : null
   } catch {
     return null
   }
@@ -323,7 +337,8 @@ function wavBlob(data: Float32Array, rate: number): Blob {
 async function kokoroClip(text: string, voice: string): Promise<Clip | null> {
   try {
     const tts = await loadKokoro()
-    tts.setup({ voice, language: 'en-us', speed: 1, audioEncoding: 'wav' })
+    // The on-device voice speaks at the chosen speed itself (better than speeding the sound up).
+    tts.setup({ voice, language: 'en-us', speed: rate(), audioEncoding: 'wav' })
     const out = await tts.synthesize({ input: await phonetic(text) })
     const parts = out.filter((m) => m.type === 'audio').map((m) => m.data as HeadTtsAudio)
     const first = parts[0]
@@ -343,7 +358,7 @@ async function ownClip(text: string): Promise<Clip | null> {
   const audio = await cloneSay(text)
   if (!audio?.length) return null
   levelUp(audio)
-  return { blob: wavBlob(audio, 24000), timing: null, energy: energyEnvelope(audio, 24000) }
+  return { blob: wavBlob(audio, 24000), timing: null, energy: energyEnvelope(audio, 24000), stretch: rate() }
 }
 
 /* ── speaking ── */
@@ -367,7 +382,7 @@ function deviceSay(parts: string[], lang: string, my: number) {
     const u = new SpeechSynthesisUtterance(text)
     u.lang = lang
     u.voice = voice
-    u.rate = 1.02
+    u.rate = 1.02 * rate()
     u.onstart = () => {
       if (my === session) announce({ text, lang, ms: estimateMs(text, u.rate), live: true })
     }
@@ -400,10 +415,15 @@ function play(clip: Clip, my: number, text: string, lang: string): Promise<void>
     if (my !== session) return resolve()
     const url = URL.createObjectURL(clip.blob)
     const a = new Audio(url)
+    const k = clip.stretch && clip.stretch !== 1 ? clip.stretch : 1
+    if (k !== 1) {
+      a.playbackRate = k
+      a.preservesPitch = true
+    }
     playing = a
     a.onplaying = () => {
       a.onplaying = null
-      if (my === session) announce({ text, lang, ms: Number.isFinite(a.duration) && a.duration > 0 ? Math.round(a.duration * 1000) : estimateMs(text), timing: clip.timing, energy: clip.energy })
+      if (my === session) announce({ text, lang, ms: Number.isFinite(a.duration) && a.duration > 0 ? Math.round((a.duration * 1000) / k) : estimateMs(text), timing: faster(clip.timing, k), energy: clip.energy, frameMs: 20 / k })
     }
     const done = () => {
       URL.revokeObjectURL(url)

@@ -399,6 +399,40 @@ English and Hindi, presence shapes present in every model, nods, typing).
 Browser: typing, thinking, the answer, dragging, captions moving word by
 word, axe 0 in light, dark and at 360 px, no sideways scroll.
 
+### 3.2.10 The Teacher studio, a tidy bar and new settings (2026-11-24)
+
+- **Teacher studio** (`/teacher`, `TeacherStudio.tsx`, `studio.css`): one page
+  for everything about the teacher, with the real teacher standing large in
+  a preview and changing as the settings change. The preview is not a
+  second drawing: the page marks a box (`Stage`) and TeacherLayer stands in
+  it (`store.anchor`; she is hidden while the box is scrolled away). Under
+  her: Say hello, Talk, Wave, Namaste, Thumbs up, Turn around. Sections:
+  who teaches you (the catalogue), name, voice (speed, read aloud, the
+  voice catalogue, your own voice), on screen (framing, size beside pages,
+  captions), behaviour, memory and privacy (memory, the on-device brain).
+  Settings → Preferences keeps one short card that opens it. Reached from
+  that card, her menu, Explore and the spoken command "teacher studio" /
+  "teacher badlo". It is deliberately **not** a spoken place in the nav
+  list: "Teacher …" as a place made "teacher dikhao" ambiguous (the sweep
+  caught it).
+- **New settings** (`prefs.ts`): speaking speed (`rate`: Slower 0.85,
+  Normal, Faster 1.15; the on-device voices speak at that speed themselves,
+  other voices are played faster or slower with the pitch kept, and the
+  lips and captions follow the new times); framing (`teacherView`: face,
+  upper body, to the waist); captions on or off; hands while talking;
+  reacting to results; glancing where you point.
+- **Her bar**: name, Talk, Type and one **More** menu (whiteboard, move,
+  sit or stand, wave, Teacher studio, hide) instead of seven small icons.
+  A real menu: arrow keys, Home/End, Escape returns to the button, a click
+  outside closes it.
+- **Fixed**: what she remembers said "she" for men teachers; the catalogue
+  cards were see-through, so a theme's night sky showed through them.
+
+Browser: `scripts/voice/sweep/teacher-studio.cjs` (22 checks: she stands
+centred in the preview; framing, speed and captions save; a new name shows
+on her bar; the menu by keyboard; the Settings card; axe 0 and no sideways
+scroll in light, dark, 360 px and with no teacher).
+
 ### 3.3 Honest limits
 
 - **No walking legs yet.** It glides (turned sideways) rather than taking

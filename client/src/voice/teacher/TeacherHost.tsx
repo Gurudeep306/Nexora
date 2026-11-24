@@ -83,7 +83,7 @@ export function TeacherHost() {
   useVoiceActions(allowed ? actions : [])
 
   if (!teacher || !allowed) return null
-  if (st.hidden) {
+  if (st.hidden && !st.anchor) {
     return (
       <button type="button" className="tch-peek" data-side={st.side === 'left' ? 'left' : 'right'} onClick={() => setTeacher({ hidden: false })}>
         <img src={teacherPortrait(teacher.id)} alt="" width={32} height={40} />

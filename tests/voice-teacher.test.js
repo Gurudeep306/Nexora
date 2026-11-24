@@ -319,3 +319,17 @@ test('typing to the teacher is handled like speaking, and remembered while she t
   assert.equal(talk.getTalk().asked, 'deadlock kya hai', 'what was heard stays while she thinks');
   off();
 });
+
+test('Teacher studio settings are kept safe: speed within limits, known framings, switches on by default', async () => {
+  const src = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'voice', 'prefs.ts'), 'utf8');
+  // prefs.ts talks to the API; check its defaults and limits by reading them, as the other prefs checks do.
+  assert.match(src, /rate: 1, teacherView: 'upper', teacherCaptions: true, teacherGestures: true, teacherReacts: true, teacherGlance: true/);
+  assert.match(src, /Math\.min\(1\.25, Math\.max\(0\.8,/, 'speed is kept between 0.8 and 1.25');
+  assert.match(src, /r\.teacherView === 'head' \|\| r\.teacherView === 'mid' \? r\.teacherView : 'upper'/);
+  assert.match(src, /export const RATES = \[0\.85, 1, 1\.15\]/);
+  // Every studio route and label is real: the page is routed and listed where people look.
+  const app = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'App.tsx'), 'utf8');
+  assert.match(app, /path="\/teacher"/);
+  const features = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'pages', 'explore', 'features.ts'), 'utf8');
+  assert.match(features, /to: '\/teacher'/);
+});

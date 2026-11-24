@@ -47,12 +47,27 @@ export interface VoicePrefs {
   teacherSize: TeacherSize
   /** The names the student gave each teacher (teachers have no names of their own). */
   teacherNames: Partial<Record<TeacherId, string>>
+  /** How fast the voice speaks (0.8–1.25; 1 = the voice's own pace). */
+  rate: number
+  /** How much of the teacher is shown: face and shoulders, upper body, or down to the waist. */
+  teacherView: TeacherView
+  /** Her words lit one by one in her bubble while she speaks (off: only the Stop button shows). */
+  teacherCaptions: boolean
+  /** Hands move while she talks (thumbs up, namaste, pointing…). */
+  teacherGestures: boolean
+  /** She reacts to real results: a judge verdict, a GATE answer. */
+  teacherReacts: boolean
+  /** Now and then she glances at where the student points. */
+  teacherGlance: boolean
 }
 
 export type TeacherSize = 's' | 'm' | 'l'
+export type TeacherView = 'head' | 'upper' | 'mid'
+/** The speaking speeds offered (Teacher studio). */
+export const RATES = [0.85, 1, 1.15] as const
 const TEACHER_IDS: readonly string[] = TEACHERS.map((t) => t.id)
 
-export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true, engine: 'auto', voice: '', kokoro: false, kokoroVoice: '', ownVoice: false, brain: false, teacher: '', teacherSize: 'm', teacherNames: {} }
+export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true, engine: 'auto', voice: '', kokoro: false, kokoroVoice: '', ownVoice: false, brain: false, teacher: '', teacherSize: 'm', teacherNames: {}, rate: 1, teacherView: 'upper', teacherCaptions: true, teacherGestures: true, teacherReacts: true, teacherGlance: true }
 const LOCAL = 'nexora:voice'
 const KEY = 'voice_prefs'
 
@@ -77,6 +92,12 @@ function sanitize(raw: unknown): VoicePrefs {
     teacher: teacherPref(r.teacher),
     teacherSize: r.teacherSize === 's' || r.teacherSize === 'l' ? r.teacherSize : 'm',
     teacherNames: teacherNames(r),
+    rate: typeof r.rate === 'number' && Number.isFinite(r.rate) ? Math.min(1.25, Math.max(0.8, Math.round(r.rate * 100) / 100)) : 1,
+    teacherView: r.teacherView === 'head' || r.teacherView === 'mid' ? r.teacherView : 'upper',
+    teacherCaptions: r.teacherCaptions !== false,
+    teacherGestures: r.teacherGestures !== false,
+    teacherReacts: r.teacherReacts !== false,
+    teacherGlance: r.teacherGlance !== false,
   }
 }
 
