@@ -4,27 +4,43 @@
 #   nexora-ears-hindi   parquet shards of ai4bharat/IndicVoices and ai4bharat/Kathbath (CC-BY-4.0), Hindi
 #   nexora-ears-test    ai4bharat/Lahaja (MIT): accents never trained on, the test
 # Base: openai/whisper-large-v3-turbo (MIT), LoRA, fp16 on a T4.
+# Progress is saved to the owner's Hugging Face every 100 steps (nexora-ears-progress, private): run it again
+# after any stop and it continues from the last save.
 # Output (/kaggle/working): ears-turbo-hi/ (merged model), ears_report.json (WER/CER before and after on
 # the same 120 Lahaja clips the site's current ears were measured on, by mother tongue).
 import glob, io, json, os, random, re, subprocess, sys, unicodedata, collections
 
-def publish(folder, name):
-    """Upload results to the owner's Hugging Face (private) when the HF_TOKEN Kaggle secret is attached: lets an
-    interactive run (no queue) hand its results back, since only saved batch runs are reachable through the Kaggle API."""
+def hf_token():
+    """The owner's Hugging Face token: the HF_TOKEN env (Colab sets it from its Secrets panel), else the Kaggle secret."""
+    token = os.environ.get("HF_TOKEN")
+    if token: return token
     try:
-        token = os.environ.get("HF_TOKEN")  # Colab: set from its Secrets panel
-        if not token:
-            from kaggle_secrets import UserSecretsClient
-            token = UserSecretsClient().get_secret("HF_TOKEN")
-    except Exception as e:
-        print("No HF_TOKEN secret attached: results stay in the output folder only.", e, flush=True)
-        return
+        from google.colab import userdata
+        return userdata.get("HF_TOKEN")
+    except Exception:
+        pass
+    try:
+        from kaggle_secrets import UserSecretsClient
+        return UserSecretsClient().get_secret("HF_TOKEN")
+    except Exception:
+        return None
+
+def hf_api():
+    token = hf_token()
+    if not token: return None
     subprocess.run([sys.executable, "-m", "pip", "install", "-q", "huggingface_hub"], check=True)
     from huggingface_hub import HfApi
-    api = HfApi(token=token)
+    return HfApi(token=token)
+
+def publish(folder, name):
+    """Upload results to the owner's Hugging Face (private)."""
+    api = hf_api()
+    if not api:
+        print("No HF_TOKEN secret attached: results stay in the output folder only.", flush=True)
+        return
     repo = f"{api.whoami()['name']}/{name}"
     api.create_repo(repo, private=True, exist_ok=True)
-    api.upload_folder(folder_path=folder, repo_id=repo, commit_message="From the Kaggle run")
+    api.upload_folder(folder_path=folder, repo_id=repo, commit_message="From the training run")
     print("Uploaded to https://huggingface.co/" + repo, flush=True)
 
 try:
@@ -92,8 +108,33 @@ def evaluate(model, tag):
     print(json.dumps(out, ensure_ascii=False), flush=True)
     return out
 
+# ── progress is kept on the owner's Hugging Face (private), so a stopped session continues where it stopped ──
+SAVES = "nexora-ears-progress"
+CKPT = f"{OUT}/progress"
+api = hf_api()
+save_repo = None
+resume = None
+before = None
+if api:
+    save_repo = f"{api.whoami()['name']}/{SAVES}"
+    api.create_repo(save_repo, private=True, exist_ok=True)
+    from huggingface_hub import snapshot_download
+    snapshot_download(save_repo, local_dir=CKPT, token=hf_token())
+    found = sorted(glob.glob(f"{CKPT}/checkpoint-*"), key=lambda d: int(d.rsplit("-", 1)[1]))
+    if found and os.path.exists(f"{found[-1]}/trainer_state.json"):
+        resume = found[-1]
+        print(f"Continuing from the last save: step {resume.rsplit('-', 1)[1]}", flush=True)
+    if os.path.exists(f"{CKPT}/before.json"):
+        before = json.load(open(f"{CKPT}/before.json"))
+else:
+    print("No HF_TOKEN: progress can't be saved, so a stopped session would start again.", flush=True)
+
 model = WhisperForConditionalGeneration.from_pretrained(BASE, torch_dtype=torch.float16, device_map={"": 0})
-before = evaluate(model, BASE)
+if before is None:
+    before = evaluate(model, BASE)
+    os.makedirs(CKPT, exist_ok=True)
+    json.dump(before, open(f"{CKPT}/before.json", "w"), ensure_ascii=False)
+    if api: api.upload_file(path_or_fileobj=f"{CKPT}/before.json", path_in_repo="before.json", repo_id=save_repo)
 
 # ── training data: real voices, balanced by state and gender ──
 rows = []
@@ -132,9 +173,25 @@ model = get_peft_model(model, LoraConfig(r=32, lora_alpha=64, lora_dropout=0.05,
 model.print_trainable_parameters()
 for p in model.parameters():  # the small trained part in full precision (fp16 training needs it)
     if p.requires_grad: p.data = p.data.float()
-args = Seq2SeqTrainingArguments(output_dir="out", per_device_train_batch_size=2, gradient_accumulation_steps=8, gradient_checkpointing=True, gradient_checkpointing_kwargs={"use_reentrant": False}, learning_rate=1e-4, warmup_steps=100,
-    max_steps=min(4000, len(train) // 16 * 2), fp16=True, logging_steps=50, save_strategy="no", report_to=[], remove_unused_columns=False, label_names=["labels"])
-Seq2SeqTrainer(model=model, args=args, train_dataset=DS(), data_collator=collate).train()
+from transformers import TrainerCallback
+
+class SaveToHub(TrainerCallback):
+    """After each save (every 100 steps, about 25 minutes on a T4), copy it to Hugging Face and drop older saves there."""
+    def on_save(self, args, state, control, **kw):
+        if not api: return
+        d = f"{CKPT}/checkpoint-{state.global_step}"
+        try:
+            api.upload_folder(folder_path=d, path_in_repo=f"checkpoint-{state.global_step}", repo_id=save_repo, commit_message=f"step {state.global_step}")
+            old = {f.split("/")[0] for f in api.list_repo_files(save_repo) if f.startswith("checkpoint-") and not f.startswith(f"checkpoint-{state.global_step}/")}
+            for o in old: api.delete_folder(path_in_repo=o, repo_id=save_repo, commit_message="older save")
+            print(f"Saved step {state.global_step} to Hugging Face: safe to stop now.", flush=True)
+        except Exception as e:
+            print("Couldn't save to Hugging Face this time (will try at the next save):", e, flush=True)
+
+args = Seq2SeqTrainingArguments(output_dir=CKPT, per_device_train_batch_size=2, gradient_accumulation_steps=8, gradient_checkpointing=True, gradient_checkpointing_kwargs={"use_reentrant": False}, learning_rate=1e-4, warmup_steps=100,
+    max_steps=min(4000, len(train) // 16 * 2), fp16=True, logging_steps=50, save_strategy="steps", save_steps=100, save_total_limit=1, seed=1,
+    report_to=[], remove_unused_columns=False, label_names=["labels"])
+Seq2SeqTrainer(model=model, args=args, train_dataset=DS(), data_collator=collate, callbacks=[SaveToHub()]).train(resume_from_checkpoint=resume)
 
 model = model.merge_and_unload()
 after = evaluate(model, "nexora-ears-turbo-hi")
