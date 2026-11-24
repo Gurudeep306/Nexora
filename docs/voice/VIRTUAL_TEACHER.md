@@ -334,7 +334,7 @@ the teacher to speak in, with no cost at all.
   - The free Oracle server: it has no GPU and is too slow (measured above).
   - IndicF5: its licence for commercial use is unclear.
 
-### 3.2.8 Full audit (2026-11-24, this PR)
+### 3.2.8 Full audit (2026-11-24, #265)
 
 I read every file of the teacher (layer, host, store, talk, mic, speech,
 board, guide, voices, own voice, memory) and checked each behaviour in a
