@@ -99,6 +99,10 @@ async function signup(b, name) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username: name, password: 'secret123' }),
   });
+  assert.equal(res.status, 200, `login failed for ${name}`);
+  // The body is deliberately not read: the next request may arrive while the
+  // session row is still being written, and must still be signed in
+  // (tests/session-store.test.js).
   return res.headers.get('set-cookie').split(';')[0];
 }
 function parseSse(text) {
