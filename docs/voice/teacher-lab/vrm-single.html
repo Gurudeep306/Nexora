@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Stylised teacher demo</title>
+<style>html, body { margin: 0; height: 100%; background: #d9d4cc; overflow: hidden; } canvas { display: block; }</style>
+<script type="importmap">
+{ "imports": {
+  "three": "./three/build/three.module.js",
+  "three/addons/": "./three/examples/jsm/",
+  "@pixiv/three-vrm": "./node_modules/@pixiv/three-vrm/lib/three-vrm.module.js"
+} }
+</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm'
+
+const q = new URLSearchParams(location.search)
+const W = 1280, H = 720
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true })
+renderer.setSize(W, H); renderer.setPixelRatio(1)
+renderer.outputColorSpace = THREE.SRGBColorSpace
+document.body.appendChild(renderer.domElement)
+const scene = new THREE.Scene()
+scene.background = new THREE.Color(0xd9d4cc)
+scene.add(new THREE.HemisphereLight(0xffffff, 0xb8b0a8, 1.6))
+const key = new THREE.DirectionalLight(0xfff1e0, 1.6); key.position.set(-1, 1.5, 2); scene.add(key)
+const camera = new THREE.PerspectiveCamera(22, W / H, 0.05, 50)
+
+const loader = new GLTFLoader()
+loader.register((p) => new VRMLoaderPlugin(p))
+const gltf = await loader.loadAsync(q.get('model') || 'sample.vrm')
+const vrm = gltf.userData.vrm
+VRMUtils.rotateVRM0(vrm)
+scene.add(vrm.scene)
+// Arms down (the model comes in a T-pose).
+const hb = (n) => vrm.humanoid.getNormalizedBoneNode(n)
+hb('leftUpperArm').rotation.z = -1.2; hb('rightUpperArm').rotation.z = 1.2
+hb('leftLowerArm').rotation.z = -0.15; hb('rightLowerArm').rotation.z = 0.15
+vrm.update(0)
+const head = new THREE.Vector3(); hb('head').getWorldPosition(head)
+camera.position.set(head.x, head.y + 0.02, head.z + 1.7)
+camera.lookAt(head.x, head.y - 0.12, head.z)
+
+// The same speech and the same AI lip-sync curves as the realistic demo.
+const LINE = q.get('line') || 'line'
+const AI = await (await fetch(`${LINE}.arkit.json`)).json()
+const audio = await new OfflineAudioContext(1, 1, 24000).decodeAudioData(await (await fetch(`${LINE}.wav`)).arrayBuffer())
+const DURATION = audio.duration * 1000
+const timing = await (await fetch(`${LINE}.timing.json`)).json()
+const smooth = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x))
+let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647)
+const blinks = []; for (let t = 600; t < DURATION + 3000; t += 2600 + rnd() * 2400) blinks.push(t)
+const ph = Array.from({ length: 6 }, () => rnd() * 6.28)
+const noise = (t, f, k) => Math.sin(t * f + ph[k]) * 0.6 + Math.sin(t * f * 2.31 + ph[k + 1]) * 0.3 + Math.sin(t * f * 4.7 + ph[(k + 2) % 6]) * 0.1
+
+// A stylised face has five mouth shapes (aa, ih, ou, ee, oh): made from the AI's 52 face values.
+function mouth(ms) {
+  const f = (ms / 1000) * AI.fps, i = Math.floor(f), k = f - i
+  const a = AI.frames[i] || {}, b = AI.frames[i + 1] || a
+  const v = (n) => (a[n] || 0) * (1 - k) + (b[n] || 0) * k
+  const open = Math.min(1, v('jawOpen') * 5.0)
+  const round = Math.min(1, (v('mouthFunnel') + v('mouthPucker')) * 2.2)
+  const wide = Math.min(1, (v('mouthStretchLeft') + v('mouthStretchRight') + v('mouthSmileLeft') + v('mouthSmileRight')) * 1.4)
+  return { aa: open * (1 - round * 0.6) * (1 - wide * 0.3), oh: open * round, ou: round * (1 - open) * 0.9, ee: wide * open * 0.8, ih: wide * (1 - open) * 0.6 }
+}
+
+window.renderAt = (ms) => {
+  const em = vrm.expressionManager
+  for (const [k, val] of Object.entries(mouth(ms))) em.setValue(k, Math.max(0, Math.min(1, val)))
+  let bl = 0; for (const b of blinks) { const d = ms - b; if (d > -60 && d < 220) bl = Math.max(bl, d < 0 ? smooth((d + 60) / 60) : 1 - smooth(d / 220)) }
+  em.setValue('blink', bl)
+  em.setValue('happy', 0.35 * (1 - smooth((ms - 900) / 900)) + 0.4 * smooth((ms - (DURATION - 700)) / 500))
+  const t = ms / 1000, amp = ms > 300 && ms < DURATION ? 1 : 0.6
+  let nod = 0; for (const wt of timing.wtimes) { const d = ms - wt; if (d > 0 && d < 400) nod += Math.sin((d / 400) * Math.PI) * 0.02 }
+  hb('neck').rotation.set((noise(t, 0.6, 0) * 0.03 + nod) * amp, noise(t, 0.4, 1) * 0.05 * amp, noise(t, 0.5, 2) * 0.02 * amp)
+  hb('spine').rotation.x = Math.sin(t * 1.6) * 0.01
+  vrm.update(1 / 25)
+  // Constraints (sleeves aiming at the forearm) read world positions: settle them with the fresh pose.
+  vrm.scene.updateMatrixWorld(true)
+  vrm.nodeConstraintManager?.update()
+  renderer.render(scene, camera)
+}
+window.__vrm = vrm
+window.__render = () => renderer.render(scene, camera)
+window.DURATION = DURATION
+window.renderAt(0)
+window.ready = true
+</script>
+</body>
+</html>

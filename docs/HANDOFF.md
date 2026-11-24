@@ -65,6 +65,9 @@ Live site last deployed at `6c04b8fe` (PR #226).
 
 **Merged and live (PRs, newest first):**
 
+
+> **Virtual teacher, 2026-11-25:** the owner rejected the current 3D teacher; the rebuild plan, decisions, licences, demos and next steps are in `docs/voice/TEACHER_HANDOFF.md`. Read it before touching `client/src/voice/teacher/`.
+
 | PR | What |
 |---|---|
 | #257 | **The teacher listens, not the website**: with a teacher on screen, every voice turn is hers (listening with nods, live words and Cancel in her bubble, thinking, answering by voice or in her bubble); the website box only for taps (confirm/choose/check). Conversational speech style for every teacher answer, natural pauses between sentences, interrupting her by speaking (`bargeIn.ts`, self-disabling on false alarms), and she offers her own natural voice (Kokoro, one-time download) once. Browser sweep 53/53. |
