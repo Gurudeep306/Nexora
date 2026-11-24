@@ -43,6 +43,115 @@ export function wordTimes(text: string, ms: number): WordTimes {
   return { words, wtimes, wdurations }
 }
 
+/** The loudness of a voice clip, one value (0–1) per `frameMs`, scaled so normal speech is near 1. */
+export function energyEnvelope(samples: ArrayLike<number>, rate: number, frameMs = 20): number[] {
+  const n = Math.max(1, Math.round((rate * frameMs) / 1000))
+  const out: number[] = []
+  for (let i = 0; i < samples.length; i += n) {
+    let s = 0
+    const end = Math.min(samples.length, i + n)
+    for (let j = i; j < end; j++) s += samples[j] * samples[j]
+    out.push(Math.sqrt(s / Math.max(1, end - i)))
+  }
+  // Scaled by a loud-but-not-peak frame, so one click doesn't make everything look quiet.
+  const ref = [...out].sort((a, b) => a - b)[Math.floor(out.length * 0.9)] || 0
+  return ref > 0 ? out.map((v) => Math.min(1, v / ref)) : out.map(() => 0)
+}
+
+/** Where the voice is sounding (ms spans), from an envelope: short gaps are bridged, short blips dropped. */
+export function voicedSpans(env: number[], frameMs = 20, level = 0.12): [number, number][] {
+  const spans: [number, number][] = []
+  for (let i = 0; i < env.length; i++) {
+    if (env[i] < level) continue
+    const s = i * frameMs
+    while (i < env.length && env[i] >= level) i++
+    const e = i * frameMs
+    const last = spans[spans.length - 1]
+    if (last && s - last[1] < 90) last[1] = e
+    else spans.push([s, e])
+  }
+  return spans.filter(([s, e]) => e - s >= 40)
+}
+
+/**
+ * Word times that follow the sound itself: the words share only the time the
+ * voice is sounding, so the mouth rests in every pause and never runs ahead
+ * or behind. Used when the voice gives no word times of its own (the
+ * student's own voice, Azure). Falls back to `wordTimes` when the clip is
+ * nearly silent.
+ */
+export function wordTimesByEnergy(text: string, ms: number, env: number[], frameMs = 20): WordTimes {
+  const even = wordTimes(text, ms)
+  const spans = voicedSpans(env, frameMs).map(([s, e]) => [Math.min(s, ms), Math.min(e, ms)] as [number, number]).filter(([s, e]) => e > s)
+  const voiced = spans.reduce((a, [s, e]) => a + e - s, 0)
+  if (!even.words.length || voiced < ms * 0.2) return even
+  const weights = even.words.map((w) => w.length + 1)
+  const unit = voiced / weights.reduce((a, b) => a + b, 0)
+  // Voiced time → clock time, and which span it falls in.
+  const at = (v: number, endSide: boolean): [number, number] => {
+    let left = v
+    for (let k = 0; k < spans.length; k++) {
+      const len = spans[k][1] - spans[k][0]
+      if (left < len || (endSide && left <= len) || k === spans.length - 1) return [spans[k][0] + Math.min(left, len), k]
+      left -= len
+    }
+    return [ms, spans.length - 1]
+  }
+  const wtimes: number[] = []
+  const wdurations: number[] = []
+  let v = 0
+  for (const w of weights) {
+    const [s0, ks] = at(v, false)
+    const [e0, ke] = at(v + w * unit, true)
+    let s = s0
+    let e = e0
+    if (ks !== ke) {
+      // A word never stretches across a pause: it stays in the span holding most of it.
+      if (spans[ks][1] - s >= e - spans[ke][0]) e = spans[ks][1]
+      else s = spans[ke][0]
+    }
+    const start = Math.max(Math.round(s), wtimes.length ? wtimes[wtimes.length - 1] + wdurations[wdurations.length - 1] : 0)
+    wtimes.push(start)
+    wdurations.push(Math.max(1, Math.round(e) - start))
+    v += w * unit
+  }
+  return { words: even.words, wtimes, wdurations }
+}
+
+/** The word being said `t` ms into the sentence (−1 before the first). */
+export function wordAt(wtimes: number[], t: number): number {
+  let i = -1
+  while (i + 1 < wtimes.length && wtimes[i + 1] <= t) i++
+  return i
+}
+
+const bare = (w: string) => toRoman(w).toLowerCase().replace(/[^\p{L}\p{N}]/gu, '')
+
+/** Is a written word the one the voice reports (case, punctuation and script aside)? */
+export function sameWord(written: string, spoken: string): boolean {
+  const a = bare(written)
+  return !!a && a === bare(spoken)
+}
+
+/**
+ * When each written word of a caption starts, from the spoken word times. Lone
+ * punctuation takes the time of the word before it; a voice that counts words
+ * its own way is matched by position.
+ */
+export function captionStarts(tokens: string[], t: WordTimes): number[] {
+  const spoken = tokens.map((w) => !!bare(w))
+  const n = spoken.filter(Boolean).length
+  const starts: number[] = []
+  let k = -1
+  for (let i = 0; i < tokens.length; i++) {
+    if (spoken[i]) k++
+    const at = Math.max(0, k)
+    const j = n === t.words.length ? at : Math.min(t.wtimes.length - 1, Math.round((at * t.words.length) / Math.max(1, n)))
+    starts.push(t.wtimes[j] ?? 0)
+  }
+  return starts
+}
+
 /* Devanagari → Roman, for the mouth only (not a transliteration standard). */
 const CONS: Record<string, string> = {
   क: 'k', ख: 'kh', ग: 'g', घ: 'gh', ङ: 'n', च: 'ch', छ: 'chh', ज: 'j', झ: 'jh', ञ: 'n',

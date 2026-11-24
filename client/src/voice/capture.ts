@@ -126,6 +126,13 @@ export function wav(x: Float32Array, rate = RATE): Blob {
 }
 
 /** Start recording the mic for the server ears. */
+const levelListeners = new Set<(level: number) => void>()
+/** How loud the microphone is while recording (0–1, about 12 times a second): the teacher shows it as she listens. */
+export function onMicLevel(fn: (level: number) => void): () => void {
+  levelListeners.add(fn)
+  return () => levelListeners.delete(fn)
+}
+
 export async function startCapture(opts: { onPause?: () => void } = {}): Promise<Capture | null> {
   let stream: MediaStream
   try {
@@ -159,6 +166,10 @@ export async function startCapture(opts: { onPause?: () => void } = {}): Promise
     let s = 0
     for (let i = 0; i < d.length; i++) s += d[i] * d[i]
     const rms = Math.sqrt(s / d.length)
+    if (levelListeners.size) {
+      const level = Math.min(1, rms * 8)
+      for (const l of levelListeners) l(level)
+    }
     if (rms > 0.02) {
       spoke = true
       quiet = 0
@@ -174,6 +185,7 @@ export async function startCapture(opts: { onPause?: () => void } = {}): Promise
   proc.connect(ctx.destination)
 
   const close = () => {
+    for (const l of levelListeners) l(0)
     proc.disconnect()
     src.disconnect()
     stream.getTracks().forEach((t) => t.stop())

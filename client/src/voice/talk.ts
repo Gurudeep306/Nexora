@@ -22,9 +22,11 @@ export interface TalkState {
   history: Turn[]
   /** What the teacher says without a voice (sound off, or a short line like "I didn't catch that"). */
   says: string
+  /** What the student last asked, said or typed (shown while the teacher thinks). */
+  asked: string
 }
 
-let state: TalkState = { on: false, status: 'idle', hearing: '', history: [], says: '' }
+let state: TalkState = { on: false, status: 'idle', hearing: '', history: [], says: '', asked: '' }
 const listeners = new Set<() => void>()
 const startListeners = new Set<() => void>()
 
@@ -50,7 +52,7 @@ export function useTalk(): TalkState {
 
 /** Start a conversation: the mic is asked to open (it checks consent first). */
 export function startTalk() {
-  set({ on: true, status: 'idle', hearing: '', history: [], says: '' })
+  set({ on: true, status: 'idle', hearing: '', history: [], says: '', asked: '' })
   for (const l of startListeners) l()
 }
 /** The mic listens for this. */
@@ -69,7 +71,7 @@ export function endTalk() {
  * answers, not a box on the website.
  */
 export function setTalkStatus(status: TalkStatus, hearing = '') {
-  if (state.status !== status || state.hearing !== hearing) set({ status, hearing, ...(status !== 'idle' ? { says: '' } : {}) })
+  if (state.status !== status || state.hearing !== hearing) set({ status, hearing, ...(hearing ? { asked: hearing } : {}), ...(status !== 'idle' ? { says: '' } : {}) })
 }
 
 let saysTimer = 0
@@ -99,4 +101,22 @@ export function remember(user: string, assistant: string) {
 /** "bye", "stop talking", "bas", "that's all" — the student is done talking. */
 export function saysGoodbye(text: string): boolean {
   return /^\s*(ok(ay)?\s+)?(bye|bye bye|goodbye|good night|see you|stop talking|end( the)? (talk|conversation)|that'?s all|bas|bas karo|chalo bye|alvida|ab bas|baad mein baat karte hain|बाय|बस|अलविदा)\b/i.test(text.trim())
+}
+
+const typedListeners = new Set<(text: string) => void>()
+/**
+ * The student typed to the teacher instead of speaking (no mic, a quiet room,
+ * a noisy one): handled exactly like spoken words. False when nothing on the
+ * page can answer (the voice is off).
+ */
+export function askTyped(text: string): boolean {
+  const t = text.trim()
+  if (!t || !typedListeners.size) return false
+  set({ asked: t })
+  for (const l of typedListeners) l(t)
+  return true
+}
+export function onAskTyped(fn: (text: string) => void): () => void {
+  typedListeners.add(fn)
+  return () => typedListeners.delete(fn)
 }

@@ -57,6 +57,8 @@ declare module '@met4citizen/talkinghead' {
     stopPose(): void
     setView(view: 'full' | 'mid' | 'upper' | 'head', opt?: Record<string, number>): void
     setMood(mood: string): void
+    /** Hold a face shape or head/body turn (`null` lets go); `ms` = how long it is held. */
+    setValue(mt: string, val: number | null, ms?: number | null): void
     makeEyeContact(ms: number): void
     lookAtCamera(ms: number): void
     lookAt(x: number, y: number, ms: number): void

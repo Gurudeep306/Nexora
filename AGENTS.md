@@ -333,7 +333,7 @@ from a range, since test files run in parallel and a clash fails the run.
   event words (`swap`, `cmp`, `found`, `push`, `pop`…) so students can jump to
   them. Keep every control's accessible name containing
   its visible text (`npm run voice:names`). After changing voice or the teacher, run the browser sweep
-  (`scripts/voice/sweep/sweep.cjs`, steps at its top). **Guru** (`src/voice/guru.js`,
+  (`scripts/voice/sweep/sweep.cjs`, steps at its top; and `teacher-talk.cjs` beside it for how she listens and speaks). **Guru** (`src/voice/guru.js`,
   `POST /api/voice/guru`): a spoken sentence that is not a command goes to
   the tutor, which follows `docs/voice/GURU_SPEC.md` — hints climb a ladder
   (1–6) while a question is unsolved, the Leak Guard blocks option letters,
