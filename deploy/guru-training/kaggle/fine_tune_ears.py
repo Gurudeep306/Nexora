@@ -37,6 +37,9 @@ from peft import LoraConfig, get_peft_model
 from transformers import WhisperForConditionalGeneration, WhisperProcessor, Seq2SeqTrainer, Seq2SeqTrainingArguments
 
 BASE = "openai/whisper-large-v3-turbo"
+# Where the voices are and where results go: Kaggle by default; Colab sets these (its /kaggle is read-only).
+IN = os.environ.get("EARS_IN", "/kaggle/input")
+OUT = os.environ.get("EARS_OUT", "/kaggle/working")
 proc = WhisperProcessor.from_pretrained(BASE, language="hindi", task="transcribe")
 
 def audio16k(blob):
@@ -59,7 +62,7 @@ def ed(a, b):
     return d[len(b)]
 
 # ── the test: the same 120 Lahaja clips as docs/voice/REAL_VOICES.md (same seed and balance) ──
-lah = pq.read_table(glob.glob("/kaggle/input/**/lahaja0.parquet", recursive=True)[0]).to_pylist()
+lah = pq.read_table(glob.glob(f"{IN}/**/lahaja0.parquet", recursive=True)[0]).to_pylist()
 random.seed(7)
 by = collections.defaultdict(list)
 for r in lah:
@@ -92,7 +95,7 @@ before = evaluate(model, BASE)
 
 # ── training data: real voices, balanced by state and gender ──
 rows = []
-for f in sorted(glob.glob("/kaggle/input/**/*.parquet", recursive=True)):
+for f in sorted(glob.glob(f"{IN}/**/*.parquet", recursive=True)):
     if "lahaja" in f.lower(): continue
     t = pq.read_table(f, columns=[c for c in ["audio_filepath", "audio", "text", "duration", "state", "gender"] if c in pq.read_schema(f).names]).to_pylist()
     for r in t:
@@ -131,10 +134,10 @@ Seq2SeqTrainer(model=model, args=args, train_dataset=DS(), data_collator=collate
 
 model = model.merge_and_unload()
 after = evaluate(model, "nexora-ears-turbo-hi")
-model.save_pretrained("/kaggle/working/ears-turbo-hi", safe_serialization=True)
-proc.save_pretrained("/kaggle/working/ears-turbo-hi")
-json.dump({"before": before, "after": after, "train_clips": len(train)}, open("/kaggle/working/ears_report.json", "w"), ensure_ascii=False, indent=1)
+model.save_pretrained(f"{OUT}/ears-turbo-hi", safe_serialization=True)
+proc.save_pretrained(f"{OUT}/ears-turbo-hi")
+json.dump({"before": before, "after": after, "train_clips": len(train)}, open(f"{OUT}/ears_report.json", "w"), ensure_ascii=False, indent=1)
 import shutil
-shutil.copy("/kaggle/working/ears_report.json", "/kaggle/working/ears-turbo-hi/ears_report.json")
-publish("/kaggle/working/ears-turbo-hi", "nexora-ears-turbo-hi")
+shutil.copy(f"{OUT}/ears_report.json", "/kaggle/working/ears-turbo-hi/ears_report.json")
+publish(f"{OUT}/ears-turbo-hi", "nexora-ears-turbo-hi")
 print("done", flush=True)
