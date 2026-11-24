@@ -113,7 +113,9 @@ config like `deploy/voice-server/setup.sh`, start with
 Headless render: Chromium with `--use-gl=angle --use-angle=swiftshader
 --enable-unsafe-swiftshader`.
 
-## 5. Deep research in progress (Teacher Maker)
+## 5. Deep research (Teacher Maker): DONE
+
+**Final report: `docs/voice/research/reports/Free talking teacher maker.md`** (read it first). Picks: MakeHuman/MPFB2 CC0 base with ARKit-52 + Oculus-15 + VRM-5 shapes (vrm-avatar-maker, MIT/CC0, as reference); own soft PBR-toon material on WebGLRenderer; HeadTTS timings for live English + own Hindi viseme table + wav2arkit on the server for cloned/pre-rendered audio + HeadAudio fallback; Kokoro live, Indic Parler-TTS and Chatterbox Multilingual for pre-rendered narration/cloning on a free GPU; procedural body + TalkingHead gesture ports + Quaternius CC0/VRoid 7-set/CMU clips as .vrma (no Mixamo files); MediaPipe photo matching on device. Phase 1 = one perfect teacher that must beat the old one in a blind test. Original research brief:
 
 Notes are being written to
 `docs/voice/research/research_notes/Free talking teacher maker/` (A_avatar_parts,
