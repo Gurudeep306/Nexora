@@ -1,5 +1,7 @@
 # Virtual teacher: handoff (2026-11-25)
 
+> To continue in a new session, paste `docs/voice/NEXT_SESSION_PROMPT.md`.
+
 Everything a new session needs to continue the virtual-teacher work: what the
 owner wants, what is live, what was tried and rejected, the decision taken,
 the research in progress, and the exact next steps. Read this first, then
@@ -167,7 +169,8 @@ procedural); F photo → avatar parameters with MediaPipe.
   whisper-large-v3 WER 0.251; open whisper-turbo WER 0.3815. Owner will
   decide "tomorrow"; estimates: full fine-tune ~40 T4-hours for Hindi+Indian
   English on free Colab (~1 week of sessions), ~6 h on one A100.
-- **Guru tutor data (Groq, free tier):** ~2,800 examples (train/val/test JSONL)
+- **Guru tutor data (Groq, free tier):** 2,808 examples (train/val/test JSONL),
+  **saved on branch `claude/guru-train` in `data/guru-groq/`** (commit `52629ed4`),
   were generated with `scripts/voice/make-guru-data.js` (branch
   `claude/guru-train`) using open models gpt-oss-120b, qwen3.8-27b,
   gpt-oss-20b (1000 requests/day each). They lived in the session scratchpad
