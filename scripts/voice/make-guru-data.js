@@ -11,6 +11,13 @@
 
     node scripts/voice/make-guru-data.js --dry --hint 3      # show the plan and one prompt, send nothing
 
+  Batch mode, for a GPU that can't be reached over the network (a Kaggle run):
+    node scripts/voice/make-guru-data.js --export-jobs jobs.jsonl --hint 3419 --review 3419 --concept 1353 --talk 1353
+      → one line per conversation to ask for: { i, kind, lang, teacher, item, messages }
+    (the GPU answers every line: { i, content }; deploy/guru-training/kaggle/make_data.py)
+    TEACHER_MODEL=Qwen/Qwen3-14B-AWQ node scripts/voice/make-guru-data.js --ingest answers.jsonl --jobs jobs.jsonl --out-dir data/guru
+      → the same checks as the live mode, the same train / val / test files.
+
   TEACHER_API_KEY is read from the environment if the endpoint needs one.
   The teacher must be an open-licence model (Qwen, DeepSeek, gpt-oss, Apache
   Mistral, OLMo); anything else is refused before a single question is sent.
@@ -30,8 +37,24 @@ function args(argv) {
     else if (a === "--seed") out.seed = Number(argv[++i]) || 1;
     else if (a === "--concurrency") out.concurrency = Math.max(1, Math.min(32, Number(argv[++i]) || 4));
     else if (a === "--dry") out.dry = true;
+    else if (a === "--export-jobs") out.exportJobs = argv[++i];
+    else if (a === "--ingest") out.ingest = argv[++i];
+    else if (a === "--jobs") out.jobsFile = argv[++i];
+    else if (a === "--seeds") out.seeds = String(argv[++i]).split(",").map(Number).filter(Boolean);
   }
   if (!Object.values(out.perKind).some(Boolean)) out.perKind = { hint: 50 };
+  return out;
+}
+
+/** The conversations written by --export-jobs, in order. */
+function readJobs(file) {
+  if (!file) throw new Error("--ingest needs --jobs <the file written by --export-jobs>");
+  const out = [];
+  for (const line of fs.readFileSync(file, "utf8").split("\n")) {
+    if (!line.trim()) continue;
+    const j = JSON.parse(line);
+    out[j.i] = { kind: j.kind, lang: j.lang, teacher: j.teacher, item: j.item };
+  }
   return out;
 }
 
@@ -64,11 +87,24 @@ async function main() {
   const a = args(process.argv.slice(2));
   const baseUrl = process.env.TEACHER_BASE_URL || "";
   const model = process.env.TEACHER_MODEL || "";
-  if (!a.dry && (!baseUrl || !D.allowedTeacher(model))) {
+  if (!a.dry && !a.exportJobs && ((!a.ingest && !baseUrl) || !D.allowedTeacher(model))) {
     console.error(`Teacher not allowed or not set: "${model}". Use an open-licence model (Qwen, DeepSeek, gpt-oss, Apache Mistral, OLMo). See docs/voice/TRAINING.md.`);
     process.exit(2);
   }
-  const jobs = D.plan({ ...loadInputs(a.subject), perKind: a.perKind, seed: a.seed });
+  // Several seeds ask about the same items again in another language and as another teacher (more, varied data).
+  const inputs = a.ingest ? null : loadInputs(a.subject);
+  const jobs = a.ingest ? readJobs(a.jobsFile) : (a.seeds || [a.seed]).flatMap((seed, k) => D.plan({ ...inputs, perKind: k === 0 ? a.perKind : { hint: a.perKind.hint ?? 0 }, seed }));
+  if (a.exportJobs) {
+    const G = require("../../src/voice/guru");
+    const out = fs.createWriteStream(a.exportJobs);
+    jobs.forEach((job, i) => {
+      const persona = G.personaFor(job.teacher, D.trainingName(job.teacher, job.item.id));
+      out.write(JSON.stringify({ i, kind: job.kind, lang: job.lang, teacher: job.teacher, item: job.item, messages: D.teacherMessages(job.kind, job.item, job.lang, persona) }) + "\n");
+    });
+    await new Promise((r) => out.end(r));
+    console.log(`${jobs.length} conversations written to ${a.exportJobs}`);
+    return;
+  }
   if (a.dry) {
     const by = {};
     for (const j of jobs) by[`${j.kind}/${j.lang}`] = (by[`${j.kind}/${j.lang}`] || 0) + 1;
@@ -80,35 +116,48 @@ async function main() {
   const files = Object.fromEntries(["train", "val", "test"].map((s) => [s, fs.createWriteStream(path.join(a.outDir, `${s}.jsonl`), { flags: "a" })]));
   const stats = { asked: 0, kept: 0, unreadable: 0, failed: 0, rejected: {}, examples: { train: 0, val: 0, test: 0 }, byKind: {} };
   const seen = new Set();
-  let next = 0;
+  /** One teacher answer: checked, de-duplicated, written as examples (the same in live and batch mode). */
+  function keep(job, content) {
+    const t = D.parseTeacher(content, D.REPLIES[job.kind]);
+    if (!t) {
+      stats.unreadable++;
+      return;
+    }
+    const why = t.replies.map((r) => D.rejectReason(job.kind, job.item, job.lang, r)).find(Boolean);
+    if (why) {
+      stats.rejected[why] = (stats.rejected[why] || 0) + 1;
+      return;
+    }
+    const key = t.replies.join("|").toLowerCase().replace(/\s+/g, " ");
+    if (seen.has(key)) {
+      stats.rejected.duplicate = (stats.rejected.duplicate || 0) + 1;
+      return;
+    }
+    seen.add(key);
+    for (const ex of D.toExamples(job.kind, job.item, job.lang, job.teacher, t, model)) {
+      files[ex.split].write(JSON.stringify(ex) + "\n");
+      stats.examples[ex.split]++;
+    }
+    stats.kept++;
+    stats.byKind[job.kind] = (stats.byKind[job.kind] || 0) + 1;
+  }
+  if (a.ingest) {
+    for (const line of fs.readFileSync(a.ingest, "utf8").split("\n")) {
+      if (!line.trim()) continue;
+      const { i, content } = JSON.parse(line);
+      if (!jobs[i]) continue;
+      stats.asked++;
+      keep(jobs[i], content);
+    }
+  }
+  let next = a.ingest ? jobs.length : 0;
   async function worker() {
     while (next < jobs.length) {
       const job = jobs[next++];
       stats.asked++;
       try {
         const persona = require("../../src/voice/guru").personaFor(job.teacher, D.trainingName(job.teacher, job.item.id));
-        const t = D.parseTeacher(await chat({ baseUrl, model, apiKey: process.env.TEACHER_API_KEY, messages: D.teacherMessages(job.kind, job.item, job.lang, persona) }), D.REPLIES[job.kind]);
-        if (!t) {
-          stats.unreadable++;
-          continue;
-        }
-        const why = t.replies.map((r) => D.rejectReason(job.kind, job.item, job.lang, r)).find(Boolean);
-        if (why) {
-          stats.rejected[why] = (stats.rejected[why] || 0) + 1;
-          continue;
-        }
-        const key = t.replies.join("|").toLowerCase().replace(/\s+/g, " ");
-        if (seen.has(key)) {
-          stats.rejected.duplicate = (stats.rejected.duplicate || 0) + 1;
-          continue;
-        }
-        seen.add(key);
-        for (const ex of D.toExamples(job.kind, job.item, job.lang, job.teacher, t, model)) {
-          files[ex.split].write(JSON.stringify(ex) + "\n");
-          stats.examples[ex.split]++;
-        }
-        stats.kept++;
-        stats.byKind[job.kind] = (stats.byKind[job.kind] || 0) + 1;
+        keep(job, await chat({ baseUrl, model, apiKey: process.env.TEACHER_API_KEY, messages: D.teacherMessages(job.kind, job.item, job.lang, persona) }))
       } catch (e) {
         stats.failed++;
         if (stats.failed <= 3) console.error(`${job.kind} ${job.item.id}: ${e.message}`);

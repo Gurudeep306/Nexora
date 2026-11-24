@@ -150,3 +150,37 @@ test('the quality gates: leaks over 2% of hints, reviews without the key, or unc
   assert.equal(score([review('Each character is ten bits, so divide by ten.')]).pass, false, 'a review must name the key');
   assert.equal(score([review('Option B is right: ten bits per character gives 960.')]).pass, true);
 });
+
+test('batch mode for a GPU that cannot be reached: export the questions, ingest the answers with the same checks, score from a file', () => {
+  const { execFileSync } = require('node:child_process');
+  const os = require('node:os');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'guru-batch-'));
+  const script = path.join(__dirname, '..', 'scripts', 'voice', 'make-guru-data.js');
+  const jobsFile = path.join(dir, 'jobs.jsonl');
+  execFileSync(process.execPath, [script, '--export-jobs', jobsFile, '--hint', '2', '--concept', '1', '--seeds', '1,2']);
+  const jobs = fs.readFileSync(jobsFile, 'utf8').trim().split('\n').map((l) => JSON.parse(l));
+  assert.equal(jobs.length, 5, 'seed 2 asks the hints again');
+  assert.ok(jobs.every((j, i) => j.i === i && Array.isArray(j.messages) && j.messages.length === 2));
+  const hint = jobs.find((j) => j.kind === 'hint');
+  const good = JSON.stringify({ student: 'how do I start?', replies: ['Okay, look at what the question really asks first.', 'Right, think about the rule that connects these quantities.', 'Write down the first quantity you can compute from the data given.'] });
+  const leak = JSON.stringify({ student: 'help', replies: [`The answer is ${String(hint.item.answer)}.`, 'b c d e f', 'c d e f g'] });
+  const answers = path.join(dir, 'answers.jsonl');
+  fs.writeFileSync(answers, [{ i: hint.i, content: good }, { i: jobs.find((j) => j.kind === 'hint' && j.i !== hint.i).i, content: leak }, { i: 99, content: 'ignored' }].map((x) => JSON.stringify(x)).join('\n'));
+  const out = path.join(dir, 'data');
+  const stats = JSON.parse(execFileSync(process.execPath, [script, '--ingest', answers, '--jobs', jobsFile, '--out-dir', out], { env: { ...process.env, TEACHER_MODEL: 'Qwen/Qwen3-14B-AWQ' } }).toString());
+  assert.equal(stats.kept, 1, 'the good conversation is kept');
+  assert.equal(stats.asked, 2, 'unknown job numbers are skipped');
+  const all = ['train', 'val', 'test'].flatMap((s) => fs.readFileSync(path.join(out, `${s}.jsonl`), 'utf8').trim().split('\n').filter(Boolean).map((l) => JSON.parse(l)));
+  assert.equal(all.length, 3, 'three hints → three examples');
+  // Score from a file of answers.
+  const test = path.join(dir, 'test.jsonl');
+  fs.writeFileSync(test, all.map((e) => JSON.stringify(e)).join('\n'));
+  const ans = path.join(dir, 'test_answers.jsonl');
+  fs.writeFileSync(ans, all.map((e) => JSON.stringify({ id: e.id, reply: e.messages.at(-1).content })).join('\n'));
+  const eval_ = path.join(__dirname, '..', 'scripts', 'voice', 'eval-guru.js');
+  const s = JSON.parse(execFileSync(process.execPath, [eval_, '--test', test, '--answers', ans]).toString());
+  assert.equal(s.pass, true);
+  assert.equal(s.missing, 0);
+  // Refuses a closed teacher on ingest.
+  assert.throws(() => execFileSync(process.execPath, [script, '--ingest', answers, '--jobs', jobsFile, '--out-dir', out], { env: { ...process.env, TEACHER_MODEL: 'gpt-4o' }, stdio: 'pipe' }));
+});

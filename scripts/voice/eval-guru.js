@@ -9,6 +9,9 @@
     GURU_BASE_URL=http://localhost:8000/v1 GURU_MODEL=nexora/guru-s \
       node scripts/voice/eval-guru.js --test data/guru/test.jsonl [--limit 500]
 
+  Or score answers a GPU run already wrote ({ id, reply } per test example):
+    node scripts/voice/eval-guru.js --test data/guru/test.jsonl --answers test_answers.jsonl
+
   Gates: leaks ≤ 2% of hints; reviews name the key ≥ 95%; spoken style,
   length and script ≥ 95% overall. Exit code 1 if a gate fails.
 */
@@ -45,6 +48,15 @@ async function main() {
   const at = (k, d) => (argv.includes(k) ? argv[argv.indexOf(k) + 1] : d);
   const file = at("--test", "data/guru/test.jsonl");
   const limit = Number(at("--limit", 0)) || Infinity;
+  const answers = at("--answers", "");
+  if (answers) {
+    const rows = fs.readFileSync(file, "utf8").trim().split("\n").filter(Boolean).map((l) => JSON.parse(l)).slice(0, limit);
+    const byId = new Map(fs.readFileSync(answers, "utf8").trim().split("\n").filter(Boolean).map((l) => JSON.parse(l)).map((a) => [a.id, a.reply]));
+    const out = rows.filter((ex) => byId.has(ex.id)).map((ex) => ({ meta: ex.meta, reply: String(byId.get(ex.id) || "").replace(/<think>[\s\S]*?<\/think>/g, "").trim() }));
+    const s = score(out);
+    console.log(JSON.stringify({ ...s, missing: rows.length - out.length, gates: GATES }, null, 1));
+    process.exit(s.pass && out.length === rows.length ? 0 : 1);
+  }
   const base = process.env.GURU_BASE_URL;
   const model = process.env.GURU_MODEL;
   if (!base || !model) {
