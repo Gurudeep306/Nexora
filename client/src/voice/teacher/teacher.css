@@ -16,7 +16,8 @@
   .tch[data-size='s'] { --tch-w: 9.5rem; }
   .tch[data-size='l'] { --tch-w: 17rem; }
   @media (max-width: 640px) {
-    .tch { --tch-w: 8.5rem; }
+    /* Above the assistant's round button, which sits just over the bottom bar on phones. */
+    .tch { --tch-w: 8.5rem; bottom: calc(env(safe-area-inset-bottom, 0px) + 8.75rem); }
     .tch[data-size='l'] { --tch-w: 11rem; }
     .tch[data-size='s'] { --tch-w: 7rem; }
   }
@@ -87,6 +88,14 @@
     border-radius: 999px;
     background: var(--color-bg-surface);
     pointer-events: auto;
+  }
+  /* The bar is wider than a small teacher: it lines up with the screen edge she stands at, so it never runs off screen. */
+  .tch[data-side='right'] .tch-bar { justify-self: unsafe end; }
+  .tch[data-side='left'] .tch-bar { justify-self: unsafe start; }
+  /* On phones the bar keeps only its buttons (the name is in the region's label), so it is no wider than she is. */
+  @media (max-width: 640px) {
+    .tch-bar { padding-left: 0.25rem; }
+    .tch-bar .tch-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   }
   .tch-name {
     margin-right: 0.25rem;

@@ -23,6 +23,8 @@ export interface TeacherState {
   progress: number
   /** Why it failed, in plain words. */
   why: string
+  /** A timed exam is on screen (the exam console): the teacher steps away until it closes. */
+  exam: boolean
 }
 
 const LOCAL = 'nexora:teacher'
@@ -35,7 +37,7 @@ function saved(): Pick<TeacherState, 'side' | 'hidden'> {
   }
 }
 
-let state: TeacherState = { ...saved(), atX: null, sitting: false, status: 'off', progress: 0, why: '' }
+let state: TeacherState = { ...saved(), atX: null, sitting: false, status: 'off', progress: 0, why: '', exam: false }
 const listeners = new Set<() => void>()
 const moveListeners = new Set<(m: Move) => void>()
 

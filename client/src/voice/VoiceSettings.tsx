@@ -167,7 +167,7 @@ function VoicePicker() {
 const size = (mb: number) => (mb >= 1000 ? `${(mb / 1000).toFixed(1)} GB` : `${mb} MB`)
 
 /** `who`: the teacher's name, when shown in the teacher's settings (her own brain). */
-export function OnDevice({ who }: { who?: string } = {}) {
+export function OnDevice({ who, male = false }: { who?: string; male?: boolean } = {}) {
   const { user } = useAuth()
   const [prefs, setPrefs] = useVoicePrefs(user?.username)
   const brain = useBrain()
@@ -217,7 +217,7 @@ export function OnDevice({ who }: { who?: string } = {}) {
     <fieldset className="vc-field">
       <legend>{who ? `${who}’s own brain` : 'Guru on this device'}</legend>
       <p className="vc-note">
-        {who ? `With it, ${who} thinks on this device instead of on a server, like a teacher with her own AI chip. ` : ''}Answers your questions on this device: private, free, and it keeps working on a weak connection. Questions you haven’t solved yet still go to the server, so hints stay fair and the
+        {who ? `With it, ${who} thinks on this device instead of on a server, like a teacher with ${male ? 'his' : 'her'} own AI chip. ` : ''}Answers your questions on this device: private, free, and it keeps working on a weak connection. Questions you haven’t solved yet still go to the server, so hints stay fair and the
         answer never reaches your device.{tier ? ` This device can run ${tier.name}, built on Qwen3.5 (Apache licence): a one-time download of about ${size(info ? downloadMb(tier, info) : tier.mb)} (Wi-Fi recommended).` : ''}
       </p>
       <div className="vc-row">

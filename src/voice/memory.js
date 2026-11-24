@@ -103,7 +103,7 @@ function greeting(mem, lang = "en-IN") {
     return name ? `नमस्ते ${name}! आज क्या पढ़ना है?` : "हाँ, बोलो! आज क्या पढ़ना है?";
   }
   if (back && last) return `${name ? `Welcome back, ${name}! ` : "Welcome back! "}Last time we were on ${last}. Shall we carry on from there, or something new?`;
-  return name ? `Hi ${name}! What shall we study today?` : "Haan, bolo! What shall we study today?";
+  return name ? `Hi ${name}! What shall we study today?` : "Hi! What shall we study today?";
 }
 
 async function recall(username) {

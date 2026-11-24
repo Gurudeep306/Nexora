@@ -19,7 +19,7 @@ import { getVoicePrefs } from './prefs'
 import { speechChunks, splitSentences } from './sentences'
 import { bestVoice } from './deviceVoice'
 import { levelUp, pickVoice } from './voices'
-import { cloneSay, getClone, loadClone } from './clone/clone'
+import { checkSavedOnce, cloneSay, getClone, loadClone } from './clone/clone'
 import { teacherById } from './teacher/teachers'
 
 export { splitSentences }
@@ -99,8 +99,13 @@ function teacherVoice(lang: string, engine: string | null): string {
 const IDLE: Speaking = { on: false, engine: null, name: '' }
 let state: Speaking = IDLE
 const listeners = new Set<() => void>()
+/** The speak() call still preparing its first sound (0 = none), and since when. */
+let waitingFor = 0
+let waitingSince = 0
 function set(next: Speaking) {
   state = next
+  // Sound started, or speech ended: nothing is waiting any more.
+  waitingFor = 0
   for (const l of listeners) l()
 }
 /** Who is speaking now (for the "AI voice" label and the teacher's lips). */
@@ -414,12 +419,23 @@ function voiceName(status: NaturalStatus | null, voice: string, lang: string): s
 }
 
 /** Say `text` in `lang` ('en-IN' or 'hi-IN'), replacing anything being said. */
+/**
+ * Is a voice still being prepared (a natural voice or the student's own voice
+ * can take seconds before the first sound)? The conversation waits for it
+ * instead of opening the mic over her first words. Never longer than 20 s.
+ */
+export function aboutToSpeak(): boolean {
+  return waitingFor !== 0 && waitingFor === session && !state.on && Date.now() - waitingSince < 20_000
+}
+
 export function speak(text: string, lang: string) {
   stopSpeaking()
   const my = ++session
   // Pieces of a sentence or two: the voice keeps its own rhythm inside each, with few seams.
   const parts = speechChunks(text)
   if (!parts.length) return
+  waitingFor = my
+  waitingSince = Date.now()
   void (async () => {
     const { engine, status } = await which()
     if (my !== session) return
@@ -433,6 +449,8 @@ export function speak(text: string, lang: string) {
     const male = teacherById(getVoicePrefs().teacher)?.body === 'M'
     const usual = (s: string) => inTime(engine === 'natural' ? naturalClip(s, lang, voice, ctrl.signal) : kokoroClip(s, pickVoice(getVoicePrefs().kokoroVoice, male, s)))
     // The voice the student gave (clone/clone.ts), when it is on and ready; Hindi and anything it can't say use the usual voice.
+    // The saved voice is looked up once per page (it lives in this browser), not only when Settings is opened.
+    if (getVoicePrefs().ownVoice) await checkSavedOnce()
     const own = getVoicePrefs().ownVoice && getClone().hasVoice
     if (own && getClone().status === 'off') void loadClone().catch(() => {})
     const make = async (s: string): Promise<Clip | null> => (own ? ((await inTime(ownClip(s))) ?? usual(s)) : usual(s))

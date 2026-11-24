@@ -31,7 +31,8 @@ export function TeacherHost() {
   const { pageContext, shareContext } = useAgentContext()
   const { pathname } = useLocation()
   const teacher = teacherById(prefs.teacher)
-  const allowed = !!teacher && !pathname.startsWith('/gate/cbt')
+  // Never in an exam: the CBT page, timed tests and contest papers (the exam console says when it is open).
+  const allowed = !!teacher && !st.exam && !pathname.startsWith('/gate/cbt')
 
   const actions = useMemo<VoiceAction[]>(() => {
     if (!teacher) return []

@@ -27,7 +27,7 @@ import { activeCode, type CodeHandle } from './code/active'
 import { applyCode } from './code/apply'
 import { parseCode, type CodeCommand } from './code/parse'
 import { activeBuilder, parseBuild } from './code/build'
-import { speak, stopSpeaking, useSpeaking } from './speak'
+import { aboutToSpeak, speak, stopSpeaking, useSpeaking } from './speak'
 import { bargeInOn, bargeInResult, listenForInterruption } from './bargeIn'
 import { endTalk, getTalk, onCancelListening, onStartTalk, remember, saysGoodbye, setTalkStatus, teacherSays, useTalk } from './talk'
 import { teacherMove, teacherShowing, useTeacher } from './teacher/store'
@@ -162,9 +162,14 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
   const speakingNow = useRef(false)
   const sayThenListen = useCallback((text: string) => {
     speak(text, prefsRef.current.lang === 'hi-IN' ? 'hi-IN' : 'en-IN')
-    window.setTimeout(() => {
-      if (getTalk().on && !speakingNow.current && getTalk().status !== 'listening') startRef.current()
-    }, 1500)
+    // A voice can take a few seconds to start (a natural voice, the student's own voice): wait for it rather than
+    // open the mic over her first words. Once she speaks, the effect below listens again when she stops.
+    const check = () => {
+      if (!getTalk().on || speakingNow.current || getTalk().status === 'listening') return
+      if (aboutToSpeak()) return void window.setTimeout(check, 400)
+      startRef.current()
+    }
+    window.setTimeout(check, 1500)
   }, [])
 
   const runAction = useCallback(
@@ -457,7 +462,7 @@ export function VoiceButton({ layer }: { layer?: 'top' } = {}) {
           return
         }
         const hi = prefsRef.current.lang === 'hi-IN'
-        const plain = hi ? 'हाँ, बोलो! आज क्या पढ़ना है?' : 'Haan, bolo! What shall we study today?'
+        const plain = hi ? 'हाँ, बोलो! आज क्या पढ़ना है?' : 'Hi! What shall we study today?'
         // She remembers the student: "Welcome back! Last time we were on paging…" (built on our server, no AI).
         void api
           .get<{ greeting?: string }>('/api/voice/teacher/memory', { query: { lang: prefsRef.current.lang }, timeoutMs: 2500 })

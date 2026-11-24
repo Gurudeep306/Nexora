@@ -88,6 +88,13 @@ export async function checkSaved() {
   set({ hasVoice: !!(await savedSample()) })
 }
 
+let checked: Promise<void> | null = null
+/** checkSaved, at most once per page (speak.ts asks before every answer). */
+export function checkSavedOnce(): Promise<void> {
+  checked ||= checkSaved().catch(() => {})
+  return checked
+}
+
 /** Erase the voice from this device. */
 export async function forgetVoice() {
   try {
@@ -155,17 +162,21 @@ export function loadClone(): Promise<void> {
     if (!sample) throw new Error('no voice saved')
     set({ status: 'loading', progress: 0, why: '' })
     worker = start()
+    // The download can take a while on slow connections; nothing else may hang: each step has a limit.
     await new Promise<void>((resolve, reject) => {
       onReady = (err) => (err ? reject(err) : resolve())
       worker!.postMessage({ type: 'load', device: 'webgpu', lm: kind === 'half' ? 'q4f16' : 'q4' })
     })
-    await new Promise<void>((resolve) => {
-      onVoiced = resolve
-      worker!.postMessage({ type: 'voice', audio: sample })
-    })
+    await limit(
+      new Promise<void>((resolve) => {
+        onVoiced = resolve
+        worker!.postMessage({ type: 'voice', audio: sample })
+      }),
+      60_000,
+    )
     // Timed on a short sentence: too slow for a conversation, and the voice waits for a faster device.
     const t0 = performance.now()
-    const test = await say('Okay. Let us start with the idea first.')
+    const test = await limit(say('Okay. Let us start with the idea first.'), 60_000)
     const speed = test.length / 24000 / ((performance.now() - t0) / 1000)
     if (speed < MIN_SPEED) {
       set({ status: 'failed', speed, why: `This device makes your voice ${speed.toFixed(1)}× as fast as it is spoken, too slow for a conversation, so she uses her normal voice. It works on devices with a stronger graphics chip.` })
@@ -180,6 +191,12 @@ export function loadClone(): Promise<void> {
     throw e
   })
   return loaded
+}
+
+/** Reject after `ms`: a stuck step becomes a plain failure (her usual voice), never a forever "getting ready". */
+function limit<T>(p: Promise<T>, ms: number): Promise<T> {
+  let t = 0
+  return Promise.race([p, new Promise<never>((_, reject) => (t = window.setTimeout(() => reject(new Error('timed out')), ms)))]).finally(() => window.clearTimeout(t))
 }
 
 function say(text: string): Promise<Float32Array> {
