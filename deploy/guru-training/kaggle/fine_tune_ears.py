@@ -130,7 +130,9 @@ def collate(batch):
 model.config.forced_decoder_ids = None
 model = get_peft_model(model, LoraConfig(r=32, lora_alpha=64, lora_dropout=0.05, target_modules=["q_proj", "k_proj", "v_proj", "out_proj", "fc1", "fc2"]))
 model.print_trainable_parameters()
-args = Seq2SeqTrainingArguments(output_dir="out", per_device_train_batch_size=8, gradient_accumulation_steps=2, learning_rate=1e-4, warmup_steps=100,
+for p in model.parameters():  # the small trained part in full precision (fp16 training needs it)
+    if p.requires_grad: p.data = p.data.float()
+args = Seq2SeqTrainingArguments(output_dir="out", per_device_train_batch_size=2, gradient_accumulation_steps=8, gradient_checkpointing=True, gradient_checkpointing_kwargs={"use_reentrant": False}, learning_rate=1e-4, warmup_steps=100,
     max_steps=min(4000, len(train) // 16 * 2), fp16=True, logging_steps=50, save_strategy="no", report_to=[], remove_unused_columns=False, label_names=["labels"])
 Seq2SeqTrainer(model=model, args=args, train_dataset=DS(), data_collator=collate).train()
 
