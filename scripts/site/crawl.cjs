@@ -26,7 +26,7 @@ const MAX = Number(arg('max', 900))
 const OUT = arg('out', require('os').tmpdir())
 const START = ['/hub', '/learn', '/gate', '/gate/notes', '/gate/practice', '/gate/tests', '/gate/review', '/gate/daily', '/gate/syllabus', '/gate/planner', '/gate/notebook',
   '/gate/leaderboard', '/gate/analytics', '/gate/cbt', '/nexus', '/problems', '/problems/sets', '/contests', '/workshop', '/analytics', '/achievements', '/social', '/explore',
-  '/live', '/submissions', '/bookmarks', '/profile', '/settings', '/theme', '/learn/dsa', '/learn/ai-courses', '/learn/system-design', '/admin', '/welcome']
+  '/live', '/submissions', '/bookmarks', '/profile', '/settings', '/theme', '/teacher', '/learn/dsa', '/learn/ai-courses', '/learn/system-design', '/admin', '/welcome']
 // Never follow: sign-out, the staff workspace (its own checks), raw files, device pages that need a token.
 const SKIP = /^\/(hive|auth|logout|api|uploads|pad|snap|explain\/pad|live\/d)\b|\.(pdf|png|jpe?g|svg|zip|json)$/i
 

@@ -25,6 +25,16 @@ export interface TeacherState {
   why: string
   /** A timed exam is on screen (the exam console): the teacher steps away until it closes. */
   exam: boolean
+  /** The Teacher studio's preview box (viewport px): she stands in it, large, while the studio is open. */
+  anchor: Anchor | null
+}
+
+export interface Anchor {
+  x: number
+  y: number
+  w: number
+  /** The box is on screen (she is hidden while it is scrolled away). */
+  shown: boolean
 }
 
 const LOCAL = 'nexora:teacher'
@@ -37,7 +47,7 @@ function saved(): Pick<TeacherState, 'side' | 'hidden'> {
   }
 }
 
-let state: TeacherState = { ...saved(), atX: null, sitting: false, status: 'off', progress: 0, why: '', exam: false }
+let state: TeacherState = { ...saved(), atX: null, sitting: false, status: 'off', progress: 0, why: '', exam: false, anchor: null }
 const listeners = new Set<() => void>()
 const moveListeners = new Set<(m: Move) => void>()
 
@@ -94,7 +104,7 @@ export function onTeacherMove(fn: (m: Move) => void): () => void {
 
 /** Is the teacher on screen now (it then shows the "AI voice" label itself)? */
 export function teacherShowing(): boolean {
-  return state.status === 'ready' && !state.hidden
+  return state.status === 'ready' && (!state.hidden || !!state.anchor)
 }
 
 /** The student's real result (judge verdict, GATE grade): the teacher reacts (reactions.ts). Ignored while no teacher is drawn. */

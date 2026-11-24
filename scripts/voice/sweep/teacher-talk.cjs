@@ -81,8 +81,12 @@ const ok = (n, pass, d = '') => { results.push(pass); console.log(`${pass ? 'PAS
     await p.keyboard.press('Enter')
     await p.waitForSelector('.tch-cap span[data-w="now"]', { timeout: 30000 }).catch(() => {})
     const a = await p.evaluate(() => [...document.querySelectorAll('.tch-cap span')].findIndex((s) => s.dataset.w === 'now'))
-    await p.waitForTimeout(1300)
-    const c = await p.evaluate(() => [...document.querySelectorAll('.tch-cap span')].findIndex((s) => s.dataset.w === 'now'))
+    // Watch for a little over a second: the lit word moves on (a new sentence starts again from its first word).
+    let c = a
+    for (let i = 0; i < 14 && c <= a; i++) {
+      await p.waitForTimeout(100)
+      c = Math.max(c, await p.evaluate(() => [...document.querySelectorAll('.tch-cap span')].findIndex((s) => s.dataset.w === 'now')))
+    }
     ok(`${scheme} ${width}px: the caption lights the word being said and moves on`, a >= 0 && c > a, `${a} → ${c}`)
     await p.screenshot({ path: path.join(S, `speaking-${scheme}-${width}.png`) })
     const v = await axe(p)

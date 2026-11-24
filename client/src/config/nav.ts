@@ -85,6 +85,8 @@ export function navMeta(pathname: string): { section?: string; label: string } {
   // GATE is reached from the dock and Learn rather than the nav sections.
   if (pathname.startsWith('/gate/notes')) return { section: 'Grow', label: 'Notes' }
   if (pathname === '/gate' || pathname.startsWith('/gate/')) return { section: 'Grow', label: 'GATE' }
+  // Reached from Settings, the teacher's menu and Explore (not a spoken place: "teacher dikhao" must still show her).
+  if (pathname === '/teacher') return { section: 'Account', label: 'Teacher studio' }
   if (pathname.startsWith('/profile/')) return { section: 'Players', label: decodeURIComponent(pathname.split('/')[2] ?? '') }
   for (const sec of [...NAV_SECTIONS, CREATE_SECTION, { title: 'Account', items: ACCOUNT_ITEMS }]) {
     const hit = sec.items.find((i) => pathname === i.to || pathname.startsWith(`${i.to}/`))

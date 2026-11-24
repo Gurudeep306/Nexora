@@ -41,6 +41,7 @@ export function GlobalActions() {
       { ...spec('page.scroll.top'), title: 'Go to the top', palette: false, run: () => scrollPage('top') },
       { ...spec('page.scroll.bottom'), title: 'Go to the bottom', palette: false, run: () => scrollPage('bottom') },
       { ...spec('problem.random'), title: 'Surprise me — random problem', icon: 'random', run: () => goToRandomProblem(navigate) },
+      { ...spec('teacher.studio'), title: 'Teacher studio', hint: 'Virtual teacher', icon: 'user', run: () => navigate('/teacher') },
       { ...spec('look.mode.dark'), title: 'Switch to dark mode', hint: 'Appearance', icon: 'moon', palette: mode !== 'dark', run: () => setAppearance('dark') },
       { ...spec('look.mode.light'), title: 'Switch to light mode', hint: 'Appearance', icon: 'sun', palette: mode === 'dark', run: () => setAppearance('light') },
       {
