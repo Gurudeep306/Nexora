@@ -279,6 +279,16 @@ def colour_maps(word):
     return [i for i in bpy.data.images if word in i.name.lower() and i.size[0] and not any(k in i.name.lower() for k in ("norm", "bump", "spec", "_ao"))]
 
 
+# A skin texture painted from the person's photos (scripts/teacher/maker/bake_skin.py) replaces the base skin.
+if recipe.get("skin_image"):
+    painted = bpy.data.images.load(os.path.join(os.path.dirname(os.path.abspath(recipe_path)), recipe["skin_image"]))
+    for image in colour_maps(recipe.get("skin_match", "skinned")):
+        painted.scale(image.size[0], image.size[1])
+        image.pixels[:] = painted.pixels[:]
+        image.update()
+        image.pack()
+        log("painted skin", image.name)
+
 for word, args in recipe.get("recolour", {}).items():
     for image in colour_maps(word):
         recolour(image, *args)
