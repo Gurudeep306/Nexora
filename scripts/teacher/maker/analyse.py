@@ -115,6 +115,13 @@ for path in files:
 
     # Colours.
     skin = (m[3] > 0.8) & face_region & ~mouth & ~eye_box
+    if skin.sum() > 200:
+        # Even light? Broad light and shadow across the face (sun stripes, one-sided lamps) show as a large
+        # spread of the blurred brightness over the skin. Photos with harsh light are kept for shape only.
+        gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY).astype(float)
+        broad = cv2.GaussianBlur(gray, (0, 0), max(2, face_px / 25))
+        vals = broad[skin]
+        rec["light_unevenness"] = round(float(np.percentile(vals, 90) - np.percentile(vals, 10)) / max(1.0, float(np.median(vals))), 3)
     if skin.sum() > 50:
         px = img[skin].astype(float)
         lum = px @ [0.299, 0.587, 0.114]
@@ -186,7 +193,12 @@ for path in files:
     q = (min(1, face_px / 300) * 0.3 + min(1, rec.get("sharpness", 0) / 200) * 0.2 + (1 - min(1, turn / 45)) * 0.25
          + (0.15 if neutral else 0) + (0.1 if rec["hair_over_face"] < 0.1 else 0) - rec["covered_eyes"] * 0.5)
     rec["quality"] = round(float(q), 3)
-    rec["role"] = "skip" if not usable else ("skin" if frontal and neutral and not reasons else "shape")
+    even = rec.get("light_unevenness", 1) < 0.45
+    if not even:
+        reasons.append("harsh light or shadows on the face (used for shape only)")
+    q -= max(0, rec.get("light_unevenness", 0.5) - 0.3) * 0.5
+    rec["quality"] = round(float(q), 3)
+    rec["role"] = "skip" if not usable else ("skin" if frontal and neutral and even and not [x for x in reasons if not x.startswith("harsh")] else "shape")
     rec["mouth_ok"] = neutral
     results[name] = rec
     print(f"ANALYSE {name[:28]:28s} {rec['role']:5s} q={rec['quality']:.2f} yaw={rec['yaw']:6.1f} smile={rec['smile']:.2f} {'; '.join(reasons)}")

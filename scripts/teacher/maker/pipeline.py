@@ -87,7 +87,7 @@ if S["usable"] < 2:
     raise SystemExit("Not enough usable photos: " + " ".join(S["advice"]))
 json.dump(usable, open(f"{W}/points.json", "w"))
 ranked = sorted(usable.values(), key=lambda r: -r["quality"])
-skin_photos = [r for r in ranked if r["role"] == "skin"] or [r for r in ranked if r["mouth_ok"]] or ranked
+skin_photos = [r for r in ranked if r["role"] == "skin"] or sorted([r for r in ranked if r["mouth_ok"]] or ranked, key=lambda r: r.get("light_unevenness", 1))
 best = skin_photos[0]
 
 
@@ -178,7 +178,7 @@ def build_variant(tag, strength, skin_set):
     return f"{W}/teacher_{tag}.vrm", hair
 
 
-def score(vrm, tag):
+def score(vrm, tag, painted=()):
     """Render front and three-quarter views and measure likeness (needs the lab renderer)."""
     if not args.lab:
         return None
@@ -188,7 +188,9 @@ def score(vrm, tag):
     shots = [[f"look.html?m=out/pipe_{tag}.vrm&v=face", f"{W}/render_{tag}_f.png"], [f"look.html?m=out/pipe_{tag}.vrm&v=side", f"{W}/render_{tag}_s.png"]]
     subprocess.run(["node", f"{lab}/shot.cjs", json.dumps(shots)], cwd=lab, capture_output=True)
     out = subprocess.run([sys.executable, "-I", os.path.join(HERE, "likeness.py"), args.models, "--photos",
-                          *[os.path.join(args.photos, n) for n in usable], "--renders", f"{W}/render_{tag}_f.png"],
+                          # Only photos not painted onto the model judge it (otherwise it recognises its own copy).
+                          *([os.path.join(args.photos, n) for n in usable if n not in painted] or [os.path.join(args.photos, n) for n in usable]),
+                          "--renders", f"{W}/render_{tag}_f.png"],
                          capture_output=True, text=True).stdout
     for line in out.splitlines():
         if "render vs photos" in line:
@@ -200,7 +202,7 @@ variants = [("a", 1.0, skin_photos[:3]), ("b", 0.75, skin_photos[:3]), ("c", 1.0
 results = []
 for tag, strength, skin_set in variants:
     vrm, hair = build_variant(tag, strength, skin_set)
-    s = score(vrm, tag)
+    s = score(vrm, tag, painted={r["file"] for r in skin_set})
     results.append((s if s is not None else -1, tag, vrm))
     log("check", f"variant {tag}: likeness {s}%", **{f"variant_{tag}": {"strength": strength, "skin_photos": [r['file'] for r in skin_set], "likeness": s, "hair": hair}})
 best_s, best_tag, best_vrm = max(results)
