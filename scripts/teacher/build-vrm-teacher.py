@@ -91,6 +91,16 @@ basemesh = HumanService.create_human(
 for target, value in recipe.get("targets", {}).items():
     TargetService.load_target(basemesh, TargetService.target_full_path(target), weight=value, name=target)
     log("target", target, value)
+# Bake the body shape now, so the face fit below edits the final shape (shape keys hide edits).
+TargetService.bake_targets(basemesh)
+if recipe.get("fit"):
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "fit"))
+    from apply import fit_face  # noqa: E402
+
+    here = os.path.dirname(os.path.abspath(recipe_path))
+    fit = recipe["fit"]
+    fit_face(basemesh, os.path.join(here, fit["shape"]), os.path.join(os.path.dirname(os.path.abspath(__file__)), "fit", "corr.json"),
+             amount=fit.get("amount", 1.0), depth=fit.get("depth", 0.6), log=log)
 rig = HumanService.add_builtin_rig(basemesh, "game_engine", import_weights=True)
 
 # --- Skin and worn assets -------------------------------------------------------------------------
@@ -105,7 +115,8 @@ for asset_type, relative in worn:
     HumanService.add_mhclo_asset(asset(relative), basemesh, asset_type=asset_type, subdiv_levels=0, material_type="GAMEENGINE")
     log("wear", asset_type, relative)
 
-TargetService.bake_targets(basemesh)
+if basemesh.data.shape_keys:
+    TargetService.bake_targets(basemesh)
 
 # --- T-pose as rest (VRM 1.0 wants a T-pose at rest) ---------------------------------------------
 aims = []
