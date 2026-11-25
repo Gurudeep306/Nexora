@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { AlertTriangle, Bookmark, BookmarkCheck, Check, ChevronLeft, ChevronRight, Clock, Flame, GraduationCap, Layers, Loader2, Route, Users, X } from 'lucide-react'
 import { Badge, Button, useToast } from '@/components/ui'
@@ -25,6 +25,13 @@ export interface NodeInsight {
 const H = 'mb-2 flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase'
 
 /** Confidence as a thin meter; the breakdown shows on hover and focus. */
+/** The level of these sections' headings: h3 inside the Nexus panel (its title is an h2), h2 on a lesson page (its title is the h1). */
+export const ExtrasHeadingLevel = createContext<'h2' | 'h3'>('h3')
+
+function ExtrasHeading({ className, children }: { className?: string; children: React.ReactNode }) {
+  return useContext(ExtrasHeadingLevel) === 'h2' ? <h2 className={className}>{children}</h2> : <h3 className={className}>{children}</h3>
+}
+
 export function MasteryMeter({ score, breakdown, color }: { score: number; breakdown: string; color: string }) {
   return (
     <div className="group relative" tabIndex={0} aria-label={`Mastery confidence ${score}%: ${breakdown}`}>
@@ -79,10 +86,10 @@ export function ExamInsight({ subject, node, insight, color }: { subject: string
   const slip = slips.data?.slips?.[0]
   return (
     <section aria-label="Exam insight" className="space-y-3">
-      <h3 className={H}>
+      <ExtrasHeading className={H}>
         <Flame className="size-3.5" aria-hidden="true" /> In the exam
         {insight.hy && <Badge variant="warning">high-yield</Badge>}
-      </h3>
+      </ExtrasHeading>
       {insight.w && (
         <div className="flex flex-wrap items-end justify-between gap-3">
           <p className="mb-0 text-[13px] text-foreground-dim">
@@ -133,9 +140,9 @@ export function UnlockPath({ steps, names, minutes, onStart, onPick }: { steps: 
   return (
     <section aria-label="Shortest path to unlock" className="rounded-xl border border-border px-3.5 py-3">
       <div className="mb-2 flex items-center justify-between gap-2">
-        <h3 className={cn(H, 'mb-0')}>
+        <ExtrasHeading className={cn(H, 'mb-0')}>
           <Route className="size-3.5" aria-hidden="true" /> Shortest path to unlock
-        </h3>
+        </ExtrasHeading>
         <span className="font-mono text-[11px] text-foreground-dim tabular-nums">
           {steps.length} step{steps.length === 1 ? '' : 's'} · ≈ {fmtMinutes(total)}
         </span>
@@ -200,9 +207,9 @@ export function TestOut({ subject, node, onClose, onPassed }: { subject: string;
   return (
     <motion.section initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} aria-label="Test out" className="border-t border-[var(--ed-line)] pt-4">
       <div className="mb-2 flex items-center justify-between">
-        <h3 className={cn(H, 'mb-0')}>
+        <ExtrasHeading className={cn(H, 'mb-0')}>
           <GraduationCap className="size-3.5" aria-hidden="true" /> Test out
-        </h3>
+        </ExtrasHeading>
         <button type="button" onClick={onClose} aria-label="Close the quick check" className="cursor-pointer rounded p-1 text-foreground-dim hover:text-foreground">
           <X className="size-3.5" />
         </button>
@@ -287,12 +294,12 @@ export function Flashcards({ cards, onAddToReview, canReview }: { cards: { front
   }
   return (
     <section aria-label="Flashcards">
-      <h3 className={H}>
+      <ExtrasHeading className={H}>
         <Layers className="size-3.5" aria-hidden="true" /> Flashcards
         <span className="ml-auto font-mono font-normal tracking-normal normal-case tabular-nums">
           {i + 1}/{cards.length}
         </span>
-      </h3>
+      </ExtrasHeading>
       <button
         type="button"
         onClick={() => setFlip((f) => !f)}
@@ -349,7 +356,7 @@ export function NodeNotes({ subject, node, initial, onSaved }: { subject: string
   const dirty = note !== (initial?.note ?? '')
   return (
     <section aria-label="Your notes">
-      <h3 className={H}>
+      <ExtrasHeading className={H}>
         Your notes
         <button
           type="button"
@@ -363,7 +370,7 @@ export function NodeNotes({ subject, node, initial, onSaved }: { subject: string
           {mark ? <BookmarkCheck className="size-3.5 text-accent-brand" aria-hidden="true" /> : <Bookmark className="size-3.5" aria-hidden="true" />}
           {mark ? 'Bookmarked' : 'Bookmark'}
         </button>
-      </h3>
+      </ExtrasHeading>
       <textarea
         value={note}
         onChange={(e) => setNote(e.target.value)}

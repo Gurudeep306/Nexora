@@ -88,7 +88,7 @@ The owner is the founder. These preferences come from many sessions. Follow them
 | `content/gate-notes/`, `public/gate-fig/` | GATE notes and figures. The past-paper PDFs and third-party reference notes are in the private repo `Gurudeep306/Materials` (clone it next to this one; the GATE scripts find it there or via `GATE_PYQ_DIR`) |
 | `scripts/learn/` | Problem and solution build/verify pipeline |
 | `bridge/` | Hive bridge (runs Claude Code / Codex / Vibe on a worker machine) |
-| `deploy/` | Deploy configs; `deploy/model-farm/` serves open models on a GPU; `deploy/coder-model/` runs NexoraGuru's own small coding model on a free Oracle server (the Solve page's AI tests) |
+| `deploy/` | Deploy configs; `deploy/model-farm/` serves open models on a GPU; `deploy/coder-model/` runs NexoraGuru's own small coding model on a free Oracle server (the Solve page's AI tests); `deploy/voice-server/` runs its own free Indian voices there (HeadTTS + Kokoro, exact lip shapes for the virtual teacher) |
 | `docs/` | `docs/hive/GUIDE.md`, `docs/gate/*`, `docs/ui/*`, `docs/ops/*` |
 | `tests/` | Server tests (`node --test`) |
 
@@ -117,6 +117,10 @@ node client/scripts/check-learn.mjs <topic>        # content integrity
 
 Before pushing, run the tests, the typecheck and the build for the parts you
 changed.
+After changing pages or the page kit, run the site crawl
+(`node scripts/site/crawl.cjs`, against a local server signed in as the owner):
+it opens every linked page and reports page errors, failed API calls, axe
+violations and sideways scroll, then one page of each kind in dark and at 360 px.
 
 Server tests that start their own server get a free port from
 `tests/helpers/free-port.js` (`await freePort()`); never pick a random port
@@ -320,7 +324,7 @@ from a range, since test files run in parallel and a clash fails the run.
   run })`; the ⌘K palette, the shortcut sheet and voice commands all read it.
   The mic (top bar) uses the browser's free speech recognition plus the
   rule matcher (`voice/actions/match.ts`, test set
-  `docs/voice/tests/commands.json`, ≥ 95%); irreversible actions need a
+  `docs/voice/tests/commands.json`, ≥ 95%, and `tests/voice-commands-corpus.test.js`: questions never fire orders, no real GATE sentence fires a command; after adding commands or much new material, run `node scripts/voice/build-real-words.mjs`); irreversible actions need a
   spoken or tapped confirm. **Scene Voice** (`voice/scene/`): with an animation
   on screen, the mic drives it — "swap pe ruko", "go to when low equals high",
   "what if sorted", "why did i become 4", "mid kya hai", predict mode. Every
@@ -328,7 +332,8 @@ from a range, since test files run in parallel and a clash fails the run.
   never a model (test set `docs/voice/tests/scene.json`). Name steps with the
   event words (`swap`, `cmp`, `found`, `push`, `pop`…) so students can jump to
   them. Keep every control's accessible name containing
-  its visible text (`npm run voice:names`). **Guru** (`src/voice/guru.js`,
+  its visible text (`npm run voice:names`). After changing voice or the teacher, run the browser sweep
+  (`scripts/voice/sweep/sweep.cjs`, steps at its top; and `teacher-talk.cjs` and `teacher-studio.cjs` beside it for how she listens and speaks, and the Teacher studio at `/teacher`). **Guru** (`src/voice/guru.js`,
   `POST /api/voice/guru`): a spoken sentence that is not a command goes to
   the tutor, which follows `docs/voice/GURU_SPEC.md` — hints climb a ladder
   (1–6) while a question is unsolved, the Leak Guard blocks option letters,
@@ -368,7 +373,12 @@ from a range, since test files run in parallel and a clash fails the run.
   Alt+M opens the top mic anywhere. **Training data** rules are in
   `docs/voice/TRAINING.md`: our solutions and lessons were drafted with AI
   agents, so they are lookup material only, never training data; the
-  data script accepts only open-licence teacher models. The voice feature never calls a paid service
+  data script accepts only open-licence teacher models. **Guru on the device** (`voice/brain/`, Settings → Voice): opt-in
+  download of base Qwen3.5 (S/M/L by the device's GPU, `tiers.ts`) run in a
+  Web Worker on WebGPU only (WebAssembly measured far too slow); the server
+  decides per turn (`/api/voice/guru/plan`, `localAllowed`): unsolved
+  questions, Explain-back and tests never run on a device, so answer keys
+  stay on the server. The voice feature never calls a paid service
   (`tests/voice-zero-spend.test.js`).
 - **Voice recognition** (Admin → Voice recognition, `src/voice/stt.js`,
   `components/admin/VoiceSttSection.tsx`, client `voice/capture.ts` used by

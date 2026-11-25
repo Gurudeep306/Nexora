@@ -68,6 +68,7 @@ const BookmarksPage = lazy(pageLoaders.BookmarksPage)
 const ProfilePage = lazy(pageLoaders.ProfilePage)
 const SettingsPage = lazy(pageLoaders.SettingsPage)
 const ThemeCentrePage = lazy(pageLoaders.ThemeCentrePage)
+const TeacherStudio = lazy(pageLoaders.TeacherStudio)
 const AiLabPage = lazy(pageLoaders.AiLabPage)
 const NotFoundPage = lazy(pageLoaders.NotFoundPage)
 const VizLab = import.meta.env.DEV ? lazy(() => import('@/learn/ui/VizLab')) : null
@@ -202,6 +203,7 @@ export default function App() {
             <Route path="/u/:username" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsRoute />} />
             <Route path="/theme" element={<ThemeCentrePage />} />
+            <Route path="/teacher" element={<TeacherStudio />} />
             <Route path="/ai-lab" element={<AiLabPage />} />
             <Route path="/admin" element={<AdminRoute />} />
             <Route path="/admin/problems/:id" element={<AuthorRoute />} />

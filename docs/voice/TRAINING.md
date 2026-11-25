@@ -16,36 +16,48 @@
 | Students' voices and words | **Only with the corpus opt-in** (18+ or guardian) | `prefs.ts`; asked again before any recording. |
 | The third-party reference notes in Materials | **Never** | Not ours. |
 
-## 2. Make the hint data
+## 2. Make the data (v2)
 
-`scripts/voice/make-guru-data.js` sends each GATE question (with its key, so
-the teacher knows what not to say) to an open-licence teacher, asks for a
-student's question and three hints that climb the ladder, drops any set our
-Leak Guard catches, and writes chat-format JSONL (`data/guru/`, not committed).
+`scripts/voice/make-guru-data.js` (pure parts in `scripts/voice/guru-data.js`)
+asks an open-licence teacher for four kinds of tutoring conversation, and
+nothing else, because Guru is built for one job:
+
+| Kind | Input (public only) | Guru learns to |
+|---|---|---|
+| `hint` | an unsolved GATE question + official key | give hints 1–3 up the ladder, never the answer |
+| `review` | an answered question + official key | say why the key is right (and the tempting option wrong) |
+| `concept` | a topic name from the Nexus map | explain it briefly with one tiny example |
+| `talk` | a topic name | answer small talk warmly and come back to study |
+
+In English (45%), Hinglish (35%) and Hindi in Devanagari (20%), as one of the
+seven teachers or as Guru. Every example is built with the server's own
+`buildMessages`, so the model learns exactly the prompt it gets on the site.
+
+Every reply must pass: the Leak Guard (hints), naming the key (reviews), spoken
+style (no markdown or code), a length limit, and the right script (Devanagari
+for Hindi, Roman otherwise). Duplicates are dropped. Train / val / test are
+split by question or topic, so the test set holds questions never trained on.
 
 ```bash
-node scripts/voice/make-guru-data.js --dry --limit 3
+node scripts/voice/make-guru-data.js --dry --hint 3
+TEACHER_BASE_URL=http://localhost:8000/v1 TEACHER_MODEL=Qwen/Qwen3-14B-AWQ \
+  node scripts/voice/make-guru-data.js --hint 1500 --review 800 --concept 1200 --talk 300 --out-dir data/guru
 ```
 
-```bash
-TEACHER_BASE_URL=http://localhost:8000/v1 TEACHER_MODEL=Qwen/Qwen3-32B node scripts/voice/make-guru-data.js --limit 500 --out data/guru/hints.jsonl
-```
-
-Each line: `{ id, messages: [system, question, …, assistant hint], meta: { question, step, subject, teacher } }`.
 Tests: `tests/voice-training-data.test.js`.
 
-## 3. Where it runs (free)
+## 3. Where it runs (free), and the quality gates
 
-1. **Teacher**: a Kaggle notebook with 2×T4 GPUs runs vLLM serving a Qwen
-   model that fits (e.g. Qwen3-14B in 4-bit), and the script runs in the same
-   notebook against `http://localhost:8000/v1`. ~30 free GPU hours a week.
-2. **Fine-tune**: a second Kaggle notebook, Unsloth + TRL, LoRA on Qwen3.5
-   0.8B / 2B / 4B (Guru-S/M/L) with the JSONL.
-3. **Check**: the quality gates in `BLUEPRINT.md` §5 (`docs/voice/tests/tutor.json`,
-   leak ≤ 2%) before any model is used on the site.
+`deploy/guru-training/` has the two Kaggle notebooks and the owner's steps:
+`1-make-data.ipynb` (vLLM serving Qwen3-14B-AWQ on 2 × T4, then the script) and
+`2-fine-tune.ipynb` (Unsloth LoRA on Qwen3.5 0.8B / 2B / 4B, trained on Guru's
+replies only, thinking off as on the site).
 
-The notebooks are written once the Kaggle account exists (founder's task),
-because they must be run and checked there — not here.
+A model is used on the site only if `scripts/voice/eval-guru.js` passes on the
+held-out test set: leaks ≤ 2% of hints, reviews name the key ≥ 95%, clean
+(spoken style, length, script) ≥ 95%. Then the browser build: ONNX export (the
+notebook stops plainly if the exporter doesn't support Qwen3.5 yet) and the
+4-bit q4f16 build, checked on a real device before the site points at it.
 
 ## 4. What still needs the founder
 

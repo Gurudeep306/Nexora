@@ -49,7 +49,8 @@ function parseInputs(algo: Algorithm, raw: Record<string, string>): { inputs?: I
 export function CodePanel({ algo, lang, step }: { algo: Algorithm; lang: Lang; step: string }) {
   const src = algo.code[lang] ?? algo.code.pseudo ?? ''
   const { lines, steps } = parsed(src)
-  return <CodeLines lines={lines} hot={new Set(steps.get(step) ?? [])} lang={lang} layoutKey={algo.id} />
+  // Named after its animation: a lesson with several players must not have several regions all called "Code".
+  return <CodeLines lines={lines} hot={new Set(steps.get(step) ?? [])} lang={lang} layoutKey={algo.id} label={`Code: ${algo.title}`} />
 }
 
 /**

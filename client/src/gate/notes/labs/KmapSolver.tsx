@@ -286,10 +286,12 @@ function SubMap({ n, vars, offset, values, loops, toggle, pos, allVars }: {
                   className={cn('km-cell', `is-${v === 'X' ? 'x' : v}`)}
                   style={{ gridRow: r + 2, gridColumn: c + 2 }}
                   onClick={() => toggle(m)}
-                  aria-label={`m${m}, ${literalsOf(m)}: ${v === 'X' ? "don't-care" : v}. Click to change.`}
+                  // The name starts with what the cell shows (1, X or nothing), so a voice user can say it;
+                  // the small minterm number is drawn by CSS from data-m, not part of the button's text.
+                  aria-label={`${v === '0' ? '0' : v}: m${m}, ${literalsOf(m)}${v === 'X' ? ", don't-care" : ''}. Click to change.`}
                 >
                   <span className="km-val">{v === '0' ? '' : v}</span>
-                  <span className="km-idx">{m}</span>
+                  <span className="km-idx" data-m={m} aria-hidden="true" />
                 </button>
               )
             })}

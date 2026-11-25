@@ -22,7 +22,8 @@ const NAV = [
 
 async function specs() {
   const G = await mod('globalSpecs.ts');
-  return [G.placeSpec([...NAV, ...G.EXTRA_PLACES]), ...G.GLOBAL_SPECS];
+  const T = await mod('teacherSpecs.ts');
+  return [G.placeSpec([...NAV, ...G.EXTRA_PLACES]), ...G.GLOBAL_SPECS, ...T.TEACHER_SPECS];
 }
 
 test('normalize folds Hindi, Hinglish and English into one form', async () => {
@@ -89,4 +90,15 @@ test('the registry: latest registration wins, and removing it restores the earli
   const hidden = R.registerAction({ ...base, when: () => false });
   assert.equal(R.getAction('test.thing'), undefined, 'when() hides an action');
   hidden();
+});
+
+test('"light mode" is not "night mode" (dark): a slip never changes the first letter', () => {
+  const { matchCommand, expand, sameWord } = require('../client/src/voice/actions/match.ts');
+  const { GLOBAL_SPECS } = require('../client/src/voice/actions/globalSpecs.ts');
+  const index = new Map(GLOBAL_SPECS.map((a) => [a.id, expand(a)]));
+  assert.equal(sameWord('light', 'night'), false);
+  assert.equal(sameWord('problms', 'problems'), true);
+  assert.equal(matchCommand('light mode', GLOBAL_SPECS, index).best?.id, 'look.mode.light');
+  assert.equal(matchCommand('night mode', GLOBAL_SPECS, index).best?.id, 'look.mode.dark');
+  assert.equal(matchCommand('dark mode', GLOBAL_SPECS, index).best?.id, 'look.mode.dark');
 });

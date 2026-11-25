@@ -11,7 +11,7 @@ import { Button, Modal } from '@/components/ui'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { getVoicePrefs } from '../prefs'
-import { listenOnce, speechSupported, type ListenHandle } from '../speech'
+import { listenOnce, useVoiceSupport, type ListenHandle } from '../speech'
 import { InkWave } from '../listen/InkWave'
 import './explain.css'
 
@@ -43,6 +43,7 @@ type Stage = { kind: 'starting' } | { kind: 'error'; say: string } | { kind: 'op
 
 export function ExplainBack({ open, problem, code, language, onClose }: { open: boolean; problem: { kind: string; id: string } | null; code: string; language: string; onClose: () => void }) {
   const [stage, setStage] = useState<Stage>({ kind: 'starting' })
+  const canListen = useVoiceSupport()
   const [text, setText] = useState('')
   const [answer, setAnswer] = useState('')
   const [live, setLive] = useState<string | null>(null)
@@ -93,6 +94,7 @@ export function ExplainBack({ open, problem, code, language, onClose }: { open: 
     setLive('')
     handle.current = await listenOnce({
       lang: prefs.lang,
+      mode: 'text',
       continuous: true,
       onText: (t) => {
         setLive(t)
@@ -148,7 +150,7 @@ export function ExplainBack({ open, problem, code, language, onClose }: { open: 
             <p className="xb-quiet">Guru stays quiet until you finish. A minute or two is enough.</p>
 
             <div className="xb-row">
-              {speechSupported() && (
+              {canListen && (
                 <Button variant="secondary" onClick={() => void listen()} aria-pressed={live !== null} disabled={stage.kind === 'grading'}>
                   {live !== null ? <Square aria-hidden="true" /> : <Mic aria-hidden="true" />}
                   {live !== null ? 'Stop' : text ? 'Speak more' : 'Speak'}

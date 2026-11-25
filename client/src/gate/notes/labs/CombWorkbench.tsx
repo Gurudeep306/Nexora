@@ -190,7 +190,8 @@ function MuxSvg({ inputs, sels, selected, enable, out, outValue, ariaLabel }: Mu
 
 function Toggle({ label, on, onClick, aria }: { label: string; on: boolean; onClick: () => void; aria?: string }) {
   return (
-    <button type="button" className={cn('lab-toggle', on && 'is-on')} aria-pressed={on} aria-label={aria} onClick={onClick}>
+    // A spoken name starts with what the button shows, so voice users can say it.
+    <button type="button" className={cn('lab-toggle', on && 'is-on')} aria-pressed={on} aria-label={aria ? `${label}. ${aria}` : undefined} onClick={onClick}>
       {label}
     </button>
   )
@@ -369,12 +370,11 @@ function ImplementTool() {
             type="button"
             className={cn('lab-toggle', v === '1' && 'is-on')}
             style={{ minWidth: '3.4em', padding: '0 6px', borderStyle: v === 'X' ? 'dashed' : undefined }}
-            aria-label={`Row ${m}, ${rowText(m)}: f = ${v === 'X' ? "don't-care" : v}. Click to change.`}
+            aria-label={`${v}: row ${m}, ${rowText(m)}, f = ${v === 'X' ? "don't-care" : v}. Click to change.`}
             onClick={() => setValues(values.map((x, j) => (j === m ? NEXT[x] : x)))}
           >
-            <span className="lab-svg-small" style={{ fontSize: 10, marginRight: 4 }}>
-              {m}
-            </span>
+            {/* The row number is drawn by CSS (data-m), so the button's text is just its value. */}
+            <span className="lab-svg-small lab-row-no" data-m={m} aria-hidden="true" style={{ fontSize: 10, marginRight: 4 }} />
             {v}
           </button>
         ))}

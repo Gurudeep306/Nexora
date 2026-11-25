@@ -12,7 +12,13 @@ import { watchBlank } from './blank'
 import { io, type Socket } from 'socket.io-client'
 import { useSyncExternalStore } from 'react'
 import { API_BASE } from '@/lib/api'
-import * as Y from 'yjs'
+import type * as YT from 'yjs'
+
+/* Yjs (the shared code pad's text) is loaded when someone joins a room, not
+   with every page: this file is part of the app frame (the ongoing-call bar). */
+let Ymod: typeof import('yjs') | null = null
+const loadYjs = async () => (Ymod ??= await import('yjs'))
+const fromB64 = (b: string) => Uint8Array.from(atob(b), (c) => c.charCodeAt(0))
 import type { ChatMsg, CodeLang, JoinOk, JoinReply, Knock, LiveRoom, PeerInfo, Poll, RoomTimer, ScreenInfo } from './api'
 import { MeshTransport } from './mesh'
 import { SfuTransport } from './sfu'
@@ -179,7 +185,7 @@ export class LiveSession {
   }
 
   private async onJoined(r: JoinOk, again: boolean) {
-    this.loadCode(r.code?.state)
+    void this.loadCode(r.code?.state)
     this.transport?.close()
     this.transport = null
     this.transportReady = false
@@ -333,8 +339,13 @@ export class LiveSession {
     })
     socket.on('code:lang', ({ lang }: { lang: CodeLang }) => this.set({ codeLang: lang }))
     socket.on('code:update', ({ update }: { update: string }) => {
+      if (!this.codePad || !Ymod) {
+        // The pad is still loading: keep the edit and apply it once it is ready.
+        this.codeQueue.push(update)
+        return
+      }
       try {
-        Y.applyUpdate(this.codePad, Uint8Array.from(atob(update), (c) => c.charCodeAt(0)), 'remote')
+        Ymod.applyUpdate(this.codePad, fromB64(update), 'remote')
         if (!this.codeOpen && !this.state.codeNew) this.set({ codeNew: true })
       } catch {
         /* ignore a broken update */
@@ -592,19 +603,24 @@ export class LiveSession {
   }
   /* ── study tools ── */
   /** The shared code pad (Yjs). Local edits go to the room; remote ones come in as 'remote'. */
-  codePad = new Y.Doc()
+  codePad: YT.Doc | null = null
   private codeOpen = false
-  private loadCode(state?: string) {
-    this.codePad.destroy()
-    this.codePad = new Y.Doc()
-    if (state) {
+  /** Edits that came in while Yjs was still loading. */
+  private codeQueue: string[] = []
+  private async loadCode(state?: string) {
+    const Y = await loadYjs()
+    this.codePad?.destroy()
+    const doc = new Y.Doc()
+    for (const u of [state, ...this.codeQueue.splice(0)]) {
+      if (!u) continue
       try {
-        Y.applyUpdate(this.codePad, Uint8Array.from(atob(state), (c) => c.charCodeAt(0)), 'remote')
+        Y.applyUpdate(doc, fromB64(u), 'remote')
       } catch {
-        /* start empty */
+        /* skip a broken one */
       }
     }
-    this.codePad.on('update', (u: Uint8Array, origin: unknown) => {
+    this.codePad = doc
+    doc.on('update', (u: Uint8Array, origin: unknown) => {
       if (origin === 'remote') return
       let bin = ''
       for (let i = 0; i < u.length; i += 0x8000) bin += String.fromCharCode(...u.subarray(i, i + 0x8000))

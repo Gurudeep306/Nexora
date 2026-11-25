@@ -6,13 +6,14 @@
   when every service is full the student's own browser listens instead. So a
   limit never stops the mic and nothing is ever charged.
 */
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ArrowDown, ArrowUp, ExternalLink, Loader2, Play, Plus, Trash2 } from 'lucide-react'
 import { Button, useToast } from '@/components/ui'
 import { useApi } from '@/hooks/useApi'
 import { api, ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import { Chip, Failed, Panel, Skeleton, Toggle } from './kit'
+import { startCapture, type Capture } from '@/voice/capture'
 
 type Limits = Partial<Record<'perMinute' | 'perDay' | 'perHourSeconds' | 'perDaySeconds' | 'perMonthSeconds' | 'creditSeconds', number>>
 type Use = { requests: number; seconds: number }
@@ -76,7 +77,160 @@ export function VoiceSttSection() {
   if (error) return <Failed message={error} onRetry={refetch} />
   if (loading || !data) return <Skeleton className="h-64" />
   // A fresh editor for each saved version, started from it.
-  return <Editor key={JSON.stringify([data.providers, data.studentDailySeconds, data.autoOrder])} data={data} refetch={refetch} />
+  return (
+    <div className="space-y-5">
+      <Editor key={JSON.stringify([data.providers, data.studentDailySeconds, data.autoOrder])} data={data} refetch={refetch} />
+      <NaturalVoice />
+      <RecordClips />
+    </div>
+  )
+}
+
+type TtsView = {
+  enabled: boolean
+  ownUrl: string
+  ownKeySet: boolean
+  ownKeyHint: string
+  own: boolean
+  azureFree: boolean
+  monthlyChars: number
+  studentDailyChars: number
+  freeMonthlyChars: number
+  stopAt: number
+  usedThisMonth: number
+  linked: boolean
+  ownVoices: { id: string; label: string }[]
+}
+type TtsDraft = { enabled: boolean; daily: number; monthly: number; ownUrl: string; newKey: string; azureFree: boolean }
+type TtsTest = { ok: boolean; reason?: string; ms: number; cached?: boolean; engine?: string; voice?: string; mime?: string; audio?: string; visemes?: number }
+
+/*
+  Natural voice for spoken answers (src/voice/tts.js): our own voice server
+  first (deploy/voice-server: Kokoro's Indian voices, free, exact mouth
+  shapes for the teacher), Azure Speech's free tier only for non-commercial
+  sites.
+*/
+function NaturalVoice() {
+  const { data, error, loading, refetch } = useApi(() => api.get<TtsView>('/api/admin/voice-tts'), [], { cacheKey: 'admin:voice-tts' })
+  const toast = useToast()
+  const [draft, setDraft] = useState<TtsDraft | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [test, setTest] = useState<{ busy: boolean; result: TtsTest | null }>({ busy: false, result: null })
+  if (error) return <Failed message={error} onRetry={refetch} />
+  if (loading || !data) return <Skeleton className="h-40" />
+  const d: TtsDraft = draft ?? { enabled: data.enabled, daily: data.studentDailyChars, monthly: data.monthlyChars, ownUrl: data.ownUrl, newKey: '', azureFree: data.azureFree }
+  const changed =
+    draft !== null &&
+    (d.enabled !== data.enabled || d.daily !== data.studentDailyChars || d.monthly !== data.monthlyChars || d.ownUrl !== data.ownUrl || d.newKey !== '' || d.azureFree !== data.azureFree)
+  const save = async () => {
+    setSaving(true)
+    try {
+      await api.put('/api/admin/voice-tts', { enabled: d.enabled, studentDailyChars: d.daily, monthlyChars: d.monthly, ownUrl: d.ownUrl.trim(), newOwnKey: d.newKey.trim(), azureFree: d.azureFree })
+      setDraft(null)
+      refetch()
+      toast.success('Saved')
+    } catch (e) {
+      toast.error(e instanceof ApiError ? e.message : 'Couldn’t save.')
+    } finally {
+      setSaving(false)
+    }
+  }
+  const runTest = async (lang: 'en-IN' | 'hi-IN') => {
+    setTest({ busy: true, result: null })
+    try {
+      const r = await api.post<TtsTest>('/api/admin/voice-tts/test', {
+        lang,
+        text: lang === 'hi-IN' ? 'नमस्ते! मैं आपकी NexoraGuru टीचर हूँ। चलिए, साथ में सीखते हैं।' : 'Namaste! I am your NexoraGuru teacher. Let us learn binary search together.',
+      })
+      setTest({ busy: false, result: r })
+      if (r.ok && r.audio && r.mime) void new Audio(`data:${r.mime};base64,${r.audio}`).play().catch(() => {})
+    } catch (e) {
+      setTest({ busy: false, result: { ok: false, ms: 0, reason: e instanceof ApiError ? e.message : 'The test didn’t run.' } })
+    }
+  }
+  const pct = data.stopAt ? Math.min(100, Math.round((data.usedThisMonth / data.stopAt) * 100)) : 0
+  const state = !data.enabled ? 'Off' : data.own ? 'Your voice server' : data.azureFree && data.linked ? 'Azure free tier' : 'Not set up'
+  const t = test.result
+  return (
+    <Panel
+      title="Natural voice"
+      icon="volume"
+      description="Spoken answers in natural Indian voices that also move the virtual teacher’s lips exactly. They come from your own free voice server (Kokoro’s Indian voices, open licence, commercial use allowed): set it up once on the free Oracle server with deploy/voice-server/README.md, then paste its address and password here. Without it, students hear their own device’s voice."
+    >
+      <div className="vstt-auto">
+        <Toggle checked={d.enabled} onChange={(v) => setDraft({ ...d, enabled: v })} label="Use the natural voice" />
+        <div>
+          <p className="vstt-auto-title">
+            Use the natural voice <Chip tone={state === 'Off' || state === 'Not set up' ? 'warning' : 'success'}>{state}</Chip>
+          </p>
+          <p className="vstt-auto-line">Voices: {data.ownVoices.map((v) => v.label).join(', ')}. Each speaks English and Hindi.</p>
+        </div>
+      </div>
+      <div className="vstt-fields">
+        <label className="ai-field">
+          <span>Voice server address</span>
+          <input className="ai-input" type="url" inputMode="url" placeholder="https://1-2-3-4.sslip.io" value={d.ownUrl} onChange={(e) => setDraft({ ...d, ownUrl: e.target.value })} />
+        </label>
+        <label className="ai-field">
+          <span>Password{data.ownKeySet ? ` (saved, ends ${data.ownKeyHint})` : ''}</span>
+          <input
+            className="ai-input"
+            type="password"
+            autoComplete="off"
+            placeholder={data.ownKeySet ? 'Leave empty to keep it' : 'From the setup script'}
+            value={d.newKey}
+            onChange={(e) => setDraft({ ...d, newKey: e.target.value })}
+          />
+        </label>
+        <label className="ai-field">
+          <span>Each student, characters a day</span>
+          <input className="ai-input" type="number" min={200} max={50000} step={100} value={d.daily} onChange={(e) => setDraft({ ...d, daily: Number(e.target.value) || 0 })} />
+        </label>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" variant="secondary" onClick={() => void runTest('en-IN')} loading={test.busy} disabled={changed}>
+          Test in English
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => void runTest('hi-IN')} disabled={changed || test.busy}>
+          Test in Hindi
+        </Button>
+        <span className="vstt-auto-line" aria-live="polite">
+          {changed
+            ? 'Save first, then test.'
+            : t
+              ? t.ok
+                ? `${t.cached ? 'Spoke from memory (said before)' : `Spoke in ${(t.ms / 1000).toFixed(1)} s`} with ${t.engine === 'own' ? 'your voice server' : 'Azure'}${t.visemes ? `, ${t.visemes} mouth shapes for the teacher` : ''}.`
+                : `Didn’t speak: ${t.reason ?? 'unknown'}.`
+              : ''}
+        </span>
+      </div>
+      <div className="vstt-auto">
+        <Toggle checked={d.azureFree} onChange={(v) => setDraft({ ...d, azureFree: v })} label="Use Azure Speech’s free tier" />
+        <div>
+          <p className="vstt-auto-title">Azure Speech’s free tier (non-commercial sites only)</p>
+          <p className="vstt-auto-line">
+            Microsoft’s terms allow commercial use of its voices only on the paid tier, so leave this off for NexoraGuru. When on, it uses the Azure Speech entry above and
+            stops at 85% of the free 500,000 characters a month ({data.usedThisMonth.toLocaleString('en-IN')} used, {pct}%).
+          </p>
+        </div>
+      </div>
+      {d.azureFree && (
+        <div className="vstt-fields">
+          <label className="ai-field">
+            <span>Azure monthly cap (at most {data.freeMonthlyChars.toLocaleString('en-IN')})</span>
+            <input className="ai-input" type="number" min={1000} max={data.freeMonthlyChars} step={1000} value={d.monthly} onChange={(e) => setDraft({ ...d, monthly: Math.min(data.freeMonthlyChars, Number(e.target.value) || 0) })} />
+          </label>
+        </div>
+      )}
+      {changed && (
+        <div className="flex justify-end">
+          <Button size="sm" onClick={() => void save()} loading={saving}>
+            Save
+          </Button>
+        </div>
+      )}
+    </Panel>
+  )
 }
 
 function Editor({ data, refetch }: { data: View; refetch: () => void }) {
@@ -431,5 +585,125 @@ function ExtraKeys({ p, busy, onChange, onTest }: { p: Provider; busy: string | 
         )
       )}
     </div>
+  )
+}
+
+type Clip = { id: string; lang: 'en' | 'hinglish' | 'hi'; kind: string; text: string }
+const LANG_NAME: Record<Clip['lang'], string> = { en: 'English', hinglish: 'Hinglish', hi: 'Hindi' }
+
+/*
+  S9: record the test clips for scripts/voice/asr-eval.js on any device. Each
+  clip is saved to your own device as <id>.wav (16 kHz mono, the same clean
+  capture the mic uses); nothing is uploaded or stored here. Put the files in
+  <folder>/<lang>/ and run the script with ASR_CLIPS_DIR=<folder>.
+*/
+function RecordClips() {
+  const [open, setOpen] = useState(false)
+  const [clips, setClips] = useState<Clip[] | null>(null)
+  const [lang, setLang] = useState<Clip['lang']>('hinglish')
+  const [at, setAt] = useState(0)
+  const [rec, setRec] = useState<'idle' | 'recording' | 'done' | 'empty' | 'blocked'>('idle')
+  const [url, setUrl] = useState<string | null>(null)
+  const [done, setDone] = useState<Set<string>>(new Set())
+  const cap = useRef<Capture | null>(null)
+  useEffect(() => {
+    if (!open || clips) return
+    api.get<{ clips: Clip[] }>('/api/admin/voice-stt/clips').then((r) => setClips(r.clips)).catch(() => setClips([]))
+  }, [open, clips])
+  useEffect(() => () => {
+    cap.current?.cancel()
+    if (url) URL.revokeObjectURL(url)
+  }, [url])
+  const list = (clips ?? []).filter((c) => c.lang === lang)
+  const clip = list[Math.min(at, Math.max(0, list.length - 1))]
+  const reset = () => {
+    cap.current?.cancel()
+    cap.current = null
+    if (url) URL.revokeObjectURL(url)
+    setUrl(null)
+    setRec('idle')
+  }
+  const start = async () => {
+    reset()
+    const c = await startCapture()
+    if (!c) return setRec('blocked')
+    cap.current = c
+    setRec('recording')
+  }
+  const stop = async () => {
+    const c = cap.current
+    cap.current = null
+    const blob = c ? await c.stop() : null
+    if (!blob) return setRec('empty')
+    setUrl(URL.createObjectURL(blob))
+    setRec('done')
+  }
+  const go = (d: number) => {
+    reset()
+    setAt((i) => Math.max(0, Math.min(list.length - 1, i + d)))
+  }
+  return (
+    <Panel
+      title="Record test clips"
+      icon="volume"
+      description="Before turning on a service or a language, measure it on real voices (scripts/voice/asr-eval.js). Read each sentence as you normally speak. Each recording is saved to your own device only; nothing is uploaded. Keep the files out of the public repository."
+      actions={
+        <button type="button" className="ai-btn" onClick={() => (open ? (reset(), setOpen(false)) : setOpen(true))} aria-expanded={open}>
+          {open ? 'Close' : 'Start recording'}
+        </button>
+      }
+    >
+      {open && !clips && <Skeleton className="h-24" />}
+      {open && clips && clip && (
+        <div className="vstt-rec">
+          <div className="vstt-rec-langs" role="group" aria-label="Language">
+            {(['en', 'hinglish', 'hi'] as const).map((l) => (
+              <button key={l} type="button" className={cn('ai-btn', l === lang && 'is-on')} aria-pressed={l === lang} onClick={() => (reset(), setLang(l), setAt(0))}>
+                {LANG_NAME[l]} · {(clips ?? []).filter((c) => c.lang === l && done.has(c.id)).length}/{(clips ?? []).filter((c) => c.lang === l).length}
+              </button>
+            ))}
+          </div>
+          <p className="vstt-rec-count">
+            {at + 1} of {list.length} · <span className="font-mono">{clip.id}</span> · {clip.kind}
+          </p>
+          <p className="vstt-rec-text" lang={clip.lang === 'hi' ? 'hi' : 'en'}>
+            {clip.text}
+          </p>
+          <div className="vstt-rec-row">
+            {rec !== 'recording' ? (
+              <Button size="sm" onClick={() => void start()}>
+                {rec === 'done' ? 'Record again' : 'Record'}
+              </Button>
+            ) : (
+              <Button size="sm" onClick={() => void stop()}>
+                Stop
+              </Button>
+            )}
+            {url && (
+              <>
+                <audio controls src={url} aria-label={`Your recording of ${clip.id}`} />
+                <a className="ai-btn" href={url} download={`${clip.id}.wav`} onClick={() => setDone((d) => new Set(d).add(clip.id))}>
+                  Save {clip.id}.wav
+                </a>
+              </>
+            )}
+          </div>
+          <p className="vstt-rec-note" aria-live="polite">
+            {rec === 'recording' && 'Recording… press Stop when you have finished the sentence.'}
+            {rec === 'empty' && 'No speech was heard. Move closer to the mic and try again.'}
+            {rec === 'blocked' && 'The microphone is blocked. Allow it in the browser’s address bar, then try again.'}
+            {rec === 'done' && `Save it into the “${clip.lang}” folder, then go to the next one.`}
+          </p>
+          <div className="vstt-rec-row">
+            <Button size="sm" variant="ghost" onClick={() => go(-1)} disabled={at === 0}>
+              Previous
+            </Button>
+            <Button size="sm" variant="secondary" onClick={() => go(1)} disabled={at >= list.length - 1}>
+              Next sentence
+            </Button>
+          </div>
+        </div>
+      )}
+    </Panel>
   )
 }

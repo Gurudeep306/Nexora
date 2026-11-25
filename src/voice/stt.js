@@ -18,9 +18,18 @@
 */
 const { all, get, run } = require("../db");
 const { seal, open } = require("../hive/vault");
+const { normalise } = require("./normalise");
 
 const KEY = "voice_stt";
 const SAFE = 0.85; // switch before a limit, not after errors
+const UNSURE_BELOW = 0.6; // S6: a service's own confidence under this is unsure
+
+const trimmed = (s) => String(s || "").trim();
+/** Same words, ignoring case, punctuation and spacing (S6's agreement check). */
+function sameWords(a, b) {
+  const norm = (s) => trimmed(s).toLowerCase().normalize("NFC").replace(/[^\p{L}\p{N}+\-*/=<>!&|[\]]+/gu, " ").trim();
+  return norm(a) === norm(b);
+}
 
 /*
   The services we support, in the default order for Indian speech. The order
@@ -308,10 +317,20 @@ async function addUsage(id, seconds, now = new Date()) {
     );
   }
   // Old minute and hour rows are not needed after a day.
-  if (Math.random() < 0.02) {
-    const cut = new Date(now.getTime() - 2 * 86400e3).toISOString();
-    await run("DELETE FROM voice_stt_usage WHERE (period LIKE 'm:%' OR period LIKE 'h:%') AND period < ?", [`m:${cut.slice(0, 16)}`]).catch(() => {});
-  }
+  if (Math.random() < 0.02) await pruneUsage(now).catch(() => {});
+}
+
+/*
+  Drop minute and hour rows older than two days. GLOB, not LIKE: LIKE ignores
+  case, so 'm:%' would also match the monthly rows ('M:2026-11'), and each kind
+  of row is compared with a cut-off of its own kind; otherwise every hour row
+  ('h:…' sorts before 'm:…') and every month row would be deleted, silently
+  resetting the free-limit counters.
+*/
+async function pruneUsage(now = new Date()) {
+  await ready();
+  const cut = new Date(now.getTime() - 2 * 86400e3).toISOString();
+  await run("DELETE FROM voice_stt_usage WHERE (period GLOB 'm:*' AND period < ?) OR (period GLOB 'h:*' AND period < ?)", [`m:${cut.slice(0, 16)}`, `h:${cut.slice(0, 13)}`]);
 }
 
 /** Why a service can't take a clip of `seconds` now, or null when it can. */
@@ -452,7 +471,7 @@ async function whisperLike(url, model, key, { audio, lang, prompt }) {
   // Whisper's own doubt signals (docs §S6): low log-probability, likely silence, or repeats.
   const unsure = segs.some((s) => s.avg_logprob < -0.8 || s.no_speech_prob > 0.5 || s.compression_ratio > 2.4);
   const lp = segs.length ? segs.reduce((a, s) => a + (s.avg_logprob ?? 0), 0) / segs.length : -0.3;
-  return { text: (b.text || "").trim(), confidence: unsure ? 0.4 : Math.max(0, Math.min(1, 1 + lp)) };
+  return { text: (b.text || "").trim(), confidence: unsure ? 0.4 : Math.max(0, Math.min(1, 1 + lp)), unsure };
 }
 
 /* ── vocabulary hints (docs §S4) ── */
@@ -510,10 +529,17 @@ async function slotsOf(p) {
 }
 
 /**
- * Transcribe one clip. Walks the chain; returns { ok, text, confidence,
- * provider, tried } or { ok: false, fallback: 'browser', tried }.
+ * Transcribe one clip. Walks the chain; returns { ok, text (normalised, S5),
+ * raw, code and unplaced (mode "code"), changes, confidence, unsure (S6),
+ * alternatives (two services disagreed), provider, tried } or
+ * { ok: false, fallback: 'browser', tried }.
+ *
+ * S6: an unsure answer (the service's own doubt signals, a confidence under
+ * 0.6, or words a code page can't place) is checked once with the next
+ * service. The same words: trusted. Different words: both are returned for the
+ * student to pick. No second service: the answer comes back marked unsure.
  */
-async function transcribe({ audio, lang = "en-IN", hints = [], username = "", fetchConfig = loadConfig, now = new Date() }) {
+async function transcribe({ audio, lang = "en-IN", hints = [], mode = "text", username = "", fetchConfig = loadConfig, now = new Date() }) {
   const seconds = wavSeconds(audio);
   if (seconds === null) return { ok: false, error: "That isn't a 16 kHz mono WAV clip.", status: 400 };
   if (seconds < 0.3) return { ok: true, text: "", provider: null, tried: [] };
@@ -527,9 +553,12 @@ async function transcribe({ audio, lang = "en-IN", hints = [], username = "", fe
   const phrases = hintsFrom(hints);
   const prompt = promptFrom(phrases, lang);
   const tried = [];
+  // S6: an unsure answer is checked once with the next service (not another key of the same one).
+  let held = null;
   const list = await ordered(cfg, now);
-  for (const p of list) {
+  services: for (const p of list) {
     if (!p.enabled) continue;
+    if (held && held.provider === p.id) continue;
     // The service's keys in turn: the main key, then each person's own key.
     const slots = await slotsOf(p);
     if (!slots.some((x) => x.key) && p.kind !== "openai_compatible") {
@@ -554,9 +583,27 @@ async function transcribe({ audio, lang = "en-IN", hints = [], username = "", fe
         const r = await ADAPTERS[p.kind](p, slot.key, { audio, lang, phrases, prompt });
         await addUsage(slot.id, seconds, now);
         if (username) await addUsage(`user:${username}`, seconds, now);
+        const raw = String(r.text || "").trim();
+        // S5: clean the text and fix names (src/voice/normalise.js).
+        const n = normalise(raw, { mode, hints, lang });
+        // Hindi written in Urdu script: a wrong answer for us; try the next service.
+        if (n.retryHindi) {
+          tried.push({ id: slot.id, skipped: "answered in Urdu script" });
+          continue;
+        }
         tried.push({ id: slot.id, ms: Date.now() - t0 });
         await addStat(p.id, { ok: true, ms: Date.now() - t0, confidence: r.confidence ?? null }, now).catch(() => {});
-        return { ok: true, text: String(r.text || "").trim(), confidence: r.confidence ?? null, provider: p.id, ms: Date.now() - t0, tried };
+        const conf = typeof r.confidence === "number" ? r.confidence : null;
+        const unsure = !!r.unsure || (conf !== null && conf < UNSURE_BELOW) || (mode === "code" && (n.unplaced || []).length > 0);
+        const answer = { ok: true, text: n.text, raw, ...(n.code !== undefined ? { code: n.code, unplaced: n.unplaced } : {}), changes: n.changes, confidence: conf, provider: p.id, ms: Date.now() - t0, unsure, tried };
+        if (held) {
+          // The second opinion: the same words means we can trust it.
+          if (sameWords(held.text, answer.text)) return { ...answer, unsure: false, agreed: [held.provider, p.id] };
+          return { ...held, unsure: true, alternatives: [held.text, answer.text], tried };
+        }
+        if (!unsure || !trimmed(raw)) return answer;
+        held = answer;
+        continue services;
       } catch (e) {
         const s = e.status || 0;
         // Out of credit or a bad key: rest a day. Rate-limited: rest as told. Down or slow: 3 minutes.
@@ -568,7 +615,41 @@ async function transcribe({ audio, lang = "en-IN", hints = [], username = "", fe
       }
     }
   }
+  // No second opinion was possible: give the one answer, marked unsure.
+  if (held) return { ...held, tried };
   return { ok: false, fallback: "browser", tried };
+}
+
+/**
+ * S9 (measuring): one clip through one named service, with the same free caps,
+ * usage counting and normaliser as the chain. Used by scripts/voice/asr-eval.js.
+ * Returns { ok, text, raw, code?, unsure, ms } or { ok: false, why }.
+ */
+async function transcribeWith(providerId, { audio, lang = "en-IN", hints = [], mode = "text", fetchConfig = loadConfig, now = new Date() }) {
+  const seconds = wavSeconds(audio);
+  if (seconds === null || seconds > 60) return { ok: false, why: "not a 16 kHz mono WAV clip of at most 60 s" };
+  const cfg = await fetchConfig();
+  const p = cfg.providers.find((x) => x.id === providerId);
+  if (!p) return { ok: false, why: "no such service" };
+  const phrases = hintsFrom(hints);
+  const prompt = promptFrom(phrases, lang);
+  for (const slot of await slotsOf(p)) {
+    if (!slot.key && p.kind !== "openai_compatible") continue;
+    const why = overLimit(p.limits, await usageOf(slot.id, now), seconds);
+    if (why) return { ok: false, why };
+    const t0 = Date.now();
+    try {
+      const r = await ADAPTERS[p.kind](p, slot.key, { audio, lang, phrases, prompt });
+      await addUsage(slot.id, seconds, now);
+      const raw = String(r.text || "").trim();
+      const n = normalise(raw, { mode, hints, lang });
+      const conf = typeof r.confidence === "number" ? r.confidence : null;
+      return { ok: true, text: n.text, raw, ...(n.code !== undefined ? { code: n.code } : {}), unsure: !!r.unsure || (conf !== null && conf < UNSURE_BELOW), ms: Date.now() - t0 };
+    } catch (e) {
+      return { ok: false, why: e.status ? `error ${e.status}` : "no answer" };
+    }
+  }
+  return { ok: false, why: "no key" };
 }
 
 /* ── admin view ── */
@@ -736,7 +817,8 @@ function createSttRouter({ requireAuthenticatedUser, isTrustedOrigin }) {
           .map((s) => s.trim())
           .filter(Boolean)
           .slice(0, 60);
-        const r = await transcribe({ audio: req.body, lang, hints, username: req.sessionUser.username });
+        const mode = ["text", "command", "code"].includes(req.query.mode) ? req.query.mode : "text";
+        const r = await transcribe({ audio: req.body, lang, hints, mode, username: req.sessionUser.username });
         if (r.status) return res.status(r.status).json({ ok: false, error: r.error });
         res.json(r);
       } catch {
@@ -746,6 +828,15 @@ function createSttRouter({ requireAuthenticatedUser, isTrustedOrigin }) {
   );
 
   router.get("/api/admin/voice-stt", requirePerm("ai.manage"), async (_req, res) => res.json({ ok: true, ...(await adminView()) }));
+  // S9: the sentences to record as test clips (docs/voice/tests/asr/clips.json).
+  router.get("/api/admin/voice-stt/clips", requirePerm("ai.manage"), (_req, res) => {
+    try {
+      const file = require("path").join(__dirname, "..", "..", "docs", "voice", "tests", "asr", "clips.json");
+      res.json({ ok: true, clips: JSON.parse(require("fs").readFileSync(file, "utf8")).clips });
+    } catch {
+      res.status(500).json({ ok: false, error: "The clip list is missing." });
+    }
+  });
   router.put("/api/admin/voice-stt", trusted, requirePerm("ai.manage"), express.json({ limit: "64kb" }), async (req, res) => {
     try {
       res.json({ ok: true, ...(await adminSave(req.body, req.sessionUser.username)) });
@@ -759,4 +850,4 @@ function createSttRouter({ requireAuthenticatedUser, isTrustedOrigin }) {
   return router;
 }
 
-module.exports = { createSttRouter, transcribe, autoScore, ordered, overLimit, wavSeconds, hintsFrom, promptFrom, sanitizeProvider, KINDS, DEFAULT_ORDER, ADAPTERS, adminSave, adminView, loadConfig, testClip, _cooling: cooling };
+module.exports = { createSttRouter, transcribe, transcribeWith, pruneUsage, usageOf, sameWords, autoScore, ordered, overLimit, wavSeconds, hintsFrom, promptFrom, sanitizeProvider, KINDS, DEFAULT_ORDER, ADAPTERS, adminSave, adminView, loadConfig, testClip, _cooling: cooling };

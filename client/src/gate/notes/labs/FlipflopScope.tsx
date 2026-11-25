@@ -291,7 +291,7 @@ function TickRow({ name, wave, onToggle, onFill }: { name: string; wave: number[
           type="button"
           className={cn('ffs-tick', v === 1 && 'is-on')}
           aria-pressed={v === 1}
-          aria-label={`${name} at tick ${t}`}
+          aria-label={`${v}: ${name} at tick ${t}`}
           tabIndex={t === focus ? 0 : -1}
           onFocus={() => setFocus(t)}
           onClick={() => onToggle(t)}

@@ -9,7 +9,8 @@
   are in capture.ts and src/voice/stt.js.
 */
 
-import { serverEars, startCapture, transcribe, type Capture } from './capture'
+import { useEffect, useState } from 'react'
+import { serverEars, startCapture, transcribe, type Capture, type EarsMode } from './capture'
 
 // The Web Speech API is not in TypeScript's DOM lib; this is the part we use.
 interface SpeechResultLike {
@@ -44,8 +45,30 @@ function ctor(): RecognitionCtor | null {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null
 }
 
+/** The browser has its own recogniser (Chrome, Edge, Safari). */
 export function speechSupported(): boolean {
   return ctor() != null
+}
+
+/**
+ * Can this page listen at all? True at once where the browser has its own
+ * recogniser; elsewhere (Firefox, some in-app browsers) it becomes true when
+ * the server ears are set up (Admin → Voice recognition) and the mic can be
+ * recorded. Use this, not speechSupported(), to decide whether to show a mic.
+ */
+export function useVoiceSupport(): boolean {
+  const [ok, setOk] = useState(speechSupported)
+  useEffect(() => {
+    if (ok) return
+    let live = true
+    void serverEars().then((yes) => {
+      if (live && yes) setOk(true)
+    })
+    return () => {
+      live = false
+    }
+  }, [ok])
+  return ok
 }
 
 /** Whether this browser can recognise `lang` without sending audio anywhere. */
@@ -60,6 +83,15 @@ export async function onDeviceAvailable(lang: string): Promise<boolean> {
 }
 
 export type SpeechError = 'not-allowed' | 'no-speech' | 'network' | 'unsupported' | 'other'
+
+/** What the server ears thought of the text (S6). Absent when only the browser heard it. */
+export interface Heard {
+  unsure: boolean
+  /** Two services heard different words. */
+  alternatives?: string[]
+  /** Code pages: the speech written as code. */
+  code?: string
+}
 
 export interface ListenHandle {
   stop(): void
@@ -78,11 +110,13 @@ export interface ListenHandle {
 export async function listenOnce(opts: {
   lang: string
   onText: (t: string) => void
-  onDone: (text: string, error?: SpeechError) => void
+  onDone: (text: string, error?: SpeechError, heard?: Heard) => void
   /** Keep listening through pauses (a long explanation) until stopped. */
   continuous?: boolean
   /** Words on the page (actions, variable names) that help the server ears. */
   hints?: string[]
+  /** What is expected: a command (top-bar mic), code (an editor in use) or plain words (default). */
+  mode?: EarsMode
 }): Promise<ListenHandle> {
   const C = ctor()
   const server = await serverEars()
@@ -99,15 +133,19 @@ export async function listenOnce(opts: {
     if (done) return
     done = true
     let text = finalText.trim()
+    let heard: Heard | undefined
     if (capture) {
       const clip = await capture.stop().catch(() => null)
       capture = null
       if (clip) {
-        const r = await transcribe(clip, opts.lang, opts.hints)
-        if (r.ok && r.text.trim()) text = r.text.trim()
+        const r = await transcribe(clip, opts.lang, opts.hints, opts.mode)
+        if (r.ok && r.text.trim()) {
+          text = r.text.trim()
+          heard = { unsure: r.unsure, ...(r.alternatives ? { alternatives: r.alternatives } : {}), ...(r.code !== undefined ? { code: r.code } : {}) }
+        }
       }
     }
-    opts.onDone(text, text ? undefined : error ?? (C ? undefined : 'no-speech'))
+    opts.onDone(text, text ? undefined : error ?? (C ? undefined : 'no-speech'), heard)
   }
   const stopAll = () => {
     if (rec) rec.stop()

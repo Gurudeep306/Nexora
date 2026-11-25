@@ -4,9 +4,7 @@ import { cachedStructure, fetchStructure, rememberStructure } from '@/components
 import { subjectHref } from '@/components/nexus/course'
 import type { NexusWebStructure } from '@/components/nexus/types'
 import { DSA_TOPICS } from '@/learn/content/dsa/syllabus'
-import { AI_COURSES, AI_TOPIC_INFO } from '@/learn/content/ai/web.gen'
-import { AI_SEARCH } from '@/learn/content/ai/search.gen'
-import { aiTopicHref, topicBase } from '@/learn/content/courses'
+import type { AiCourse, AiTopicInfo } from '@/learn/content/ai/web.gen'
 import type { SearchResult } from '@/gate/notes/types'
 import type { IconName } from '@/components/icon/names'
 
@@ -32,6 +30,41 @@ export interface LessonHit {
 }
 
 type Cluster = NexusWebStructure['clusters'][number]
+
+/* The AI courses' topic list is large (web.gen.ts), so it loads the first
+   time someone searches, not with every page. */
+interface AiIndex {
+  courses: AiCourse[]
+  topics: Record<string, AiTopicInfo>
+  pages: Record<string, { page: string; title: string; sections: string[] }[]>
+  /** Where a topic is read (learn/content/courses.ts, which needs the same index). */
+  href: (id: string) => string
+  base: (id: string) => string
+}
+let aiIndex: AiIndex | null = null
+let aiLoad: Promise<AiIndex> | null = null
+function loadAiIndex(): Promise<AiIndex> {
+  aiLoad ??= Promise.all([import('@/learn/content/ai/web.gen'), import('@/learn/content/ai/search.gen'), import('@/learn/content/courses')]).then(
+    ([w, s, c]) => (aiIndex = { courses: w.AI_COURSES, topics: w.AI_TOPIC_INFO, pages: s.AI_SEARCH, href: c.aiTopicHref, base: c.topicBase }),
+  )
+  return aiLoad
+}
+function useAiIndex(enabled: boolean): AiIndex | null {
+  const [ix, setIx] = useState<AiIndex | null>(aiIndex)
+  useEffect(() => {
+    if (!enabled || ix) return
+    let live = true
+    loadAiIndex()
+      .then((v) => live && setIx(v))
+      .catch(() => {
+        aiLoad = null // try again next time
+      })
+    return () => {
+      live = false
+    }
+  }, [enabled, ix])
+  return ix
+}
 
 let structureLoad: Promise<NexusWebStructure | null> | null = null
 /** The Nexus map: this browser's copy, else fetched once. */
@@ -90,6 +123,7 @@ export function useLessonSearch(query: string, { enabled = true, limit = 6 }: { 
   }, [q, enabled])
   // Still waiting for the server's answer to this exact query.
   const loading = enabled && q.length >= 2 && notes.q !== q
+  const ai = useAiIndex(enabled && q.length > 0)
 
   const hits = useMemo<LessonHit[]>(() => {
     if (!enabled || !q) return []
@@ -104,16 +138,16 @@ export function useLessonSearch(query: string, { enabled = true, limit = 6 }: { 
       if (r >= 0) lessons.push({ r, h: { id: `dsa:${t.id}`, kind: 'lesson', label: t.title, hint: 'DSA course', to: `/learn/dsa/${t.id}` } })
     }
     // AI courses: every topic by name (written or not), and every page and section of the written ones.
-    for (const [id, t] of Object.entries(AI_TOPIC_INFO)) {
-      const course = AI_COURSES.find((c) => c.id === t.course)?.title ?? 'AI'
+    for (const [id, t] of Object.entries(ai?.topics ?? {})) {
+      const course = ai?.courses.find((c) => c.id === t.course)?.title ?? 'AI'
       const r = matchRank(t.title, q)
-      if (r >= 0) lessons.push({ r, h: { id: `ai:${id}`, kind: 'lesson', label: t.title, hint: `${course} · ${t.chapter}`, to: aiTopicHref(id) } })
-      for (const p of AI_SEARCH[id] ?? []) {
+      if (r >= 0) lessons.push({ r, h: { id: `ai:${id}`, kind: 'lesson', label: t.title, hint: `${course} · ${t.chapter}`, to: ai!.href(id) } })
+      for (const p of ai?.pages[id] ?? []) {
         const pr = matchRank(p.title, q)
-        if (pr >= 0) lessons.push({ r: pr + 0.5, h: { id: `ai:${id}/${p.page}`, kind: 'lesson', label: p.title, hint: `${course} · ${t.title}`, to: `${topicBase(id)}/${p.page}` } })
+        if (pr >= 0) lessons.push({ r: pr + 0.5, h: { id: `ai:${id}/${p.page}`, kind: 'lesson', label: p.title, hint: `${course} · ${t.title}`, to: `${ai!.base(id)}/${p.page}` } })
         for (const sec of p.sections) {
           const sr = matchRank(sec, q)
-          if (sr >= 0) lessons.push({ r: sr + 1, h: { id: `ai:${id}/${p.page}#${sec}`, kind: 'lesson', label: sec, hint: `${t.title} · ${p.title}`, to: `${topicBase(id)}/${p.page}` } })
+          if (sr >= 0) lessons.push({ r: sr + 1, h: { id: `ai:${id}/${p.page}#${sec}`, kind: 'lesson', label: sec, hint: `${t.title} · ${p.title}`, to: `${ai!.base(id)}/${p.page}` } })
         }
       }
     }
@@ -154,7 +188,7 @@ export function useLessonSearch(query: string, { enabled = true, limit = 6 }: { 
         .map((x) => x.h)
     }
     return [...top(lessons, limit), ...top(subjects, Math.ceil(limit / 2)), ...top(skills, limit)]
-  }, [q, enabled, structure, notes, limit])
+  }, [q, enabled, structure, notes, limit, ai])
 
   return { hits, loading, ready: !!structure }
 }

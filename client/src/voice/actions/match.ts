@@ -8,6 +8,8 @@
   Pure functions, dependency-free and type-strippable: tests/voice-actions.test.js.
 */
 import type { ActionSpec, Args } from './types'
+import { REAL_WORDS } from './realWords.ts'
+import { isQuestion } from './ask.ts'
 
 /* ── Normalising ─────────────────────────────────────────────────────────── */
 
@@ -72,6 +74,8 @@ export interface Variant {
   /** Tokens that came from slot values: all of them must be heard. */
   slotTokens: string[]
   args: Args
+  /** The phrase is itself a question ("what is on your left"): only these match a question. */
+  asks: boolean
 }
 
 /** One spoken alias list per slot value: 'B|bee|बी' → value 'B', aliases [B, bee, बी]. */
@@ -103,7 +107,7 @@ export function expand(spec: ActionSpec): Variant[] {
     }
     for (const p of partial) {
       const tokens = normalize(p.text).split(' ').filter(Boolean)
-      if (tokens.length) out.push({ id: spec.id, tokens, slotTokens: p.slotTokens, args: p.args })
+      if (tokens.length) out.push({ id: spec.id, tokens, slotTokens: p.slotTokens, args: p.args, asks: isQuestion(phrase) })
     }
   }
   return out
@@ -127,13 +131,24 @@ function editDistance(a: string, b: string, max: number): number {
   return prev[b.length]
 }
 
-/** Same word, allowing small recognition slips on longer words ("problms"). */
-export function sameWord(a: string, b: string): boolean {
+/**
+ * Same word, allowing small recognition slips on longer words ("problms").
+ * The first letter must match: slips rarely change it, and without this
+ * "light" and "night" (light mode / night mode) were the same word.
+ * A real word that means something else is never a slip ("contents" is not
+ * "contests", realWords.ts); `raw` skips that check (for the script that
+ * builds the list).
+ */
+export function sameWord(a: string, b: string, raw = false): boolean {
   if (a === b) return true
+  if (!raw && REAL_WORDS.has(a)) return false
   const n = Math.min(a.length, b.length)
-  if (n < 4) return false
+  if (n < 4 || a[0] !== b[0]) return false
   return editDistance(a, b, n >= 7 ? 2 : 1) <= (n >= 7 ? 2 : 1)
 }
+
+/** What a word heard with a small slip counts for, against 1 for an exact word. */
+const SLIP = 0.9
 
 /** 0..1: how well the heard words cover this sentence (and not much else). */
 export function score(heard: string[], v: Variant): number {
@@ -141,10 +156,16 @@ export function score(heard: string[], v: Variant): number {
   const used = new Array(heard.length).fill(false)
   let matched = 0
   for (const t of v.tokens) {
-    const i = heard.findIndex((h, k) => !used[k] && sameWord(h, t))
+    // An exact word first; a forgiven slip counts a little less.
+    let i = heard.findIndex((h, k) => !used[k] && h === t)
+    let worth = 1
+    if (i < 0) {
+      i = heard.findIndex((h, k) => !used[k] && sameWord(h, t))
+      worth = SLIP
+    }
     if (i >= 0) {
       used[i] = true
-      matched++
+      matched += worth
     }
   }
   const recall = matched / v.tokens.length
@@ -152,8 +173,12 @@ export function score(heard: string[], v: Variant): number {
   // Recall matters most, but a short phrase inside a long sentence ("search"
   // in "what is a binary search tree") must not win: precision scales it.
   let s = recall * (0.5 + 0.5 * precision)
+  // A question command with extra words is usually a question about something else ("explain page table" is not "page samjhao").
+  if (v.asks) s *= 0.5 + 0.5 * precision
   // Every word of a slot value must be heard ("option B" must hear "b").
   if (v.slotTokens.some((t) => !heard.some((h) => sameWord(h, t)))) s *= 0.5
+  // A one-word command ("search", "notes") is the whole sentence or nothing: "binary search" is a topic, not the search box.
+  if (v.tokens.length === 1 && heard.length > 1) s *= 0.8
   return Math.round(s * 1000) / 1000
 }
 
@@ -184,11 +209,14 @@ export function matchCommand(utterance: string, specs: ActionSpec[], expanded?: 
     const args = spec.parse?.(utterance)
     if (args) return { best: { id: spec.id, args, score: 1 }, candidates: [] }
   }
+  const asking = isQuestion(utterance)
   const ranked: Match[] = []
   for (const spec of specs) {
     const variants = expanded?.get(spec.id) ?? expand(spec)
     let top: Match | null = null
     for (const v of variants) {
+      // A question ("left shift kya hai") is never an order ("go left").
+      if (asking && !v.asks) continue
       const s = score(heard, v)
       if (!top || s > top.score) top = { id: spec.id, args: v.args, score: s }
     }

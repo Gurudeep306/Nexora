@@ -1,0 +1,77 @@
+/* The parts of TalkingHead (MIT, @met4citizen/talkinghead) the teacher uses. The package ships no types. */
+declare module '@met4citizen/talkinghead' {
+  export interface TalkingHeadOptions {
+    ttsEndpoint?: string
+    lipsyncModules?: string[]
+    lipsyncLang?: string
+    cameraView?: 'full' | 'mid' | 'upper' | 'head'
+    cameraRotateEnable?: boolean
+    cameraZoomEnable?: boolean
+    cameraPanEnable?: boolean
+    modelFPS?: number
+    modelPixelRatio?: number
+    avatarIdleEyeContact?: number
+    avatarIdleHeadMove?: number
+    avatarSpeakingEyeContact?: number
+    avatarSpeakingHeadMove?: number
+    lightAmbientIntensity?: number
+    lightAmbientColor?: number
+    lightDirectIntensity?: number
+    lightDirectColor?: number
+    lightSpotIntensity?: number
+    lightSpotColor?: number
+    lightSpotPhi?: number
+    lightSpotTheta?: number
+    lightSpotDispersion?: number
+  }
+  export interface Lipsync {
+    preProcessText(s: string): string
+    wordsToVisemes(w: string): unknown
+  }
+  export class TalkingHead {
+    constructor(node: HTMLElement, opt?: TalkingHeadOptions)
+    audioCtx: AudioContext
+    armature: { rotation: { y: number } } | null
+    lipsync: Record<string, Lipsync>
+    showAvatar(
+      avatar: { url: string; body: 'F' | 'M'; avatarMood?: string; lipsyncLang?: string },
+      onprogress?: (e: ProgressEvent) => void,
+    ): Promise<void>
+    renderer: { toneMappingExposure: number }
+    speakAudio(
+      r: {
+        audio: AudioBuffer
+        words: string[]
+        wtimes: number[]
+        wdurations: number[]
+        visemes?: string[]
+        vtimes?: number[]
+        vdurations?: number[]
+      },
+      opt?: { lipsyncLang?: string },
+    ): void
+    stopSpeaking(): void
+    playGesture(name: string, dur?: number, mirror?: boolean, ms?: number): void
+    stopGesture(ms?: number): void
+    playPose(name: string, onprogress?: null, dur?: number): Promise<void>
+    stopPose(): void
+    setView(view: 'full' | 'mid' | 'upper' | 'head', opt?: Record<string, number>): void
+    setMood(mood: string): void
+    /** Hold a face shape or head/body turn (`null` lets go); `ms` = how long it is held. */
+    setValue(mt: string, val: number | null, ms?: number | null): void
+    makeEyeContact(ms: number): void
+    lookAtCamera(ms: number): void
+    lookAt(x: number, y: number, ms: number): void
+    speakWithHands(delay?: number, prob?: number): void
+    start(): void
+    stop(): void
+    dispose(): void
+  }
+}
+declare module '@met4citizen/talkinghead/modules/lipsync-en.mjs' {
+  import type { Lipsync } from '@met4citizen/talkinghead'
+  export class LipsyncEn implements Lipsync {
+    preProcessText(s: string): string
+    wordsToVisemes(w: string): unknown
+  }
+}

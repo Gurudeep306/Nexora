@@ -92,7 +92,7 @@ export function SubjectMiniMap({ structure, subject }: { structure: NexusWebStru
               return c ? (
                 <span key={id}>
                   {i ? ' · ' : ''}
-                  <Link to={subjectHref(c)} className="text-text-primary hover:underline">
+                  <Link to={subjectHref(c)} className="text-text-primary underline decoration-text-muted/50 underline-offset-[3px] hover:decoration-current">
                     {c.name}
                   </Link>
                 </span>
@@ -110,7 +110,7 @@ export function SubjectMiniMap({ structure, subject }: { structure: NexusWebStru
               return c ? (
                 <span key={id}>
                   {i ? ' · ' : ''}
-                  <Link to={subjectHref(c)} className="text-text-primary hover:underline">
+                  <Link to={subjectHref(c)} className="text-text-primary underline decoration-text-muted/50 underline-offset-[3px] hover:decoration-current">
                     {c.name}
                   </Link>
                 </span>
@@ -241,7 +241,7 @@ export function StudyPlanView({
           <ul className="mb-0 space-y-1">
             {today.items.map((it) => (
               <li key={it.id} className="flex items-baseline justify-between gap-3 text-[13.5px]">
-                <button type="button" className="cursor-pointer text-left text-text-primary hover:underline" onClick={() => onPick(it.id)}>
+                <button type="button" className="cursor-pointer text-left text-text-primary underline decoration-text-muted/50 underline-offset-[3px] hover:decoration-current" onClick={() => onPick(it.id)}>
                   {names[it.id] ?? it.id}
                 </button>
                 <span className="font-mono text-[11.5px] text-text-muted tabular-nums">{fmtMinutes(it.minutes)}</span>
@@ -266,7 +266,7 @@ export function StudyPlanView({
                 {ids.map((id, k) => (
                   <span key={id}>
                     {k ? ' · ' : ''}
-                    <button type="button" className="cursor-pointer text-text-primary hover:underline" onClick={() => onPick(id)}>
+                    <button type="button" className="cursor-pointer text-text-primary underline decoration-text-muted/50 underline-offset-[3px] hover:decoration-current" onClick={() => onPick(id)}>
                       {names[id] ?? id}
                     </button>
                     {(weight[id] ?? 0) > 0 && <span className="ml-0.5 text-[10.5px] text-warning">★</span>}

@@ -14,15 +14,32 @@
 import { API_BASE } from '@/lib/api'
 
 let available: Promise<boolean> | null = null
-/** Is any server ear set up? (Asked once per page load.) */
+/**
+ * Is any server ear set up, and can this browser record for it? Asked once per
+ * page load; a "no" (for example before signing in) is asked again after a
+ * minute, so the mic appears without a reload once ears are set up.
+ */
 export function serverEars(): Promise<boolean> {
+  if (!canRecord()) return Promise.resolve(false)
   if (!available) {
-    available = fetch(`${API_BASE}/api/voice/stt/status`, { credentials: 'include' })
+    // A slow or stuck answer must never leave the mic dead: after 4 s, the browser's own recogniser is used.
+    const p = fetch(`${API_BASE}/api/voice/stt/status`, { credentials: 'include', signal: AbortSignal.timeout(4000) })
       .then((r) => (r.ok ? r.json() : null))
       .then((j) => !!j?.available)
       .catch(() => false)
+    available = p
+    void p.then((yes) => {
+      if (!yes) window.setTimeout(() => (available === p ? (available = null) : undefined), 60_000)
+    })
   }
   return available
+}
+
+/** The browser can record the mic and process audio (every current browser on https). */
+export function canRecord(): boolean {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false
+  const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+  return !!navigator.mediaDevices?.getUserMedia && !!Ctx
 }
 
 export interface Capture {
@@ -109,6 +126,13 @@ export function wav(x: Float32Array, rate = RATE): Blob {
 }
 
 /** Start recording the mic for the server ears. */
+const levelListeners = new Set<(level: number) => void>()
+/** How loud the microphone is while recording (0–1, about 12 times a second): the teacher shows it as she listens. */
+export function onMicLevel(fn: (level: number) => void): () => void {
+  levelListeners.add(fn)
+  return () => levelListeners.delete(fn)
+}
+
 export async function startCapture(opts: { onPause?: () => void } = {}): Promise<Capture | null> {
   let stream: MediaStream
   try {
@@ -142,6 +166,10 @@ export async function startCapture(opts: { onPause?: () => void } = {}): Promise
     let s = 0
     for (let i = 0; i < d.length; i++) s += d[i] * d[i]
     const rms = Math.sqrt(s / d.length)
+    if (levelListeners.size) {
+      const level = Math.min(1, rms * 8)
+      for (const l of levelListeners) l(level)
+    }
     if (rms > 0.02) {
       spoke = true
       quiet = 0
@@ -157,6 +185,7 @@ export async function startCapture(opts: { onPause?: () => void } = {}): Promise
   proc.connect(ctx.destination)
 
   const close = () => {
+    for (const l of levelListeners) l(0)
     proc.disconnect()
     src.disconnect()
     stream.getTracks().forEach((t) => t.stop())
@@ -178,17 +207,49 @@ export async function startCapture(opts: { onPause?: () => void } = {}): Promise
   }
 }
 
-export type ServerText = { ok: true; text: string; confidence: number | null; provider: string | null } | { ok: false }
+/** What the site is listening for: plain words, a command, or code (src/voice/normalise.js). */
+export type EarsMode = 'text' | 'command' | 'code'
+
+export type ServerText =
+  | {
+      ok: true
+      /** Cleaned, with names fixed (what to act on). */
+      text: string
+      /** What the service heard, before the normaliser. */
+      raw: string
+      /** Code pages: the speech written as code ("i++"). */
+      code?: string
+      /** Code pages: words that could not be placed. */
+      unplaced?: string[]
+      confidence: number | null
+      provider: string | null
+      /** S6: the service doubted it, or (code pages) words couldn't be placed. */
+      unsure: boolean
+      /** S6: two services heard different words; let the student pick. */
+      alternatives?: string[]
+    }
+  | { ok: false }
 
 /** Send a clip to the chain. */
-export async function transcribe(clip: Blob, lang: string, hints: string[] = []): Promise<ServerText> {
+export async function transcribe(clip: Blob, lang: string, hints: string[] = [], mode: EarsMode = 'text'): Promise<ServerText> {
   try {
-    const q = new URLSearchParams({ lang })
+    const q = new URLSearchParams({ lang, mode })
     if (hints.length) q.set('hints', hints.slice(0, 60).join(','))
-    const r = await fetch(`${API_BASE}/api/voice/stt?${q}`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'audio/wav' }, body: clip })
+    // At most 15 s: then the browser's own words are used, so a turn never hangs.
+    const r = await fetch(`${API_BASE}/api/voice/stt?${q}`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'audio/wav' }, body: clip, signal: AbortSignal.timeout(15_000) })
     if (!r.ok) return { ok: false }
     const j = await r.json()
-    return j?.ok ? { ok: true, text: String(j.text || ''), confidence: typeof j.confidence === 'number' ? j.confidence : null, provider: j.provider ?? null } : { ok: false }
+    if (!j?.ok) return { ok: false }
+    return {
+      ok: true,
+      text: String(j.text || ''),
+      raw: String(j.raw ?? j.text ?? ''),
+      ...(typeof j.code === 'string' ? { code: j.code, unplaced: Array.isArray(j.unplaced) ? j.unplaced.map(String) : [] } : {}),
+      confidence: typeof j.confidence === 'number' ? j.confidence : null,
+      provider: j.provider ?? null,
+      unsure: j.unsure === true,
+      ...(Array.isArray(j.alternatives) && j.alternatives.length > 1 ? { alternatives: j.alternatives.map(String).slice(0, 3) } : {}),
+    }
   } catch {
     return { ok: false }
   }

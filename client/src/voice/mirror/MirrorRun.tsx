@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils'
 import type { Frame, Inputs } from '@/learn/engine/types'
 import { useVoiceAction } from '../actions/useVoiceAction'
 import { getVoicePrefs } from '../prefs'
-import { listenOnce, speechSupported, type ListenHandle } from '../speech'
+import { listenOnce, useVoiceSupport, type ListenHandle } from '../speech'
 import { speak } from '../speak'
 import { activeScene, sceneById } from '../scene/active'
 import { runPseudo, type Env } from './pseudo'
@@ -32,6 +32,7 @@ while lo ≤ hi
 const fmt = (v: unknown) => (v === null || v === undefined ? '—' : Array.isArray(v) ? `[${v.join(', ')}]` : String(v))
 
 export function MirrorRun({ sceneId, title, inputs, frames }: { sceneId: string; title: string; inputs: Inputs | null; frames: Frame[] }) {
+  const canListen = useVoiceSupport()
   const [open, setOpen] = useState(false)
   const [src, setSrc] = useState('')
   const [listening, setListening] = useState<string | null>(null)
@@ -73,6 +74,7 @@ export function MirrorRun({ sceneId, title, inputs, frames }: { sceneId: string;
     setListening('')
     handle.current = await listenOnce({
       lang: prefs.lang,
+      mode: 'text',
       onText: (t) => setListening(t),
       onDone: async (text) => {
         handle.current = null
@@ -143,7 +145,7 @@ export function MirrorRun({ sceneId, title, inputs, frames }: { sceneId: string;
       </div>
 
       <div className="mr-row">
-        {speechSupported() && (
+        {canListen && (
           <Button size="sm" variant="secondary" onClick={() => void listen()} loading={busy} aria-pressed={listening !== null}>
             {listening !== null ? <Square aria-hidden="true" /> : <Mic aria-hidden="true" />}
             {listening !== null ? 'Stop' : 'Say your approach'}

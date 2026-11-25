@@ -324,6 +324,8 @@ app.use(
           "'self'",
           "'unsafe-inline'", // Monaco loader needs this
           "'unsafe-eval'", // Monaco worker needs this
+          // The in-browser voice (Settings → Voice → Kokoro, opt-in): ONNX Runtime loads its WebAssembly glue from a blob: URL inside its worker.
+          "blob:",
           "https://cdn.jsdelivr.net",
           "https://cdnjs.cloudflare.com",
           "https://cdn.socket.io",
@@ -349,7 +351,9 @@ app.use(
         // Problem statements may embed videos / audio from the source sites.
         mediaSrc: ["'self'", "https:", "blob:", "data:"],
         // The AI course lessons run Python in the browser (Pyodide, from jsDelivr, pinned in client/src/learn/python/runtime.ts).
-        connectSrc: ["'self'", "wss:", "ws:", "https://cdn.jsdelivr.net"],
+        // Kokoro (Settings → Voice, opt-in): its model files come from Hugging Face and its CDN.
+        // The virtual teacher (Settings → Virtual teacher): the 3D loader unpacks the model's own textures from blob: URLs.
+        connectSrc: ["'self'", "blob:", "wss:", "ws:", "https://cdn.jsdelivr.net", "https://huggingface.co", "https://*.huggingface.co", "https://*.hf.co"],
         workerSrc: ["'self'", "blob:"],
         frameSrc: ["'self'", "https://www.youtube.com", "https://www.youtube-nocookie.com", "https://player.vimeo.com"],
         objectSrc: ["'none'"],
@@ -1156,6 +1160,15 @@ app.get("/api/problem-pdf/:id", async (req, res) => {
   }
 });
 
+/* Statements from the judge within a time budget (src/statement-fetch.js). */
+const { makeStatementFetcher, STILL_FETCHING } = require("./statement-fetch");
+const statementFetcher = makeStatementFetcher({
+  fetch: (problem) => require("./sources").fetchStatement(problem),
+  save: (id, data) => _saveStatement(id, data),
+  budgetMs: Number(process.env.STATEMENT_BUDGET_MS) || 40000,
+  log: (problem, e) => console.log(`[statement] ✗ ${problem.platform} ${problem.problem_id}: ${e.message}`),
+});
+
 app.get("/api/problem-statement/:id", async (req, res) => {
   try {
     const problem = await get("SELECT * FROM problems WHERE id=?", [
@@ -1224,22 +1237,23 @@ app.get("/api/problem-statement/:id", async (req, res) => {
       } catch {}
     }
 
-    // 3. The platform's source module (API / page / mirror / archive).
-    try {
-      const data = await require("./sources").fetchStatement(problem);
-      if (data && (data.statement || "").replace(/<[^>]+>/g, "").trim().length > 10) {
-        await _saveStatement(problem.id, data);
-        const norm = normalizeStatement(data, problem);
-        return res.json({
-          ok: true,
-          ...norm,
-          extra: data.extra || {},
-          platform: problem.platform,
-          source: "live",
-        });
-      }
-    } catch (e) {
-      console.log(`[statement] ✗ ${problem.platform} ${problem.problem_id}: ${e.message}`);
+    // 3. The platform's source module (API / page / dataset / archive),
+    // within STATEMENT_BUDGET_MS: past that the page hears "still fetching"
+    // (never a timeout error), while the fetch carries on and stores the
+    // statement for the next visit. One fetch per problem at a time.
+    const data = await statementFetcher.within(problem);
+    if (data === STILL_FETCHING) {
+      return res.json({ ok: true, unavailable: true, pending: true, url: problem.url, statement: "", samples: [], inputSpec: "", outputSpec: "", note: "", timeLimit: "", memLimit: "", platform: problem.platform, source: "pending" });
+    }
+    if (data) {
+      const norm = normalizeStatement(data, problem);
+      return res.json({
+        ok: true,
+        ...norm,
+        extra: data.extra || {},
+        platform: problem.platform,
+        source: "live",
+      });
     }
 
     // 4. SLOW FALLBACK: Puppeteer (for Cloudflare-protected pages)
@@ -5421,6 +5435,8 @@ app.use(createSocialRouter({ all, get, run, realtime, isTrustedOrigin, calcLevel
 app.use(require("./push").createPushRouter({ requireAuthenticatedUser, isTrustedOrigin }));
 // Voice: speech to text through a chain of services (Admin → AI models → Voice recognition).
 app.use(require("./voice/stt").createSttRouter({ requireAuthenticatedUser, isTrustedOrigin }));
+// Natural voice for spoken answers (Azure Speech free tier, capped): docs/voice/STEP1_EARS_DESIGN.md §S8.
+app.use(require("./voice/tts").createTtsRouter({ requireAuthenticatedUser, isTrustedOrigin }));
 app.use(require("./routes/chat").createChatRouter({ realtime, isTrustedOrigin, catalog: require("./problem-catalog"), gate: require("./routes/gate") }));
 // Hosted contests: made from anywhere on the site, coding and GATE questions, marks and analysis.
 app.use(require("./routes/hosted-contests").createHostedContestsRouter({ gate: require("./routes/gate"), hashPassword, verifyPassword }));

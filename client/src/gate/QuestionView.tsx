@@ -12,6 +12,7 @@ import { Markdown } from '@/learn/md'
 import { AnswerField, CheckButton, Masthead, NextQuestion, OptionList, OptionRow, QuestionActions, QuestionCard, QuestionHint, QuestionText, SolutionBlock, TextAction, Verdict, type OptionState } from '@/components/question/Question'
 import { ReconstructedDiagram } from './ReconstructedDiagram'
 import { TYPE_LABEL, TYPE_SHORT, paperLabel, qLabel, type GateQuestion } from './types'
+import { teacherReact } from '@/voice/teacher/store'
 import { fmtInterval, recordAttempt, releaseAttempt, scheduleLocal, setConfidence, toggleBookmark, useQuestionProgress, type Outcome } from './progress'
 import { checkIsCorrect, formatKey, hasOptions, isKeyOption, isSelfCheck, tfOptions, type Pick } from './answers'
 import { solutionToText, useGateSolution } from './solution/useGateSolution'
@@ -167,6 +168,8 @@ export function QuestionView({
     setOutcome(o)
     recordAttempt({ questionId: q.id, response: response ?? null, timeMs, mode, outcome: o, ...extra }, { hold: o === 'correct' })
     onAttempt?.({ questionId: q.id, outcome: o, timeMs })
+    // A teacher on screen reacts to the grade; never in a test.
+    if (mode !== 'test' && (o === 'correct' || o === 'wrong' || o === 'partial')) teacherReact(o === 'wrong' ? 'incorrect' : o)
   }
 
   // Leaving the question: send a held attempt; an ungraded self-check counts as seen.

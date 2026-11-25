@@ -6,8 +6,11 @@ free tools, and answer in a natural voice. This is step 1 of
 `docs/voice/VIRTUAL_TEACHER.md` §7. Every stage below has its own check, so
 an error is caught where it starts instead of reaching the tutor.
 
-Status: **designed, not built** (2026-11-22). The owner has added a Groq key
-and chosen a Groq model for answers.
+Status (2026-11-22): S1–S4 and S7 built (#229–#232); the mic works without
+browser recognition (#233); **S5 built** (#234, `src/voice/normalise.js`,
+340-line test set); **S6 built** (#235); **S8 built** (#238); **S9 built**
+(this step): the measuring script and the clip list; the first results wait
+for the owner's recordings.
 
 ---
 
@@ -159,6 +162,17 @@ is in India; Groq's is not) before launch, and record them in this file.
 Test set: `docs/voice/tests/normalise.json` (at least 300 lines: spoken →
 expected), run in `npm test`. Target 100%, because these are rules.
 
+**As built:** the normaliser returns `text` (what the site acts on: the same
+words, cleaned, with names fixed; words stay words because the browser's own
+parsers in `client/src/voice/actions` and `voice/code` read words), `code`
+(code pages only: the speech as code, "i plus plus" → `i++`), `unplaced`
+(code pages only: words it could not place, for S6), `retryHindi` and
+`changes`. Modes: `text` (no guessing), `command` and `code` (near-miss names
+fixed, page names first). The browser sends the mode and the page's names
+(`client/src/voice/hints.ts`: names in the code editor in use, then the
+page's action titles). Hindi that comes back in Urdu script makes the chain
+try the next service. Server and browser number words are checked to agree.
+
 ## S6. Check confidence before acting (both)
 
 For each clip, from Whisper's numbers:
@@ -175,6 +189,18 @@ For each clip, from Whisper's numbers:
   tap the right one.
 - The student always sees what was heard (a one-line caption), and can tap
   it to fix it by typing.
+
+**As built:** `stt.js` marks each answer `unsure` (Whisper's own signals, a
+service confidence under 0.6, or unplaced words on a code page) and checks an
+unsure answer once with the **next service** (another key of the same
+service is not a second opinion). The same words (ignoring case, spacing and
+punctuation): trusted. Different words: both come back as `alternatives`. No
+second service: the answer comes back marked unsure. In the mic
+(`VoiceButton.tsx`), unsure words that would change something (a code edit,
+Build mode, an action whose risk isn't `safe`) show "Did you mean this?" and
+change nothing until tapped; two answers show "Which did you say?". Questions
+and looking around (risk `safe`) go ahead. What was heard always shows with
+**Fix** (type the right words; they are used as if said).
 
 ## S7. Never stuck on a limit (server)
 
@@ -209,6 +235,41 @@ console; they change). The account is shared by all students, so:
 - Every AI voice is labelled "AI voice" (India's IT rules).
 - Text always shown alongside (sound off, deaf students).
 
+**As built:**
+- `src/voice/tts.js`, `POST /api/voice/tts`: Azure Speech neural voices
+  (Neerja and Prabhat for en-IN, Swara and Madhur for hi-IN), using the
+  **Azure Speech entry of the ears** (same key and region). Free tier only:
+  it stops at 85% of the free 500,000 characters a month, the cap can only
+  be lowered (Admin → Voice recognition → Natural voice), each student has a
+  daily share (4,000 characters by default), and repeated sentences come from
+  a 24 MB in-memory cache at no cost. Use a Free (F0) resource: a paid (S0)
+  one would bill. `tests/voice-tts.test.js`, and the zero-spend test checks
+  the cap.
+- `client/src/voice/speak.ts`: best available voice (natural → Kokoro if
+  downloaded → device), sentence by sentence
+  (`client/src/voice/sentences.ts`), the next sentence made while one plays;
+  a failure hands the rest to the device voice. `SpeakingChip` shows
+  "AI voice · Neerja" (or "Device voice") with Stop while speaking.
+  `playingAudio()` exposes the audio element for the teacher's lip sync.
+- Settings → Voice: best available / natural (voice picker) / Kokoro
+  (opt-in download with progress, English only) / device voice, and "Try the
+  voice".
+- **Kokoro, now with no GPL part (2026-11-23):** kokoro-js was replaced by
+  HeadTTS (MIT), whose own English dictionary replaces eSpeak NG. Its files
+  ship in `client/public/headtts` (copied by
+  `scripts/teacher/vendor-headtts.sh`, pinned to 1.3.0); after the student
+  opts in, the browser loads transformers.js 4.0.0 from jsDelivr and the
+  model (fp16 163 MB on a GPU that supports it, else 8-bit 92 MB on
+  WebAssembly) from Hugging Face. It speaks with Kokoro's Indian voices,
+  English and Hindi (Hindi written as sounds by `/api/voice/phonetic`), and
+  returns exact mouth shapes for the teacher. The CSP's script-src gained
+  `blob:` (ONNX Runtime's WebAssembly glue loads from one). Tested end to end
+  in a browser on WebAssembly: about 6–7 s to the first sentence on a
+  container CPU without a GPU.
+- Lip sync with exact mouth shapes (Azure visemes) needs the Speech SDK's
+  WebSocket, not the REST call used here; the teacher will read the audio's
+  loudness instead (step 2).
+
 ## S9. Measuring accuracy (before turning anything on)
 
 1. **Test clips**: record (with consent; the owner and volunteers first)
@@ -230,6 +291,26 @@ console; they change). The account is shared by all students, so:
    - p95 under 1.5 s on 4G.
    Results go in this file, and a language is offered only when it passes.
 4. Repeat monthly and whenever an engine or prompt changes.
+
+**As built:**
+- `docs/voice/tests/asr/clips.json`: the first 58 sentences (19 English,
+  24 Hinglish, 15 Hindi; commands, code and doubts). Each command clip names
+  the action it must trigger and each code clip the code it must become; a
+  test checks every expectation holds for the clip's own text.
+- **Record** in Admin → Voice recognition → Record test clips: one sentence
+  at a time, the same clean 16 kHz capture as the mic, saved to the owner's
+  own device as `<id>.wav`. Nothing is uploaded.
+- **Voices are private:** keep recordings out of this public repository.
+  `docs/voice/tests/asr/<lang>/*.wav` and `results/` are gitignored; put the
+  files in a private folder as `<folder>/<lang>/<id>.wav`.
+- **Run** where the site's database and SESSION_SECRET are set:
+  `ASR_CLIPS_DIR=<folder> node scripts/voice/asr-eval.js [--only groq]
+  [--lang hinglish] [--limit 20]`. It runs each service separately through
+  `stt.transcribeWith()` (same free caps and usage counting as the chain; it
+  stops a service at its cap), and prints WER, code-word error rate, command
+  and code accuracy, p50/p95 and the gates (✓/✗). Measures:
+  `scripts/voice/asr-metrics.js`, tested in `tests/voice-asr-metrics.test.js`.
+- Results: none yet (no recordings). Record them here when they exist.
 
 ## S10. Getting better over time (what we build ourselves)
 

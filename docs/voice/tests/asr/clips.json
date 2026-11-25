@@ -1,0 +1,458 @@
+{
+ "about": "S9 test clips (docs/voice/STEP1_EARS_DESIGN.md §S9): what to say for each recording, and what must come out. Record each as docs/voice/tests/asr/<lang>/<id>.wav (16 kHz mono, from Admin → Voice recognition → Record test clips). scripts/voice/asr-eval.js reads them. A command clip names the action it must trigger; a code clip names the code the normaliser must make; a doubt is scored by word error rate only. Start with these; the design's full set is 200 English, 300 Hinglish (half code) and 200 Hindi, in a quiet and a noisy room, on a phone and a laptop.",
+ "clips": [
+  {
+   "id": "en-c01",
+   "lang": "en",
+   "kind": "command",
+   "text": "Open problems",
+   "command": "nav.open",
+   "args": {
+    "page": "/problems"
+   }
+  },
+  {
+   "id": "en-c02",
+   "lang": "en",
+   "kind": "command",
+   "text": "Go back",
+   "command": "nav.back"
+  },
+  {
+   "id": "en-c03",
+   "lang": "en",
+   "kind": "command",
+   "text": "Switch to dark mode",
+   "command": "look.mode.dark"
+  },
+  {
+   "id": "en-c04",
+   "lang": "en",
+   "kind": "command",
+   "text": "Light mode",
+   "command": "look.mode.light"
+  },
+  {
+   "id": "en-c05",
+   "lang": "en",
+   "kind": "command",
+   "text": "Scroll down",
+   "command": "page.scroll.down"
+  },
+  {
+   "id": "en-c06",
+   "lang": "en",
+   "kind": "command",
+   "text": "Go to the top",
+   "command": "page.scroll.top"
+  },
+  {
+   "id": "en-c07",
+   "lang": "en",
+   "kind": "command",
+   "text": "Give me a random problem",
+   "command": "problem.random"
+  },
+  {
+   "id": "en-c08",
+   "lang": "en",
+   "kind": "command",
+   "text": "Open my profile",
+   "command": "profile.open"
+  },
+  {
+   "id": "en-c09",
+   "lang": "en",
+   "kind": "command",
+   "text": "Open settings",
+   "command": "nav.open",
+   "args": {
+    "page": "/settings"
+   }
+  },
+  {
+   "id": "en-k01",
+   "lang": "en",
+   "kind": "code",
+   "text": "i plus plus",
+   "code": "i++"
+  },
+  {
+   "id": "en-k02",
+   "lang": "en",
+   "kind": "code",
+   "text": "low equals mid plus one",
+   "code": "low = mid + 1",
+   "hints": [
+    "low",
+    "mid",
+    "high"
+   ]
+  },
+  {
+   "id": "en-k03",
+   "lang": "en",
+   "kind": "code",
+   "text": "while low is less than or equal to high",
+   "code": "while low <= high",
+   "hints": [
+    "low",
+    "high"
+   ]
+  },
+  {
+   "id": "en-k04",
+   "lang": "en",
+   "kind": "code",
+   "text": "return d p of n",
+   "code": "return dp[n]",
+   "hints": [
+    "dp"
+   ]
+  },
+  {
+   "id": "en-k05",
+   "lang": "en",
+   "kind": "code",
+   "text": "sum plus equals a of i",
+   "code": "sum += a[i]",
+   "hints": [
+    "sum",
+    "a"
+   ]
+  },
+  {
+   "id": "en-k06",
+   "lang": "en",
+   "kind": "code",
+   "text": "node dot next equals null",
+   "code": "node.next = null",
+   "hints": [
+    "node"
+   ]
+  },
+  {
+   "id": "en-d01",
+   "lang": "en",
+   "kind": "doubt",
+   "text": "Why does binary search need a sorted array?"
+  },
+  {
+   "id": "en-d02",
+   "lang": "en",
+   "kind": "doubt",
+   "text": "What is the time complexity of BFS on an adjacency list?"
+  },
+  {
+   "id": "en-d03",
+   "lang": "en",
+   "kind": "doubt",
+   "text": "Explain the difference between a stack and a queue."
+  },
+  {
+   "id": "en-d04",
+   "lang": "en",
+   "kind": "doubt",
+   "text": "How does Dijkstra's algorithm pick the next vertex?"
+  },
+  {
+   "id": "hg-c01",
+   "lang": "hinglish",
+   "kind": "command",
+   "text": "Problems kholo",
+   "command": "nav.open",
+   "args": {
+    "page": "/problems"
+   }
+  },
+  {
+   "id": "hg-c02",
+   "lang": "hinglish",
+   "kind": "command",
+   "text": "Wapas jao",
+   "command": "nav.back"
+  },
+  {
+   "id": "hg-c03",
+   "lang": "hinglish",
+   "kind": "command",
+   "text": "Dark mode on karo",
+   "command": "look.mode.dark"
+  },
+  {
+   "id": "hg-c04",
+   "lang": "hinglish",
+   "kind": "command",
+   "text": "Thoda neeche scroll karo",
+   "command": "page.scroll.down"
+  },
+  {
+   "id": "hg-c05",
+   "lang": "hinglish",
+   "kind": "command",
+   "text": "Sabse upar jao",
+   "command": "page.scroll.top"
+  },
+  {
+   "id": "hg-c06",
+   "lang": "hinglish",
+   "kind": "command",
+   "text": "Koi random problem do",
+   "command": "problem.random"
+  },
+  {
+   "id": "hg-c07",
+   "lang": "hinglish",
+   "kind": "command",
+   "text": "Settings kholo",
+   "command": "nav.open",
+   "args": {
+    "page": "/settings"
+   }
+  },
+  {
+   "id": "hg-c08",
+   "lang": "hinglish",
+   "kind": "command",
+   "text": "Notes kholo",
+   "command": "nav.open",
+   "args": {
+    "page": "/gate/notes"
+   }
+  },
+  {
+   "id": "hg-k01",
+   "lang": "hinglish",
+   "kind": "code",
+   "text": "mid ko update karo, low equals mid plus one",
+   "code": "mid ko update karo low = mid + 1",
+   "hints": [
+    "low",
+    "mid",
+    "high"
+   ]
+  },
+  {
+   "id": "hg-k02",
+   "lang": "hinglish",
+   "kind": "code",
+   "text": "i plus plus karo",
+   "code": "i++ karo"
+  },
+  {
+   "id": "hg-k03",
+   "lang": "hinglish",
+   "kind": "code",
+   "text": "count plus equals do",
+   "code": "count += 2",
+   "hints": [
+    "count"
+   ]
+  },
+  {
+   "id": "hg-k04",
+   "lang": "hinglish",
+   "kind": "code",
+   "text": "high equals mid minus ek",
+   "code": "high = mid - 1",
+   "hints": [
+    "low",
+    "mid",
+    "high"
+   ]
+  },
+  {
+   "id": "hg-k05",
+   "lang": "hinglish",
+   "kind": "code",
+   "text": "agar a of i key se chhota hai",
+   "code": "agar a[i] < key",
+   "hints": [
+    "a",
+    "key"
+   ]
+  },
+  {
+   "id": "hg-k06",
+   "lang": "hinglish",
+   "kind": "code",
+   "text": "j minus minus karo",
+   "code": "j-- karo"
+  },
+  {
+   "id": "hg-k07",
+   "lang": "hinglish",
+   "kind": "code",
+   "text": "answer barabar zero",
+   "code": "answer = 0",
+   "hints": [
+    "answer"
+   ]
+  },
+  {
+   "id": "hg-k08",
+   "lang": "hinglish",
+   "kind": "code",
+   "text": "visited of v equals true",
+   "code": "visited[v] = true",
+   "hints": [
+    "visited"
+   ]
+  },
+  {
+   "id": "hg-k09",
+   "lang": "hinglish",
+   "kind": "code",
+   "text": "queue mein node push karo",
+   "code": "queue mein node push karo",
+   "hints": [
+    "queue",
+    "node"
+   ]
+  },
+  {
+   "id": "hg-k10",
+   "lang": "hinglish",
+   "kind": "code",
+   "text": "b f s se graph traverse karo",
+   "code": "BFS se graph traverse karo"
+  },
+  {
+   "id": "hg-d01",
+   "lang": "hinglish",
+   "kind": "doubt",
+   "text": "Binary search mein mid kaise nikalte hain?"
+  },
+  {
+   "id": "hg-d02",
+   "lang": "hinglish",
+   "kind": "doubt",
+   "text": "Ye loop infinite kyun chal raha hai?"
+  },
+  {
+   "id": "hg-d03",
+   "lang": "hinglish",
+   "kind": "doubt",
+   "text": "DFS aur BFS mein kya difference hai?"
+  },
+  {
+   "id": "hg-d04",
+   "lang": "hinglish",
+   "kind": "doubt",
+   "text": "Is question mein DP kaise lagayenge?"
+  },
+  {
+   "id": "hg-d05",
+   "lang": "hinglish",
+   "kind": "doubt",
+   "text": "Linked list reverse karne ka approach batao"
+  },
+  {
+   "id": "hg-d06",
+   "lang": "hinglish",
+   "kind": "doubt",
+   "text": "Heap mein insert ka time complexity kya hai?"
+  },
+  {
+   "id": "hi-c01",
+   "lang": "hi",
+   "kind": "command",
+   "text": "प्रॉब्लम्स खोलो",
+   "command": "nav.open",
+   "args": {
+    "page": "/problems"
+   }
+  },
+  {
+   "id": "hi-c02",
+   "lang": "hi",
+   "kind": "command",
+   "text": "वापस जाओ",
+   "command": "nav.back"
+  },
+  {
+   "id": "hi-c03",
+   "lang": "hi",
+   "kind": "command",
+   "text": "डार्क मोड",
+   "command": "look.mode.dark"
+  },
+  {
+   "id": "hi-c04",
+   "lang": "hi",
+   "kind": "command",
+   "text": "सबसे ऊपर जाओ",
+   "command": "page.scroll.top"
+  },
+  {
+   "id": "hi-c05",
+   "lang": "hi",
+   "kind": "command",
+   "text": "नोट्स खोलो",
+   "command": "nav.open",
+   "args": {
+    "page": "/gate/notes"
+   }
+  },
+  {
+   "id": "hi-d01",
+   "lang": "hi",
+   "kind": "doubt",
+   "text": "बाइनरी सर्च के लिए सॉर्टेड ऐरे क्यों चाहिए?"
+  },
+  {
+   "id": "hi-d02",
+   "lang": "hi",
+   "kind": "doubt",
+   "text": "स्टैक और क्यू में क्या अंतर है?"
+  },
+  {
+   "id": "hi-d03",
+   "lang": "hi",
+   "kind": "doubt",
+   "text": "इस लूप का टाइम कॉम्प्लेक्सिटी क्या है?"
+  },
+  {
+   "id": "hi-d04",
+   "lang": "hi",
+   "kind": "doubt",
+   "text": "रिकर्शन में बेस केस क्यों ज़रूरी है?"
+  },
+  {
+   "id": "hi-d05",
+   "lang": "hi",
+   "kind": "doubt",
+   "text": "ग्राफ़ में साइकिल कैसे पता करें?"
+  },
+  {
+   "id": "hi-d06",
+   "lang": "hi",
+   "kind": "doubt",
+   "text": "डीपी और ग्रीडी में क्या फर्क है?"
+  },
+  {
+   "id": "hi-d07",
+   "lang": "hi",
+   "kind": "doubt",
+   "text": "मर्ज सॉर्ट कैसे काम करता है?"
+  },
+  {
+   "id": "hi-d08",
+   "lang": "hi",
+   "kind": "doubt",
+   "text": "हैश मैप में कोलिजन क्या होता है?"
+  },
+  {
+   "id": "hi-d09",
+   "lang": "hi",
+   "kind": "doubt",
+   "text": "लिंक्ड लिस्ट को उल्टा कैसे करें?"
+  },
+  {
+   "id": "hi-d10",
+   "lang": "hi",
+   "kind": "doubt",
+   "text": "प्रायोरिटी क्यू किस काम आती है?"
+  }
+ ]
+}

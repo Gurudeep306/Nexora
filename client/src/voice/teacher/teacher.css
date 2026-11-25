@@ -1,0 +1,616 @@
+/* The virtual teacher (TeacherLayer.tsx, TeacherHost.tsx). Tokens only; no
+   shadows-as-glow, no gradients. The drawing never takes a click. */
+@layer components {
+  .tch {
+    --tch-w: 13rem;
+    position: fixed;
+    left: 0;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 5.25rem);
+    z-index: 55;
+    width: var(--tch-w);
+    display: grid;
+    /* One column exactly her width: the bar lines up with her edge instead of widening the column. */
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    pointer-events: none;
+    transition: transform 1.5s cubic-bezier(0.45, 0, 0.55, 1);
+  }
+  /* Following the finger while dragged by the name bar. */
+  .tch[data-dragging] { transition: none; }
+  /* Standing in the Teacher studio's preview box: placed from the top, following the box exactly. */
+  .tch[data-anchored] { top: 0; bottom: auto; transition: none; z-index: 30; }
+  .tch[data-anchored] .tch-bar { cursor: default; }
+  .tch[data-size='s'] { --tch-w: 9.5rem; }
+  .tch[data-size='l'] { --tch-w: 17rem; }
+  @media (max-width: 640px) {
+    /* Above the assistant's round button, which sits just over the bottom bar on phones. */
+    .tch { --tch-w: 8.5rem; bottom: calc(env(safe-area-inset-bottom, 0px) + 8.75rem); }
+    .tch[data-size='l'] { --tch-w: 11rem; }
+    .tch[data-size='s'] { --tch-w: 7rem; }
+  }
+
+  /* 40% wider than the teacher's box (transparent), so a raised hand isn't cut off. */
+  .tch-stage {
+    width: 140%;
+    margin-inline: -20%;
+    aspect-ratio: 21 / 20;
+    position: relative;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  /* Out of the flow: the canvas sizes itself to the stage, so the stage must never size itself to the canvas. */
+  .tch-stage canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none;
+  }
+
+  /* While loading or when it can't draw: the portrait in the stage's place. */
+  .tch-load {
+    position: absolute;
+    inset: auto 0 2.25rem;
+    display: grid;
+    justify-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    pointer-events: auto;
+  }
+  .tch-load img {
+    width: 4.5rem;
+    height: auto;
+    border-radius: 999px 999px 0.75rem 0.75rem;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-surface);
+    opacity: 0.9;
+  }
+  .tch-load:not(.tch-fail) img { animation: tch-wait 1.6s ease-in-out infinite; }
+  .tch-fail {
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.75rem);
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+  }
+  .tch-link {
+    font-size: 0.75rem;
+    color: var(--color-text-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+
+  /* Name and the three small buttons, under the teacher. */
+  .tch-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.125rem;
+    margin-top: -0.25rem;
+    padding: 0.125rem 0.25rem 0.125rem 0.625rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-bg-surface);
+    pointer-events: auto;
+    position: relative;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+
+  /* Her "More" menu: opens above the bar, lined up with the side she stands on. */
+  .tch-menu {
+    position: absolute;
+    bottom: calc(100% + 0.375rem);
+    right: 0;
+    z-index: 2;
+    display: grid;
+    min-width: 13.5rem;
+    padding: 0.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.75rem);
+    background: var(--color-bg-surface);
+    box-shadow: var(--elev-2);
+    animation: tch-pop 0.14s ease-out both;
+  }
+  .tch[data-side='left'] .tch-menu { right: auto; left: 0; }
+  .tch-menu button {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.4375rem 0.625rem;
+    border-radius: calc(var(--kit-card-radius-sm, 0.75rem) - 0.25rem);
+    font-size: 0.8125rem;
+    color: var(--color-text-primary);
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+  .tch-menu button svg { width: 0.9375rem; height: 0.9375rem; color: var(--color-text-muted); flex-shrink: 0; }
+  .tch-menu button:hover,
+  .tch-menu button:focus-visible {
+    background: color-mix(in oklab, var(--color-text-primary) 7%, transparent);
+    outline: none;
+  }
+  .tch[data-dragging] .tch-bar { cursor: grabbing; }
+  /* The bar is wider than a small teacher: it lines up with the screen edge she stands at, so it never runs off screen. */
+  .tch[data-side='right'] .tch-bar { justify-self: unsafe end; }
+  .tch[data-side='left'] .tch-bar { justify-self: unsafe start; }
+  /* On phones the bar keeps only its buttons (the name is in the region's label), so it is no wider than she is. */
+  @media (max-width: 640px) {
+    .tch-bar { padding-left: 0.25rem; }
+    .tch-bar .tch-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  }
+  .tch-name {
+    margin-right: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .tch-chip {
+    display: inline-flex;
+    margin-right: 0.25rem;
+    color: var(--color-text-muted);
+  }
+  .tch-btn {
+    display: grid;
+    place-items: center;
+    width: 1.625rem;
+    height: 1.625rem;
+    border-radius: 999px;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+  .tch-btn svg { width: 0.875rem; height: 0.875rem; }
+  .tch-btn[data-on] {
+    color: var(--color-accent-brand);
+    background: color-mix(in oklab, var(--color-accent-brand) 12%, transparent);
+  }
+  .tch-say--talk .tch-say-text { font-style: italic; color: var(--color-text-secondary); }
+  .tch-say-head {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+
+  /* The student's voice, as five bars that rise with it. */
+  .tch-meter {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    height: 0.875rem;
+  }
+  .tch-meter i {
+    display: block;
+    width: 3px;
+    height: 100%;
+    border-radius: 2px;
+    background: var(--color-accent-brand);
+    transform-origin: center;
+    transition: transform 90ms linear;
+  }
+
+  /* Thinking: what was asked, then three soft dots. */
+  .tch-asked {
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-family: var(--kit-read, inherit);
+    font-size: 0.8125rem;
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--color-text-secondary);
+  }
+  .tch-think {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: 0.8125rem;
+    color: var(--color-text-primary);
+  }
+  .tch-dots { display: inline-flex; gap: 3px; }
+  .tch-dots i {
+    width: 5px;
+    height: 5px;
+    border-radius: 999px;
+    background: var(--color-text-muted);
+    animation: tch-dot 1.2s ease-in-out infinite;
+  }
+  .tch-dots i:nth-child(2) { animation-delay: 0.15s; }
+  .tch-dots i:nth-child(3) { animation-delay: 0.3s; }
+
+  /* The sentence being said: words already said in full ink, the current one marked, the rest still quiet. */
+  .tch-cap span { color: var(--color-text-secondary); transition: color 0.12s linear; }
+  .tch-cap span[data-w='said'] { color: var(--color-text-primary); }
+  .tch-cap span[data-w='now'] {
+    color: var(--color-text-primary);
+    text-decoration: underline;
+    text-decoration-color: var(--color-accent-brand);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+  }
+
+  /* Typing to her. */
+  .tch-type { width: min(17rem, calc(100vw - 2rem)); }
+  .tch-type-row { display: block; }
+  .tch-type-input {
+    width: 100%;
+    padding: 0.375rem 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.5rem);
+    background: var(--color-bg-app);
+    color: var(--color-text-primary);
+    font: inherit;
+    font-size: 0.875rem;
+  }
+  .tch-type-input::placeholder { color: var(--color-text-muted); }
+  .tch-type-input:focus-visible { outline: 2px solid var(--color-accent-brand); outline-offset: 1px; }
+  .tch-say-foot .tch-send { color: var(--color-accent-brand); font-weight: 600; }
+  .tch-say-foot .tch-send:disabled { color: var(--color-text-muted); font-weight: 400; cursor: default; }
+  .tch-btn:hover,
+  .tch-btn:focus-visible {
+    color: var(--color-text-primary);
+    background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+  }
+
+  /* What is being said, in a speech bubble above the teacher. */
+  .tch-say {
+    position: absolute;
+    /* Just above her head (the drawing keeps headroom for a raised hand). */
+    bottom: calc(100% - 0.5rem - min(3rem, var(--tch-w) * 0.3));
+    width: max-content;
+    max-width: min(17rem, calc(100vw - 2rem));
+    display: grid;
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.75rem);
+    background: var(--color-bg-surface);
+    pointer-events: auto;
+    animation: tch-pop 0.18s ease-out both;
+  }
+  /* A small tail towards her, so it reads as her speech. */
+  .tch-say::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    width: 0.625rem;
+    height: 0.625rem;
+    margin-top: -0.3125rem;
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-bg-surface);
+    rotate: 45deg;
+  }
+  .tch[data-side='right'] .tch-say::after { right: calc(var(--tch-w) / 2 - 0.3125rem); }
+  .tch[data-side='left'] .tch-say::after { left: calc(var(--tch-w) / 2 - 0.3125rem); }
+  .tch[data-side='centre'] .tch-say::after { left: calc(50% - 0.3125rem); }
+  .tch[data-side='right'] .tch-say { right: 0; }
+  .tch[data-side='left'] .tch-say { left: 0; }
+  .tch[data-side='centre'] .tch-say { left: 50%; transform: translateX(-50%); }
+  .tch-say-text {
+    margin: 0;
+    max-height: 6.5rem;
+    overflow-y: auto;
+    font-family: var(--kit-read, inherit);
+    font-size: 0.875rem;
+    line-height: 1.45;
+    color: var(--color-text-primary);
+  }
+  .tch-say-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+  }
+  .tch-say-foot strong { color: var(--color-text-primary); font-weight: 600; }
+  .tch-say-foot button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    color: var(--color-text-primary);
+    cursor: pointer;
+  }
+  .tch-say-foot button:hover,
+  .tch-say-foot button:focus-visible {
+    background: color-mix(in oklab, var(--color-text-primary) 8%, transparent);
+  }
+
+  /* A hidden teacher leaves a small "Show" button at its side. */
+  .tch-peek {
+    position: fixed;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 5.25rem);
+    right: 1rem;
+    z-index: 55;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-bg-surface);
+    font-size: 0.8125rem;
+    color: var(--color-text-primary);
+    cursor: pointer;
+  }
+  .tch-peek[data-side='left'] { right: auto; left: 1rem; }
+  .tch-peek img {
+    width: 2rem;
+    height: 2rem;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 999px;
+  }
+  .tch-peek:hover,
+  .tch-peek:focus-visible {
+    background: color-mix(in oklab, var(--color-text-primary) 6%, var(--color-bg-surface));
+  }
+
+  /* Settings → Virtual teacher: the four faces to choose from. */
+  .tch-pick {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .tch-pick legend {
+    margin-bottom: 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .tch-opt {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.375rem 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.75rem);
+    background: var(--color-bg-surface);
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+  .tch-look {
+    max-width: 100%;
+    font-size: 0.75rem;
+    line-height: 1.3;
+    text-align: center;
+  }
+  .tch-voices {
+    display: grid;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .tch-voices li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.375rem 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+  .tch-voices label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    cursor: pointer;
+  }
+  .tch-voices strong {
+    color: var(--color-text-primary);
+  }
+  .tch-play {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-text-secondary);
+    font: inherit;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+  .tch-play:hover:not(:disabled) {
+    color: var(--color-text-primary);
+  }
+  .tch-play:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+  .tch-read {
+    padding: 0.625rem 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.5rem);
+  }
+  .tch-read-text {
+    margin: 0.25rem 0 0;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--color-text-primary);
+  }
+  .tch-name-label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .tch-name-input {
+    width: min(100%, 16rem);
+    padding: 0.375rem 0.625rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius-sm, 0.5rem);
+    background: var(--color-bg-surface);
+    color: var(--color-text-primary);
+    font: inherit;
+  }
+  .tch-name-input:focus-visible {
+    outline: 2px solid var(--color-accent-brand);
+    outline-offset: 1px;
+  }
+  .tch-opt input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .tch-opt img,
+  .tch-opt .tch-off {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: top;
+    border-radius: calc(var(--kit-card-radius-sm, 0.75rem) - 0.25rem);
+    background: color-mix(in oklab, var(--color-text-primary) 5%, transparent);
+  }
+  .tch-off {
+    display: grid;
+    place-items: center;
+    color: var(--color-text-muted);
+  }
+  .tch-opt:has(input:checked) {
+    border-color: var(--color-accent-brand);
+    color: var(--color-text-primary);
+    font-weight: 600;
+  }
+  .tch-opt:has(input:focus-visible) {
+    outline: 2px solid var(--color-accent-brand);
+    outline-offset: 2px;
+  }
+}
+
+/* What the teacher is pointing at: an accent outline for a moment (no glow). */
+.tch-target {
+  outline: 2px solid var(--color-accent-brand) !important;
+  outline-offset: 3px;
+  border-radius: 6px;
+  transition: outline-color 0.2s ease;
+}
+
+@keyframes tch-pop {
+  from { opacity: 0; translate: 0 0.375rem; }
+  to { opacity: 1; translate: 0 0; }
+}
+@keyframes tch-dot {
+  0%, 60%, 100% { opacity: 0.35; translate: 0 0; }
+  30% { opacity: 1; translate: 0 -2px; }
+}
+@keyframes tch-wait {
+  0%, 100% { opacity: 0.9; }
+  50% { opacity: 0.55; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tch { transition: none; }
+  .tch-load:not(.tch-fail) img { animation: none; }
+  .tch-dots i, .tch-say, .tch-menu { animation: none; }
+  .tch-meter i, .tch-cap span { transition: none; }
+}
+
+/* The teacher's whiteboard (Board.tsx): a sheet of paper beside the teacher.
+   Ink is the text colour; the accent marks what to look at, never text. */
+@layer components {
+  .wb {
+    position: fixed;
+    top: 4.25rem;
+    left: clamp(1rem, 6vw, 5rem);
+    z-index: 54;
+    width: min(46rem, calc(100vw - 2rem - 15rem));
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--kit-card-radius, 1rem);
+    background: var(--color-bg-surface);
+    box-shadow: var(--elev-2);
+  }
+  @media (max-width: 760px) {
+    .wb { left: 1rem; width: calc(100vw - 2rem); top: 3.75rem; }
+  }
+  .wb-head { display: flex; align-items: center; gap: 0.5rem; }
+  .wb-title { flex: 1; min-width: 0; margin: 0; font-weight: 600; font-size: 0.95rem; color: var(--color-text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wb-count { font-size: 0.75rem; color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+  .wb-btn {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+  }
+  .wb-btn svg { width: 1rem; height: 1rem; }
+  .wb-btn:hover:not(:disabled),
+  .wb-btn:focus-visible { color: var(--color-text-primary); background: color-mix(in oklab, var(--color-text-primary) 7%, transparent); }
+  .wb-btn:disabled { opacity: 0.4; cursor: default; }
+  .wb-sheet {
+    position: relative;
+    aspect-ratio: 100 / 60;
+    border: 1px solid var(--color-border);
+    border-radius: calc(var(--kit-card-radius, 1rem) - 0.375rem);
+    background: color-mix(in oklab, var(--color-text-primary) 2%, var(--color-bg-surface));
+    overflow: hidden;
+  }
+  .wb-svg { display: block; width: 100%; height: 100%; }
+  .wb-wait { position: absolute; inset: 0; display: grid; place-content: center; margin: 0; padding: 1rem; text-align: center; font-size: 0.875rem; color: var(--color-text-secondary); }
+  .wb-text { fill: var(--color-text-primary); font-family: var(--font-solution, var(--font-body, inherit)); }
+  .wb-index { fill: var(--color-text-muted); font-family: var(--font-body, inherit); }
+  .wb-stroke { fill: none; stroke-width: 0.32; stroke-linecap: round; stroke-linejoin: round; }
+  .wb-ink { stroke: var(--color-text-primary); }
+  .wb-muted { stroke: var(--color-text-muted); }
+  .wb-accent { stroke: var(--color-accent-brand); }
+  .wb-good { stroke: var(--color-state-success); }
+  .wb-bad { stroke: var(--color-state-error); }
+  .wb-hl { fill: color-mix(in oklab, var(--color-accent-brand) 16%, transparent); stroke: var(--color-accent-brand); }
+  .wb-fill-ink { fill: var(--color-text-primary); }
+  .wb-fill-muted { fill: var(--color-text-muted); }
+  .wb-fill-accent { fill: var(--color-accent-brand); }
+  .wb-fill-good { fill: var(--color-state-success); }
+  .wb-fill-bad { fill: var(--color-state-error); }
+  .wb-say { margin: 0; min-height: 2.6em; font-family: var(--kit-read, inherit); font-size: 0.95rem; line-height: 1.45; color: var(--color-text-primary); }
+  .wb-controls { display: flex; justify-content: center; gap: 0.25rem; }
+  .wb-voice { margin: -0.25rem 0 0; font-size: 0.75rem; color: var(--color-text-secondary); }
+  .wb-voice strong { color: var(--color-text-primary); font-weight: 600; }
+
+  /* Drawing: strokes are drawn, text is written left to right. */
+  .wb-new .wb-stroke { stroke-dasharray: 1; stroke-dashoffset: 1; animation: wb-draw 0.8s ease-out forwards; }
+  .wb-new text { animation: wb-write 0.7s ease-out both; }
+}
+@keyframes wb-draw { to { stroke-dashoffset: 0; } }
+@keyframes wb-write { from { clip-path: inset(0 100% 0 0); opacity: 0.2; } to { clip-path: inset(0 0 0 0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .wb-new .wb-stroke, .wb-new text { animation: none; stroke-dashoffset: 0; }
+}
+
+/* Her offer of a natural voice sits where her speech bubble does. */
+.tch-offer .tch-say-foot {
+  justify-content: flex-start;
+  gap: 8px;
+}

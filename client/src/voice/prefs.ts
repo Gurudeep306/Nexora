@@ -8,8 +8,13 @@
 */
 import { useCallback, useEffect, useSyncExternalStore } from 'react'
 import { api } from '@/lib/api'
+import { voiceById } from './voices'
+import { cleanName, OLD_NAMES, RENAMED, setTeacherNames, TEACHERS, type TeacherId } from './teacher/teachers'
+export type { TeacherId }
 
 export type VoiceLang = 'en-IN' | 'hi-IN'
+/** Which voice reads answers: the best available, a natural Indian voice (server), Kokoro on this device, or the device's own. */
+export type VoiceEngine = 'auto' | 'natural' | 'kokoro' | 'device'
 
 export interface VoicePrefs {
   v: 1
@@ -22,11 +27,47 @@ export interface VoicePrefs {
   corpus: boolean
   /** Confirmed 18+ or a parent's/guardian's permission (needed for the corpus). */
   adultOrGuardian: boolean
-  /** Read answers aloud (browser voice). */
+  /** Read answers aloud. */
   speak: boolean
+  /** Which voice reads answers (S8). */
+  engine: VoiceEngine
+  /** The natural voice's name, e.g. en-IN-NeerjaNeural ('' = the default for the language). */
+  voice: string
+  /** Agreed to download Kokoro (a large one-time download) on this device. */
+  kokoro: boolean
+  /** The on-device voice the student chose (ids in voices.ts; '' = the clearest for the teacher). */
+  kokoroVoice: string
+  /** Speak in the voice the student gave (kept on this device only; clone/clone.ts). */
+  ownVoice: boolean
+  /** Guru answers on this device when it can (the student agreed to the download; Settings → Voice). */
+  brain: boolean
+  /** The virtual teacher on screen ('' = off, the default; ids in teacher/teachers.ts). */
+  teacher: TeacherId | ''
+  /** How big the teacher is drawn. */
+  teacherSize: TeacherSize
+  /** The names the student gave each teacher (teachers have no names of their own). */
+  teacherNames: Partial<Record<TeacherId, string>>
+  /** How fast the voice speaks (0.8–1.25; 1 = the voice's own pace). */
+  rate: number
+  /** How much of the teacher is shown: face and shoulders, upper body, or down to the waist. */
+  teacherView: TeacherView
+  /** Her words lit one by one in her bubble while she speaks (off: only the Stop button shows). */
+  teacherCaptions: boolean
+  /** Hands move while she talks (thumbs up, namaste, pointing…). */
+  teacherGestures: boolean
+  /** She reacts to real results: a judge verdict, a GATE answer. */
+  teacherReacts: boolean
+  /** Now and then she glances at where the student points. */
+  teacherGlance: boolean
 }
 
-export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true }
+export type TeacherSize = 's' | 'm' | 'l'
+export type TeacherView = 'head' | 'upper' | 'mid'
+/** The speaking speeds offered (Teacher studio). */
+export const RATES = [0.85, 1, 1.15] as const
+const TEACHER_IDS: readonly string[] = TEACHERS.map((t) => t.id)
+
+export const DEFAULT_PREFS: VoicePrefs = { v: 1, consent: false, lang: 'en-IN', corpus: false, adultOrGuardian: false, speak: true, engine: 'auto', voice: '', kokoro: false, kokoroVoice: '', ownVoice: false, brain: false, teacher: '', teacherSize: 'm', teacherNames: {}, rate: 1, teacherView: 'upper', teacherCaptions: true, teacherGestures: true, teacherReacts: true, teacherGlance: true }
 const LOCAL = 'nexora:voice'
 const KEY = 'voice_prefs'
 
@@ -42,7 +83,45 @@ function sanitize(raw: unknown): VoicePrefs {
     corpus: r.corpus === true && adultOrGuardian,
     adultOrGuardian,
     speak: r.speak !== false,
+    engine: r.engine === 'natural' || r.engine === 'kokoro' || r.engine === 'device' ? r.engine : 'auto',
+    voice: typeof r.voice === 'string' && /^[a-z]{2}-[A-Z]{2}-[A-Za-z]+Neural$/.test(r.voice) ? r.voice : '',
+    kokoro: r.kokoro === true,
+    ownVoice: r.ownVoice === true,
+    kokoroVoice: typeof r.kokoroVoice === 'string' && voiceById(r.kokoroVoice) ? r.kokoroVoice : '',
+    brain: r.brain === true,
+    teacher: teacherPref(r.teacher),
+    teacherSize: r.teacherSize === 's' || r.teacherSize === 'l' ? r.teacherSize : 'm',
+    teacherNames: teacherNames(r),
+    rate: typeof r.rate === 'number' && Number.isFinite(r.rate) ? Math.min(1.25, Math.max(0.8, Math.round(r.rate * 100) / 100)) : 1,
+    teacherView: r.teacherView === 'head' || r.teacherView === 'mid' ? r.teacherView : 'upper',
+    teacherCaptions: r.teacherCaptions !== false,
+    teacherGestures: r.teacherGestures !== false,
+    teacherReacts: r.teacherReacts !== false,
+    teacherGlance: r.teacherGlance !== false,
   }
+}
+
+/** The names the student gave; someone who chose a teacher before naming existed keeps the name that teacher had. */
+function teacherNames(r: Record<string, unknown>): Partial<Record<TeacherId, string>> {
+  const out: Partial<Record<TeacherId, string>> = {}
+  const raw = r.teacherNames && typeof r.teacherNames === 'object' ? (r.teacherNames as Record<string, unknown>) : null
+  if (raw) {
+    for (const id of TEACHER_IDS) {
+      const n = cleanName(raw[id])
+      if (n) out[id as TeacherId] = n
+    }
+    return out
+  }
+  const before = teacherPref(r.teacher)
+  if (before) out[before] = OLD_NAMES[before]
+  return out
+}
+
+/** A saved teacher, moved to who replaced them if they were retired. */
+function teacherPref(v: unknown): TeacherId | '' {
+  if (typeof v !== 'string') return ''
+  if (TEACHER_IDS.includes(v)) return v as TeacherId
+  return RENAMED[v] ?? ''
 }
 
 let current: VoicePrefs = (() => {
@@ -52,10 +131,12 @@ let current: VoicePrefs = (() => {
     return DEFAULT_PREFS
   }
 })()
+setTeacherNames(current.teacherNames)
 const listeners = new Set<() => void>()
 
 function publish(next: VoicePrefs) {
   current = next
+  setTeacherNames(next.teacherNames)
   try {
     localStorage.setItem(LOCAL, JSON.stringify(next))
   } catch {

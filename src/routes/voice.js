@@ -3,10 +3,12 @@
 const express = require("express");
 const rateLimit = require("express-rate-limit");
 const { logError } = require("../http-error");
-const { askGuru } = require("../voice/guru");
+const { askGuru, planGuru, localAllowed } = require("../voice/guru");
 const { approachToPseudo } = require("../voice/pseudo");
 const { buildCode } = require("../voice/build");
+const { makeBoard } = require("../voice/board");
 const explain = require("../voice/explain");
+const memory = require("../voice/memory");
 const db = require("../db");
 const { invalidateNexusUser } = require("../nexus/user-cache");
 
@@ -24,7 +26,7 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
   explain.ensureTables(db).catch((e) => logError("voice.explain.tables", e));
 
   router.post("/api/voice/guru", requireAuthenticatedUser, limiter, async (req, res) => {
-    const { text, page, hintsGiven, lang } = req.body || {};
+    const { text, page, hintsGiven, lang, teacher, teacherName, talk, history } = req.body || {};
     const username = req.sessionUser?.username || "";
     const problemId = page && typeof page === "object" ? page.problemId : null;
     // Explain-back is a viva: no hints until it ends.
@@ -32,20 +34,102 @@ function createVoiceRouter({ getSessionUser, requireAuthenticatedUser }) {
       return res.json({ ok: true, say: lang === "hi-IN" ? "अभी Explain-back चल रहा है — अपने शब्दों में समझाओ, हिंट बाद में।" : "Explain-back is on — tell it in your own words. Hints after.", step: 0, source: "rule" });
     }
     try {
+      // A teacher on screen remembers the student between sessions (src/voice/memory.js; study facts only go to the AI).
+      const mem = teacher ? await memory.recall(username).catch(() => null) : null;
       const out = await askGuru({
+        memory: memory.promptFacts(mem),
         user: req.sessionUser,
         page: page && typeof page === "object" && !Array.isArray(page) ? page : {},
         text,
         hintsGiven: Math.max(0, Math.min(10, Number(hintsGiven) || 0)),
         lang: lang === "hi-IN" ? "hi-IN" : "en-IN",
+        // Conversation mode with the virtual teacher: who is speaking, and what was said before.
+        teacher: typeof teacher === "string" ? teacher.slice(0, 20) : "",
+        teacherName: typeof teacherName === "string" ? teacherName.slice(0, 40) : "",
+        talk: talk === true,
+        history: Array.isArray(history) ? history.slice(-8) : [],
       });
       // Any help on a problem makes a later explain-back of it "aided" for a day.
       if (problemId && out.source !== "rule" && out.source !== "none") explain.logHint(db, username, problemId).catch(() => {});
+      if (teacher) memory.remember(username, { heard: text, page }).catch(() => {});
       res.json({ ok: true, ...out });
     } catch (e) {
       if (e?.name === "AiError") return res.status(e.status || 502).json({ ok: false, error: e.message });
       logError("voice.guru", e);
       res.status(500).json({ ok: false, error: "Guru ran into a problem — try again." });
+    }
+  });
+
+  // Guru on the student's own device: the server plans the turn (rules, page,
+  // safety) and hands over the messages only when nothing in them must stay
+  // hidden; otherwise the device asks /api/voice/guru as before.
+  router.post("/api/voice/guru/plan", requireAuthenticatedUser, limiter, async (req, res) => {
+    const { text, page, hintsGiven, lang, teacher, teacherName, talk, history } = req.body || {};
+    const username = req.sessionUser?.username || "";
+    const problemId = page && typeof page === "object" ? page.problemId : null;
+    if (problemId && explain.explaining(username, problemId)) return res.json({ ok: true, local: false });
+    try {
+      const mem = teacher ? await memory.recall(username).catch(() => null) : null;
+      const plan = await planGuru({
+        memory: memory.promptFacts(mem),
+        user: req.sessionUser,
+        page: page && typeof page === "object" && !Array.isArray(page) ? page : {},
+        text,
+        hintsGiven: Math.max(0, Math.min(10, Number(hintsGiven) || 0)),
+        lang: lang === "hi-IN" ? "hi-IN" : "en-IN",
+        teacher: typeof teacher === "string" ? teacher.slice(0, 20) : "",
+        teacherName: typeof teacherName === "string" ? teacherName.slice(0, 40) : "",
+        talk: talk === true,
+        history: Array.isArray(history) ? history.slice(-8) : [],
+      });
+      if (plan.kind === "say") return res.json({ ok: true, local: false, say: plan.say, step: plan.step, source: plan.source });
+      if (!localAllowed(plan)) return res.json({ ok: true, local: false });
+      if (teacher) memory.remember(username, { heard: text, page }).catch(() => {});
+      res.json({ ok: true, local: true, messages: plan.messages, step: plan.step });
+    } catch (e) {
+      if (e?.name === "AiError") return res.status(e.status || 502).json({ ok: false, error: e.message });
+      logError("voice.guru.plan", e);
+      res.json({ ok: true, local: false });
+    }
+  });
+
+  // What the teacher remembers about the student, and a welcome that shows it; the student can erase it.
+  router.get("/api/voice/teacher/memory", requireAuthenticatedUser, async (req, res) => {
+    try {
+      const mem = await memory.recall(req.sessionUser?.username || "");
+      res.json({ ok: true, memory: mem, greeting: memory.greeting(mem, req.query.lang === "hi-IN" ? "hi-IN" : "en-IN") });
+    } catch (e) {
+      logError("voice.memory", e);
+      res.json({ ok: true, memory: memory.EMPTY, greeting: memory.greeting(null, req.query.lang === "hi-IN" ? "hi-IN" : "en-IN") });
+    }
+  });
+  router.delete("/api/voice/teacher/memory", requireAuthenticatedUser, async (req, res) => {
+    try {
+      await memory.forget(req.sessionUser?.username || "");
+      res.json({ ok: true });
+    } catch (e) {
+      logError("voice.memory.forget", e);
+      res.status(500).json({ ok: false, error: "Couldn't forget just now — try again." });
+    }
+  });
+
+  // The teacher's whiteboard: a topic → a short lesson of spoken steps with drawings.
+  router.post("/api/voice/board", requireAuthenticatedUser, limiter, async (req, res) => {
+    const { topic, page, lang, teacher, teacherName } = req.body || {};
+    try {
+      const out = await makeBoard({
+        user: req.sessionUser,
+        topic,
+        page: page && typeof page === "object" && !Array.isArray(page) ? page : {},
+        lang: lang === "hi-IN" ? "hi-IN" : "en-IN",
+        teacher: typeof teacher === "string" ? teacher.slice(0, 20) : "",
+        teacherName: typeof teacherName === "string" ? teacherName.slice(0, 40) : "",
+      });
+      res.json({ ok: true, ...out });
+    } catch (e) {
+      if (e?.name === "AiError") return res.status(e.status || 502).json({ ok: false, error: e.message });
+      logError("voice.board", e);
+      res.status(500).json({ ok: false, error: "The whiteboard ran into a problem — try again." });
     }
   });
 
