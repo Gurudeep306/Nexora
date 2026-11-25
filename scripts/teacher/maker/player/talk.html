@@ -1,0 +1,91 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#f3eee6}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"./three/build/three.module.js","three/addons/":"./three/examples/jsm/","@pixiv/three-vrm":"./vrmlib/lib/three-vrm.module.js"}}</script></head><body>
+<script type="module">
+import * as THREE from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { VRMLoaderPlugin, MToonMaterial } from '@pixiv/three-vrm'
+const q=new URLSearchParams(location.search), W=+q.get('w')||900, H=+q.get('h')||900
+const r=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true}); r.setSize(W,H); r.outputColorSpace=THREE.SRGBColorSpace
+document.body.appendChild(r.domElement)
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0xf3eee6)
+scene.add(new THREE.HemisphereLight(0xfff7ee,0xb9a99a,1.1)); const rimL=new THREE.DirectionalLight(0xffe6d0,1.2); rimL.position.set(1.5,1.6,-1.8); scene.add(rimL)
+const key=new THREE.DirectionalLight(0xfff0e0,2.4); key.position.set(-1.2,2,2.2); scene.add(key)
+const L=new GLTFLoader(); L.register(p=>new VRMLoaderPlugin(p))
+const g=await L.loadAsync(q.get('m')||'out/her_anime.vrm'); const vrm=g.userData.vrm; scene.add(vrm.scene)
+const paint=q.get('style')==='paint'; const shade=+(q.get('toony')||(paint?0.42:0.75))
+// Matcaps: a picture of how a shiny sphere looks; MToon adds it on top, which gives anime highlights.
+function matcap(kind){ const c=document.createElement('canvas'); c.width=c.height=256; const g=c.getContext('2d'); g.fillStyle='#000'; g.fillRect(0,0,256,256)
+  if(kind==='hair'){ // the anime "angel ring": a bright band across the upper part
+    for(let i=0;i<40;i++){ g.strokeStyle='rgba(255,236,220,'+(0.018*(40-i)/40)+')'; g.lineWidth=8+i*1.2; g.beginPath(); g.ellipse(128,150,104,62,0,Math.PI*1.08,Math.PI*1.92); g.stroke() }
+  } else if(kind==='skin'){ const r=g.createRadialGradient(96,84,4,128,128,128); r.addColorStop(0,'rgba(255,230,215,0.22)'); r.addColorStop(0.5,'rgba(255,210,190,0.05)'); r.addColorStop(1,'rgba(0,0,0,0)'); g.fillStyle=r; g.fillRect(0,0,256,256)
+  } else if(kind==='cloth'){ const r=g.createRadialGradient(100,90,4,128,128,128); r.addColorStop(0,'rgba(255,255,255,0.12)'); r.addColorStop(1,'rgba(0,0,0,0)'); g.fillStyle=r; g.fillRect(0,0,256,256)
+  } else { const r=g.createRadialGradient(90,80,2,90,80,40); r.addColorStop(0,'rgba(255,255,255,0.9)'); r.addColorStop(1,'rgba(255,255,255,0)'); g.fillStyle=r; g.fillRect(0,0,256,256) }
+  const t=new THREE.CanvasTexture(c); t.colorSpace=THREE.SRGBColorSpace; return t }
+const MC={hair:matcap('hair'),skin:matcap('skin'),cloth:matcap('cloth'),eye:matcap('eye')}
+vrm.scene.traverse(o=>{
+  if(!o.isMesh) return
+  const old=o.material, name=(old.name||'').toLowerCase()
+  const hair=/long|hair|braid|bob|pony/.test(name), cut=old.alphaTest>0||old.transparent||/eyebrow|eyelash/.test(name)
+  const skin=/body|human\.body/.test(name)
+  const m=new MToonMaterial({
+    map:old.map, color:new THREE.Color(1,1,1), transparent:false, alphaTest: cut?0.5:0,
+    shadeColorFactor: skin? (paint? new THREE.Color(0.80,0.55,0.50): new THREE.Color(0.86,0.62,0.56)): hair? new THREE.Color(0.55,0.5,0.5): new THREE.Color(0.62,0.58,0.62),
+    shadeMultiplyTexture: old.map,
+    shadingShiftFactor: skin? -0.05: -0.1, shadingToonyFactor: shade,
+    giEqualizationFactor: 0.6,
+    parametricRimColorFactor: hair? new THREE.Color(0.06,0.04,0.03): new THREE.Color(skin?0.35:0.25, skin?0.22:0.2, skin?0.2:0.22), parametricRimFresnelPowerFactor: 4, parametricRimLiftFactor: 0.05,
+    side: cut? THREE.DoubleSide: THREE.FrontSide,
+    matcapTexture: hair? MC.hair: skin? MC.skin: /low-poly/.test(name)? MC.eye: MC.cloth,
+    matcapFactor: new THREE.Color(1,1,1),
+  })
+  m.name=old.name
+  if(/teeth/.test(name)){ m.color=new THREE.Color(1.25,1.22,1.18); m.shadeColorFactor=new THREE.Color(0.92,0.88,0.86); m.matcapTexture=null }
+  if(cut){ m.alphaTest=0.5; m.uniforms.alphaTest.value=0.5 }
+  o.material=m
+  // Anime outline: the same skinned surface, pushed out along its normals and drawn back-faces only.
+  if(!cut && !/low-poly|teeth|tongue/.test(name)){
+    const om=new THREE.MeshBasicMaterial({color: skin?(paint?0x8a5444:0x6b3a2c):0x2a2024, side:THREE.BackSide})
+    const width=+(q.get('ow')||(paint?0.0008:0.0016))
+    om.onBeforeCompile=sh=>{ sh.vertexShader=sh.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\n transformed += normalize(objectNormal) * '+width.toFixed(5)+';') }
+    const ol=o.isSkinnedMesh? new THREE.SkinnedMesh(o.geometry,om): new THREE.Mesh(o.geometry,om)
+    if(o.isSkinnedMesh) ol.bind(o.skeleton,o.bindMatrix)
+    ol.morphTargetInfluences=o.morphTargetInfluences; ol.morphTargetDictionary=o.morphTargetDictionary
+    ol.frustumCulled=false; o.parent.add(ol); ol.position.copy(o.position); ol.quaternion.copy(o.quaternion); ol.scale.copy(o.scale)
+  }
+})
+const hb=n=>vrm.humanoid.getNormalizedBoneNode(n)
+hb('leftUpperArm').rotation.z=-1.2; hb('rightUpperArm').rotation.z=1.2
+hb('leftLowerArm').rotation.z=-0.12; hb('rightLowerArm').rotation.z=0.12
+const em=vrm.expressionManager; if(em){ em.setValue('relaxed', +(q.get('smile')||0.35)) }
+vrm.update(0)
+const head=new THREE.Vector3(); hb('head').getWorldPosition(head)
+const view=q.get('v')||'upper'
+const cam=new THREE.PerspectiveCamera(view==='full'?28:20,W/H,0.05,50)
+if(view==='full'){cam.position.set(0,0.95,4.4);cam.lookAt(0,0.88,0)}
+else if(view==='side'){cam.position.set(head.x+0.55,head.y+0.05,head.z+0.5);cam.lookAt(head.x,head.y+0.03,head.z)}
+else if(view==='face'){cam.position.set(head.x,head.y+0.06,head.z+0.75);cam.lookAt(head.x,head.y+0.05,head.z)}
+else {cam.position.set(head.x,head.y-0.05,head.z+1.6);cam.lookAt(head.x,head.y-0.17,head.z)}
+
+const line=q.get('line')||'l1'
+const AK=await (await fetch('demo/'+line+'.arkit.json')).json()
+const meshes=[]; vrm.scene.traverse(o=>{ if(o.isMesh&&o.morphTargetDictionary&&o.material.isMToonMaterial) meshes.push(o) })
+let seed=5; const rnd=()=>((seed=(seed*16807)%2147483647)/2147483647)
+const blinks=[]; for(let t=0.8;t<30;t+=2.4+rnd()*2.6) blinks.push(t)
+const hb2=n=>vrm.humanoid.getNormalizedBoneNode(n)
+window.renderAt=(t)=>{
+  const fi=t*AK.fps, i0=Math.floor(fi), f=fi-i0
+  const a=AK.frames[Math.min(i0,AK.frames.length-1)]||{}, b=AK.frames[Math.min(i0+1,AK.frames.length-1)]||{}
+  const keys=new Set([...Object.keys(a),...Object.keys(b)])
+  em.setValue('relaxed',0.15)
+  let blink=0; for(const bt of blinks){const d=t-bt; if(d>=0&&d<0.15) blink=Math.max(blink,Math.sin(Math.PI*d/0.15))}
+  em.setValue('blink',blink)
+  hb2('head').rotation.set(0.03*Math.sin(t*1.3)+0.02*Math.sin(t*2.9),0.05*Math.sin(t*0.7),0.015*Math.sin(t*1.1))
+  hb2('neck').rotation.set(0.01*Math.sin(t*0.9),0.02*Math.sin(t*0.5),0)
+  vrm.update(1/30)
+  const GAIN={mouthUpperUpLeft:0.35,mouthUpperUpRight:0.35,mouthLowerDownLeft:0.55,mouthLowerDownRight:0.55,mouthStretchLeft:0.45,mouthStretchRight:0.45,mouthSmileLeft:0.6,mouthSmileRight:0.6,mouthDimpleLeft:0.5,mouthDimpleRight:0.5}
+  for(const m of meshes){ for(const k of keys){ if(/^eye(Blink|Look)/.test(k)) continue; const idx=m.morphTargetDictionary[k]; if(idx!==undefined) m.morphTargetInfluences[idx]=((a[k]||0)*(1-f)+(b[k]||0)*f)*(GAIN[k]??1) } }
+  r.render(scene,cam)
+}
+window.DURATION=AK.frames.length/AK.fps
+window.ready=true
+</script></body></html>
