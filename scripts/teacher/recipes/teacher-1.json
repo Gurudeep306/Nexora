@@ -1,0 +1,72 @@
+{
+ "name": "NexoraGuru teacher 1",
+ "body": {
+  "gender": 0.0,
+  "age": 0.5,
+  "muscle": 0.5,
+  "weight": 0.52,
+  "height": 0.45,
+  "race": {
+   "caucasian": 0.55,
+   "asian": 0.3,
+   "african": 0.15
+  }
+ },
+ "targets": {
+  "l-eye-scale-incr": 0.35,
+  "r-eye-scale-incr": 0.35,
+  "l-eye-height2-incr": 0.25,
+  "r-eye-height2-incr": 0.25,
+  "nose-scale-horiz-decr": 0.15,
+  "nose-scale-vert-decr": 0.15,
+  "nose-volume-decr": 0.25,
+  "nose-point-width-decr": 0.2,
+  "head-round": 0.35,
+  "head-scale-vert-incr": 0.08,
+  "head-scale-horiz-incr": 0.08,
+  "chin-prominent-decr": 0.25,
+  "chin-width-decr": 0.15,
+  "l-cheek-volume-incr": 0.3,
+  "r-cheek-volume-incr": 0.3,
+  "mouth-upperlip-volume-incr": 0.2,
+  "mouth-lowerlip-volume-incr": 0.25,
+  "mouth-angles-up": 0.2
+ },
+ "skin": "skins/young_asian_female/young_asian_female.mhmat",
+ "eyes": "eyes/low-poly/low-poly.mhclo",
+ "eyebrows": "eyebrows/eyebrow001/eyebrow001.mhclo",
+ "eyelashes": "eyelashes/eyelashes02/eyelashes02.mhclo",
+ "hair": "hair/long01/long01.mhclo",
+ "clothes": [
+  "clothes/toigo_female_suit_2/toigo_female_suit_2.mhclo"
+ ],
+ "recolour": {
+  "fsuit2": [
+   0.5,
+   0.55,
+   0.42
+  ],
+  "long01": [
+   0.05,
+   0.5,
+   0.22,
+   0.0
+  ],
+  "brown_eye": [
+   0.07,
+   0.6,
+   0.35,
+   0.0
+  ]
+ },
+ "decimate": {
+  "teeth": 0.15
+ },
+ "tint": {
+  "young_lightskinned": [
+   0.88,
+   0.74,
+   0.62
+  ]
+ }
+}

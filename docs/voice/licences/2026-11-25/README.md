@@ -8,6 +8,7 @@ says so.
 |---|---|---|---|
 | MakeHuman / MPFB2 base mesh, targets, skins, hair, eyebrows, clothes, rigs, expressions | `mpfb2-LICENSE.md` (copy) | Assets **CC0 1.0**; code GPLv3 (only run offline in Blender, never shipped). §D: "no claim whatsoever" over exports, "graphical data generated via scripting or plugins", renderings or saved models | **Yes** |
 | MakeHuman FAQ on character generators | makehumancommunity.org did not answer from this machine | — | Not needed: §D of the MPFB licence already covers output made by scripts. Re-read the FAQ by hand before the Teacher Maker (Phase 2) ships |
+| MakeHuman functional packs faceunits01 (52 ARKit), visemes01 (22), visemes02 (15 Oculus) | `makehuman-functional-packs.md` (copy of the official asset-pack page source: "The assets are shared under CC0") and `mpfb-*.json` (each pack's own records: every item `"license": "CC0"`, author Mika Suominen) | **CC0** | **Yes** (all 67 face shapes on the teacher) |
 | ffunch/vrm-avatar-maker code | `ffunch-LICENSE.txt` (copy) | **MIT** (2026 Flemming Funch) | **Yes**, as a reference and pipeline |
 | ffunch/vrm-avatar-maker assets | `ffunch-ASSETS.md` (copy) | Every item listed **CC0**. Two items have an unknown author but are still marked CC0 ("Long, loose" hair, "Galactic uniform") | **Yes**. Avoid those two items anyway, to be safe |
 | three.js | repository LICENSE (MIT, known) | MIT | Yes |
@@ -23,3 +24,5 @@ says so.
 Decision: Phase 1 uses MPFB2/MakeHuman CC0 assets, the ffunch pipeline (MIT)
 as a reference, three-vrm, HeadTTS, HeadAudio, wav2arkit_cpu, TalkingHead's
 gesture templates, and Quaternius CC0 clips. The VRoid 7-set is dropped.
+
+Community clothes packs (shirts01, pants01, skirts01, suits01, jewelry01) list every item as CC0 on their official pages; `scripts/teacher/build-vrm-teacher.py` also refuses any worn item whose own file does not say CC0.
