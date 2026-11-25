@@ -1,0 +1,287 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>MetaHuman teacher demo</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #d9d4cc; overflow: hidden; }
+  canvas { display: block; }
+</style>
+<script type="importmap">
+{ "imports": { "three": "./three/build/three.module.js", "three/addons/": "./three/examples/jsm/" } }
+</script>
+</head>
+<body>
+<script type="module">
+import * as THREE from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js'
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
+
+const q = new URLSearchParams(location.search)
+const W = Number(q.get('w') || 1280), H = Number(q.get('h') || 720)
+const MODEL = q.get('model') || 'ada.glb'
+const LINE = q.get('line') || 'line'
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true })
+renderer.setSize(W, H)
+renderer.setPixelRatio(1)
+renderer.outputColorSpace = THREE.SRGBColorSpace
+renderer.toneMapping = THREE.NeutralToneMapping
+renderer.toneMappingExposure = 1.0
+document.body.appendChild(renderer.domElement)
+
+const scene = new THREE.Scene()
+scene.background = new THREE.Color(0xd9d4cc)
+const pmrem = new THREE.PMREMGenerator(renderer)
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
+scene.environmentIntensity = 0.55
+
+// A portrait studio: warm key from the front-left, soft fill, cool rim behind.
+const key = new THREE.DirectionalLight(0xfff1e0, 2.2); key.position.set(-1.2, 1.6, 2.2); scene.add(key)
+const fill = new THREE.DirectionalLight(0xe8eeff, 0.6); fill.position.set(1.6, 0.6, 1.4); scene.add(fill)
+const rim = new THREE.DirectionalLight(0xdfe8ff, 1.4); rim.position.set(0.4, 1.8, -2.2); scene.add(rim)
+
+const camera = new THREE.PerspectiveCamera(22, W / H, 0.05, 50)
+
+const draco = new DRACOLoader().setDecoderPath('./three/examples/jsm/libs/draco/')
+const gltf = await new GLTFLoader().setDRACOLoader(draco).loadAsync(MODEL)
+const root = gltf.scene
+scene.add(root)
+
+// ── Materials the export can't carry (our own versions of the fixes, after reading how MetaHuman packs them) ──
+const texLoader = new THREE.TextureLoader()
+const pending = []
+const tex = (url) => { const t = texLoader.load(url); pending.push(new Promise((ok, bad) => { const img = new Image(); img.onload = ok; img.onerror = bad; img.src = url })); t.colorSpace = THREE.NoColorSpace; t.flipY = false; t.anisotropy = 8; return t }
+const spec = q.get('materials') ? (await (await fetch(q.get('materials'))).json()).materials : []
+const byName = new Map(spec.map((s) => [s.material_name, s]))
+const extraPasses = []
+function hairMaterial(m, s, facial) {
+  const p = s.params
+  const atlas = tex(`textures/${p.alpha_stem}.png`)
+  m.map = null
+  m.color.setRGB(p.base_color[0], p.base_color[1], p.base_color[2]).convertSRGBToLinear()
+  m.roughness = p.roughness ?? 0.55
+  m.metalness = 0
+  m.alphaMap = atlas
+  m.side = THREE.DoubleSide
+  // Hair cards sit flush on the skin: nudge them towards the camera so they never sink into it.
+  m.polygonOffset = true; m.polygonOffsetFactor = facial ? -12 : -4; m.polygonOffsetUnits = facial ? -120 : -16
+  m.transparent = true; m.depthWrite = false; m.alphaTest = 0
+  const density = facial ? 4.0 : 2.2
+  m.onBeforeCompile = (sh) => {
+    // The atlas is data, not colour: R = strand coverage, B = a per-strand random value (colour variation).
+    sh.fragmentShader = sh.fragmentShader
+      .replace('#include <alphamap_fragment>', `
+        vec4 hairAtlas = texture2D( alphaMap, vAlphaMapUv );
+        diffuseColor.a *= clamp( hairAtlas.r * ${density.toFixed(2)}, 0.0, 1.0 );
+        diffuseColor.rgb *= 1.0 + ( hairAtlas.b - 0.5 ) * 0.72;`)
+  }
+  m.customProgramCacheKey = () => `hair-${facial}-${m.name}`
+  m.needsUpdate = true
+}
+function lashMaterial(m, s) {
+  const p = s.params
+  m.map = null
+  m.color.setRGB(p.base_color[0], p.base_color[1], p.base_color[2]).convertSRGBToLinear()
+  m.roughness = 0.6
+  m.alphaMap = tex(s.textures.alpha)
+  m.transparent = true; m.depthWrite = false; m.alphaTest = 0; m.side = THREE.DoubleSide
+  m.needsUpdate = true
+}
+root.traverse((o) => {
+  if (!o.isMesh) return
+  const mats = Array.isArray(o.material) ? o.material : [o.material]
+  for (const m of mats) {
+    const s = byName.get(m.name)
+    if (!s) continue
+    if (s.kind === 'hair') {
+      const facial = /brow|beard|mustache/i.test(m.name)
+      hairMaterial(m, s, facial)
+      o.renderOrder = facial ? 2 : 3
+      // Head hair: a solid inner pass (hard cut) under the soft outer pass, so it has body and clean edges.
+      if (!facial) extraPasses.push(o)
+    } else if (s.face_slot === 'eyelashes') { lashMaterial(m, s) }
+  }
+})
+for (const o of extraPasses) {
+  const inner = o.material.clone()
+  inner.transparent = false; inner.depthWrite = true; inner.alphaTest = 0.5
+  inner.onBeforeCompile = (sh) => { sh.fragmentShader = sh.fragmentShader.replace('#include <alphamap_fragment>', `
+    vec4 hairAtlas = texture2D( alphaMap, vAlphaMapUv );
+    diffuseColor.a *= hairAtlas.r;
+    diffuseColor.rgb *= 1.0 + ( hairAtlas.b - 0.5 ) * 0.72;`) }
+  inner.customProgramCacheKey = () => `hair-inner-${inner.name}`
+  const twin = o.clone(); twin.material = inner; twin.renderOrder = 1
+  o.parent.add(twin)
+}
+
+// Meshes that carry the ARKit face shapes (face, teeth, eyes are one mesh; brows have their own).
+const faces = []
+const bones = {}
+root.traverse((o) => {
+  if (o.isSkinnedMesh || o.isMesh) {
+    o.frustumCulled = false
+    const mats = Array.isArray(o.material) ? o.material : [o.material]
+    for (const m of mats) {
+      const n = (m.name || '').toLowerCase()
+      // Known gaps of the export: the eye "shell" renders as a flat dark film, and M_Hide is a hidden part.
+      if (n.includes('eyeshell') || n.includes('m_hide')) m.visible = false
+      if (m.map) m.map.anisotropy = 8
+    }
+    if (o.morphTargetDictionary && 'jawOpen' in o.morphTargetDictionary || o.morphTargetDictionary && 'browInnerUp' in o.morphTargetDictionary) faces.push(o)
+  }
+  if (o.isBone) (bones[o.name] ||= []).push(o)
+})
+// Every part (face, brows, hair, body, clothes) came with its own copy of the skeleton. Bind them all to the
+// face's bones, so the head turns them all exactly together (separate copies drifted and opened gaps in the brows).
+{
+  const faceMesh = faces.find((f) => f.isSkinnedMesh && 'jawOpen' in f.morphTargetDictionary)
+  const master = new Map(faceMesh.skeleton.bones.map((b) => [b.name, b]))
+  root.traverse((o) => {
+    if (!o.isSkinnedMesh || o === faceMesh) return
+    const shared = o.skeleton.bones.map((b) => master.get(b.name) || b)
+    o.bind(new THREE.Skeleton(shared, o.skeleton.boneInverses), o.bindMatrix)
+  })
+  for (const name of Object.keys(bones)) bones[name] = master.has(name) ? [master.get(name)] : bones[name]
+}
+const rest = new Map()
+for (const list of Object.values(bones)) for (const b of list) rest.set(b, b.quaternion.clone())
+
+// Frame head and shoulders, eyes a third from the top.
+root.updateMatrixWorld(true)
+const headPos = new THREE.Vector3(); bones.head[0].getWorldPosition(headPos)
+const eyeY = headPos.y + 0.09
+camera.position.set(headPos.x, eyeY - 0.01, headPos.z + 1.35)
+camera.lookAt(headPos.x, eyeY - 0.12, headPos.z)
+
+// ── the speech ──
+const timing = await (await fetch(`${LINE}.timing.json`)).json()
+const wav = await (await fetch(`${LINE}.wav`)).arrayBuffer()
+const audio = await new OfflineAudioContext(1, 1, 24000).decodeAudioData(wav)
+const pcm = audio.getChannelData(0), RATE = audio.sampleRate
+// Loudness every 10 ms, scaled so speech is near 1.
+const env = []
+for (let i = 0; i < pcm.length; i += RATE / 100) { let s = 0, n = 0; for (let j = i; j < Math.min(pcm.length, i + RATE / 100); j++) { s += pcm[j] * pcm[j]; n++ } env.push(Math.sqrt(s / Math.max(1, n))) }
+const ref = [...env].sort((a, b) => a - b)[Math.floor(env.length * 0.92)] || 1
+const loud = (ms) => Math.min(1.2, (env[Math.max(0, Math.floor(ms / 10))] || 0) / ref)
+const DURATION = audio.duration * 1000
+
+// Oculus visemes → ARKit face shapes (what each mouth position is made of).
+const V = {
+  sil: {},
+  PP: { mouthClose: 0.35, mouthPressLeft: 0.45, mouthPressRight: 0.45, mouthRollLower: 0.25, mouthRollUpper: 0.15 },
+  FF: { mouthRollLower: 0.55, mouthUpperUpLeft: 0.2, mouthUpperUpRight: 0.2, jawOpen: 0.08, mouthFunnel: 0.08 },
+  TH: { jawOpen: 0.14, mouthStretchLeft: 0.12, mouthStretchRight: 0.12, tongueOut: 0.25 },
+  DD: { jawOpen: 0.18, mouthStretchLeft: 0.15, mouthStretchRight: 0.15, mouthUpperUpLeft: 0.08, mouthUpperUpRight: 0.08 },
+  kk: { jawOpen: 0.22, mouthStretchLeft: 0.18, mouthStretchRight: 0.18 },
+  CH: { jawOpen: 0.16, mouthFunnel: 0.45, mouthShrugUpper: 0.2, mouthUpperUpLeft: 0.12, mouthUpperUpRight: 0.12 },
+  SS: { jawOpen: 0.07, mouthStretchLeft: 0.3, mouthStretchRight: 0.3, mouthSmileLeft: 0.1, mouthSmileRight: 0.1 },
+  nn: { jawOpen: 0.14, mouthStretchLeft: 0.1, mouthStretchRight: 0.1 },
+  RR: { jawOpen: 0.14, mouthFunnel: 0.3, mouthPucker: 0.22 },
+  aa: { jawOpen: 0.5, mouthLowerDownLeft: 0.18, mouthLowerDownRight: 0.18, mouthStretchLeft: 0.05, mouthStretchRight: 0.05 },
+  E: { jawOpen: 0.3, mouthStretchLeft: 0.28, mouthStretchRight: 0.28, mouthSmileLeft: 0.12, mouthSmileRight: 0.12 },
+  I: { jawOpen: 0.18, mouthStretchLeft: 0.34, mouthStretchRight: 0.34, mouthSmileLeft: 0.18, mouthSmileRight: 0.18 },
+  O: { jawOpen: 0.34, mouthFunnel: 0.5, mouthPucker: 0.22 },
+  U: { jawOpen: 0.13, mouthPucker: 0.65, mouthFunnel: 0.32 },
+}
+const vis = timing.visemes.map((v, i) => ({ v, s: timing.vtimes[i], d: timing.vdurations[i] }))
+const LEAD = 70 // the mouth starts moving a little before the sound, as people's do
+// AI lip-sync curves (audio → ARKit), when given. The model was trained on a gentler face than a MetaHuman's,
+// so the mouth and jaw are scaled up to a natural opening.
+const AI = q.get('curves') ? await (await fetch(q.get('curves'))).json() : null
+const GAIN = { jawOpen: 2.2, mouthClose: 1.4, mouthFunnel: 1.5, mouthPucker: 1.5, mouthLowerDownLeft: 0.9, mouthLowerDownRight: 0.9, mouthUpperUpLeft: 0.8, mouthUpperUpRight: 0.8, mouthStretchLeft: 1.3, mouthStretchRight: 1.3, mouthRollLower: 1.3, mouthRollUpper: 1.3, tongueOut: 0.3 }
+const smooth = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x))
+
+// Seeded, so the same time always gives the same pose (frames can be rendered one by one).
+let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647)
+const blinks = []; for (let t = 600; t < DURATION + 3000; t += 2600 + rnd() * 2400) blinks.push(t)
+const glances = []; for (let t = 0; t < DURATION + 3000; t += 900 + rnd() * 1400) glances.push({ t, x: (rnd() - 0.5) * 0.06, y: (rnd() - 0.5) * 0.035 })
+const ph = Array.from({ length: 6 }, () => rnd() * 6.28)
+const noise = (t, f, k) => Math.sin(t * f + ph[k]) * 0.6 + Math.sin(t * f * 2.31 + ph[k + 1]) * 0.3 + Math.sin(t * f * 4.7 + ph[(k + 2) % 6]) * 0.1
+
+function face(ms) {
+  const w = {}
+  const add = (k, v) => { w[k] = 1 - (1 - (w[k] || 0)) * (1 - Math.max(0, Math.min(1, v))) }
+  const lo = loud(ms)
+  if (AI) {
+    // Lips and lower face from the AI model that listened to the audio (30 frames a second, blended between frames).
+    const f = (ms / 1000) * AI.fps, i = Math.floor(f), k = f - i
+    const a = AI.frames[i] || {}, b = AI.frames[i + 1] || a
+    for (const name of new Set([...Object.keys(a), ...Object.keys(b)])) {
+      if (/^eye(Blink|Look)/.test(name)) continue // her eyes are driven by the blink and glance timing below
+      const v = (a[name] || 0) * (1 - k) + (b[name] || 0) * k
+      // Brow cards follow the skin only for small moves (bigger ones open gaps): keep brows gentle.
+      add(name, /^brow/.test(name) ? Math.min(0.22, v) : v * (GAIN[name] ?? 1))
+    }
+  } else for (const x of vis) {
+    if (ms < x.s - LEAD - 80 || ms > x.s + x.d + 120) continue
+    const inK = smooth((ms - (x.s - LEAD)) / Math.max(50, Math.min(90, x.d * 0.6)))
+    const outK = 1 - smooth((ms - (x.s + x.d - 20)) / 110)
+    const k = Math.min(inK, outK)
+    if (k <= 0) continue
+    for (const [m, v] of Object.entries(V[x.v] || {})) add(m, v * k * (m === 'jawOpen' ? 0.75 + 0.45 * Math.min(1, lo) : 1))
+  }
+  // Blinks (about every 3–5 s), quick down, slower up.
+  for (const b of blinks) { const d = ms - b; if (d > -60 && d < 220) add('eyeBlinkLeft', d < 0 ? smooth((d + 60) / 60) : 1 - smooth(d / 220)), add('eyeBlinkRight', d < 0 ? smooth((d + 60) / 60) : 1 - smooth(d / 220)) }
+  // Warmth: a gentle smile while greeting and at the end; brows lift on the question.
+  const smile = 0.22 * (1 - smooth((ms - 900) / 900)) + 0.28 * smooth((ms - (DURATION - 700)) / 500)
+  add('mouthSmileLeft', smile); add('mouthSmileRight', smile); add('cheekSquintLeft', smile * 0.5); add('cheekSquintRight', smile * 0.5)
+  const qStart = timing.wtimes[timing.wtimes.length - 1] ?? DURATION
+  add('browInnerUp', 0.35 * smooth((ms - qStart + 150) / 250) * (1 - smooth((ms - DURATION - 400) / 500)))
+  // Emphasis: brows lift a little on loud stressed moments.
+  add('browOuterUpLeft', Math.max(0, lo - 0.85) * 0.5); add('browOuterUpRight', Math.max(0, lo - 0.85) * 0.5)
+  return w
+}
+
+const tmpQ = new THREE.Quaternion(), pw = new THREE.Quaternion(), bw = new THREE.Quaternion(), e = new THREE.Euler()
+function turn(name, pitch, yaw, roll) {
+  for (const b of bones[name] || []) {
+    b.quaternion.copy(rest.get(b))
+    b.updateMatrixWorld(true)
+    b.parent.getWorldQuaternion(pw)
+    b.getWorldQuaternion(bw)
+    tmpQ.setFromEuler(e.set(pitch, yaw, roll, 'YXZ'))
+    bw.premultiply(tmpQ)
+    b.quaternion.copy(pw.invert().multiply(bw))
+    b.updateMatrixWorld(true)
+  }
+}
+
+window.renderAt = (ms) => {
+  const w = q.get('nomorph') ? {} : face(ms)
+  if (q.get('nobrowmorph')) for (const f of faces) if (!('jawOpen' in f.morphTargetDictionary)) f.userData.skip = true
+  for (const f of faces) {
+    if (f.userData.skip) { f.morphTargetInfluences.fill(0); continue }
+    const dict = f.morphTargetDictionary, inf = f.morphTargetInfluences
+    for (let i = 0; i < inf.length; i++) inf[i] = 0
+    for (const [k, v] of Object.entries(w)) if (k in dict) inf[dict[k]] = v
+  }
+  const t = ms / 1000
+  const speaking = ms > 300 && ms < DURATION
+  // Head: slow living sway, more while speaking, small nods on word starts.
+  let nod = 0
+  for (const wt of timing.wtimes) { const d = ms - wt; if (d > 0 && d < 400) nod += Math.sin((d / 400) * Math.PI) * 0.012 }
+  const amp = q.get('nohead') ? 0 : speaking ? 1 : 0.6
+  const pitch = (noise(t, 0.6, 0) * 0.018 + nod) * amp
+  const yaw = noise(t, 0.4, 1) * 0.03 * amp
+  const roll = noise(t, 0.5, 2) * 0.012 * amp
+  root.updateMatrixWorld(true)
+  turn('spine_05', Math.sin(t * 1.6) * 0.006, 0, 0) // breathing
+  turn('neck_01', pitch * 0.3, yaw * 0.3, roll * 0.3)
+  turn('neck_02', pitch * 0.3, yaw * 0.3, roll * 0.3)
+  turn('head', pitch * 0.4, yaw * 0.4, roll * 0.4)
+  // Eyes: on the student, with small natural glances.
+  let g = glances[0]; for (const x of glances) if (x.t <= ms) g = x
+  turn('FACIAL_L_Eye', g.y - pitch * 0.5, g.x - yaw * 0.6, 0)
+  turn('FACIAL_R_Eye', g.y - pitch * 0.5, g.x - yaw * 0.6, 0)
+  renderer.render(scene, camera)
+}
+window.DURATION = DURATION
+await Promise.all(pending)
+await new Promise((r) => setTimeout(r, 500))
+window.renderAt(0)
+window.ready = true
+</script>
+</body>
+</html>
