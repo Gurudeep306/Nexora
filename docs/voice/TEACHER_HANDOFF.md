@@ -68,6 +68,13 @@ the research in progress, and the exact next steps. Read this first, then
 | wav2arkit_cpu (audio → 52 ARKit, myned-ai) | Apache-2.0 (base LAM_audio2exp Apache-2.0). Real weights 402 MB (`.onnx.data`), not 1.8 MB. **29× real time on 4 CPU threads, 9× on 1** (measured) | Server-side option |
 | NVIDIA Audio2Face-3D | SDK MIT; weights under NVIDIA Open Model License (not yet read) | Check |
 | Kokoro-82M via HeadTTS 1.3.0 | Apache-2.0 / MIT; gives exact word and viseme timings | Yes (current voice server) |
+| **Phase 1 checks (2026-11-25)** | Full table, with saved copies of each licence: `docs/voice/licences/2026-11-25/README.md` | — |
+| MPFB2 assets (base mesh, ARKit face units, visemes, skins, eyebrows) | CC0 1.0; MPFB code GPLv3 runs only offline in Blender; §D no claim over exported or script-made output | **Yes** (base teacher) |
+| ffunch/vrm-avatar-maker | Code MIT, assets CC0 (two unknown-author items avoided) | Yes (reference and pipeline) |
+| HeadAudio, TalkingHead gestures | MIT | Yes |
+| Quaternius Universal Animation Library | CC0 | Yes (body clips as .vrma) |
+| VRoid "VRM Animation 7-set" | Forbids redistributing the motions in an extractable form without permission | **No** (a website always sends them to the browser) |
+| Mixamo | Raw files may not be distributed | No |
 
 ## 4. Demos made in this session (code saved in `docs/voice/teacher-lab/`)
 
@@ -117,7 +124,7 @@ Headless render: Chromium with `--use-gl=angle --use-angle=swiftshader
 
 ## 5. Deep research (Teacher Maker): DONE
 
-**Final report: `docs/voice/research/reports/Free talking teacher maker.md`** (read it first). Picks: MakeHuman/MPFB2 CC0 base with ARKit-52 + Oculus-15 + VRM-5 shapes (vrm-avatar-maker, MIT/CC0, as reference); own soft PBR-toon material on WebGLRenderer; HeadTTS timings for live English + own Hindi viseme table + wav2arkit on the server for cloned/pre-rendered audio + HeadAudio fallback; Kokoro live, Indic Parler-TTS and Chatterbox Multilingual for pre-rendered narration/cloning on a free GPU; procedural body + TalkingHead gesture ports + Quaternius CC0/VRoid 7-set/CMU clips as .vrma (no Mixamo files); MediaPipe photo matching on device. Phase 1 = one perfect teacher that must beat the old one in a blind test. Original research brief:
+**Final report: `docs/voice/research/reports/Free talking teacher maker.md`** (read it first). Picks: MakeHuman/MPFB2 CC0 base with ARKit-52 + Oculus-15 + VRM-5 shapes (vrm-avatar-maker, MIT/CC0, as reference); own soft PBR-toon material on WebGLRenderer; HeadTTS timings for live English + own Hindi viseme table + wav2arkit on the server for cloned/pre-rendered audio + HeadAudio fallback; Kokoro live, Indic Parler-TTS and Chatterbox Multilingual for pre-rendered narration/cloning on a free GPU; procedural body + TalkingHead gesture ports + Quaternius CC0/CMU clips (VRoid 7-set rejected on 2026-11-25, see §3) as .vrma (no Mixamo files); MediaPipe photo matching on device. Phase 1 = one perfect teacher that must beat the old one in a blind test. Original research brief:
 
 Notes are being written to
 `docs/voice/research/research_notes/Free talking teacher maker/` (A_avatar_parts,
@@ -152,7 +159,7 @@ procedural); F photo → avatar parameters with MediaPipe.
    work (word-lit captions, typing, listening meter, Teacher studio page, More
    menu) but re-check every one in a real browser **with sound recordings**.
 4. **Send the owner a video with sound** of the engine with a sample character;
-   ship nothing until he approves.
+   ship nothing until the owner approves.
 5. Teacher Maker: parts library (CC0 / permissive), sliders, then MediaPipe
    photo matching, then per-teacher cloned voice. Videos at each stage.
 6. Replace the sample characters with the owner's own (VRoid Studio-made
