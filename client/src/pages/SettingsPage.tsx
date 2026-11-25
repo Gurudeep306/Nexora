@@ -16,6 +16,7 @@ import { PreferencesForm } from '@/components/account/PreferencesForm'
 import { DangerZone } from '@/components/account/DangerZone'
 import { VoiceSettings } from '@/voice/VoiceSettings'
 import { TeacherSettings } from '@/voice/teacher/TeacherSettings'
+import { TEACHER_LIVE } from '@/voice/teacher/available'
 import type { LanguageOption, ProfileUser, SettingsResponse } from '@/components/account/types'
 
 /** Dock arrangement — a layout preference, so it lives with Preferences. */
@@ -180,7 +181,7 @@ export default function SettingsPage() {
                   <PreferencesForm settings={settings} onSaved={settingsApi.refetch} />
                   <DockSettings />
                   <VoiceSettings />
-                  <TeacherSettings />
+                  {TEACHER_LIVE && <TeacherSettings />}
                   <Card>
                     <CardContent className="flex flex-wrap items-center justify-between gap-4 px-5 py-4">
                       <div>

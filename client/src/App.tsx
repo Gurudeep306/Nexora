@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react'
+import { TEACHER_LIVE } from '@/voice/teacher/available'
 import { LegacyGateRedirect } from '@/gate/LegacyGateRedirect'
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom'
 import { AppLayout } from '@/components/layout/AppLayout'
@@ -203,7 +204,8 @@ export default function App() {
             <Route path="/u/:username" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsRoute />} />
             <Route path="/theme" element={<ThemeCentrePage />} />
-            <Route path="/teacher" element={<TeacherStudio />} />
+            {/* The teacher is off until the new one is approved (voice/teacher/available.ts). */}
+            <Route path="/teacher" element={TEACHER_LIVE ? <TeacherStudio /> : <Navigate to="/settings" replace />} />
             <Route path="/ai-lab" element={<AiLabPage />} />
             <Route path="/admin" element={<AdminRoute />} />
             <Route path="/admin/problems/:id" element={<AuthorRoute />} />

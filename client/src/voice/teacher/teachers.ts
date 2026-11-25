@@ -65,9 +65,25 @@ export const TEACHERS: readonly Omit<TeacherInfo, 'name'>[] = LOOKS
 /** Teachers from before (2026-11) and who took their place. */
 export const RENAMED: Record<string, TeacherId> = { maya: 'ananya', elena: 'kavya', kai: 'arjun', victor: 'dev' }
 
-export function teacherById(id: string): TeacherInfo | null {
+/*
+  The virtual teacher is switched off on the site while the new one is built
+  (docs/voice/TEACHER_HANDOFF.md): the owner rejected the TalkingHead /
+  Rocketbox teacher (2026-11-25), so nothing shows it — no Settings card, no
+  Teacher studio, no palette entry, no layer — even for people who had turned
+  it on. The code stays until the new engine replaces it; set this back to
+  true only when the owner has approved the new teacher's video.
+*/
+export const TEACHER_LIVE = false
+
+/** A teacher from the catalogue, whether or not the teacher is on the site. */
+export function teacherLookById(id: string): TeacherInfo | null {
   const t = LOOKS.find((x) => x.id === id)
   return t ? named(t) : null
+}
+
+/** The student's teacher, or null while the teacher is off on the site (available.ts). */
+export function teacherById(id: string): TeacherInfo | null {
+  return TEACHER_LIVE ? teacherLookById(id) : null
 }
 
 export const teacherModel = (id: string) => `/teachers/${id}.glb`

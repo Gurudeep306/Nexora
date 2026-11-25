@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Teacher scene demo</title>
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #ece6dc; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+  canvas { display: block; }
+  /* What the student sees around the teacher: her state, and the words. */
+  #state { position: absolute; left: 40px; top: 36px; display: flex; align-items: center; gap: 10px; padding: 8px 14px; border-radius: 999px; background: #fffdf9; border: 1px solid #d8d0c4; font-size: 17px; color: #2b2620; }
+  #state i { width: 10px; height: 10px; border-radius: 99px; background: #b4552d; }
+  #cap { position: absolute; left: 50%; bottom: 42px; transform: translateX(-50%); max-width: 860px; padding: 14px 22px; border-radius: 14px; background: #fffdf9; border: 1px solid #d8d0c4; font-size: 24px; line-height: 1.4; color: #2b2620; text-align: center; }
+  #cap:empty { display: none; }
+  #cap .now { text-decoration: underline; text-decoration-color: #b4552d; text-decoration-thickness: 3px; text-underline-offset: 5px; }
+  #cap .later { color: #8a8076; }
+  #cap.student { font-style: italic; color: #4a4038; }
+  #credit { position: absolute; right: 16px; bottom: 10px; font-size: 12px; color: #8a8076; }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "./three/build/three.module.js",
+  "three/addons/": "./three/examples/jsm/",
+  "@pixiv/three-vrm": "./node_modules/@pixiv/three-vrm/lib/three-vrm.module.js"
+} }
+</script>
+</head>
+<body>
+<div id="state"><i></i><span></span></div>
+<div id="cap"></div>
+<div id="credit">Sample character © pixiv Inc. (VRM Public License 1.0) · a test model, not a NexoraGuru teacher</div>
+<script type="module">
+import * as THREE from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm'
+
+const W = 1280, H = 720
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true })
+renderer.setSize(W, H); renderer.setPixelRatio(1)
+renderer.outputColorSpace = THREE.SRGBColorSpace
+document.body.prepend(renderer.domElement)
+const scene = new THREE.Scene()
+scene.background = new THREE.Color(0xece6dc)
+scene.add(new THREE.HemisphereLight(0xffffff, 0xc8beb2, 1.7))
+const key = new THREE.DirectionalLight(0xfff1e0, 1.5); key.position.set(-1, 1.6, 2); scene.add(key)
+const camera = new THREE.PerspectiveCamera(24, W / H, 0.05, 50)
+
+const loader = new GLTFLoader()
+loader.register((p) => new VRMLoaderPlugin(p))
+const vrm = (await loader.loadAsync(new URLSearchParams(location.search).get('model') || 'sample.vrm')).userData.vrm
+VRMUtils.rotateVRM0(vrm)
+scene.add(vrm.scene)
+const bone = (n) => vrm.humanoid.getNormalizedBoneNode(n)
+vrm.update(0)
+const headP = new THREE.Vector3(); bone('head').getWorldPosition(headP)
+camera.position.set(headP.x, headP.y + 0.02, headP.z + 2.5)
+camera.lookAt(headP.x, headP.y - 0.2, headP.z)
+// Her eyes follow the camera: she looks at the student.
+const target = new THREE.Object3D(); target.position.copy(camera.position); scene.add(target)
+if (vrm.lookAt) vrm.lookAt.target = target
+
+// ── The scene: who speaks when (ms) ──
+const load = async (k) => ({ t: await (await fetch(`${k}.timing.json`)).json(), d: (await new OfflineAudioContext(1, 1, 24000).decodeAudioData(await (await fetch(`${k}.wav`)).arrayBuffer())).duration * 1000 })
+const S1 = await load('s1'), S2 = await load('s2'), S5 = await load('s5')
+const lines = [
+  { at: 500, ...S1 },
+  { at: 500 + S1.d + 500, ...S2 },
+]
+const L2end = lines[1].at + S2.d
+const LISTEN = [L2end + 300, L2end + 4100]
+const THINK = [LISTEN[1], LISTEN[1] + 1400]
+lines.push({ at: THINK[1], ...S5 })
+const END = THINK[1] + S5.d + 1000
+window.SCENE = { lines: lines.map((l) => ({ at: Math.round(l.at) })), END }
+const QUESTION = 'Why do we always pick the middle?'
+
+// Vowel mouth shapes from the exact sound timings (anime faces speak in vowels).
+const MOUTH = { aa: { aa: 1 }, E: { ee: 0.8, aa: 0.2 }, I: { ih: 0.9 }, O: { oh: 1 }, U: { ou: 1 }, PP: {}, FF: { ih: 0.25 }, TH: { ih: 0.3, aa: 0.1 }, DD: { ih: 0.35, aa: 0.15 }, kk: { aa: 0.3, ih: 0.2 }, CH: { ou: 0.4, ih: 0.2 }, SS: { ih: 0.45 }, nn: { ih: 0.25, aa: 0.1 }, RR: { ou: 0.35, oh: 0.15 }, sil: {} }
+const smooth = (x) => (x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x))
+const bump = (ms, a, b, rise = 300, fall = 400) => Math.min(smooth((ms - a) / rise), 1 - smooth((ms - b) / fall))
+
+function mouth(ms) {
+  const w = { aa: 0, ih: 0, ou: 0, ee: 0, oh: 0 }
+  for (const l of lines) {
+    const r = ms - l.at
+    if (r < -150 || r > l.d + 200) continue
+    l.t.visemes.forEach((v, i) => {
+      const s = l.t.vtimes[i], d = l.t.vdurations[i]
+      const k = Math.min(smooth((r - (s - 60)) / Math.max(50, Math.min(90, d * 0.6))), 1 - smooth((r - (s + d - 20)) / 100))
+      if (k > 0) for (const [m, val] of Object.entries(MOUTH[v] || {})) w[m] = Math.max(w[m], val * k)
+    })
+  }
+  return w
+}
+function speakingLine(ms) { return lines.find((l) => ms >= l.at && ms <= l.at + l.d) }
+
+let seed = 11; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647)
+const blinks = []; for (let t = 700; t < END + 2000; t += 2400 + rnd() * 2600) blinks.push(t)
+const ph = Array.from({ length: 6 }, () => rnd() * 6.28)
+const noise = (t, f, k) => Math.sin(t * f + ph[k]) * 0.6 + Math.sin(t * f * 2.31 + ph[k + 1]) * 0.3 + Math.sin(t * f * 4.7 + ph[(k + 2) % 6]) * 0.1
+
+const stateEl = document.querySelector('#state span'), capEl = document.querySelector('#cap')
+function overlay(ms) {
+  const sp = speakingLine(ms)
+  const listening = ms >= LISTEN[0] && ms < LISTEN[1], thinking = ms >= THINK[0] && ms < THINK[1]
+  stateEl.textContent = sp ? 'Speaking' : listening ? 'Listening…' : thinking ? 'Thinking…' : 'Ready'
+  if (sp) {
+    const r = ms - sp.at
+    let cur = -1; sp.t.wtimes.forEach((wt, i) => { if (wt <= r) cur = i })
+    capEl.className = ''
+    capEl.innerHTML = sp.t.words.map((w, i) => `<span class="${i < cur ? '' : i === cur ? 'now' : 'later'}">${w.trim()}</span>`).join(' ')
+  } else if (listening) {
+    // The student's question appears as they say it.
+    const n = Math.round(QUESTION.length * smooth((ms - LISTEN[0] - 300) / 2600))
+    capEl.className = 'student'
+    capEl.textContent = n ? `You: “${QUESTION.slice(0, n)}${n < QUESTION.length ? '' : '”'}` : ''
+  } else if (thinking) { capEl.className = 'student'; capEl.textContent = `You: “${QUESTION}”` }
+  else capEl.textContent = ''
+}
+
+window.renderAt = (ms) => {
+  const t = ms / 1000, em = vrm.expressionManager
+  for (const [k, v] of Object.entries(mouth(ms))) em.setValue(k, Math.min(1, v))
+  let bl = 0; for (const b of blinks) { const d = ms - b; if (d > -60 && d < 220) bl = Math.max(bl, d < 0 ? smooth((d + 60) / 60) : 1 - smooth(d / 220)) }
+  const listening = bump(ms, LISTEN[0], LISTEN[1], 400, 300)
+  const thinking = bump(ms, THINK[0], THINK[1], 300, 300)
+  // Moods: a warm smile when greeting and praising; calm attention while listening; a thinking look.
+  const greet = bump(ms, 0, 2600, 300, 800), praise = bump(ms, THINK[1], THINK[1] + 2200, 200, 900), end = smooth((ms - (END - 1400)) / 600)
+  em.setValue('happy', Math.max(greet * 0.7, praise * 0.65, end * 0.5))
+  em.setValue('relaxed', listening * 0.35)
+  em.setValue('surprised', bump(ms, THINK[1] - 100, THINK[1] + 700, 150, 400) * 0.3)
+  em.setValue('blink', Math.max(bl, 0) * (1 - Math.max(greet, praise) * 0.5))
+  em.setValue('lookUp', thinking * 0.6); em.setValue('lookRight', thinking * 0.5)
+
+  // Body: arms resting, a living sway, nods on words, a lean in and head tilt while listening.
+  const sp = speakingLine(ms)
+  let nod = 0
+  if (sp) for (const wt of sp.t.wtimes) { const d = ms - sp.at - wt; if (d > 0 && d < 380) nod += Math.sin((d / 380) * Math.PI) * 0.025 }
+  for (const n of [LISTEN[0] + 1300, LISTEN[0] + 2700]) { const d = ms - n; if (d > 0 && d < 600) nod += Math.sin((d / 600) * Math.PI) * 0.09 }
+  const amp = sp ? 1 : 0.6
+  bone('neck').rotation.set((noise(t, 0.6, 0) * 0.03 + nod) * amp + listening * 0.06 + thinking * -0.05, noise(t, 0.4, 1) * 0.06 * amp + thinking * -0.12, noise(t, 0.5, 2) * 0.025 * amp + listening * 0.1 + thinking * 0.06)
+  bone('spine').rotation.set(Math.sin(t * 1.6) * 0.012 + listening * 0.07, 0, 0)
+  // The wave: right arm up, forearm swinging, then back down.
+  const wave = bump(ms, 150, 2300, 450, 500)
+  bone('rightUpperArm').rotation.set(0, 0, THREE.MathUtils.lerp(1.2, -0.15, wave))
+  bone('rightLowerArm').rotation.set(0, THREE.MathUtils.lerp(0, -0.25, wave), THREE.MathUtils.lerp(0.12, -1.6, wave) + wave * Math.sin(t * 9) * 0.35)
+  bone('rightHand').rotation.set(0, 0, wave * -0.2)
+  bone('leftUpperArm').rotation.set(0, 0, -1.2 + Math.sin(t * 1.6) * 0.01)
+  bone('leftLowerArm').rotation.set(0, 0, -0.12)
+  // Thinking: a hand comes up near the chin.
+  bone('leftLowerArm').rotation.y = thinking * 0.0
+  vrm.update(1 / 25)
+  vrm.scene.updateMatrixWorld(true)
+  vrm.nodeConstraintManager?.update()
+  overlay(ms)
+  renderer.render(scene, camera)
+}
+window.DURATION = END
+// Let the hair settle (spring bones) before the first frame.
+for (let i = 0; i < 60; i++) vrm.update(1 / 30)
+window.renderAt(0)
+window.ready = true
+</script>
+</body>
+</html>

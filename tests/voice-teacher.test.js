@@ -67,7 +67,7 @@ test('every teacher ships a model with Mixamo bones, visemes and ARKit shapes, p
 });
 
 test('every teacher has an Indian voice on our voice server, women and men matched, and retired teachers move on', async () => {
-  const { TEACHERS, RENAMED, teacherById } = await T('teachers.ts');
+  const { TEACHERS, RENAMED, teacherLookById: teacherById } = await T('teachers.ts');
   const tts = require('../src/voice/tts');
   const own = new Map(tts.OWN_VOICES.map((v) => [v.id, v.gender]));
   for (const t of TEACHERS) {
@@ -327,9 +327,23 @@ test('Teacher studio settings are kept safe: speed within limits, known framings
   assert.match(src, /Math\.min\(1\.25, Math\.max\(0\.8,/, 'speed is kept between 0.8 and 1.25');
   assert.match(src, /r\.teacherView === 'head' \|\| r\.teacherView === 'mid' \? r\.teacherView : 'upper'/);
   assert.match(src, /export const RATES = \[0\.85, 1, 1\.15\]/);
-  // Every studio route and label is real: the page is routed and listed where people look.
+  // The old teacher is off on the site until the new one is approved
+  // (voice/teacher/available.ts): the studio route sends people to Settings,
+  // and Explore does not list it.
   const app = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'App.tsx'), 'utf8');
-  assert.match(app, /path="\/teacher"/);
+  assert.match(app, /path="\/teacher" element=\{TEACHER_LIVE \? <TeacherStudio \/> : <Navigate to="\/settings" replace \/>\}/);
+  const live = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'voice', 'teacher', 'teachers.ts'), 'utf8');
+  const on = /export const TEACHER_LIVE = true/.test(live);
   const features = fs.readFileSync(path.join(__dirname, '..', 'client', 'src', 'pages', 'explore', 'features.ts'), 'utf8');
-  assert.match(features, /to: '\/teacher'/);
+  assert.equal(/to: '\/teacher'/.test(features), on, 'Explore lists the teacher only while it is on');
+});
+
+test('while the teacher is off, no student can reach it', async () => {
+  const { teacherById, teacherLookById, TEACHERS } = await T('teachers.ts');
+  const { TEACHER_LIVE } = await T('teachers.ts');
+  if (TEACHER_LIVE) return;
+  for (const t of TEACHERS) {
+    assert.ok(teacherLookById(t.id), `${t.id} stays in the catalogue for the new engine`);
+    assert.equal(teacherById(t.id), null, `${t.id} is not offered while the teacher is off`);
+  }
 });
