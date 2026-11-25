@@ -1,0 +1,289 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+html,body{margin:0;width:1280px;height:720px;overflow:hidden;background:#efe8dd;font-family:"Helvetica Neue",Arial,sans-serif}
+canvas#gl{position:absolute;inset:0}
+#cap{position:absolute;left:0;right:0;bottom:34px;text-align:center;font-size:30px;font-weight:600;color:#2a2320;text-shadow:0 1px 0 #fff8}
+#cap span{color:#2a232066}#cap span.on{color:#2a2320}
+#tag{position:absolute;left:28px;top:24px;font-size:17px;letter-spacing:.06em;color:#5b4d44;text-transform:uppercase}
+#intro{position:absolute;inset:0;background:#efe8dd;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px}
+#intro h1{margin:0;font-size:44px;color:#2a2320;font-weight:700}
+#intro p{margin:0;font-size:22px;color:#5b4d44}
+#strip{display:flex;gap:10px}#strip img{width:88px;height:118px;object-fit:cover;border-radius:8px;filter:saturate(.95)}
+#arrow{font-size:40px;color:#b0643c}
+#q{position:absolute;right:60px;top:120px;max-width:360px;background:#fff;border-radius:18px;padding:16px 20px;font-size:24px;color:#2a2320;box-shadow:0 6px 24px #0002;opacity:0}
+#q small{display:block;font-size:15px;color:#8a7b70;margin-bottom:4px}
+#end{position:absolute;inset:0;background:#efe8dd;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;opacity:0}
+#end h1{margin:0;font-size:40px;color:#2a2320}#end p{margin:0;font-size:22px;color:#5b4d44}
+</style>
+<script type="importmap">{"imports":{"three":"./three/build/three.module.js","three/addons/":"./three/examples/jsm/","@pixiv/three-vrm":"./vrmlib/lib/three-vrm.module.js"}}</script></head><body>
+<canvas id="gl"></canvas>
+<div id="tag">NexoraGuru · Teacher Maker</div>
+<div id="cap"></div>
+<div id="q"><small>Student asks</small>Does binary search work on any list?</div>
+<div id="intro"><h1>Photos in → your own teacher out</h1><p>12 everyday photos · no 3D scan · built automatically</p><div id="strip"></div><div id="arrow">↓</div></div>
+<div id="end"><h1>Make your own teacher</h1><p>Your photos · your voice · your lessons</p></div>
+<script type="module">
+import * as THREE from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { VRMLoaderPlugin, MToonMaterial } from '@pixiv/three-vrm'
+import { retargetUAL } from './retarget.js'
+
+const W = 1280, H = 720
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true })
+renderer.setSize(W, H); renderer.setPixelRatio(1); renderer.outputColorSpace = THREE.SRGBColorSpace
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0xefe8dd)
+scene.add(new THREE.HemisphereLight(0xfff7ee, 0xb9a99a, 1.15))
+const key = new THREE.DirectionalLight(0xfff0e0, 2.3); key.position.set(-1.5, 2.6, 2.4); scene.add(key)
+
+// --- Room: floor, wall, whiteboard ------------------------------------------------------------
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(12, 8), new THREE.MeshLambertMaterial({ color: 0xc9b49b }))
+floor.rotation.x = -Math.PI / 2; scene.add(floor)
+const wall = new THREE.Mesh(new THREE.PlaneGeometry(12, 5), new THREE.MeshLambertMaterial({ color: 0xf6f1e9 }))
+wall.position.set(0, 2.5, -1.6); scene.add(wall)
+const skirting = new THREE.Mesh(new THREE.BoxGeometry(12, 0.08, 0.02), new THREE.MeshLambertMaterial({ color: 0xcbbca8 }))
+skirting.position.set(0, 0.04, -1.59); scene.add(skirting)
+const boardCanvas = document.createElement('canvas'); boardCanvas.width = 1400; boardCanvas.height = 760
+const bctx = boardCanvas.getContext('2d')
+const boardTex = new THREE.CanvasTexture(boardCanvas); boardTex.colorSpace = THREE.SRGBColorSpace; boardTex.anisotropy = 8
+const BOARD = { x: -1.55, y: 1.45, z: -0.75, w: 2.1, h: 1.14, ry: 0.55 }
+const board = new THREE.Mesh(new THREE.PlaneGeometry(BOARD.w, BOARD.h), new THREE.MeshBasicMaterial({ map: boardTex }))
+board.position.set(BOARD.x, BOARD.y, BOARD.z); board.rotation.y = BOARD.ry; scene.add(board)
+const frame = new THREE.Mesh(new THREE.BoxGeometry(BOARD.w + 0.08, BOARD.h + 0.08, 0.03), new THREE.MeshLambertMaterial({ color: 0x9b8d80 }))
+frame.position.set(0, 0, -0.02); board.add(frame)
+const tray = new THREE.Mesh(new THREE.BoxGeometry(BOARD.w * 0.8, 0.03, 0.07), new THREE.MeshLambertMaterial({ color: 0x9b8d80 }))
+tray.position.set(0, -BOARD.h / 2 - 0.04, 0.03); board.add(tray)
+const boardPoint = (u, v) => board.localToWorld(new THREE.Vector3((u - 0.5) * BOARD.w, (0.5 - v) * BOARD.h, 0.01))
+
+// --- Teacher --------------------------------------------------------------------------------------
+const loader = new GLTFLoader(); loader.register((p) => new VRMLoaderPlugin(p))
+const vrm = (await loader.loadAsync('out/her_anime.vrm')).userData.vrm
+scene.add(vrm.scene)
+vrm.scene.traverse((o) => {
+  if (!o.isMesh) return
+  const old = o.material, name = (old.name || '').toLowerCase()
+  const hair = /long|hair|braid|bob|pony/.test(name), cut = old.alphaTest > 0 || /eyebrow|eyelash/.test(name)
+  const skin = /body/.test(name)
+  const m = new MToonMaterial({
+    map: old.map, transparent: false,
+    shadeColorFactor: skin ? new THREE.Color(0.86, 0.62, 0.56) : hair ? new THREE.Color(0.55, 0.5, 0.5) : new THREE.Color(0.62, 0.58, 0.62),
+    shadeMultiplyTexture: old.map, shadingShiftFactor: skin ? -0.05 : -0.1, shadingToonyFactor: 0.75, giEqualizationFactor: 0.6,
+    parametricRimColorFactor: hair ? new THREE.Color(0.06, 0.04, 0.03) : new THREE.Color(skin ? 0.35 : 0.25, skin ? 0.22 : 0.2, skin ? 0.2 : 0.22),
+    parametricRimFresnelPowerFactor: 4, parametricRimLiftFactor: 0.05, side: cut ? THREE.DoubleSide : THREE.FrontSide,
+  })
+  m.name = old.name
+  if (cut) { m.alphaTest = 0.5; m.uniforms.alphaTest.value = 0.5 }
+  if (/teeth/.test(name)) { m.color = new THREE.Color(1.15, 1.12, 1.08); m.shadeColorFactor = new THREE.Color(0.85, 0.8, 0.78) }
+  o.material = m
+  if (!cut && !/low-poly|teeth|tongue/.test(name)) {
+    const om = new THREE.MeshBasicMaterial({ color: skin ? 0x6b3a2c : 0x2a2024, side: THREE.BackSide })
+    om.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n transformed += normalize(objectNormal) * 0.0016;') }
+    const ol = o.isSkinnedMesh ? new THREE.SkinnedMesh(o.geometry, om) : new THREE.Mesh(o.geometry, om)
+    if (o.isSkinnedMesh) ol.bind(o.skeleton, o.bindMatrix)
+    ol.morphTargetInfluences = o.morphTargetInfluences; ol.morphTargetDictionary = o.morphTargetDictionary
+    ol.frustumCulled = false; o.parent.add(ol); ol.position.copy(o.position); ol.quaternion.copy(o.quaternion); ol.scale.copy(o.scale)
+  }
+  o.frustumCulled = false
+})
+// A soft contact shadow under her feet (a blurred dark disc that follows her).
+const shCanvas = document.createElement('canvas'); shCanvas.width = shCanvas.height = 128
+const sc = shCanvas.getContext('2d'); const gr = sc.createRadialGradient(64, 64, 4, 64, 64, 62); gr.addColorStop(0, 'rgba(60,40,30,0.38)'); gr.addColorStop(1, 'rgba(60,40,30,0)'); sc.fillStyle = gr; sc.fillRect(0, 0, 128, 128)
+const shadow = new THREE.Mesh(new THREE.PlaneGeometry(0.9, 0.6), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(shCanvas), transparent: true, depthWrite: false }))
+shadow.rotation.x = -Math.PI / 2; shadow.position.y = 0.003; scene.add(shadow)
+
+const ual = await new GLTFLoader().loadAsync('anim/UAL1_Standard.glb')
+const clips = retargetUAL(ual, vrm, ['Idle_Loop', 'Idle_Talking_Loop', 'Walk_Formal_Loop', 'Interact'])
+const mixer = new THREE.AnimationMixer(vrm.humanoid.normalizedHumanBonesRoot)
+const actions = {}
+for (const [n, c] of Object.entries(clips)) { const a = mixer.clipAction(c); a.play(); a.setEffectiveWeight(0); actions[n] = a }
+const bone = (n) => vrm.humanoid.getNormalizedBoneNode(n)
+
+// --- Voice lines --------------------------------------------------------------------------------
+const LINES = {}
+for (const k of ['l1', 'l2', 'l3', 'l4', 'l5', 'l6']) LINES[k] = await (await fetch(`demo/${k}.json`)).json()
+// When each line starts (seconds) in the film.
+const SAY = { l1: 4.6, l2: 13.9, l3: 17.9, l4: 25.0, l5: 33.6, l6: 41.2 }
+const DURATION = 49.5
+
+// --- Timeline helpers ----------------------------------------------------------------------------
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x))
+const smooth = (x) => { x = clamp(x); return x * x * (3 - 2 * x) }
+const win = (t, a, b, f = 0.35) => smooth((t - a) / f) * (1 - smooth((t - (b - f)) / f))
+let seed = 11; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647)
+const BLINKS = []; for (let t = 1.2; t < DURATION; t += 2.2 + rnd() * 2.8) BLINKS.push(t)
+const SACC = []; for (let t = 0.5; t < DURATION; t += 0.6 + rnd() * 1.4) SACC.push([t, (rnd() - 0.5) * 0.06, (rnd() - 0.5) * 0.04])
+
+// Body clip segments [clip, start, end]; weights cross-fade.
+const SEG = [
+  ['Idle_Loop', 0, 5.0], ['Idle_Talking_Loop', 6.2, 10.6], ['Walk_Formal_Loop', 10.5, 13.7], ['Idle_Loop', 13.5, 18.8],
+  ['Idle_Talking_Loop', 18.6, 21.6], ['Idle_Talking_Loop', 21.3, 31.0], ['Idle_Loop', 30.8, 34.4], ['Idle_Talking_Loop', 34.2, 40.0],
+  ['Walk_Formal_Loop', 39.9, 41.4], ['Idle_Talking_Loop', 41.2, 46.4], ['Idle_Loop', 46.2, DURATION],
+]
+// Procedural gestures [name, start, end].
+const GEST = [['namaste', 4.5, 6.2], ['wave', 9.0, 10.7], ['write', 14.0, 17.6], ['present', 18.9, 21.8], ['present', 27.3, 29.0], ['think', 35.2, 37.0], ['wave', 46.0, 48.4]]
+const POSES = {
+  namaste: { rightUpperArm: [0, 0.7, 1.1], rightLowerArm: [0, 2.0, 0], leftUpperArm: [0, -0.7, -1.1], leftLowerArm: [0, -2.0, 0], rightHand: [0, 0, -0.3], leftHand: [0, 0, 0.3] },
+  wave: { rightUpperArm: [0, 0, 0.55], rightLowerArm: [0, 0, -1.7] },
+  write: { rightUpperArm: [0, 0.9, -0.3], rightLowerArm: [0, 0.4, 0], rightHand: [0, 0, 0] },
+  present: { rightUpperArm: [0, 0.45, 0.15], rightLowerArm: [0, 0.35, 0], rightHand: [0, 0, -0.25] },
+  think: { rightUpperArm: [0, 0.75, 0.9], rightLowerArm: [0, 2.55, 0], rightHand: [0.3, 0, 0] },
+}
+// Where she stands and faces: [t, x, z, facing yaw]. Yaw 0 = towards the camera; positive turns her to her left.
+const PATH = [[0, 0.55, 0.1, 0], [10.4, 0.55, 0.1, 0], [10.9, 0.5, 0.08, -1.45], [13.2, -0.5, -0.2, -1.6], [13.8, -0.5, -0.2, -2.0],
+  [17.6, -0.5, -0.2, -2.0], [18.4, -0.45, -0.15, -0.45], [40.0, -0.45, -0.15, -0.35],
+  [40.4, -0.4, -0.12, 1.2], [41.6, 0.35, 0.05, 1.2], [42.1, 0.35, 0.05, 0], [DURATION, 0.35, 0.05, 0]]
+// Camera: [t, pos x,y,z, look x,y,z]
+const CAM = [[0, 0.5, 1.45, 3.0, 0.4, 1.25, 0], [5, 0.55, 1.5, 2.1, 0.55, 1.4, 0], [9.5, 0.4, 1.4, 2.9, 0.3, 1.2, 0],
+  [12.5, 0.4, 1.45, 3.1, -0.8, 1.25, -0.4], [17.6, 0.3, 1.45, 2.9, -0.9, 1.3, -0.45], [24.5, 0.05, 1.5, 1.9, -0.55, 1.4, -0.3],
+  [31, 0.05, 1.48, 1.85, -0.5, 1.42, -0.3], [33, 0.3, 1.45, 2.8, -0.7, 1.3, -0.4], [39.5, 0.3, 1.45, 2.8, -0.6, 1.3, -0.4],
+  [43, 0.4, 1.5, 2.05, 0.35, 1.42, 0], [DURATION, 0.4, 1.5, 2.2, 0.35, 1.42, 0]]
+const lerpKeys = (K, t) => {
+  let i = 0; while (i < K.length - 2 && K[i + 1][0] <= t) i++
+  const a = K[i], b = K[i + 1], f = smooth((t - a[0]) / Math.max(1e-6, b[0] - a[0]))
+  return a.slice(1).map((v, k) => v + (b[k + 1] - v) * f)
+}
+
+// --- Lip sync: visemes from the voice, co-articulated ---------------------------------------------
+const VIS = { aa: 'aa', E: 'ee', I: 'ih', O: 'oh', U: 'ou' } // VRM expressions
+function visemeWeights(t) {
+  const w = {}
+  for (const [k, start] of Object.entries(SAY)) {
+    const L = LINES[k], lt = (t - start) * 1000
+    if (lt < -200 || lt > (L.vtimes.at(-1) + L.vdurations.at(-1) + 200)) continue
+    for (let i = 0; i < L.visemes.length; i++) {
+      const v = L.visemes[i], a = L.vtimes[i] - 45, b = L.vtimes[i] + L.vdurations[i] + 40 // shapes lead the sound a little
+      const env = clamp((lt - a) / 70) * (1 - clamp((lt - (b - 70)) / 70))
+      if (env > 0) w[v] = Math.max(w[v] || 0, env)
+    }
+  }
+  return w
+}
+function speaking(t) { for (const [k, s] of Object.entries(SAY)) { const L = LINES[k]; if (t >= s && t <= s + (L.wtimes.at(-1) + L.wdurations.at(-1)) / 1000) return k } return null }
+
+const lookTarget = new THREE.Object3D(); scene.add(lookTarget); vrm.lookAt.target = lookTarget
+const camera = new THREE.PerspectiveCamera(30, W / H, 0.05, 50)
+const meshes = []; vrm.scene.traverse((o) => { if (o.isMesh && o.morphTargetDictionary && o.material.isMToonMaterial) meshes.push(o) })
+const strip = document.getElementById('strip')
+for (const src of (window.PHOTOS || [])) { const im = document.createElement('img'); im.src = src; strip.appendChild(im) }
+
+function drawBoard(t) {
+  const c = bctx; c.fillStyle = '#fbfaf7'; c.fillRect(0, 0, 1400, 760)
+  c.fillStyle = '#1f3b5a'; c.font = 'bold 84px "Comic Sans MS", "Segoe Print", cursive'
+  const title = 'Binary Search'
+  const n = Math.floor(clamp((t - 14.3) / 3.0) * title.length)
+  c.fillText(title.slice(0, n), 90, 150)
+  if (t > 17.2) {
+    const arr = [2, 5, 8, 12, 16, 23, 38, 45, 56, 72, 91]
+    const appear = clamp((t - 17.2) / 1.2)
+    const cw = 104, x0 = 130, y0 = 300
+    const mid = 5
+    for (let i = 0; i < arr.length; i++) {
+      if (i / arr.length > appear) break
+      let fill = '#ffffff', stroke = '#1f3b5a', txt = '#1f3b5a'
+      if (t > 19.4 && i === mid) { fill = '#ffd98a' }
+      if (t > 22.6 && i < mid) { fill = '#eeeae4'; txt = '#b9b1a6'; stroke = '#c9c1b6' }
+      if (t > 22.6 && i > mid && t > 27.5) { if (i === 8) fill = '#ffd98a' }
+      c.fillStyle = fill; c.strokeStyle = stroke; c.lineWidth = 4
+      c.fillRect(x0 + i * cw, y0, cw - 8, 96); c.strokeRect(x0 + i * cw, y0, cw - 8, 96)
+      c.fillStyle = txt; c.font = 'bold 44px Arial'; c.textAlign = 'center'; c.fillText(arr[i], x0 + i * cw + (cw - 8) / 2, y0 + 64); c.textAlign = 'left'
+    }
+    if (t > 19.4) { c.fillStyle = '#b0643c'; c.font = 'bold 38px Arial'; c.fillText('middle', x0 + mid * cw - 6, y0 + 150) }
+    if (t > 22.6) { c.fillStyle = '#7a8a99'; c.font = '34px Arial'; c.fillText('too small → throw away the left half', x0, y0 + 230) }
+    if (t > 27.5) { c.fillStyle = '#2e7d55'; c.font = 'bold 40px Arial'; c.fillText('हर बार आधा!  (half each time)', x0, y0 + 300) }
+    if (t > 37.6) { c.fillStyle = '#b0643c'; c.font = 'bold 40px Arial'; c.fillText('✔ only on a sorted list', x0 + 560, y0 - 70) }
+  }
+  boardTex.needsUpdate = true
+}
+
+const q = new THREE.Quaternion(), e = new THREE.Euler(), tmpV = new THREE.Vector3()
+let lastT = 0
+window.renderAt = function (t) {
+  const dt = Math.max(1 / 60, t - lastT); lastT = t
+  // Body clips.
+  for (const a of Object.values(actions)) a.setEffectiveWeight(0)
+  const weights = {}
+  for (const [clip, a, b] of SEG) {
+    const w = win(t, a, b, 0.45); if (w <= 0) continue
+    const act = actions[clip]; const d = act.getClip().duration
+    act.time = clip === 'Interact' ? clamp(t - a, 0, d - 0.01) : (t - a + 0.37 * a) % d
+    weights[clip] = (weights[clip] || 0) + w
+  }
+  const total = Object.values(weights).reduce((x, y) => x + y, 0) || 1
+  for (const [clip, w] of Object.entries(weights)) actions[clip].setEffectiveWeight(w / total)
+  mixer.update(0)
+  // Gestures on top.
+  for (const [g, a, b] of GEST) {
+    const w = win(t, a, b, 0.4); if (w <= 0) continue
+    for (const [bn, r] of Object.entries(POSES[g])) {
+      const node = bone(bn); if (!node) continue
+      let rr = r.slice()
+      if (g === 'wave' && bn === 'rightLowerArm') rr = [r[0], r[1], r[2] + 0.28 * Math.sin((t - a) * 9)]
+      if (g === 'write' && bn === 'rightHand') rr = [0.15 * Math.sin((t - a) * 11), 0, 0.15 * Math.cos((t - a) * 7)]
+      q.setFromEuler(e.set(rr[0], rr[1], rr[2]))
+      node.quaternion.slerp(q, w)
+    }
+  }
+  // Breathing and a small idle sway.
+  bone('chest').rotation.x += 0.012 * Math.sin((2 * Math.PI * t) / 4.2)
+  bone('spine').rotation.z += 0.01 * Math.sin((2 * Math.PI * t) / 6.3)
+  // Where she stands.
+  const [px, pz, yaw] = lerpKeys(PATH, t)
+  vrm.scene.position.set(px, 0, pz); vrm.scene.rotation.y = yaw
+  shadow.position.set(px, 0.003, pz + 0.02)
+  // Camera.
+  const c = lerpKeys(CAM, t)
+  camera.position.set(c[0], c[1], c[2]); camera.lookAt(c[3], c[4], c[5])
+  // Gaze: the board while writing and pointing, otherwise the viewer; small eye darts.
+  const atBoard = win(t, 13.4, 17.9, 0.4) + 0.6 * win(t, 19.0, 20.6, 0.3) + 0.6 * win(t, 27.4, 28.6, 0.3)
+  const thinking = win(t, 35.2, 37.0, 0.3)
+  let s = [0, 0]; for (const [st, sx, sy] of SACC) if (st <= t) s = [sx, sy]
+  const camP = camera.position.clone().add(new THREE.Vector3(s[0], s[1], 0))
+  const boardP = boardPoint(clamp((t - 14.3) / 3.0) * 0.55 + 0.1, 0.25)
+  if (t > 18.8) boardP.copy(boardPoint(0.45, 0.48))
+  lookTarget.position.copy(camP).lerp(boardP, atBoard)
+  if (thinking > 0) lookTarget.position.lerp(tmpV.set(px - 0.6, 2.4, pz + 1), thinking)
+  // Head follows the gaze a little (on top of the clip).
+  const head = bone('head'); const neck = bone('neck')
+  const hp = new THREE.Vector3(); head.getWorldPosition(hp)
+  const dir = lookTarget.position.clone().sub(hp); const yawTo = Math.atan2(dir.x, dir.z) - yaw
+  const pitchTo = Math.atan2(dir.y, Math.hypot(dir.x, dir.z))
+  const hy = clamp(((yawTo + Math.PI) % (2 * Math.PI)) - Math.PI, -0.7, 0.7), hpch = clamp(-pitchTo, -0.35, 0.35)
+  neck.rotation.y += hy * 0.3; head.rotation.y += hy * 0.35; head.rotation.x += hpch * 0.4
+  // Nods: while listening, and on "Yes".
+  head.rotation.x += 0.12 * Math.max(0, Math.sin((t - 31.2) * 5.5)) * win(t, 31.2, 33.0, 0.2)
+  head.rotation.x += 0.12 * Math.max(0, Math.sin((t - 37.4) * 6)) * win(t, 37.3, 38.4, 0.2)
+  head.rotation.z += 0.08 * win(t, 30.8, 33.4, 0.4) // listening tilt
+  // Talking head motion follows the voice's loudness (word starts).
+  const sp = speaking(t)
+  if (sp) { const L = LINES[sp], lt = (t - SAY[sp]) * 1000; let k = 0; while (k + 1 < L.wtimes.length && L.wtimes[k + 1] <= lt) k++
+    const ph = (lt - L.wtimes[k]) / Math.max(60, L.wdurations[k]); head.rotation.x += 0.025 * Math.sin(Math.PI * clamp(ph)); head.rotation.y += 0.02 * Math.sin(k * 1.7) }
+  // Face.
+  const em = vrm.expressionManager
+  for (const n of ['aa', 'ih', 'ou', 'ee', 'oh', 'blink', 'happy', 'relaxed', 'surprised']) em.setValue(n, 0)
+  let blink = 0; for (const bt of BLINKS) { const d = t - bt; if (d >= 0 && d < 0.16) blink = Math.max(blink, Math.sin((Math.PI * d) / 0.16)) }
+  em.setValue('blink', blink)
+  em.setValue('relaxed', 0.35)
+  const talkNow = speaking(t) ? 0.4 : 1
+  em.setValue('happy', 0.28 * talkNow * (win(t, 4.4, 7.0, 0.5) + win(t, 33.5, 34.8, 0.3) + win(t, 45.5, DURATION, 0.5)))
+  em.setValue('surprised', 0.25 * win(t, 30.9, 32.2, 0.3))
+  const vw = visemeWeights(t)
+  for (const [v, ex] of Object.entries(VIS)) em.setValue(ex, (vw[v] || 0) * 0.6)
+  vrm.update(dt)
+  // The shapes VRM has no preset for: lips closing (p, b, m), teeth on lip (f, v), tongue sounds...
+  const extra = { viseme_PP: vw.PP || 0, viseme_FF: vw.FF || 0, viseme_TH: vw.TH || 0, viseme_DD: vw.DD || 0, viseme_kk: vw.kk || 0, viseme_CH: vw.CH || 0, viseme_SS: vw.SS || 0, viseme_nn: vw.nn || 0, viseme_RR: vw.RR || 0,
+    browInnerUp: 0.3 * (win(t, 35.2, 37.0, 0.3)) + 0.15 * win(t, 30.9, 32.2, 0.3), browOuterUpLeft: 0.25 * win(t, 30.9, 32.2, 0.3), browOuterUpRight: 0.25 * win(t, 30.9, 32.2, 0.3),
+    mouthSmileLeft: 0.2 * win(t, 33.5, 35.0, 0.3), mouthSmileRight: 0.2 * win(t, 33.5, 35.0, 0.3) }
+  for (const m of meshes) for (const [n, v] of Object.entries(extra)) { const i = m.morphTargetDictionary[n]; if (i !== undefined) m.morphTargetInfluences[i] = Math.max(m.morphTargetInfluences[i], v) }
+  drawBoard(t)
+  renderer.render(scene, camera)
+  // Overlays.
+  document.getElementById('intro').style.opacity = 1 - smooth((t - 3.0) / 0.8)
+  document.getElementById('end').style.opacity = smooth((t - (DURATION - 1.2)) / 0.8)
+  document.getElementById('q').style.opacity = win(t, 30.6, 34.2, 0.3)
+  const cap = document.getElementById('cap')
+  if (sp) { const L = LINES[sp], lt = (t - SAY[sp]) * 1000; const words = L.text.split(/\s+/); const nw = L.wtimes.length
+    cap.innerHTML = words.map((w, i) => { const j = Math.min(nw - 1, Math.round((i * nw) / words.length)); return `<span class="${L.wtimes[j] <= lt ? 'on' : ''}">${w}</span>` }).join(' ') }
+  else cap.innerHTML = ''
+}
+window.DURATION = DURATION
+window.ready = true
+</script></body></html>

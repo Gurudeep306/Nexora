@@ -29,6 +29,13 @@ for obj in list(bpy.data.objects):
     bpy.data.objects.remove(obj, do_unlink=True)
 macros = TargetService.get_default_macro_info_dict()
 macros["gender"] = 0.0
+# Optional: the body settings of a recipe (render mode), so the reference face matches the person's base.
+if mode == "render" and len(argv) > 2:
+    for k, v in json.load(open(argv[2])).get("body", {}).items():
+        if k == "race":
+            macros["race"].update(v)
+        else:
+            macros[k] = v
 human = HumanService.create_human(mask_helpers=True, detailed_helpers=False, extra_vertex_groups=False,
                                   feet_on_ground=True, scale=0.1, macro_detail_dict=macros)
 TargetService.bake_targets(human)

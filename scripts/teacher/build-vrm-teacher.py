@@ -279,15 +279,20 @@ def colour_maps(word):
     return [i for i in bpy.data.images if word in i.name.lower() and i.size[0] and not any(k in i.name.lower() for k in ("norm", "bump", "spec", "_ao"))]
 
 
-# A skin texture painted from the person's photos (scripts/teacher/maker/bake_skin.py) replaces the base skin.
+# Textures made for this person (painted skin, anime skin and eyes: scripts/teacher/maker/) replace
+# the base ones whose names contain the given word.
+replace = dict(recipe.get("replace_images", {}))
 if recipe.get("skin_image"):
-    painted = bpy.data.images.load(os.path.join(os.path.dirname(os.path.abspath(recipe_path)), recipe["skin_image"]))
-    for image in colour_maps(recipe.get("skin_match", "skinned")):
-        painted.scale(image.size[0], image.size[1])
-        image.pixels[:] = painted.pixels[:]
+    replace[recipe.get("skin_match", "skinned")] = recipe["skin_image"]
+for word, rel in replace.items():
+    new_image = bpy.data.images.load(os.path.join(os.path.dirname(os.path.abspath(recipe_path)), rel))
+    for image in colour_maps(word):
+        if tuple(new_image.size) != tuple(image.size):
+            new_image.scale(image.size[0], image.size[1])
+        image.pixels[:] = new_image.pixels[:]
         image.update()
         image.pack()
-        log("painted skin", image.name)
+        log("replaced texture", image.name, "with", rel)
 
 for word, args in recipe.get("recolour", {}).items():
     for image in colour_maps(word):

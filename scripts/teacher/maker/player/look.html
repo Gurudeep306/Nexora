@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#e9e4dc}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"./three/build/three.module.js","three/addons/":"./three/examples/jsm/","@pixiv/three-vrm":"./vrmlib/lib/three-vrm.module.js"}}</script></head><body>
+<script type="module">
+import * as THREE from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { VRMLoaderPlugin } from '@pixiv/three-vrm'
+const q=new URLSearchParams(location.search), W=+q.get('w')||900, H=+q.get('h')||900
+const r=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true}); r.setSize(W,H); r.outputColorSpace=THREE.SRGBColorSpace; r.toneMapping=THREE.NeutralToneMapping
+document.body.appendChild(r.domElement)
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0xe9e4dc)
+scene.add(new THREE.HemisphereLight(0xfff6ea,0x8a8078,1.2)); const k=new THREE.DirectionalLight(0xffe8d0,2.2); k.position.set(-1,1.6,2); scene.add(k)
+const rim=new THREE.DirectionalLight(0xcfe0ff,1.5); rim.position.set(1.5,1.2,-1.5); scene.add(rim)
+const L=new GLTFLoader(); L.register(p=>new VRMLoaderPlugin(p))
+const g=await L.loadAsync(q.get('m')||'out/t1.vrm'); const vrm=g.userData.vrm; scene.add(vrm.scene)
+const hb=n=>vrm.humanoid.getNormalizedBoneNode(n)
+hb('leftUpperArm').rotation.z=-1.25; hb('rightUpperArm').rotation.z=1.25
+for (const [n,v] of Object.entries(JSON.parse(q.get('e')||'{}'))) vrm.scene.traverse(o=>{ if(o.morphTargetDictionary&&n in o.morphTargetDictionary) o.morphTargetInfluences[o.morphTargetDictionary[n]]=v })
+vrm.update(0)
+const head=new THREE.Vector3(); hb('head').getWorldPosition(head)
+const view=q.get('v')||'upper'
+const cam=new THREE.PerspectiveCamera(view==='full'?28:20,W/H,0.05,50)
+if(view==='full'){cam.position.set(0,0.9,4.2);cam.lookAt(0,0.85,0)}
+else if(view==='side'){cam.position.set(head.x+0.7,head.y+0.05,head.z+0.25);cam.lookAt(head.x,head.y+0.04,head.z)}
+else if(view==='face'){cam.position.set(head.x,head.y+0.05,head.z+0.75);cam.lookAt(head.x,head.y+0.04,head.z)}
+else {cam.position.set(head.x,head.y-0.05,head.z+1.6);cam.lookAt(head.x,head.y-0.15,head.z)}
+r.render(scene,cam); window.ready=true
+</script></body></html>
