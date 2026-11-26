@@ -8,7 +8,7 @@ const fs = require('fs')
   p.on('pageerror', (e) => console.log('PAGEERR', e.message))
   p.on('console', (m) => m.type() === 'error' && console.log('ERR', m.text()))
   await p.addInitScript(() => { window.PHOTOS = Array.from({ length: 12 }, (_, i) => `demo/photos/p${String(i).padStart(2, '0')}.jpg`) })
-  await p.goto('http://localhost:8765/demo.html')
+  await p.goto((process.env.PB_LAB_URL || 'http://localhost:8765/') + 'demo.html')
   await p.waitForFunction('window.ready', null, { timeout: 300000 })
   const times = only ? only.split(',').map(Number) : []
   if (!only) for (let f = Math.round(+from * fps); f < Math.round(+to * fps); f++) times.push(f / fps)

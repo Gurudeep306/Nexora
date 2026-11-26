@@ -232,15 +232,50 @@ def build_variant(tag, strength, skin_set, detail=True):
     return f"{W}/teacher_{tag}.vrm", hair
 
 
+_lab = {}
+
+
+def own_lab():
+    """The renderer for scoring, made on the spot when no --lab is given: the player pages and
+    three.js / three-vrm from the client's node_modules, served on a free local port. Works on any
+    machine with the repository, Node and Playwright."""
+    if _lab:
+        return _lab["dir"], _lab["url"]
+    import http.server
+    import socket
+    import threading
+    lab = os.path.join(W, "lab")
+    os.makedirs(os.path.join(lab, "out"), exist_ok=True)
+    player = os.path.join(HERE, "player")
+    links = {f: os.path.join(player, f) for f in os.listdir(player) if f.endswith((".html", ".js", ".cjs"))}
+    links["three"] = os.path.join(ROOT, "client", "node_modules", "three")
+    links["vrmlib"] = os.path.join(ROOT, "client", "node_modules", "@pixiv", "three-vrm")
+    for name, target in links.items():
+        dst = os.path.join(lab, name)
+        if not os.path.exists(dst) and os.path.exists(target):
+            os.symlink(target, dst)
+    s = socket.socket()
+    s.bind(("127.0.0.1", 0))
+    port = s.getsockname()[1]
+    s.close()
+    handler = lambda *x, **k: http.server.SimpleHTTPRequestHandler(*x, directory=lab, **k)  # noqa: E731
+    http.server.SimpleHTTPRequestHandler.log_message = lambda *x: None
+    srv = http.server.ThreadingHTTPServer(("127.0.0.1", port), handler)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    _lab.update(dir=lab, url=f"http://127.0.0.1:{port}/")
+    return _lab["dir"], _lab["url"]
+
+
 def score(vrm, tag, painted=()):
-    """Render front and three-quarter views and measure likeness (needs the lab renderer)."""
-    if not args.lab:
-        return None
-    lab = os.path.abspath(args.lab)
+    """Render front and three-quarter views and measure likeness (the lab renderer, or our own)."""
+    if args.lab:
+        lab, url = os.path.abspath(args.lab), os.environ.get("PB_LAB_URL", "http://localhost:8765/")
+    else:
+        lab, url = own_lab()
     os.makedirs(f"{lab}/out", exist_ok=True)
     shutil.copy(vrm, f"{lab}/out/pipe_{tag}.vrm")
     shots = [[f"anime.html?m=out/pipe_{tag}.vrm&style=paint&smile=0&v=face", f"{W}/render_{tag}_f.png"], [f"anime.html?m=out/pipe_{tag}.vrm&style=paint&smile=0&v=side", f"{W}/render_{tag}_s.png"]]
-    subprocess.run(["node", f"{lab}/shot.cjs", json.dumps(shots)], cwd=lab, capture_output=True)
+    subprocess.run(["node", f"{lab}/shot.cjs", json.dumps(shots)], cwd=lab, capture_output=True, env={**os.environ, "PB_LAB_URL": url})
     out = subprocess.run([sys.executable, "-I", os.path.join(HERE, "likeness.py"), args.models, "--photos",
                           # Only photos not painted onto the model judge it (otherwise it recognises its own copy).
                           *([os.path.join(args.photos, n) for n in usable if n not in painted] or [os.path.join(args.photos, n) for n in usable]),

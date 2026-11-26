@@ -30,6 +30,9 @@ export interface Reading {
   sharp: number
   /** face points moved since the last frame (fraction of the face width) */
   motion: number
+  /** share of the cheeks and forehead covered by something dark and sharp-edged (sticker, emoji, filter
+      drawing, hand); 0 when clear */
+  foreign: number
   /** the 478 face points, 0..1 of the frame (camera's own, unmirrored), for drawing the live mesh */
   points: { x: number; y: number }[]
 }
@@ -65,9 +68,11 @@ export function loadCoach() {
 
 const scratch = typeof document !== 'undefined' ? document.createElement('canvas') : null
 
-/** Light and sharpness of the face area. */
-function pixels(src: CanvasImageSource, w: number, h: number, box: { x: number; y: number; w: number; h: number }) {
-  if (!scratch) return { light: 128, sideLight: 0, sharp: 100 }
+type Pt = { x: number; y: number }
+
+/** Light, sharpness, and anything covering the face, measured on the face area. */
+function pixels(src: CanvasImageSource, w: number, h: number, box: { x: number; y: number; w: number; h: number }, lm?: Pt[]) {
+  if (!scratch) return { light: 128, sideLight: 0, sharp: 100, foreign: 0 }
   const S = 128
   scratch.width = S
   scratch.height = S
@@ -101,7 +106,59 @@ function pixels(src: CanvasImageSource, w: number, h: number, box: { x: number; 
       n++
     }
   const mean = sum / (S * S)
-  return { light: mean, sideLight: Math.abs(left - right) / Math.max(1, (left + right) / 2), sharp: (lap2 / n - (lap / n) ** 2) * 2 }
+  // Something on the face: on the cheeks and forehead (an oval inside the face, away from the eyes,
+  // brows, nose and mouth), pixels far darker than the skin, where there are also hard edges. Shadows
+  // are dark but soft; stickers and drawn filters are dark and sharp. Same rule as analyse.py.
+  let foreign = 0
+  if (lm) {
+    const at = (i: number) => ({ x: ((lm[i].x - box.x) / box.w) * S, y: ((lm[i].y - box.y) / box.h) * S })
+    const keep: { c: Pt; r: number }[] = [
+      { c: mid(at(33), at(133)), r: S * 0.14 },
+      { c: mid(at(263), at(362)), r: S * 0.14 },
+      { c: at(105), r: S * 0.12 },
+      { c: at(334), r: S * 0.12 },
+      { c: at(1), r: S * 0.13 },
+      { c: at(2), r: S * 0.12 },
+      { c: at(13), r: S * 0.2 },
+    ]
+    const oval = OVAL.map(at)
+    const inner: number[] = []
+    for (let y = 1; y < S - 1; y++)
+      for (let x = 1; x < S - 1; x++) {
+        if (!insidePoly(oval, x, y)) continue
+        if (keep.some((k) => Math.hypot(x - k.c.x, y - k.c.y) < k.r)) continue
+        inner.push(y * S + x)
+      }
+    if (inner.length > 400) {
+      const vals = inner.map((i) => L[i]).sort((a, b) => a - b)
+      const med = vals[vals.length >> 1]
+      let dark = 0
+      let edges = 0
+      for (const i of inner) {
+        if (L[i] < med * 0.35) dark++
+        if (Math.abs(4 * L[i] - L[i - 1] - L[i + 1] - L[i - S] - L[i + S]) > 40) edges++
+      }
+      const d = dark / inner.length
+      foreign = edges / inner.length > 0.005 ? d : 0
+    }
+  }
+  return { light: mean, sideLight: Math.abs(left - right) / Math.max(1, (left + right) / 2), sharp: (lap2 / n - (lap / n) ** 2) * 2, foreign }
+}
+
+const OVAL = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109]
+
+function insidePoly(poly: Pt[], x: number, y: number) {
+  let inside = false
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const a = poly[i]
+    const b = poly[j]
+    if (a.y > y !== b.y > y && x < ((b.x - a.x) * (y - a.y)) / (b.y - a.y) + a.x) inside = !inside
+  }
+  return inside
+}
+
+function mid(a: Pt, b: Pt): Pt {
+  return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }
 }
 
 let last: { x: number; y: number }[] | null = null
@@ -143,7 +200,7 @@ export function read(result: FaceLandmarkerResult, src: CanvasImageSource, w: nu
   const tilt = ((nose.y - mid.y) * h) / Math.max(1, (chin.y - mid.y) * h)
   const roll = (Math.atan2((eyeL.y - eyeR.y) * h, (eyeL.x - eyeR.x) * w) * 180) / Math.PI
   const bs = Object.fromEntries((result.faceBlendshapes[k]?.categories ?? []).map((c) => [c.categoryName, c.score]))
-  const px = pixels(src, w, h, { x: Math.max(0, x0), y: Math.max(0, y0), w: Math.min(1, x1) - Math.max(0, x0), h: Math.min(1, y1) - Math.max(0, y0) })
+  const px = pixels(src, w, h, { x: Math.max(0, x0), y: Math.max(0, y0), w: Math.min(1, x1) - Math.max(0, x0), h: Math.min(1, y1) - Math.max(0, y0) }, lm)
   const pts = [1, 33, 263, 61, 291, 152].map((i) => ({ x: lm[i].x, y: lm[i].y }))
   const motion = last ? pts.reduce((s, p, i) => s + Math.hypot(p.x - last![i].x, p.y - last![i].y), 0) / pts.length / Math.max(1e-6, x1 - x0) : 0
   last = pts
@@ -163,6 +220,7 @@ export function read(result: FaceLandmarkerResult, src: CanvasImageSource, w: nu
     sideLight: px.sideLight,
     sharp: px.sharp * (256 / Math.max(64, (x1 - x0) * w)),
     motion,
+    foreign: px.foreign,
     points: lm.map((p) => ({ x: p.x, y: p.y })),
   }
 }

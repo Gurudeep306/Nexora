@@ -65,6 +65,43 @@ def py(script, *args, env=None):
     return p.stdout
 
 
+def consent_matches(clip, pack_path):
+    """The face in the consent clip must be the face the model is made of (SFace, same-person line 0.363).
+    Returns (ok, similarity, reason)."""
+    import cv2
+    import numpy as np
+    ident = json.loads(zipfile.ZipFile(pack_path).read("identity.json")).get("identity")
+    if not ident:
+        return False, None, "No face could be read from the photos."
+    ref = np.array(ident["vector"], np.float32)
+    det = cv2.FaceDetectorYN.create(os.path.join(a.models, "face_detection_yunet_2023mar.onnx"), "", (320, 320), 0.6)
+    rec = cv2.FaceRecognizerSF.create(os.path.join(a.models, "face_recognition_sface_2021dec.onnx"), "")
+    cap = cv2.VideoCapture(clip)
+    n = int(cap.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
+    sims = []
+    for k in range(12):
+        if n > 0:
+            cap.set(cv2.CAP_PROP_POS_FRAMES, int(n * (k + 0.5) / 12))
+        ok, img = cap.read()
+        if not ok:
+            if n <= 0:
+                break
+            continue
+        det.setInputSize((img.shape[1], img.shape[0]))
+        _, faces = det.detect(img)
+        if faces is None or not len(faces):
+            continue
+        e = rec.feature(rec.alignCrop(img, max(faces, key=lambda r: r[2] * r[3]))).ravel()
+        sims.append(float(e @ ref / (np.linalg.norm(e) + 1e-9)))
+    cap.release()
+    if not sims:
+        return False, None, "No face was found in the consent video."
+    best = float(np.median(sorted(sims)[-5:]))
+    if best < 0.363:
+        return False, round(best, 3), "The face in the consent video is not the face in the photos. Record the consent sentence again, by the person in the photos."
+    return True, round(best, 3), ""
+
+
 def build(job):
     jid = job["id"]
     W = os.path.join(a.work, jid)
@@ -102,6 +139,13 @@ def build(job):
         consent = os.path.join(W, "consent.json")
         json.dump(job.get("consent"), open(consent, "w"))
         py("pack.py", cap, a.models, pack, "--consent", consent)
+        clips = [os.path.join(inp, f) for f in os.listdir(inp) if f.startswith("consent-")]
+        if clips:
+            status(jid, "building", "consent")
+            ok, sim, why = consent_matches(clips[0], pack)
+            print("WORKER consent face match", sim, flush=True)
+            if not ok:
+                raise RuntimeError(why)
         api("PUT", f"/api/pratibimb/worker/{jid}/result/pack.pbpack", raw=open(pack, "rb").read(), ctype="application/zip")
     status(jid, "building", "model")
     o = job.get("options") or {}
@@ -112,7 +156,7 @@ def build(job):
        "--blender", a.blender, *(["--lab", a.lab] if a.lab else []))
     api("PUT", f"/api/pratibimb/worker/{jid}/result/model.vrm", raw=open(os.path.join(work, "teacher.vrm"), "rb").read(), ctype="model/gltf-binary")
     report = json.load(open(os.path.join(work, "report.json")))
-    api("PUT", f"/api/pratibimb/worker/{jid}/result/report.json", raw=json.dumps(report).encode())
+    api("PUT", f"/api/pratibimb/worker/{jid}/result/report.json", raw=json.dumps(report).encode(), ctype="application/octet-stream")
     likeness = (report.get("stages", {}).get("done") or {}).get("likeness")
     status(jid, "done", "done", likeness=likeness)
     shutil.rmtree(W, ignore_errors=True)

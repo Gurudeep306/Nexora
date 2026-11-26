@@ -5,7 +5,7 @@ const { chromium } = require('playwright')
   p.on('console', (m) => m.type() === 'error' && console.log('ERR', m.text()))
   p.on('pageerror', (e) => console.log('PAGEERR', e.message))
   for (const [q, out] of JSON.parse(process.argv[2])) {
-    await p.goto('http://localhost:8765/' + q)
+    await p.goto((process.env.PB_LAB_URL || 'http://localhost:8765/') + q)
     await p.waitForFunction('window.ready', null, { timeout: 120000 })
     await p.screenshot({ path: out })
   }

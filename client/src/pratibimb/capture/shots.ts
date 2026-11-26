@@ -125,6 +125,7 @@ export function judge(shot: Shot, r: Reading | null, base: Baseline): Check[] {
     r.light < 70 ? { ok: false, label: 'Light', fix: 'Too dark: face a window or a lamp' } : r.light > 215 ? { ok: false, label: 'Light', fix: 'Too bright: move out of direct sun' } : { ok: true, label: 'Light' },
   )
   out.push(r.sideLight > 0.35 ? { ok: false, label: 'Even light', fix: 'Light falls on one side of your face: turn towards the light' } : { ok: true, label: 'Even light' })
+  out.push(r.foreign > 0.05 ? { ok: false, label: 'Clear face', fix: 'Something covers your face (a sticker, filter or hand): use a photo without it' } : { ok: true, label: 'Clear face' })
   out.push(Math.abs(r.roll) > 10 ? { ok: false, label: 'Head level', fix: 'Keep your head level, not tilted to one side' } : { ok: true, label: 'Head level' })
   out.push(shot.id !== 'smile' && r.blink > 0.5 ? { ok: false, label: 'Eyes open', fix: 'Keep your eyes open' } : { ok: true, label: 'Eyes open' })
   const pose = shot.pose(r, base)
