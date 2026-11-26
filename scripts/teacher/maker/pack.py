@@ -458,6 +458,13 @@ for v in views:
             files[f"views/{name}"] = open(p, "rb").read()
 if os.path.exists(wav):
     files["voice/voice.wav"] = open(wav, "rb").read()
+# Training frames for the appearance learner: face crops, each with its offset and scale into the
+# original frame (so the frame's landmarks in frames.npz apply: crop = (frame - offset) * scale).
+tdir = os.path.join(C, "train")
+if os.path.exists(os.path.join(tdir, "train.json")):
+    files["train/train.json"] = open(os.path.join(tdir, "train.json"), "rb").read()
+    for m in json.load(open(os.path.join(tdir, "train.json"))):
+        files[f"train/{m['file']}"] = open(os.path.join(tdir, m["file"]), "rb").read()
 
 identity_doc = {
     "face": {

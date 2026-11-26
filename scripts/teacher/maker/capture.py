@@ -50,6 +50,7 @@ ap.add_argument("--fps", type=float, default=15.0)
 ap.add_argument("--max-seconds", type=float, default=600.0)
 ap.add_argument("--keep", type=int, default=40, help="most view / expression frames to save")
 ap.add_argument("--add", action="append", default=[], help="another video or photo folder, read with the first")
+ap.add_argument("--train", type=int, default=64, help="most training frames to save for the appearance learner")
 a = ap.parse_args()
 os.makedirs(os.path.join(a.out, "views"), exist_ok=True)
 M = lambda n: os.path.join(a.models, n)  # noqa: E731
@@ -339,14 +340,76 @@ for ename, fn in EXPRESSIONS.items():
     if cand and max(cand)[0] > 0.35:
         views.append((f"expression: {ename}", max(cand)[1]))
 views = views[: a.keep]
+
+# Training frames for the appearance learner (stage 2): up to --train frames, spread over head angles
+# and expressions, sharp ones first. Saved as face crops (head and shoulders) with their offset, so the
+# frame's own face points still apply.
+cands = [i for i, (r, _) in enumerate(records) if r["face_px"] > 90 and r["sharp"] > 25]
+bins = {}
+for i in cands:
+    r = records[i][0]
+    b = r["blend"]
+    key = (int((r["yaw"] + 90) // 12), int((r["pitch"] + 90) // 12),
+           int(b.get("jawOpen", 0) > 0.25), int((b.get("mouthSmileLeft", 0) + b.get("mouthSmileRight", 0)) > 0.7), int(b.get("browInnerUp", 0) > 0.35))
+    bins.setdefault(key, []).append(i)
+train_ids = []
+for key in sorted(bins, key=lambda k: -len(bins[k])):
+    best = max(bins[key], key=lambda i: records[i][0]["sharp"])
+    train_ids.append(best)
+# Fill up with the sharpest remaining frames, evenly spaced in time.
+rest = sorted(set(cands) - set(train_ids), key=lambda i: -records[i][0]["sharp"])
+train_ids = (train_ids + rest)[: a.train]
+want_train = {records[i][0]["name"]: i for i in train_ids}
+
+
+def covered(bgr, lm, face_px):
+    """Something on the face (sticker, emoji, drawn filter, hand): dark, hard-edged blobs on the cheeks
+    and forehead, away from the features. The same rule as analyse.py and the browser coach."""
+    H_, W_ = bgr.shape[:2]
+    face = np.zeros((H_, W_), np.uint8)
+    cv2.fillPoly(face, [lm[OVAL, :2].astype(np.int32)], 1)
+    feats = np.zeros((H_, W_), np.uint8)
+    for ring in (*SCLERA, *BROWS, LIPS, [98, 97, 2, 326, 327, 294, 278, 344, 440, 275, 4, 45, 220, 115, 48, 64]):
+        cv2.fillPoly(feats, [lm[ring, :2].astype(np.int32)], 1)
+    k_ = int(face_px / 10) | 1
+    inner = (face > 0) & (cv2.dilate(feats, np.ones((k_, k_), np.uint8)) == 0)
+    if inner.sum() < 400:
+        return False
+    L_ = cv2.cvtColor(bgr, cv2.COLOR_BGR2LAB)[..., 0].astype(np.float32)
+    dark = (L_ < np.median(L_[inner]) * 0.35) & inner
+    _, _, st, _ = cv2.connectedComponentsWithStats(dark.astype(np.uint8))
+    blobs = sum(int(x) for x in st[1:, 4] if x > (face_px / 30) ** 2) / inner.sum()
+    edges = ((np.abs(cv2.Laplacian(cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY), cv2.CV_64F)) > 40) & inner).sum() / inner.sum()
+    return blobs > 0.05 and edges > 0.005
 # Read the chosen frames again (frames are not kept in memory while scanning).
 want = {records[i][0]["name"]: [] for _, i in views}
 for label, i in views:
     want[records[i][0]["name"]].append((label, i))
 picked = {}
+os.makedirs(os.path.join(a.out, "train"), exist_ok=True)
+train_meta = []
 for t, bgr, name in frames():
     if name in want:
         picked[name] = bgr
+    if name in want_train:
+        r = records[want_train[name]][0]
+        lm = np.array(r["landmarks"])
+        if covered(bgr, lm, r["face_px"]):
+            continue  # a covered face would teach the learner the cover
+        fw = float(np.ptp(lm[:, 0]))
+        cx, cy = lm[:, 0].mean(), lm[:, 1].mean()
+        half = fw * 1.4
+        H_, W_ = bgr.shape[:2]
+        x0, y0 = int(max(0, cx - half)), int(max(0, cy - half * 1.15))
+        x1, y1 = int(min(W_, cx + half)), int(min(H_, cy + half * 1.05))
+        crop = bgr[y0:y1, x0:x1]
+        scale = min(1.0, 768 / max(1, max(crop.shape[:2])))
+        if scale < 1:
+            crop = cv2.resize(crop, (int(crop.shape[1] * scale), int(crop.shape[0] * scale)), interpolation=cv2.INTER_AREA)
+        fn = f"{len(train_meta):03d}.jpg"
+        cv2.imwrite(os.path.join(a.out, "train", fn), crop, [cv2.IMWRITE_JPEG_QUALITY, 93])
+        train_meta.append({"file": fn, "t": r["t"], "offset": [x0, y0], "scale": scale, "yaw": r["yaw"], "pitch": r["pitch"]})
+json.dump(train_meta, open(os.path.join(a.out, "train", "train.json"), "w"))
 saved = []
 for label, i in views:
     r = records[i][0]
