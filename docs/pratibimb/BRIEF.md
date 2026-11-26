@@ -13,22 +13,27 @@
 **Never used: the photo pixels themselves.** No real face, background or clothes from the photos is put on
 the model.
 
-## Output: one thing, a fully built realistic 3D human (CG), waist up, facing the student
+## Output: one thing, a fully built 3D anime character, waist up, facing the student
+
+Owner's choice (2026-11-26, replaces the realistic CG output): **advanced 3D anime**, like modern 3D anime
+games and VTubers. A real 3D model (depth, turns, light and shadow) drawn with anime shading and outlines,
+not flat 2D. It is designed from the person's features, so it is clearly *them* as an anime character.
+A style slider runs from "soft anime" to "full anime" (variations).
 
 | Part | What it is |
 |---|---|
-| Face | Sculpted from their 3D points: same proportions |
-| Skin | A built skin material in their tone, soft studio light |
-| Eyes | Modelled eyeballs, their iris colour, highlights, blinks |
-| Hair | Modelled in their style and colour |
+| Face | Sculpted from their 3D points (face shape, jaw, eye spacing), then stylised to anime (larger eyes, simpler nose and mouth) |
+| Skin | Their skin tone, anime shading (two-tone light/shadow, soft rim light, outline) |
+| Eyes | Anime eyes in their iris colour: layered iris, pupils, highlights; blink and look around |
+| Hair | Anime hair locks in their style, length, parting and colour; moves a little |
 | Body | Built to their proportions; arms, five-finger hands |
 | Clothes | New, from a wardrobe (Indian and Western), switchable colours |
 | Background | None (transparent): the person only |
 | Movement | Lip sync from the voice (any language, by sounds); expressions; gestures (namaste, point, explain); listens and reacts |
 | Voice | Their cloned voice |
 | Brain | Converses (Guru) |
-| Likeness | Recognisable by eye; face-recognition score reported (likely below 90%, since no photo pixels are used) |
+| Likeness | Recognisable as them by eye (face shape, hair, eye and skin colour, glasses, features); judged by the owner side by side |
 | Build time | 3–4 minutes on a GPU |
 
 Everything is made by our own code (`scripts/pratibimb/engine/`); research papers are read for ideas only.
-Reference for the *kind* of output (not used): Epic MetaHuman, Reallusion Headshot.
+Reference for the *kind* of output (not used): 3D anime games with toon shading; VRoid Studio characters.
