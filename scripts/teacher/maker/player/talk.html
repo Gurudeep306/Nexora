@@ -68,22 +68,54 @@ else {cam.position.set(head.x,head.y-0.05,head.z+1.6);cam.lookAt(head.x,head.y-0
 
 const line=q.get('line')||'l1'
 const AK=await (await fetch('demo/'+line+'.arkit.json')).json()
+const VT=await (await fetch('demo/'+line+'.json')).json()          // exact sound timings from the voice (HeadTTS)
+const PR=await (await fetch('demo/'+line+'.prosody.json')).json()  // loudness, pitch, stresses, pauses
 const meshes=[]; vrm.scene.traverse(o=>{ if(o.isMesh&&o.morphTargetDictionary&&o.material.isMToonMaterial) meshes.push(o) })
-let seed=5; const rnd=()=>((seed=(seed*16807)%2147483647)/2147483647)
-const blinks=[]; for(let t=0.8;t<30;t+=2.4+rnd()*2.6) blinks.push(t)
 const hb2=n=>vrm.humanoid.getNormalizedBoneNode(n)
+const LEAD=0.04       // the face moves ~40 ms before the sound, as real speakers do
+const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)), sstep=x=>{x=clamp(x);return x*x*(3-2*x)}
+// Smoothed curve sample: a small Gaussian over neighbouring frames removes jitter, keeps shape.
+function curve(t){ const fi=t*AK.fps, out={}, W=[0.25,0.5,0.25]
+  for(let k=-1;k<=1;k++){ const i=Math.floor(fi)+k, f=fi-Math.floor(fi)
+    const a=AK.frames[clamp(i,0,AK.frames.length-1)]||{}, b=AK.frames[clamp(i+1,0,AK.frames.length-1)]||{}
+    for(const key of new Set([...Object.keys(a),...Object.keys(b)])) out[key]=(out[key]||0)+W[k+1]*((a[key]||0)*(1-f)+(b[key]||0)*f) }
+  return out }
+// How strongly a sound class is "on" at time t (ms timings, with soft 35 ms ramps).
+function on(cls,t){ let w=0; const ms=t*1000
+  for(let i=0;i<VT.visemes.length;i++){ if(!cls.includes(VT.visemes[i])) continue
+    const a=VT.vtimes[i]-55, b=VT.vtimes[i]+Math.max(VT.vdurations[i],70)+15
+    w=Math.max(w, clamp((ms-a)/35)*(1-clamp((ms-(b-35))/35))) }
+  return w }
+const at=(arr,t)=>arr[clamp(Math.round(t*PR.rate),0,arr.length-1)]
+// Blinks: at the ends of phrases (pauses) plus a slow natural rhythm.
+let seed=5; const rnd=()=>((seed=(seed*16807)%2147483647)/2147483647)
+const blinks=PR.pauses.map(p=>p[0]+0.05); for(let t=2.5;t<30;t+=3+rnd()*2.5) if(!blinks.some(b=>Math.abs(b-t)<1.2)) blinks.push(t)
+const GAIN={mouthUpperUpLeft:0.35,mouthUpperUpRight:0.35,mouthLowerDownLeft:0.6,mouthLowerDownRight:0.6,mouthStretchLeft:0.45,mouthStretchRight:0.45,mouthSmileLeft:0.6,mouthSmileRight:0.6,mouthDimpleLeft:0.5,mouthDimpleRight:0.5,jawOpen:1.15}
+const OPEN=['jawOpen','mouthLowerDownLeft','mouthLowerDownRight','mouthUpperUpLeft','mouthUpperUpRight','mouthFunnel','mouthStretchLeft','mouthStretchRight']
 window.renderAt=(t)=>{
-  const fi=t*AK.fps, i0=Math.floor(fi), f=fi-i0
-  const a=AK.frames[Math.min(i0,AK.frames.length-1)]||{}, b=AK.frames[Math.min(i0+1,AK.frames.length-1)]||{}
-  const keys=new Set([...Object.keys(a),...Object.keys(b)])
-  em.setValue('relaxed',0.15)
-  let blink=0; for(const bt of blinks){const d=t-bt; if(d>=0&&d<0.15) blink=Math.max(blink,Math.sin(Math.PI*d/0.15))}
+  const c=curve(t+LEAD)
+  for(const k in c) c[k]*=(GAIN[k]??1)
+  // Lips meet fully on p, b, m; lower lip to the upper teeth on f, v.
+  const pbm=on(['PP'],t+0.02), fv=on(['FF'],t+0.02)
+  for(const k of OPEN) c[k]=(c[k]||0)*(1-pbm)
+  c.mouthPressLeft=Math.max(c.mouthPressLeft||0,0.45*pbm); c.mouthPressRight=Math.max(c.mouthPressRight||0,0.45*pbm)
+  c.mouthClose=Math.max(c.mouthClose||0,0.25*pbm); c.mouthRollUpper=Math.max(c.mouthRollUpper||0,0.12*pbm); c.mouthRollLower=Math.max(c.mouthRollLower||0,0.12*pbm)
+  c.mouthRollLower=Math.max(c.mouthRollLower||0,0.55*fv); c.mouthUpperUpLeft=Math.max(c.mouthUpperUpLeft||0,0.15*fv); c.mouthUpperUpRight=Math.max(c.mouthUpperUpRight||0,0.15*fv)
+  c.jawOpen=(c.jawOpen||0)*(1-0.5*fv)
+  // Prosody: brows follow pitch peaks a little; head nods on stressed syllables; a breath in pauses.
+  const pitch=at(PR.pitch,t), loud=at(PR.loud,t)
+  const brow=clamp((pitch-2)/6)*0.35
+  c.browInnerUp=Math.max(c.browInnerUp||0,brow); c.browOuterUpLeft=Math.max(c.browOuterUpLeft||0,brow*0.6); c.browOuterUpRight=Math.max(c.browOuterUpRight||0,brow*0.6)
+  let nod=0; for(const s of PR.stress){ const d=t-s+0.05; if(d>0&&d<0.35) nod=Math.max(nod,Math.sin(Math.PI*d/0.35)) }
+  let breath=0; for(const [a,b] of PR.pauses){ if(t>a&&t<b) breath=Math.max(breath,Math.sin(Math.PI*(t-a)/(b-a))) }
+  em.setValue('relaxed',0.12)
+  let blink=0; for(const bt of blinks){const d=t-bt; if(d>=0&&d<0.16) blink=Math.max(blink,Math.sin(Math.PI*d/0.16))}
   em.setValue('blink',blink)
-  hb2('head').rotation.set(0.03*Math.sin(t*1.3)+0.02*Math.sin(t*2.9),0.05*Math.sin(t*0.7),0.015*Math.sin(t*1.1))
-  hb2('neck').rotation.set(0.01*Math.sin(t*0.9),0.02*Math.sin(t*0.5),0)
+  hb2('head').rotation.set(0.035*nod+0.012*Math.sin(t*1.3)+0.006*loud, 0.03*Math.sin(t*0.6)+0.012*Math.sin(t*1.7), 0.01*Math.sin(t*0.9))
+  hb2('neck').rotation.set(0.01*nod+0.006*Math.sin(t*0.8), 0.015*Math.sin(t*0.45), 0)
+  hb2('chest').rotation.x=0.02*breath+0.006*Math.sin(t*1.5)
   vrm.update(1/30)
-  const GAIN={mouthUpperUpLeft:0.35,mouthUpperUpRight:0.35,mouthLowerDownLeft:0.55,mouthLowerDownRight:0.55,mouthStretchLeft:0.45,mouthStretchRight:0.45,mouthSmileLeft:0.6,mouthSmileRight:0.6,mouthDimpleLeft:0.5,mouthDimpleRight:0.5}
-  for(const m of meshes){ for(const k of keys){ if(/^eye(Blink|Look)/.test(k)) continue; const idx=m.morphTargetDictionary[k]; if(idx!==undefined) m.morphTargetInfluences[idx]=((a[k]||0)*(1-f)+(b[k]||0)*f)*(GAIN[k]??1) } }
+  for(const m of meshes){ for(const k in c){ if(/^eye(Blink|Look)/.test(k)) continue; const idx=m.morphTargetDictionary[k]; if(idx!==undefined) m.morphTargetInfluences[idx]=clamp(c[k]) } }
   r.render(scene,cam)
 }
 window.DURATION=AK.frames.length/AK.fps

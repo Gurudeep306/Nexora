@@ -1,0 +1,45 @@
+{
+  "_about": "Pratibimb model slots. Each AI step has a fixed input and output; 'default' is what runs today, 'trained' is where a model we train is dropped in (an ONNX file with the stated inputs/outputs). pipeline.py and the player read this file. docs/pratibimb/TRAINING.md explains how to train each one.",
+  "face_controls": {
+    "input": "the person's face points: float32[478,3] per photo (MediaPipe Face Landmarker, image pixels, z scaled like x), plus head turn (yaw, pitch, roll, degrees)",
+    "output": "float32[222] MakeHuman face-control values in 0..1, names in face_controls_names (training/face_controls/names.json)",
+    "default": "solve_face.py (relative least-squares fit over all photos)",
+    "trained": null,
+    "kit": "training/face_controls"
+  },
+  "lipsync": {
+    "input": "mono 16 kHz audio, float32[samples]",
+    "output": "float32[frames,52] ARKit blendshapes at 30 fps (names in the model's config.json, ARKit order)",
+    "default": "wav2arkit_cpu (Apache-2.0, myned-ai) + Pratibimb rules (p/b/m closure, f/v, 40 ms lead, smoothing, gains)",
+    "trained": null,
+    "kit": "training/lipsync"
+  },
+  "voice": {
+    "input": "text (English / Hindi / Hinglish) + the person's consented reference clip (16-24 kHz, 10-60 s)",
+    "output": "mono audio (24 kHz) with a watermark, plus word timings when available",
+    "default": "Kokoro via HeadTTS (fixed Indian voices); cloning: Chatterbox Multilingual + Hindi (MIT) on a GPU",
+    "trained": null,
+    "kit": "training/voice"
+  },
+  "skin": {
+    "input": "the best even-lit photo, its camera and the fitted head mesh",
+    "output": "a 2048x2048 skin texture in the MakeHuman UV layout",
+    "default": "bake_skin.py (lighting removed) + paint_features.py + paint_look.py",
+    "trained": null,
+    "kit": "training/skin"
+  },
+  "likeness": {
+    "input": "a render and the person's held-out photos",
+    "output": "a likeness score in percent of the photo-vs-photo ceiling",
+    "default": "likeness.py: YuNet (MIT) + SFace (Apache-2.0)",
+    "trained": null,
+    "kit": null
+  },
+  "gestures": {
+    "input": "the sentence, its word timings and prosody (prosody.py)",
+    "output": "a list of gestures [name, start s, end s, strength] from the gesture library",
+    "default": "rules in the player: beats on stressed words, point when the board is referenced, nod on agreement",
+    "trained": null,
+    "kit": "training/gestures"
+  }
+}
