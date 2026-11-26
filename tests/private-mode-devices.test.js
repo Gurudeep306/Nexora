@@ -19,6 +19,10 @@ test('device links pass private mode', () => {
     `/api/explain/device/${T}/videos`,
     `/api/explain/device/${T}/videos/${V}/data`,
     `/api/explain/device/${T}/videos/${V}/finish`,
+    `/pratibimb/capture/${T}`,
+    `/api/pratibimb/device/${T}`,
+    `/api/pratibimb/device/${T}/files/photo`,
+    `/api/pratibimb/device/${T}/files/video`,
   ])
     assert.equal(isPublicPath(p), true, p);
 });
@@ -33,6 +37,12 @@ test('nothing else around them does', () => {
     `/api/explain/device/${T}/videos/${V}`,
     `/api/explain/device/${T}/other`,
     '/api/explain/mine',
+    '/pratibimb',
+    `/pratibimb/capture/${T}/x`,
+    `/api/pratibimb/device/${T}/files/consent`,
+    `/api/pratibimb/device/${T}/files/voice`,
+    `/api/pratibimb/models`,
+    `/api/pratibimb/models/abcdef012345678901234567/link`,
   ])
     assert.equal(isPublicPath(p), false, p);
 });

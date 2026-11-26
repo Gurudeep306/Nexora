@@ -5,11 +5,11 @@
   Staff only until the owner opens it (the server answers 403 to everyone else).
 */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Camera, Check, Mic, Square, Trash2, Upload, X } from 'lucide-react'
+import { Camera, Check, Mic, Square, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { BackButton } from '@/components/ui/BackButton'
-import { buildModel, createModel, deleteModel, getModel, listModels, modelUrl, PratibimbError, removeFile, speakLine, uploadFile, type Model } from './api'
-import { checkPhoto, type PhotoCheck } from './checks'
+import { buildModel, createLink, createModel, deleteModel, getModel, listModels, modelUrl, PratibimbError, removeFile, speakLine, uploadFile, type Model } from './api'
+import { CaptureStep } from './capture/CaptureStep'
 import { TeacherPanel } from './TeacherPanel'
 import type { Player, Framing } from './engine/player'
 import type { Look } from './engine/look'
@@ -18,7 +18,7 @@ import './pratibimb.css'
 type Step = 'consent' | 'photos' | 'body' | 'voice' | 'build' | 'preview'
 const STEPS: { id: Step; label: string }[] = [
   { id: 'consent', label: 'Consent' },
-  { id: 'photos', label: 'Photos' },
+  { id: 'photos', label: 'Photos and video' },
   { id: 'body', label: 'Body and look' },
   { id: 'voice', label: 'Voice' },
   { id: 'build', label: 'Build' },
@@ -36,17 +36,18 @@ const VOICE_LINES = [
   'First we look at the middle. If it is too small, we search the right half.',
   'आज हम एक नया विषय सीखेंगे, ध्यान से सुनिए।',
 ]
-const PHOTO_GUIDE = ['Face, straight on', 'Face turned a little left', 'Face turned a little right', 'A natural smile', 'Head and shoulders', 'Full body, standing']
 const STAGE_NAMES: Record<string, string> = {
-  analyse: 'Reading the photos',
-  body: 'Body',
+  upright: 'Turning photos upright',
+  analyse: 'Reading every photo',
+  body: 'Body and build',
   reference: 'Base face',
   shape: 'Face shape',
-  face: 'Face controls',
-  skin: 'Skin',
+  points3d: 'Your 3D face points',
+  face: 'Face controls and detail',
+  skin: 'Skin, light taken out',
   features: 'Brows, eyes and lips',
-  look: 'Finish',
-  build: 'Model',
+  look: 'Finish and eyes',
+  build: 'Rig and model',
   check: 'Likeness check',
 }
 
@@ -145,14 +146,18 @@ function Meter({ level }: { level: number }) {
 
 /* ── Step 1: consent ── */
 function ConsentStep({ onMade }: { onMade: (m: Model) => void }) {
-  const [ticks, setTicks] = useState({ adult: false, ownFace: false, understood: false })
+  const [who, setWho] = useState<'self' | 'other'>('self')
+  const [name, setName] = useState('')
+  const [ticks, setTicks] = useState({ adult: false, agreed: false, understood: false })
   const sentence = useMemo(() => pick(SENTENCES), [])
   const r = useRecorder()
   const video = useRef<HTMLVideoElement>(null)
+  const fileIn = useRef<HTMLInputElement>(null)
   const [clip, setClip] = useState<Blob | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
-  const all = ticks.adult && ticks.ownFace && ticks.understood
+  const all = ticks.adult && ticks.agreed && ticks.understood
+  const other = who === 'other'
 
   useEffect(() => {
     if (video.current) video.current.srcObject = r.stream
@@ -177,7 +182,11 @@ function ConsentStep({ onMade }: { onMade: (m: Model) => void }) {
     setBusy(true)
     setError('')
     try {
-      const m = await createModel(sentence)
+      const m = await createModel(
+        other
+          ? { subject: 'other', name: name.trim(), adult: true, permission: true, understood: true, sentence }
+          : { subject: 'self', adult: true, ownFace: true, understood: true, sentence },
+      )
       await uploadFile(m.id, 'consent', clip)
       onMade(await getModel(m.id))
     } catch (e) {
@@ -197,18 +206,61 @@ function ConsentStep({ onMade }: { onMade: (m: Model) => void }) {
   )
   return (
     <section className="pbs-card" aria-labelledby="pbs-consent">
-      <h2 id="pbs-consent">First, your consent</h2>
-      <p>A teacher model is made only from your own face and voice. Your photos, voice and video stay private to you, are never used to train anything, and one tap deletes them all.</p>
-      {tick('adult', 'I am 18 or older.')}
-      {tick('ownFace', 'These will be my own photos and my own voice.')}
-      {tick('understood', 'I understand the model will look and sound like me, and that it is labelled as made by AI wherever it is shown.')}
-      <p>Now record a short video of yourself saying this sentence:</p>
+      <StepHead n={1} id="pbs-consent" title="Consent" line="Whose model is this? The person whose face and voice it is must agree, on camera, in their own voice." />
+      <div className="pbs-who" role="radiogroup" aria-label="Whose model">
+        {([
+          ['self', 'Me', 'My own face and voice.'],
+          ['other', 'Someone I know', 'A friend, colleague or family member who has agreed.'],
+        ] as const).map(([k, t, d]) => (
+          <button
+            key={k}
+            type="button"
+            role="radio"
+            aria-checked={who === k}
+            className="pbs-whoopt"
+            onClick={() => {
+              setWho(k)
+              setTicks({ adult: false, agreed: false, understood: false })
+              setClip(null)
+            }}
+          >
+            <span className="pbs-whot">{t}</span>
+            <span className="pbs-whod">{d}</span>
+          </button>
+        ))}
+      </div>
+      {other && (
+        <label className="pbs-field">
+          What should we call them? (only you see this)
+          <input value={name} maxLength={60} onChange={(e) => setName(e.target.value)} placeholder="e.g. Asha" />
+        </label>
+      )}
+      <p>
+        {other
+          ? 'Their photos, voice and video stay private to your account, are never used for anything else, and one tap deletes them all. They can ask you to delete the model at any time.'
+          : 'Your photos, voice and video stay private to you, are never used for anything else, and one tap deletes them all.'}
+      </p>
+      {tick('adult', other ? 'They are 18 or older.' : 'I am 18 or older.')}
+      {tick('agreed', other ? 'They have agreed to a model of their face and voice being made for NexoraGuru, and the photos will be of them.' : 'These will be my own photos and my own voice.')}
+      {tick('understood', other ? 'They understand it will look and sound like them, and is labelled as made by AI wherever it is shown.' : 'I understand the model will look and sound like me, and that it is labelled as made by AI wherever it is shown.')}
+      <p>{other ? 'Now they read this sentence to the camera themselves: record them here, or upload a clip they recorded on their phone.' : 'Now record a short video of yourself saying this sentence:'}</p>
       <div className="pbs-sentence">“{sentence}”</div>
       <div className="pbs-row">
         {!clip && <video ref={video} className="pbs-video" autoPlay muted playsInline aria-label="Camera preview" hidden={!r.stream} />}
-        {clip && <video className="pbs-video" src={clipUrl} controls playsInline aria-label="Your consent video" />}
+        {clip && <video className="pbs-video" src={clipUrl} controls playsInline aria-label="The consent video" />}
       </div>
       {r.recording && <Meter level={r.level} />}
+      <input
+        ref={fileIn}
+        type="file"
+        accept="video/mp4,video/webm,video/quicktime"
+        hidden
+        onChange={(e) => {
+          const f = e.target.files?.[0]
+          if (f) setClip(f)
+          e.target.value = ''
+        }}
+      />
       <div className="pbs-row">
         {!r.recording && (
           <Button variant="secondary" onClick={record} disabled={!all}>
@@ -220,103 +272,17 @@ function ConsentStep({ onMade }: { onMade: (m: Model) => void }) {
             <Square aria-hidden="true" /> Stop
           </Button>
         )}
+        {other && !r.recording && (
+          <Button variant="ghost" onClick={() => fileIn.current?.click()} disabled={!all}>
+            Upload their clip
+          </Button>
+        )}
         <Button onClick={next} disabled={!all || !clip || busy} loading={busy}>
           Continue
         </Button>
       </div>
+      {other && <p className="pbs-note">The build checks that the face in this clip is the face in the photos. If it isn't, the model is not built.</p>}
       {error && <p className="pbs-error" role="alert">{error}</p>}
-    </section>
-  )
-}
-
-/* ── Step 2: photos ── */
-interface Shot {
-  name: string
-  url: string
-  check: PhotoCheck | null
-}
-function PhotosStep({ model, onNext, refresh }: { model: Model; onNext: () => void; refresh: () => Promise<void> }) {
-  const [shots, setShots] = useState<Shot[]>([])
-  const [busy, setBusy] = useState(0)
-  const [error, setError] = useState('')
-  const input = useRef<HTMLInputElement>(null)
-  const count = model.photos.length
-
-  async function add(files: FileList | null) {
-    if (!files) return
-    setError('')
-    for (const f of Array.from(files)) {
-      if (!/^image\/(jpeg|png|webp)$/.test(f.type)) {
-        setError('Use JPG, PNG or WebP photos.')
-        continue
-      }
-      setBusy((b) => b + 1)
-      try {
-        const [check, name] = await Promise.all([checkPhoto(f).catch(() => null), uploadFile(model.id, 'photo', f)])
-        setShots((s) => [...s, { name, url: URL.createObjectURL(f), check }])
-      } catch (e) {
-        setError(e instanceof Error ? e.message : 'Upload failed')
-      } finally {
-        setBusy((b) => b - 1)
-      }
-    }
-    await refresh()
-  }
-  async function remove(name: string) {
-    await removeFile(model.id, name).catch(() => {})
-    setShots((s) => s.filter((x) => x.name !== name))
-    await refresh()
-  }
-  useEffect(() => () => shots.forEach((s) => URL.revokeObjectURL(s.url)), []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  const earlier = model.photos.filter((n) => !shots.some((s) => s.name === n)).length
-  return (
-    <section className="pbs-card" aria-labelledby="pbs-photos">
-      <h2 id="pbs-photos">Your photos</h2>
-      <p>Add 3 to 12 photos taken today, in soft daylight, with no glasses, mask or filter. Hair away from the eyes. These help most:</p>
-      <ul className="pbs-guide">
-        {PHOTO_GUIDE.map((g) => (
-          <li key={g}>{g}</li>
-        ))}
-      </ul>
-      <input ref={input} type="file" accept="image/jpeg,image/png,image/webp" multiple hidden onChange={(e) => void add(e.target.files).then(() => (e.target.value = ''))} />
-      <div className="pbs-row">
-        <Button variant="secondary" onClick={() => input.current?.click()} loading={busy > 0}>
-          <Upload aria-hidden="true" /> Add photos
-        </Button>
-        <span className="text-sm text-text-secondary">
-          {count} added{earlier > 0 ? ` (${earlier} from before)` : ''}
-        </span>
-      </div>
-      {shots.length > 0 && (
-        <ul className="pbs-photos">
-          {shots.map((s) => (
-            <li key={s.name} className="pbs-photo">
-              <img src={s.url} alt="" />
-              <button type="button" className="pbs-remove" onClick={() => void remove(s.name)} aria-label="Remove this photo">
-                <X className="size-4" aria-hidden="true" />
-              </button>
-              {s.check?.ok && (
-                <span className="pbs-ok">
-                  <Check className="inline size-3.5" aria-hidden="true" /> Looks good
-                </span>
-              )}
-              {s.check?.notes.map((n) => (
-                <span key={n} className="pbs-warn">
-                  {n}
-                </span>
-              ))}
-            </li>
-          ))}
-        </ul>
-      )}
-      {error && <p className="pbs-error" role="alert">{error}</p>}
-      <div className="pbs-row">
-        <Button onClick={onNext} disabled={count < 3 || busy > 0}>
-          Continue
-        </Button>
-        {count < 3 && <span className="text-sm text-text-muted">At least 3 photos.</span>}
-      </div>
     </section>
   )
 }
@@ -325,8 +291,7 @@ function PhotosStep({ model, onNext, refresh }: { model: Model; onNext: () => vo
 function BodyStep({ options, setOptions, onNext }: { options: Model['options']; setOptions: (o: Model['options']) => void; onNext: () => void }) {
   return (
     <section className="pbs-card" aria-labelledby="pbs-body">
-      <h2 id="pbs-body">Body and look</h2>
-      <p>Her face comes from the photos. Tell us the rest.</p>
+      <StepHead n={3} id="pbs-body" title="Body and look" line="Your face comes from the photos. Tell us the rest." />
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="pbs-field">
           Body
@@ -402,7 +367,7 @@ function VoiceStep({ model, onNext, refresh }: { model: Model; onNext: () => voi
   const done = Object.keys(takes).length
   return (
     <section className="pbs-card" aria-labelledby="pbs-voice">
-      <h2 id="pbs-voice">Your voice (optional)</h2>
+      <StepHead n={4} id="pbs-voice" title="Voice" line="Optional. Read three lines; she will speak in your voice." />
       <p>Read each line aloud in a quiet room, phone or laptop about a hand’s length away. About 30 seconds in all. Until her own voice is ready, she speaks with the site’s Indian voice.</p>
       {VOICE_LINES.map((line, i) => (
         <div key={i} className="pbs-voice">
@@ -444,39 +409,64 @@ function VoiceStep({ model, onNext, refresh }: { model: Model; onNext: () => voi
 function BuildStep({ model, options, onStart, starting }: { model: Model; options: Model['options']; onStart: () => void; starting: boolean }) {
   const waiting = model.status === 'queued' || model.status === 'building'
   const stages = model.report?.stages ?? {}
+  const keys = Object.keys(STAGE_NAMES)
+  const at = model.stage ? keys.indexOf(model.stage) : -1
   return (
     <section className="pbs-card" aria-labelledby="pbs-build">
-      <h2 id="pbs-build">Build your model</h2>
+      <StepHead n={5} id="pbs-build" title="Build" line="The build machine turns your photos into your presenter, stage by stage." />
       {model.status === 'draft' && (
-        <>
-          <p>
-            {model.photos.length} photos, {model.voices.length ? `${model.voices.length} voice lines` : 'no voice yet'}, {options.style ?? 'painted'} look. The build runs on our machine and usually takes 10 to 20 minutes. You can leave this page.
-          </p>
+        <div className="pbs-ready">
+          <dl className="pbs-stats pbs-stats-light">
+            <div data-ok>
+              <dt>Photos</dt>
+              <dd>{model.photos.length}</dd>
+            </div>
+            <div data-ok={model.videos.length > 0 || undefined}>
+              <dt>Video</dt>
+              <dd>{model.videos.length || '—'}</dd>
+            </div>
+            <div data-ok={model.voices.length > 0 || undefined}>
+              <dt>Voice</dt>
+              <dd>{model.voices.length ? `${model.voices.length} lines` : '—'}</dd>
+            </div>
+            <div data-ok>
+              <dt>Look</dt>
+              <dd>{{ painted: 'Lightly painted', real: 'Closer to real', anime: 'Light anime' }[options.style ?? 'painted']}</dd>
+            </div>
+          </dl>
+          <p className="pbs-note">The build runs on our machine and you can leave this page; it carries on and the result waits here.</p>
           <div className="pbs-row">
             <Button onClick={onStart} loading={starting}>
               Build my model
             </Button>
           </div>
-        </>
+        </div>
       )}
-      {waiting && (
-        <>
-          <p aria-live="polite">{model.status === 'queued' ? 'Waiting for the build machine…' : `Working: ${STAGE_NAMES[model.stage ?? ''] ?? model.stage ?? '…'}`}</p>
-          <ol className="pbs-stages">
-            {Object.entries(STAGE_NAMES).map(([k, label]) => (
-              <li key={k} className={k in stages ? 'pbs-ok' : model.stage === k ? 'text-text-primary' : 'text-text-muted'}>
-                {k in stages ? <Check className="inline size-3.5" aria-hidden="true" /> : '·'} {label}
+      {(waiting || model.status === 'done' || model.status === 'failed') && (
+        <ol className="pbs-pipe" aria-live="polite">
+          {keys.map((k, i) => {
+            const s = stages[k]
+            const state = s?.seconds != null || (model.status === 'done' && i <= keys.length) ? 'done' : model.stage === k ? 'now' : model.status === 'failed' && i === at ? 'fail' : 'wait'
+            return (
+              <li key={k} data-state={state}>
+                <span className="pbs-pipe-dot" aria-hidden="true">
+                  {state === 'done' ? <Check className="size-3" /> : null}
+                </span>
+                <span className="pbs-pipe-name">{STAGE_NAMES[k]}</span>
+                <span className="pbs-pipe-t">{s?.seconds != null ? `${s.seconds.toFixed(1)} s` : state === 'now' ? 'working…' : ''}</span>
+                {s?.note && state !== 'wait' && <span className="pbs-pipe-note">{s.note}</span>}
               </li>
-            ))}
-          </ol>
-        </>
+            )
+          })}
+        </ol>
       )}
+      {model.status === 'queued' && <p className="pbs-note">Waiting for the build machine to pick it up.</p>}
       {model.status === 'failed' && (
         <>
           <p className="pbs-error" role="alert">
             The build stopped: {model.note || 'something went wrong.'}
           </p>
-          <p>Add or replace the photos it names, then build again.</p>
+          <p className="pbs-note">Add or replace the photos it names, then build again.</p>
           <div className="pbs-row">
             <Button onClick={onStart} loading={starting}>
               Build again
@@ -579,7 +569,7 @@ function PreviewStep({ model }: { model: Model }) {
 
   return (
     <section className="pbs-card" aria-labelledby="pbs-meet">
-      <h2 id="pbs-meet">Meet your teacher</h2>
+      <StepHead n={6} id="pbs-meet" title="Meet her" line="Say hello, open the board, change the look." />
       {model.likeness != null && <p>Likeness to your photos (checked on photos the model was not made from): {model.likeness}%.</p>}
       <TeacherPanel
         modelUrl={modelUrl(model.id)}
@@ -634,6 +624,64 @@ function PreviewStep({ model }: { model: Model }) {
   )
 }
 
+/* ── The journey: what is really done, from the model's own files ── */
+const NEEDED: string[] = ['front', 'left', 'right', 'smile', 'waist']
+function journeyFacts(m: Model, options: Model['options']) {
+  const shots = new Set(Object.values(m.shots ?? {}))
+  const needed = NEEDED.filter((x) => shots.has(x)).length
+  const extra = Math.max(0, (m.photos?.length ?? 0) - needed)
+  const videos = m.videos?.length ?? 0
+  const voices = m.voices?.length ?? 0
+  const style = { painted: 'Lightly painted', real: 'Closer to real', anime: 'Light anime' }[options.style as string] ?? 'Lightly painted'
+  const building = m.status === 'queued' || m.status === 'building'
+  const done: Record<Step, boolean> = {
+    consent: m.consentVideo,
+    photos: needed === NEEDED.length,
+    body: !!m.options?.body,
+    voice: voices > 0,
+    build: m.status === 'done',
+    preview: m.status === 'done',
+  }
+  const sub: Record<Step, string> = {
+    consent: m.consentVideo ? 'Recorded' : 'Needed',
+    photos: `${needed} of 5 needed${extra ? ` · ${extra} more` : ''}`,
+    body: style,
+    voice: voices ? `${voices} line${voices > 1 ? 's' : ''}` : 'Optional',
+    build: m.status === 'done' ? 'Built' : m.status === 'failed' ? 'Stopped' : building ? STAGE_NAMES[m.stage ?? ''] ?? 'Waiting' : 'Not started',
+    preview: m.status === 'done' ? 'Ready' : 'After the build',
+  }
+  const stats = [
+    { k: 'Photos', v: `${needed}/5${extra ? ` +${extra}` : ''}`, ok: needed === 5 },
+    { k: 'Video', v: videos ? String(videos) : '—', ok: videos > 0 },
+    { k: 'Voice', v: voices ? `${voices} lines` : '—', ok: voices > 0 },
+    { k: 'Model', v: m.status === 'done' ? (m.likeness != null ? `${m.likeness}% alike` : 'Ready') : building ? 'Building' : m.status === 'failed' ? 'Stopped' : 'Not built', ok: m.status === 'done' },
+  ]
+  return { done, sub, stats }
+}
+
+/** Which steps can be opened: in order, and the build and preview only when they make sense. */
+function canReach(step: Step, m: Model | null) {
+  if (!m) return step === 'consent'
+  const needed = NEEDED.filter((x) => Object.values(m.shots ?? {}).includes(x)).length === NEEDED.length
+  if (step === 'consent') return false
+  if (step === 'photos') return m.status === 'draft' || m.status === 'failed'
+  if (step === 'body' || step === 'voice') return needed && (m.status === 'draft' || m.status === 'failed')
+  if (step === 'build') return needed || m.status !== 'draft'
+  return m.status === 'done'
+}
+
+function StepHead({ n, id, title, line }: { n: number; id: string; title: string; line: string }) {
+  return (
+    <div className="pbs-stephead">
+      <span className="pbs-stepn">{String(n).padStart(2, '0')}</span>
+      <div>
+        <h2 id={id}>{title}</h2>
+        <p>{line}</p>
+      </div>
+    </div>
+  )
+}
+
 /* ── The page ── */
 export default function StudioPage() {
   const [models, setModels] = useState<Model[] | null>(null)
@@ -651,11 +699,12 @@ export default function StudioPage() {
       .catch((e) => setBlocked(e instanceof PratibimbError && e.status === 403 ? 'Pratibimb is being tested by the team and opens to everyone soon.' : 'Could not load your models. Try again in a moment.'))
   }, [])
 
+  const modelId = model?.id
   const refresh = useCallback(async () => {
-    if (!model) return
-    const m = await getModel(model.id)
-    setModel(m)
-  }, [model])
+    if (!modelId) return
+    setModel(await getModel(modelId))
+  }, [modelId])
+  const makeLink = useCallback(() => createLink(modelId!), [modelId])
 
   // While a build runs, check on it.
   useEffect(() => {
@@ -700,15 +749,38 @@ export default function StudioPage() {
   }
 
   const at = STEPS.findIndex((s) => s.id === step)
+  const facts = model ? journeyFacts(model, options) : null
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 pt-8 pb-32 sm:px-6">
+    <div className="mx-auto w-full max-w-6xl px-4 pt-6 pb-32 sm:px-6">
       <div className="pbs">
-        <header className="pbs-head">
-          <div className="flex items-center gap-3">
-            <BackButton />
-            <h1 className="pbs-title">Pratibimb</h1>
+        <header className="pbs-hero">
+          <div className="pbs-hero-main">
+            <div className="flex items-center gap-3">
+              <BackButton className="pbs-hero-back" />
+              <span className="pbs-eyebrow">Pratibimb studio · प्रतिबिम्ब</span>
+            </div>
+            <h1 className="pbs-title">A teacher made from you</h1>
+            <p className="pbs-line">Your face from your photos, your voice from your recording: a waist-up presenter who teaches on NexoraGuru. Private to you until you choose to use it.</p>
           </div>
-          <p className="pbs-line">Make a teacher who looks and sounds like you, from a few photos and your voice.</p>
+          {making && facts ? (
+            <dl className="pbs-stats" aria-label="This model">
+              {facts.stats.map((f) => (
+                <div key={f.k} data-ok={f.ok || undefined}>
+                  <dt>{f.k}</dt>
+                  <dd>{f.v}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : (
+            <ol className="pbs-flow" aria-label="How it works">
+              {STEPS.map((s, i) => (
+                <li key={s.id}>
+                  <span>{String(i + 1).padStart(2, '0')}</span>
+                  {s.label}
+                </li>
+              ))}
+            </ol>
+          )}
         </header>
 
         {blocked && (
@@ -718,55 +790,85 @@ export default function StudioPage() {
         )}
 
         {!blocked && !making && models && (
-          <section className="pbs-card" aria-labelledby="pbs-yours">
-            <h2 id="pbs-yours">Your models</h2>
-            {models.length === 0 ? (
-              <p>You have no models yet. It takes about 5 minutes of your time: consent, photos, and an optional voice sample.</p>
-            ) : (
-              <ul className="pbs-models">
-                {models.map((m) => (
-                  <li key={m.id} className="pbs-model">
-                    <span className="text-sm">
-                      <span className="font-semibold text-text-primary">{m.status === 'done' ? 'Ready' : m.status === 'failed' ? 'Build stopped' : m.status === 'draft' ? 'Not built yet' : 'Building'}</span>
-                      <span className="text-text-muted"> · {new Date(m.createdAt).toLocaleDateString()}</span>
-                    </span>
-                    <span className="pbs-row">
-                      <Button variant="secondary" size="sm" onClick={() => open(m)}>
+          <section aria-labelledby="pbs-yours" className="grid gap-4">
+            <div className="pbs-sechead">
+              <h2 id="pbs-yours" className="pbs-h2">Your models</h2>
+              <span className="pbs-count">{models.length} of 3</span>
+            </div>
+            <ul className="pbs-models">
+              {models.map((m) => {
+                const f = journeyFacts(m, m.options)
+                return (
+                  <li key={m.id} className="pbs-model" data-status={m.status}>
+                    <div className="pbs-model-top">
+                      <span className="pbs-pill" data-status={m.status}>
+                        {m.status === 'done' ? 'Ready' : m.status === 'failed' ? 'Build stopped' : m.status === 'draft' ? 'In progress' : m.status === 'queued' ? 'Waiting to build' : 'Building'}
+                      </span>
+                      <span className="pbs-date">{new Date(m.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                    </div>
+                    <dl className="pbs-model-stats">
+                      {f.stats.slice(0, 3).map((x) => (
+                        <div key={x.k}>
+                          <dt>{x.k}</dt>
+                          <dd>{x.v}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                    <div className="pbs-row">
+                      <Button size="sm" onClick={() => open(m)}>
                         {m.status === 'done' ? 'Open' : 'Continue'}
                       </Button>
                       <Button variant="ghost" size="sm" onClick={() => void remove(m)} aria-label="Delete this model">
                         <Trash2 aria-hidden="true" /> Delete
                       </Button>
-                    </span>
+                    </div>
                   </li>
-                ))}
-              </ul>
-            )}
-            <div className="pbs-row">
-              <Button
-                onClick={() => {
-                  setModel(null)
-                  setStep('consent')
-                  setMaking(true)
-                }}
-                disabled={models.length >= 3}
-              >
-                Make a new model
-              </Button>
-              {models.length >= 3 && <span className="text-sm text-text-muted">You can keep up to 3. Delete one first.</span>}
-            </div>
+                )
+              })}
+              <li>
+                <button
+                  type="button"
+                  className="pbs-new"
+                  disabled={models.length >= 3}
+                  onClick={() => {
+                    setModel(null)
+                    setStep('consent')
+                    setMaking(true)
+                  }}
+                >
+                  <span className="pbs-new-plus" aria-hidden="true">+</span>
+                  <span className="pbs-new-t">Make a new model</span>
+                  <span className="pbs-new-s">{models.length >= 3 ? 'You can keep 3. Delete one first.' : 'About 5 minutes: consent, photos, an optional video and voice.'}</span>
+                </button>
+              </li>
+            </ul>
           </section>
         )}
 
         {making && (
           <>
-            <ol className="pbs-steps" aria-label="Steps">
-              {STEPS.map((s, i) => (
-                <li key={s.id} className={`pbs-step${i < at ? ' pbs-done' : ''}`} aria-current={i === at ? 'step' : undefined}>
-                  {s.label}
-                </li>
-              ))}
-            </ol>
+            <nav className="pbs-journey" aria-label="Steps">
+              <ol>
+                {STEPS.map((s, i) => {
+                  const reach = canReach(s.id, model)
+                  const state = i < at ? 'done' : i === at ? 'current' : 'next'
+                  return (
+                    <li key={s.id} data-state={state} data-ok={facts?.done[s.id] || undefined}>
+                      <button type="button" disabled={!reach || i === at} aria-current={i === at ? 'step' : undefined} onClick={() => setStep(s.id)}>
+                        <span className="pbs-node" aria-hidden="true">
+                          {facts?.done[s.id] ? <Check className="size-3.5" /> : String(i + 1).padStart(2, '0')}
+                        </span>
+                        <span className="pbs-jlabel">{s.label}</span>
+                        <span className="pbs-jsub">{facts ? facts.sub[s.id] : s.id === 'consent' ? 'Now' : ''}</span>
+                      </button>
+                    </li>
+                  )
+                })}
+              </ol>
+              <div className="pbs-track" aria-hidden="true">
+                <span style={{ width: `${(at / (STEPS.length - 1)) * 100}%` }} />
+              </div>
+            </nav>
             {step === 'consent' && (
               <ConsentStep
                 onMade={(m) => {
@@ -776,7 +878,19 @@ export default function StudioPage() {
                 }}
               />
             )}
-            {step === 'photos' && model && <PhotosStep model={model} refresh={refresh} onNext={() => setStep('body')} />}
+            {step === 'photos' && model && (
+              <section className="pbs-card" aria-labelledby="pbs-photos">
+                <StepHead n={2} id="pbs-photos" title="Photos and video" line="The camera reads your face as you take each photo and tells you exactly what to change. Five photos are needed; more angles and a short video bring her closer to you." />
+                <CaptureStep
+                  shots={model.shots ?? {}}
+                  videos={model.videos?.length ?? 0}
+                  upload={(kind, blob, shot) => uploadFile(model.id, kind, blob, shot)}
+                  refresh={refresh}
+                  makeLink={makeLink}
+                  onDone={() => setStep('body')}
+                />
+              </section>
+            )}
             {step === 'body' && <BodyStep options={options} setOptions={setOptions} onNext={() => setStep('voice')} />}
             {step === 'voice' && model && <VoiceStep model={model} refresh={refresh} onNext={() => setStep('build')} />}
             {step === 'build' && model && <BuildStep model={model} options={options} onStart={() => void start()} starting={starting} />}

@@ -20,6 +20,7 @@ const LiveLobbyPage = lazy(() => import('@/pages/live/LiveLobbyPage'))
 const LiveRoomPage = lazy(() => import('@/pages/live/LiveRoomPage'))
 const LiveDevicePage = lazy(() => import('@/pages/live/LiveDevicePage'))
 const ExplainPadPage = lazy(() => import('@/pages/explain/ExplainPadPage'))
+const PratibimbDevicePage = lazy(() => import('@/pratibimb/DeviceCapturePage'))
 const AuthPage = lazy(pageLoaders.AuthPage)
 const WelcomePage = lazy(pageLoaders.WelcomePage)
 const LandingPage = lazy(pageLoaders.LandingPage)
@@ -133,6 +134,7 @@ export default function App() {
           <Route path="/snap/:token" element={<SnapPage />} />
           <Route path="/live/d/:token" element={<LiveDevicePage />} />
           <Route path="/explain/pad/:token" element={<ExplainPadPage />} />
+          <Route path="/pratibimb/capture/:token" element={<PratibimbDevicePage />} />
           <Route path="/live/:code" element={<RequireAuth><LiveRoomPage /></RequireAuth>} />
           <Route path="/welcome" element={<RequireAuth><WelcomePage /></RequireAuth>} />
           <Route path="/" element={<LandingPage />} />

@@ -71,6 +71,12 @@ test('pratibimb models', async (t) => {
   // Consent first.
   const noConsent = await call('POST', '/api/pratibimb/models', { cookie: owner, body: { consent: { adult: true } } });
   assert.equal(noConsent.status, 400);
+  // Someone else's model needs their permission confirmed (and their own consent video, below).
+  assert.equal((await call('POST', '/api/pratibimb/models', { cookie: owner, body: { consent: { subject: 'other', adult: true, ownFace: true, understood: true } } })).status, 400);
+  const theirs = await call('POST', '/api/pratibimb/models', { cookie: owner, body: { consent: { subject: 'other', name: 'Asha', adult: true, permission: true, understood: true, sentence: 'I agree' } } });
+  assert.equal(theirs.status, 200);
+  assert.deepEqual(theirs.body.model.subject, { kind: 'other', name: 'Asha' });
+  assert.equal((await call('DELETE', `/api/pratibimb/models/${theirs.body.model.id}`, { cookie: owner })).status, 200);
   const made = await call('POST', '/api/pratibimb/models', { cookie: owner, body: { consent: { adult: true, ownFace: true, understood: true, sentence: 'I agree' } } });
   assert.equal(made.status, 200);
   const id = made.body.model.id;
@@ -78,7 +84,24 @@ test('pratibimb models', async (t) => {
 
   // Files: types checked, kept on disk in the model's folder.
   assert.equal((await call('PUT', `/api/pratibimb/models/${id}/files/photo`, { cookie: owner, body: Buffer.from('x'), type: 'text/plain' })).status, 400);
-  for (let i = 0; i < 3; i++) assert.equal((await call('PUT', `/api/pratibimb/models/${id}/files/photo`, { cookie: owner, body: jpg, type: 'image/jpeg' })).status, 200);
+  const shots = ['front', 'left', 'right'];
+  for (let i = 0; i < 3; i++) assert.equal((await call('PUT', `/api/pratibimb/models/${id}/files/photo?shot=${shots[i]}`, { cookie: owner, body: jpg, type: 'image/jpeg' })).status, 200);
+  // Size limits hold even when streamed.
+  assert.equal((await call('PUT', `/api/pratibimb/models/${id}/files/photo`, { cookie: owner, body: Buffer.alloc(16 * 1024 * 1024, 1), type: 'image/jpeg' })).status, 400);
+  assert.equal(fs.readdirSync(path.join(DIR, id)).filter((f) => f.endsWith('.part')).length, 0);
+
+  // A phone link: not signed in, the token stands for this one model; photos and videos only.
+  const link = await call('POST', `/api/pratibimb/models/${id}/link`, { cookie: owner });
+  assert.equal(link.status, 200);
+  assert.match(link.body.path, /^\/pratibimb\/capture\/[A-Za-z0-9_-]{22,}$/);
+  const tok = link.body.token;
+  assert.equal((await call('GET', `/api/pratibimb/device/${tok}`)).body.model.photos, 3);
+  assert.equal((await call('PUT', `/api/pratibimb/device/${tok}/files/video`, { body: Buffer.alloc(2048, 3), type: 'video/mp4' })).status, 200);
+  assert.equal((await call('PUT', `/api/pratibimb/device/${tok}/files/consent`, { body: Buffer.alloc(64, 1), type: 'video/webm' })).status, 403);
+  assert.equal((await call('GET', `/api/pratibimb/device/${'x'.repeat(30)}`)).status, 404);
+  const withShots = await call('GET', `/api/pratibimb/models/${id}`, { cookie: owner });
+  assert.deepEqual(Object.values(withShots.body.model.shots).sort(), ['front', 'left', 'right']);
+  assert.equal(withShots.body.model.videos.length, 1);
   // Building needs the consent video.
   assert.equal((await call('POST', `/api/pratibimb/models/${id}/build`, { cookie: owner, body: {} })).status, 400);
   assert.equal((await call('PUT', `/api/pratibimb/models/${id}/files/consent`, { cookie: owner, body: Buffer.alloc(64, 1), type: 'video/webm' })).status, 200);
@@ -87,7 +110,7 @@ test('pratibimb models', async (t) => {
   assert.equal(seen.body.model.photos.length, 3);
   assert.equal(seen.body.model.voices.length, 1);
   assert.equal(seen.body.model.consentVideo, true);
-  assert.equal(fs.readdirSync(path.join(DIR, id)).length, 5);
+  assert.equal(fs.readdirSync(path.join(DIR, id)).filter((f) => f !== 'shots.json').length, 6);
 
   const built = await call('POST', `/api/pratibimb/models/${id}/build`, { cookie: owner, body: { body: 'female', heightCm: 160, style: 'painted' } });
   assert.equal(built.body.model.status, 'queued');
@@ -98,6 +121,7 @@ test('pratibimb models', async (t) => {
   const job = await call('POST', '/api/pratibimb/worker/next', { headers: auth });
   assert.equal(job.body.job.id, id);
   assert.equal(job.body.job.options.heightCm, 160);
+  assert.equal(Object.keys(job.body.job.shots).length, 3);
   const name = job.body.job.files.find((f) => f.startsWith('photo-'));
   const file = await call('GET', `/api/pratibimb/worker/${id}/files/${name}`, { headers: auth });
   assert.deepEqual(file.body, jpg);

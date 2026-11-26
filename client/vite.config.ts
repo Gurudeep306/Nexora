@@ -54,8 +54,32 @@ function pagesFiles(apiUrl: string | undefined): Plugin {
   }
 }
 
+/**
+ * MediaPipe's web runtime (Apache-2.0) for Pratibimb's live photo coach, served from the installed
+ * package at /mediapipe/wasm/ (dev) and copied into dist (build), so it is never committed and never
+ * fetched from a CDN.
+ */
+function mediapipeWasm(): Plugin {
+  const dir = path.resolve(__dirname, 'node_modules/@mediapipe/tasks-vision/wasm')
+  const files = () => (fs.existsSync(dir) ? fs.readdirSync(dir) : [])
+  return {
+    name: 'nexora-mediapipe-wasm',
+    configureServer(server) {
+      server.middlewares.use('/mediapipe/wasm', (req, res, next) => {
+        const name = path.basename((req.url || '').split('?')[0])
+        if (!files().includes(name)) return next()
+        res.setHeader('Content-Type', name.endsWith('.wasm') ? 'application/wasm' : 'text/javascript')
+        fs.createReadStream(path.join(dir, name)).pipe(res)
+      })
+    },
+    generateBundle() {
+      for (const name of files()) this.emitFile({ type: 'asset', fileName: `mediapipe/wasm/${name}`, source: fs.readFileSync(path.join(dir, name)) })
+    },
+  }
+}
+
 export default defineConfig(({ mode }) => ({
-  plugins: [react(), tailwindcss(), themeLayer(), pagesFiles(loadEnv(mode, process.cwd(), 'VITE_').VITE_API_URL)],
+  plugins: [react(), tailwindcss(), themeLayer(), mediapipeWasm(), pagesFiles(loadEnv(mode, process.cwd(), 'VITE_').VITE_API_URL)],
   resolve: {
     alias: [
       { find: '@', replacement: path.resolve(__dirname, './src') },

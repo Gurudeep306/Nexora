@@ -55,16 +55,19 @@ const isLiveDevice = (p) => /^\/api\/live\/device\/[A-Za-z0-9_-]{20,64}$/.test(c
 const isExplainDevice = (p) => /^\/api\/explain\/device\/[A-Za-z0-9_-]{20,64}(\/videos(\/[A-Za-z0-9_-]{16,32}\/(data|finish))?)?$/.test(canon(p));
 // The Pratibimb build worker signs in with its own key (src/routes/pratibimb.js).
 const isPratibimbWorker = (p) => /^\/api\/pratibimb\/worker\/(next|[a-f0-9]{24}\/(files\/[a-z0-9.-]{1,40}|result\/[a-z.]{1,20}|status))$/.test(canon(p));
-const isPublicApi = (p) => isPratibimbWorker(p) || isHandDevice(p) || isLiveDevice(p) || isExplainDevice(p) || PUBLIC_API.has(canon(p).toLowerCase()) || (/^\/api\/hive-bridge\/(hello|poll|result|script|approve|setup\.sh)$/i.test(canon(p)) || /^\/api\/hive-mcp$/i.test(canon(p)));
+// A phone adding Pratibimb photos by QR: its token stands for one model (src/routes/pratibimb.js).
+const isPratibimbDevice = (p) => /^\/api\/pratibimb\/device\/[A-Za-z0-9_-]{22,64}(\/files\/(photo|video))?$/.test(canon(p));
+const isPublicApi = (p) => isPratibimbWorker(p) || isPratibimbDevice(p) || isHandDevice(p) || isLiveDevice(p) || isExplainDevice(p) || PUBLIC_API.has(canon(p).toLowerCase()) || (/^\/api\/hive-bridge\/(hello|poll|result|script|approve|setup\.sh)$/i.test(canon(p)) || /^\/api\/hive-mcp$/i.test(canon(p)));
 function isPublicPath(p) {
   if (isApi(p)) return isPublicApi(p);
   if (p === "/auth" || p.startsWith("/auth/")) return true; // sign-in page + OAuth
   if (/^\/(pad|snap)\/[A-Za-z0-9_-]{20,64}\/?$/.test(p)) return true; // handwriting device pages
   if (/^\/live\/d\/[A-Za-z0-9_-]{20,64}\/?$/.test(p)) return true; // a tablet joining a Live room
   if (/^\/explain\/pad\/[A-Za-z0-9_-]{20,64}\/?$/.test(p)) return true; // a tablet recording an explanation
+  if (/^\/pratibimb\/capture\/[A-Za-z0-9_-]{22,64}\/?$/.test(p)) return true; // a phone adding Pratibimb photos
   if (p.startsWith("/uploads/")) return false;
   // Static assets (scripts, styles, fonts, images, manifest) — not pages.
-  return /\.(js|mjs|css|map|woff2?|ttf|otf|eot|svg|png|jpe?g|gif|webp|avif|ico|webmanifest|json|txt|wasm)$/i.test(p);
+  return /\.(js|mjs|css|map|woff2?|ttf|otf|eot|svg|png|jpe?g|gif|webp|avif|ico|webmanifest|json|txt|wasm|task)$/i.test(p);
 }
 
 // Section → API paths switched off with it.

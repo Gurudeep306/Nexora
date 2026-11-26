@@ -8,13 +8,18 @@ export interface Model {
   note: string | null
   likeness: number | null
   options: { body?: string; heightCm?: number | null; style?: string; outfit?: string }
+  /** whose model: yours, or someone you know who agreed */
+  subject?: { kind: 'self' | 'other'; name: string }
   createdAt: number
   updatedAt: number
   photos: string[]
   voices: string[]
+  videos: string[]
+  /** photo file name → the shot it was taken for */
+  shots: Record<string, string>
   consentVideo: boolean
   hasModel: boolean
-  report: { stages: Record<string, string | null> } | null
+  report: { stages: Record<string, { note: string | null; seconds: number | null }> } | null
 }
 
 export class PratibimbError extends Error {
@@ -40,10 +45,27 @@ async function call<T>(method: string, path: string, body?: unknown, type?: stri
 
 export const listModels = () => call<{ models: Model[] }>('GET', '/api/pratibimb/models').then((r) => r.models)
 export const getModel = (id: string) => call<{ model: Model }>('GET', `/api/pratibimb/models/${id}`).then((r) => r.model)
-export const createModel = (sentence: string) =>
-  call<{ model: Model }>('POST', '/api/pratibimb/models', { consent: { adult: true, ownFace: true, understood: true, sentence } }).then((r) => r.model)
-export const uploadFile = (id: string, kind: 'photo' | 'voice' | 'consent', blob: Blob) =>
-  call<{ name: string }>('PUT', `/api/pratibimb/models/${id}/files/${kind}`, blob, blob.type.split(';')[0]).then((r) => r.name)
+export type Consent =
+  | { subject: 'self'; adult: true; ownFace: true; understood: true; sentence: string }
+  | { subject: 'other'; name: string; adult: true; permission: true; understood: true; sentence: string }
+export const createModel = (consent: Consent) => call<{ model: Model }>('POST', '/api/pratibimb/models', { consent }).then((r) => r.model)
+export type FileKind = 'photo' | 'voice' | 'consent' | 'video'
+const q = (shot?: string) => (shot ? `?shot=${encodeURIComponent(shot)}` : '')
+export const uploadFile = (id: string, kind: FileKind, blob: Blob, shot?: string) =>
+  call<{ name: string }>('PUT', `/api/pratibimb/models/${id}/files/${kind}${q(shot)}`, blob, blob.type.split(';')[0]).then((r) => r.name)
+/** A one-time link for a phone (2 hours, photos and video only). */
+export const createLink = (id: string) => call<{ token: string; path: string; expiresAt: number }>('POST', `/api/pratibimb/models/${id}/link`)
+
+/** The phone side of a link: not signed in, the token is the key. */
+export interface DeviceModel {
+  photos: number
+  shots: Record<string, string>
+  videos: number
+  status: Model['status']
+}
+export const deviceModel = (token: string) => call<{ model: DeviceModel }>('GET', `/api/pratibimb/device/${token}`).then((r) => r.model)
+export const deviceUpload = (token: string, kind: 'photo' | 'video', blob: Blob, shot?: string) =>
+  call<{ name: string }>('PUT', `/api/pratibimb/device/${token}/files/${kind}${q(shot)}`, blob, blob.type.split(';')[0]).then((r) => r.name)
 export const removeFile = (id: string, name: string) => call('DELETE', `/api/pratibimb/models/${id}/files/${name}`)
 export const buildModel = (id: string, options: Model['options']) => call<{ model: Model }>('POST', `/api/pratibimb/models/${id}/build`, options).then((r) => r.model)
 export const deleteModel = (id: string) => call('DELETE', `/api/pratibimb/models/${id}`)

@@ -1,0 +1,449 @@
+"""Pratibimb stage C (capture): everything the later stages need, from a video or a folder of photos.
+
+  python3 scripts/teacher/maker/capture.py <video file | photo folder> <models dir> <out dir> \
+      [--fps 15] [--max-seconds 600] [--keep 40]
+
+Runs on CPU with MediaPipe (Apache-2.0) and OpenCV's YuNet + SFace (MIT / Apache-2.0).
+
+What it finds
+- The main person. Interviews and crowd shots have other people in them, so every face is turned into
+  an identity vector (SFace) and the person who appears most often is followed; frames where that person
+  is not visible are left out. Cuts between camera shots are detected.
+- For every sampled frame of that person: the 478 face points and 52 expression scores, the head turn
+  (yaw, pitch, roll), 33 body points, 21 points per visible hand, hair / skin / clothes regions, and
+  how usable the frame is (face size, sharpness, light, motion blur).
+- Views: the sharpest calm frame for each head angle (left, three-quarter, front, right; up, level,
+  down), and the clearest frame for each expression (smile, open mouth, raised brows, pout, blink...).
+  Coverage says which angles are still missing, in plain words.
+- How the person moves (a motion profile): blinks per minute and how long they last, how much and how
+  fast the head moves, how wide each mouth shape opens while speaking (this tunes the lip sync to the
+  person, instead of one setting for everyone), how often they smile and raise their brows, and how
+  much and where their hands move when they talk.
+- Appearance: skin, eye, lip, brow, hair and clothes colours, with the room's colour cast taken out
+  using the whites of the eyes; hair length.
+- Voice: the sound track (16 kHz mono WAV) with the stretches where the person is speaking.
+
+Writes <out>/frames.jsonl, <out>/views/*.jpg (+ masks), <out>/profile.json, <out>/capture.json and
+<out>/voice.wav. Nothing leaves the machine.
+"""
+import argparse
+import glob
+import json
+import math
+import os
+import subprocess
+import sys
+
+import cv2
+import mediapipe as mp
+import numpy as np
+from mediapipe.tasks.python import BaseOptions, vision
+
+ap = argparse.ArgumentParser()
+ap.add_argument("source")
+ap.add_argument("models")
+ap.add_argument("out")
+ap.add_argument("--fps", type=float, default=15.0)
+ap.add_argument("--max-seconds", type=float, default=600.0)
+ap.add_argument("--keep", type=int, default=40, help="most view / expression frames to save")
+a = ap.parse_args()
+os.makedirs(os.path.join(a.out, "views"), exist_ok=True)
+M = lambda n: os.path.join(a.models, n)  # noqa: E731
+
+face_det = cv2.FaceDetectorYN.create(M("face_detection_yunet_2023mar.onnx"), "", (320, 320), 0.6)
+face_id = cv2.FaceRecognizerSF.create(M("face_recognition_sface_2021dec.onnx"), "")
+landmarker = vision.FaceLandmarker.create_from_options(vision.FaceLandmarkerOptions(
+    base_options=BaseOptions(model_asset_path=M("face_landmarker.task")), num_faces=1,
+    output_face_blendshapes=True, output_facial_transformation_matrixes=True))
+pose = vision.PoseLandmarker.create_from_options(vision.PoseLandmarkerOptions(
+    base_options=BaseOptions(model_asset_path=M("pose_landmarker_full.task")), num_poses=3))
+hands = vision.HandLandmarker.create_from_options(vision.HandLandmarkerOptions(
+    base_options=BaseOptions(model_asset_path=M("hand_landmarker.task")), num_hands=2))
+segmenter = vision.ImageSegmenter.create_from_options(vision.ImageSegmenterOptions(
+    base_options=BaseOptions(model_asset_path=M("selfie_multiclass.tflite")), output_confidence_masks=True))
+
+IMG_EXT = (".jpg", ".jpeg", ".png", ".webp")
+SCLERA = ([33, 246, 161, 160, 159, 158, 157, 173, 133, 155, 154, 153, 145, 144, 163, 7],
+          [263, 466, 388, 387, 386, 385, 384, 398, 362, 382, 381, 380, 374, 373, 390, 249])
+LIPS = [61, 185, 40, 39, 37, 0, 267, 269, 270, 409, 291, 375, 321, 405, 314, 17, 84, 181, 91, 146]
+BROWS = ([70, 63, 105, 66, 107, 55, 65, 52, 53, 46], [300, 293, 334, 296, 336, 285, 295, 282, 283, 276])
+OVAL = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152, 148, 176,
+        149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109]
+
+
+# --- Frames -----------------------------------------------------------------------------------------
+def frames():
+    """(time in s, BGR image) for a video at --fps, or for each photo (time = its index)."""
+    if os.path.isdir(a.source):
+        for i, p in enumerate(sorted(f for f in glob.glob(os.path.join(a.source, "*")) if f.lower().endswith(IMG_EXT))):
+            from PIL import Image, ImageOps
+            im = np.asarray(ImageOps.exif_transpose(Image.open(p)).convert("RGB"))[:, :, ::-1]
+            yield float(i), np.ascontiguousarray(im), os.path.basename(p)
+        return
+    cap = cv2.VideoCapture(a.source)
+    src_fps = cap.get(cv2.CAP_PROP_FPS) or 25.0
+    step = max(1, round(src_fps / a.fps))
+    i = 0
+    while True:
+        ok, im = cap.read()
+        if not ok or i / src_fps > a.max_seconds:
+            break
+        if i % step == 0:
+            yield i / src_fps, im, f"t{i / src_fps:08.3f}"
+        i += 1
+    cap.release()
+
+
+def detect_faces(bgr):
+    h, w = bgr.shape[:2]
+    s = min(1.0, 1280 / max(h, w))
+    small = cv2.resize(bgr, (int(w * s), int(h * s))) if s < 1 else bgr
+    face_det.setInputSize((small.shape[1], small.shape[0]))
+    _, f = face_det.detect(small)
+    if f is None:
+        return []
+    out = []
+    for row in f:
+        row = row.copy()
+        row[:14] /= s
+        out.append(row)
+    return out
+
+
+def embed(bgr, row):
+    aligned = face_id.alignCrop(bgr, row)
+    e = face_id.feature(aligned).ravel()
+    return e / (np.linalg.norm(e) + 1e-9)
+
+
+# --- Pass 1: who is the main person? -------------------------------------------------------------------
+print("CAPTURE pass 1: finding the main person", flush=True)
+seen = []  # embeddings of every face seen (sampled at ~2 per second)
+prev_hist, cuts, t_last = None, [], -1e9
+for t, bgr, name in frames():
+    if t - t_last < 0.5:
+        continue
+    t_last = t
+    for row in detect_faces(bgr):
+        if row[2] * row[3] > 40 * 40:
+            seen.append(embed(bgr, row))
+if not seen:
+    raise SystemExit("CAPTURE no face found anywhere in the source")
+E = np.array(seen)
+sim = E @ E.T
+votes = (sim > 0.45).sum(1)
+centre = E[sim[np.argmax(votes)] > 0.45].mean(0)
+centre /= np.linalg.norm(centre)
+print(f"CAPTURE main person in {int(votes.max())} of {len(E)} faces seen", flush=True)
+
+
+# --- Pass 2: everything about that person ------------------------------------------------------------
+def zoom_landmarks(rgb, box):
+    """Face points on a zoomed crop around the person's face, mapped back to the full frame."""
+    H, W = rgb.shape[:2]
+    x, y, w, h = box
+    side = max(w, h) * 2.4
+    cx, cy = x + w / 2, y + h / 2
+    x0, y0 = int(max(0, cx - side / 2)), int(max(0, cy - side / 2))
+    x1, y1 = int(min(W, cx + side / 2)), int(min(H, cy + side / 2))
+    crop = rgb[y0:y1, x0:x1]
+    if crop.size == 0:
+        return None
+    sz = 512
+    up = cv2.resize(crop, (sz, int(sz * crop.shape[0] / crop.shape[1])), interpolation=cv2.INTER_CUBIC)
+    r = landmarker.detect(mp.Image(image_format=mp.ImageFormat.SRGB, data=np.ascontiguousarray(up)))
+    if not r.face_landmarks:
+        return None
+    cw, ch = x1 - x0, y1 - y0
+    lm = np.array([[x0 + p.x * cw, y0 + p.y * ch, p.z * cw] for p in r.face_landmarks[0]])
+    bs = {b.category_name: round(b.score, 4) for b in r.face_blendshapes[0]}
+    Mx = np.array(r.facial_transformation_matrixes[0])
+    R = Mx[:3, :3] / np.linalg.norm(Mx[:3, 0])
+    yaw = math.degrees(math.atan2(-R[2, 0], math.hypot(R[2, 1], R[2, 2])))
+    pitch = math.degrees(math.atan2(R[2, 1], R[2, 2]))
+    roll = math.degrees(math.atan2(R[1, 0], R[0, 0]))
+    return lm, bs, (yaw, pitch, roll)
+
+
+def sharpness(gray, box):
+    x, y, w, h = [int(v) for v in box]
+    c = gray[max(0, y):y + h, max(0, x):x + w]
+    if c.size < 100:
+        return 0.0
+    c = cv2.resize(c, (160, int(160 * c.shape[0] / max(1, c.shape[1]))))
+    return float(cv2.Laplacian(c, cv2.CV_64F).var())
+
+
+def white_gain(rgb, lm):
+    m = np.zeros(rgb.shape[:2], np.uint8)
+    for ring in SCLERA:
+        cv2.fillPoly(m, [lm[ring, :2].astype(np.int32)], 1)
+    for c, ring in ((468, range(469, 473)), (473, range(474, 478))):
+        rr = np.mean([np.hypot(*(lm[k, :2] - lm[c, :2])) for k in ring]) * 1.15
+        cv2.circle(m, tuple(lm[c, :2].astype(int)), int(rr), 0, -1)
+    px = rgb[m > 0].astype(np.float32)
+    if len(px) < 30:
+        return None
+    lum = px @ [0.299, 0.587, 0.114]
+    c = np.median(px[lum >= np.percentile(lum, 60)], 0)
+    return np.clip(c.mean() / np.maximum(c, 1), 0.8, 1.25) ** 0.6
+
+
+print("CAPTURE pass 2: reading every frame of the main person", flush=True)
+records = []
+colours = {"skin": [], "iris": [], "lips": [], "brows": [], "hair": [], "clothes": []}
+hair_len = []
+f_out = open(os.path.join(a.out, "frames.jsonl"), "w")
+prev_small = None
+for t, bgr, name in frames():
+    rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
+    H, W = rgb.shape[:2]
+    gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+    small = cv2.resize(gray, (64, 36))
+    cut = prev_small is not None and float(np.abs(small.astype(int) - prev_small.astype(int)).mean()) > 40
+    prev_small = small
+    best, best_sim = None, 0.35
+    for row in detect_faces(bgr):
+        s_ = float(embed(bgr, row) @ centre)
+        if s_ > best_sim:
+            best, best_sim = row, s_
+    rec = {"t": round(t, 3), "name": name, "cut": bool(cut), "size": [W, H]}
+    if best is None:
+        rec["person"] = False
+        f_out.write(json.dumps(rec) + "\n")
+        continue
+    z = zoom_landmarks(rgb, best[:4])
+    if z is None:
+        rec["person"] = False
+        f_out.write(json.dumps(rec) + "\n")
+        continue
+    lm, bs, (yaw, pitch, roll) = z
+    face_px = float(np.ptp(lm[:, 0]))
+    rec.update(person=True, id=round(best_sim, 3), face_px=round(face_px, 1),
+               yaw=round(yaw, 1), pitch=round(pitch, 1), roll=round(roll, 1), blend=bs,
+               sharp=round(sharpness(gray, best[:4]), 1),
+               bright=round(float(gray[int(best[1]):int(best[1] + best[3]), int(best[0]):int(best[0] + best[2])].mean()), 1),
+               landmarks=lm.round(2).tolist())
+    # Body: the pose nearest the face.
+    pr = pose.detect(mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb))
+    if pr.pose_landmarks:
+        fc = lm[1, :2]
+        k = int(np.argmin([np.hypot(p[0].x * W - fc[0], p[0].y * H - fc[1]) for p in pr.pose_landmarks]))
+        rec["body"] = [[round(q.x * W, 1), round(q.y * H, 1), round(q.visibility, 2)] for q in pr.pose_landmarks[k]]
+        if pr.pose_world_landmarks:
+            rec["body3d"] = [[round(q.x, 3), round(q.y, 3), round(q.z, 3)] for q in pr.pose_world_landmarks[k]]
+    hr = hands.detect(mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb))
+    if hr.hand_landmarks:
+        rec["hands"] = [{"side": hd[0].category_name, "score": round(hd[0].score, 2),
+                         "points": [[round(q.x * W, 1), round(q.y * H, 1), round(q.z, 3)] for q in hl]}
+                        for hl, hd in zip(hr.hand_landmarks, hr.handedness)]
+    # Appearance, from calm, sharp, well-lit frames.
+    calm = abs(yaw) < 25 and abs(pitch) < 25 and bs.get("mouthSmileLeft", 0) < 0.4 and bs.get("jawOpen", 0) < 0.2
+    if calm and face_px > 120 and rec["sharp"] > 40:
+        g = white_gain(rgb, lm)
+        if g is not None:
+            seg = segmenter.segment(mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)).confidence_masks
+            masks = [m_.numpy_view().reshape(H, W) for m_ in seg]
+            wb = np.clip(rgb.astype(np.float32) * g, 0, 255)
+            oval = np.zeros((H, W), np.uint8)
+            cv2.fillPoly(oval, [lm[OVAL, :2].astype(np.int32)], 1)
+            lips = np.zeros((H, W), np.uint8)
+            cv2.fillPoly(lips, [lm[LIPS, :2].astype(np.int32)], 1)
+            brow = np.zeros((H, W), np.uint8)
+            for ring in BROWS:
+                cv2.fillPoly(brow, [lm[ring, :2].astype(np.int32)], 1)
+            skin = (masks[3] > 0.8) & (oval > 0) & (lips == 0) & (brow == 0)
+            if skin.sum() > 200:
+                px = wb[skin]
+                lum = px @ [0.299, 0.587, 0.114]
+                lo, hi = np.percentile(lum, [60, 90])
+                colours["skin"].append(np.median(px[(lum >= lo) & (lum <= hi)], 0))
+            if (lips > 0).sum() > 30:
+                colours["lips"].append(np.median(wb[(lips > 0) & (masks[3] > 0.2)], 0) if ((lips > 0) & (masks[3] > 0.2)).sum() > 20 else np.median(wb[lips > 0], 0))
+            if (brow > 0).sum() > 20:
+                bp = wb[brow > 0]
+                colours["brows"].append(np.median(bp[(bp @ [0.299, 0.587, 0.114]) <= np.percentile(bp @ [0.299, 0.587, 0.114], 40)], 0))
+            ir = []
+            for c_, ring in ((468, range(469, 473)), (473, range(474, 478))):
+                rr = np.mean([np.hypot(*(lm[k, :2] - lm[c_, :2])) for k in ring])
+                yy, xx = np.ogrid[:H, :W]
+                d = np.sqrt((xx - lm[c_, 0]) ** 2 + (yy - lm[c_, 1]) ** 2)
+                ir.append((d < rr * 0.9) & (d > rr * 0.4))
+            irm = ir[0] | ir[1]
+            if irm.sum() > 10:
+                colours["iris"].append(np.median(wb[irm], 0))
+            hair = masks[1] > 0.6
+            if hair.sum() > 200:
+                colours["hair"].append(np.median(wb[hair], 0))
+                ys = np.nonzero(hair)[0]
+                hair_len.append(float((np.percentile(ys, 98) - lm[152, 1]) / face_px))
+            cl = masks[4] > 0.7
+            if cl.sum() > 500:
+                colours["clothes"].append(np.median(wb[cl], 0))
+            rec["appearance_frame"] = True
+    records.append((rec, True))
+    f_out.write(json.dumps(rec) + "\n")
+    if len(records) % 50 == 0:
+        print(f"CAPTURE {len(records)} frames of the person (t={t:.1f}s)", flush=True)
+f_out.close()
+people = [r for r, _ in records]
+print(f"CAPTURE {len(people)} frames of the main person", flush=True)
+if not people:
+    raise SystemExit("CAPTURE the main person was never seen clearly")
+
+
+# --- Views and expressions ------------------------------------------------------------------------------
+def quality(r):
+    return min(1, r["face_px"] / 350) * 0.4 + min(1, r["sharp"] / 250) * 0.4 + (0.2 if 60 < r["bright"] < 220 else 0)
+
+
+def neutral(r):
+    b = r["blend"]
+    return b.get("jawOpen", 0) < 0.15 and b.get("mouthSmileLeft", 0) < 0.3 and b.get("eyeBlinkLeft", 0) < 0.4
+
+
+YAW_BINS = [(-60, -35, "far left"), (-35, -15, "three-quarter left"), (-15, 15, "front"), (15, 35, "three-quarter right"), (35, 60, "far right")]
+PITCH_BINS = [(-30, -8, "looking down"), (-8, 8, "level"), (8, 30, "looking up")]
+views, missing = [], []
+for y0, y1, yn in YAW_BINS:
+    for p0, p1, pn in PITCH_BINS:
+        cand = [(quality(r), i) for i, (r, b) in enumerate(records) if b is not None and neutral(r)
+                and y0 <= r["yaw"] < y1 and p0 <= r["pitch"] < p1 and r["face_px"] > 90]
+        if cand:
+            views.append((f"{yn}, {pn}", max(cand)[1]))
+        elif pn == "level":
+            missing.append(yn)
+EXPRESSIONS = {
+    "smile": lambda b: (b.get("mouthSmileLeft", 0) + b.get("mouthSmileRight", 0)) / 2,
+    "open mouth": lambda b: b.get("jawOpen", 0),
+    "raised brows": lambda b: b.get("browInnerUp", 0),
+    "pout": lambda b: b.get("mouthPucker", 0),
+    "frown": lambda b: (b.get("browDownLeft", 0) + b.get("browDownRight", 0)) / 2,
+    "eyes closed": lambda b: (b.get("eyeBlinkLeft", 0) + b.get("eyeBlinkRight", 0)) / 2,
+    "wide eyes": lambda b: (b.get("eyeWideLeft", 0) + b.get("eyeWideRight", 0)) / 2,
+}
+for ename, fn in EXPRESSIONS.items():
+    cand = [(fn(r["blend"]) * (0.5 + quality(r)), i) for i, (r, b) in enumerate(records)
+            if b is not None and abs(r["yaw"]) < 25 and r["face_px"] > 90]
+    if cand and max(cand)[0] > 0.35:
+        views.append((f"expression: {ename}", max(cand)[1]))
+views = views[: a.keep]
+# Read the chosen frames again (frames are not kept in memory while scanning).
+want = {records[i][0]["name"]: [] for _, i in views}
+for label, i in views:
+    want[records[i][0]["name"]].append((label, i))
+picked = {}
+for t, bgr, name in frames():
+    if name in want:
+        picked[name] = bgr
+saved = []
+for label, i in views:
+    r = records[i][0]
+    b = picked.get(r["name"])
+    if b is None:
+        continue
+    fn = f"{len(saved):02d}_{label.replace(':', '').replace(',', '').replace(' ', '_')}.jpg"
+    cv2.imwrite(os.path.join(a.out, "views", fn), b, [cv2.IMWRITE_JPEG_QUALITY, 95])
+    rgb = cv2.cvtColor(b, cv2.COLOR_BGR2RGB)
+    seg = segmenter.segment(mp.Image(image_format=mp.ImageFormat.SRGB, data=np.ascontiguousarray(rgb))).confidence_masks
+    lab = np.argmax(np.stack([m_.numpy_view().reshape(rgb.shape[:2]) for m_ in seg]), 0).astype(np.uint8)
+    cv2.imwrite(os.path.join(a.out, "views", fn[:-4] + "_parts.png"), lab * 40)  # 0 bg, 1 hair, 2 body, 3 face, 4 clothes, 5 other
+    saved.append({"file": fn, "label": label, "t": r["t"], "yaw": r["yaw"], "pitch": r["pitch"], "face_px": r["face_px"], "sharp": r["sharp"]})
+
+# --- How the person moves ------------------------------------------------------------------------------------
+is_video = not os.path.isdir(a.source)
+voice = None
+if is_video:
+    wav = os.path.join(a.out, "voice.wav")
+    p = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", a.source, "-t", str(a.max_seconds), "-ac", "1", "-ar", "16000", wav])
+    if p.returncode == 0 and os.path.exists(wav):
+        import wave
+        with wave.open(wav) as w_:
+            s16 = np.frombuffer(w_.readframes(w_.getnframes()), np.int16).astype(np.float32) / 32768
+        hop = 160  # 10 ms
+        rms = np.sqrt(np.convolve(s16 ** 2, np.ones(400) / 400, "same")[::hop] + 1e-12)
+        thr = max(np.percentile(rms, 30) * 2.5, 0.01)
+        voice = rms > thr
+        voice = np.convolve(voice.astype(float), np.ones(25) / 25, "same") > 0.3  # fill short gaps (250 ms)
+        spans, on = [], None
+        for k, v in enumerate(voice):
+            if v and on is None:
+                on = k
+            if not v and on is not None:
+                spans.append([round(on / 100, 2), round(k / 100, 2)])
+                on = None
+        if on is not None:
+            spans.append([round(on / 100, 2), round(len(voice) / 100, 2)])
+        voice_spans = spans
+    else:
+        voice_spans = []
+
+profile = {"frames": len(people), "seconds": round(people[-1]["t"] - people[0]["t"], 1) if is_video else None}
+if is_video and len(people) > 30:
+    T = np.array([r["t"] for r in people])
+    B = lambda k: np.array([r["blend"].get(k, 0) for r in people])  # noqa: E731
+    blink = (B("eyeBlinkLeft") + B("eyeBlinkRight")) / 2 > 0.5
+    starts = np.nonzero(blink[1:] & ~blink[:-1])[0]
+    dur = []
+    for s0 in starts:
+        e = s0 + 1
+        while e < len(blink) and blink[e]:
+            e += 1
+        dur.append(T[min(e, len(T) - 1)] - T[s0 + 1])
+    span = max(1e-6, T[-1] - T[0])
+    yaw, pitch, roll = (np.array([r[k] for r in people]) for k in ("yaw", "pitch", "roll"))
+    dt = np.diff(T)
+    ok = (dt > 0) & (dt < 0.3)
+    speaking = None
+    if voice is not None:
+        idx = np.clip((T * 100).astype(int), 0, len(voice) - 1)
+        speaking = voice[idx]
+    MOUTH = ["jawOpen", "mouthClose", "mouthFunnel", "mouthPucker", "mouthStretchLeft", "mouthStretchRight", "mouthSmileLeft",
+             "mouthSmileRight", "mouthUpperUpLeft", "mouthUpperUpRight", "mouthLowerDownLeft", "mouthLowerDownRight",
+             "mouthPressLeft", "mouthPressRight", "mouthRollLower", "mouthRollUpper", "mouthShrugLower", "mouthShrugUpper"]
+    sel = speaking if speaking is not None and speaking.sum() > 20 else np.ones(len(people), bool)
+    profile.update({
+        "blinks_per_minute": round(len(starts) / span * 60, 1),
+        "blink_ms": round(float(np.median(dur)) * 1000) if dur else None,
+        "head": {k: {"spread_deg": round(float(np.std(v)), 2), "speed_deg_s": round(float(np.median(np.abs(np.diff(v))[ok] / dt[ok])), 2) if ok.any() else None}
+                 for k, v in (("yaw", yaw), ("pitch", pitch), ("roll", roll))},
+        "speaking_mouth": {k: {"p50": round(float(np.percentile(B(k)[sel], 50)), 3), "p95": round(float(np.percentile(B(k)[sel], 95)), 3)} for k in MOUTH},
+        "smile_share": round(float(((B("mouthSmileLeft") + B("mouthSmileRight")) / 2 > 0.35).mean()), 3),
+        "brow_raise_share": round(float((B("browInnerUp") > 0.35).mean()), 3),
+        "speaking_share": round(float(speaking.mean()), 3) if speaking is not None else None,
+    })
+    # Hands: how often they are up and moving while speaking, and where (relative to the shoulders).
+    hand_up, hand_speed, hand_y = 0, [], []
+    for k_, r in enumerate(people):
+        if "hands" in r and "body" in r:
+            sh = np.array(r["body"])[[11, 12], :2]
+            sw = max(1.0, float(np.linalg.norm(sh[0] - sh[1])))
+            for h_ in r["hands"]:
+                wr = np.array(h_["points"][0][:2])
+                hand_up += 1
+                hand_y.append(float((wr[1] - sh[:, 1].mean()) / sw))
+                if k_ > 0 and "hands" in people[k_ - 1] and 0 < dt[k_ - 1] < 0.3:
+                    prev = [np.array(q["points"][0][:2]) for q in people[k_ - 1]["hands"] if q["side"] == h_["side"]]
+                    if prev:
+                        hand_speed.append(float(np.linalg.norm(wr - prev[0]) / sw / dt[k_ - 1]))
+    profile["hands"] = {"visible_share": round(hand_up / len(people) / 2, 3),
+                        "speed_shoulders_per_s": round(float(np.median(hand_speed)), 3) if hand_speed else None,
+                        "height_below_shoulders": round(float(np.median(hand_y)), 3) if hand_y else None}
+    profile["voice_spans"] = voice_spans[:400] if voice is not None else []
+
+med = lambda xs: (np.median(np.array(xs), 0) / 255).round(3).tolist() if xs else None  # noqa: E731
+appearance = {k: med(v) for k, v in colours.items()}
+appearance["hair_below_chin_face_widths"] = round(float(np.median(hair_len)), 2) if hair_len else None
+yaws = np.array([r["yaw"] for r in people])
+summary = {
+    "source": os.path.basename(a.source.rstrip("/")), "kind": "video" if is_video else "photos",
+    "frames_of_person": len(people), "views": saved, "missing_views": missing,
+    "turn_range_deg": [round(float(yaws.min()), 1), round(float(yaws.max()), 1)],
+    "appearance": appearance,
+    "advice": ([f"Add a {', '.join(missing)} view (turn the head slowly to that side)."] if missing else [])
+    + (["Faces are small: film closer, head and shoulders filling about a third of the frame."] if np.median([r["face_px"] for r in people]) < 150 else []),
+}
+json.dump(profile, open(os.path.join(a.out, "profile.json"), "w"), indent=1)
+json.dump(summary, open(os.path.join(a.out, "capture.json"), "w"), indent=1)
+print("CAPTURE views", len(saved), "missing", missing, "turn range", summary["turn_range_deg"])
+print("CAPTURE done", json.dumps({k: profile.get(k) for k in ("blinks_per_minute", "blink_ms", "smile_share", "speaking_share")}))

@@ -11,7 +11,11 @@
 //   POST   /api/pratibimb/models                   start a model (consent answers required)
 //   GET    /api/pratibimb/models                   mine
 //   GET    /api/pratibimb/models/:id               one: status, files, report
-//   PUT    /api/pratibimb/models/:id/files/:kind   add a photo, a voice clip or the consent video (raw body)
+//   PUT    /api/pratibimb/models/:id/files/:kind   add a photo (?shot=front…), a voice clip, the consent
+//                                                   video or an optional capture video (raw body, streamed)
+//   POST   /api/pratibimb/models/:id/link          a one-time phone link (/pratibimb/capture/<token>, 2 hours)
+//   GET    /api/pratibimb/device/:token            the phone: which shots are done
+//   PUT    /api/pratibimb/device/:token/files/:kind  the phone adds a photo or video (same rules)
 //   DELETE /api/pratibimb/models/:id/files/:name   remove one file before building
 //   POST   /api/pratibimb/models/:id/build         queue the build (height, body, style)
 //   GET    /api/pratibimb/models/:id/model.vrm     the finished model (the person only)
@@ -36,10 +40,15 @@ const KINDS = {
   photo: { max: 24, bytes: 15 * 1024 * 1024, types: { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" } },
   voice: { max: 8, bytes: 12 * 1024 * 1024, types: { "audio/wav": "wav", "audio/webm": "webm", "audio/ogg": "ogg", "audio/mp4": "m4a", "audio/mpeg": "mp3" } },
   consent: { max: 1, bytes: 40 * 1024 * 1024, types: { "video/webm": "webm", "video/mp4": "mp4" } },
+  // Optional: a short guided video (turning the head, smiling, speaking) makes the model better.
+  video: { max: 3, bytes: 300 * 1024 * 1024, types: { "video/webm": "webm", "video/mp4": "mp4", "video/quicktime": "mov" } },
 };
+const SHOT_RE = /^[a-z][a-z0-9-]{1,30}$/;
+const TOKEN_RE = /^[A-Za-z0-9_-]{22,64}$/;
+const LINK_TTL_MS = 2 * 60 * 60 * 1000;
 const RESULTS = { "model.vrm": 60 * 1024 * 1024, "report.json": 2 * 1024 * 1024, "preview.jpg": 4 * 1024 * 1024 };
 const ID_RE = /^[a-f0-9]{24}$/;
-const FILE_RE = /^(photo|voice|consent)-[a-f0-9]{8}\.[a-z0-9]{2,4}$/;
+const FILE_RE = /^(photo|voice|consent|video)-[a-f0-9]{8}\.[a-z0-9]{2,4}$/;
 const STATUSES = new Set(["draft", "queued", "building", "done", "failed"]);
 const MAX_MODELS = 3;
 
@@ -77,6 +86,13 @@ function ensureTables() {
         updated_at INTEGER NOT NULL
       )`);
       await run(`CREATE INDEX IF NOT EXISTS pratibimb_models_user ON pratibimb_models(username)`);
+      await run(`CREATE TABLE IF NOT EXISTS pratibimb_links (
+        token TEXT PRIMARY KEY,
+        model_id TEXT NOT NULL,
+        username TEXT NOT NULL,
+        created_at INTEGER NOT NULL,
+        expires_at INTEGER NOT NULL
+      )`);
     })().catch((e) => {
       ready = null;
       throw e;
@@ -93,6 +109,66 @@ const listFiles = (id) => {
     return [];
   }
 };
+
+const shotsPath = (id) => path.join(folder(id), "shots.json");
+function readShots(id) {
+  try {
+    return JSON.parse(fs.readFileSync(shotsPath(id), "utf8"));
+  } catch {
+    return {};
+  }
+}
+function writeShots(id, shots) {
+  fs.writeFileSync(shotsPath(id), JSON.stringify(shots));
+}
+
+/** Stream a request body to a file in the model's folder, stopping at the kind's size limit. */
+function saveUpload(req, row, kindName) {
+  const kind = KINDS[kindName];
+  if (!kind) bad("Unknown file kind");
+  const type = String(req.get("content-type") || "").split(";")[0].trim().toLowerCase();
+  const ext = kind.types[type];
+  if (!ext) bad("That file type is not supported here.");
+  const declared = Number(req.get("content-length") || 0);
+  if (declared > kind.bytes) bad("That file is too large.");
+  const have = listFiles(row.id).filter((f) => f.startsWith(kindName + "-"));
+  if (have.length >= kind.max) bad(`At most ${kind.max} ${kindName} files.`);
+  const name = `${kindName}-${crypto.randomBytes(4).toString("hex")}.${ext}`;
+  const dest = path.join(folder(row.id), name);
+  const part = dest + ".part";
+  return new Promise((resolve, reject) => {
+    let size = 0;
+    let failed = false;
+    const out = fs.createWriteStream(part);
+    const fail = (e) => {
+      if (failed) return;
+      failed = true;
+      out.destroy();
+      fs.rmSync(part, { force: true });
+      reject(e);
+    };
+    req.on("data", (chunk) => {
+      size += chunk.length;
+      if (size > kind.bytes) {
+        req.unpipe(out);
+        req.resume();
+        fail(new HttpError(400, "That file is too large."));
+      }
+    });
+    req.on("error", fail);
+    out.on("error", fail);
+    out.on("finish", () => {
+      if (failed) return;
+      if (!size) {
+        fs.rmSync(part, { force: true });
+        return reject(new HttpError(400, "Empty file"));
+      }
+      fs.renameSync(part, dest);
+      resolve(name);
+    });
+    req.pipe(out);
+  });
+}
 
 async function own(req, id) {
   if (!ID_RE.test(id)) bad("Not found", 404);
@@ -116,13 +192,26 @@ function view(row) {
     note: row.note,
     likeness: row.likeness,
     options: row.options ? JSON.parse(row.options) : {},
+    subject: (() => {
+      try {
+        const c = JSON.parse(row.consent || "{}");
+        return c.subject === "other" ? { kind: "other", name: c.name || "" } : { kind: "self", name: "" };
+      } catch {
+        return { kind: "self", name: "" };
+      }
+    })(),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     photos: files.filter((f) => f.startsWith("photo-")),
     voices: files.filter((f) => f.startsWith("voice-")),
     consentVideo: files.some((f) => f.startsWith("consent-")),
+    videos: files.filter((f) => f.startsWith("video-")),
+    shots: (() => {
+      const all_ = readShots(row.id);
+      return Object.fromEntries(Object.entries(all_).filter(([f]) => files.includes(f)));
+    })(),
     hasModel: files.includes("model.vrm"),
-    report: report && { stages: report.stages ? Object.fromEntries(Object.entries(report.stages).map(([k, v]) => [k, v && v.note])) : {} },
+    report: report && { stages: report.stages ? Object.fromEntries(Object.entries(report.stages).map(([k, v]) => [k, { note: (v && v.note) || null, seconds: v && Number.isFinite(v.seconds) ? v.seconds : null }])) : {} },
   };
 }
 
@@ -144,15 +233,20 @@ function createPratibimbRouter() {
   router.post("/api/pratibimb/models", ...user, express.json({ limit: "4kb" }), wrap(async (req, res) => {
     await ensureTables();
     const c = req.body?.consent || {};
-    if (c.adult !== true || c.ownFace !== true || c.understood !== true) bad("Please confirm all three consent points first.");
+    // A model of yourself, or of someone you know who has agreed (they read the consent sentence on
+    // camera themselves; the build checks that face against the photos).
+    const other = c.subject === "other";
+    if (c.adult !== true || c.understood !== true || (other ? c.permission !== true : c.ownFace !== true)) bad("Please confirm all three consent points first.");
     const mine = await all(`SELECT id FROM pratibimb_models WHERE username = ?`, [req.sessionUser.username]);
     if (mine.length >= MAX_MODELS) bad(`You can keep up to ${MAX_MODELS} models. Delete one first.`);
     const id = crypto.randomBytes(12).toString("hex");
     const now = Date.now();
     fs.mkdirSync(folder(id), { recursive: true });
-    const consent = { adult: true, ownFace: true, understood: true, sentence: String(c.sentence || "").slice(0, 200), at: now };
+    const consent = other
+      ? { subject: "other", name: String(c.name || "").trim().slice(0, 60), adult: true, permission: true, understood: true, sentence: String(c.sentence || "").slice(0, 200), at: now }
+      : { subject: "self", adult: true, ownFace: true, understood: true, sentence: String(c.sentence || "").slice(0, 200), at: now };
     await run(`INSERT INTO pratibimb_models (id, username, status, consent, created_at, updated_at) VALUES (?, ?, 'draft', ?, ?, ?)`, [id, req.sessionUser.username, JSON.stringify(consent), now, now]);
-    res.json({ ok: true, model: view({ id, username: req.sessionUser.username, status: "draft", created_at: now, updated_at: now }) });
+    res.json({ ok: true, model: view({ id, username: req.sessionUser.username, status: "draft", consent: JSON.stringify(consent), created_at: now, updated_at: now }) });
   }));
 
   router.get("/api/pratibimb/models", ...user, wrap(async (req, res) => {
@@ -166,24 +260,68 @@ function createPratibimbRouter() {
     res.json({ ok: true, model: view(await own(req, req.params.id)) });
   }));
 
-  router.put("/api/pratibimb/models/:id/files/:kind", ...user, express.raw({ type: () => true, limit: "41mb" }), wrap(async (req, res) => {
+  async function addFile(req, row) {
+    if (row.status !== "draft" && row.status !== "failed") bad("This model is being built. Delete it to start again.");
+    const name = await saveUpload(req, row, req.params.kind);
+    const shot = String(req.query.shot || "");
+    if (req.params.kind === "photo" && SHOT_RE.test(shot)) {
+      const shots = readShots(row.id);
+      shots[name] = shot;
+      writeShots(row.id, shots);
+    }
+    await run(`UPDATE pratibimb_models SET updated_at = ? WHERE id = ?`, [Date.now(), row.id]);
+    return name;
+  }
+
+  router.put("/api/pratibimb/models/:id/files/:kind", ...user, wrap(async (req, res) => {
     await ensureTables();
     const row = await own(req, req.params.id);
-    if (row.status !== "draft" && row.status !== "failed") bad("This model is being built. Delete it to start again.");
-    const kind = KINDS[req.params.kind];
-    if (!kind) bad("Unknown file kind");
-    const type = String(req.get("content-type") || "").split(";")[0].trim().toLowerCase();
-    const ext = kind.types[type];
-    if (!ext) bad("That file type is not supported here.");
-    const body = req.body;
-    if (!Buffer.isBuffer(body) || !body.length) bad("Empty file");
-    if (body.length > kind.bytes) bad("That file is too large.");
-    const have = listFiles(row.id).filter((f) => f.startsWith(req.params.kind + "-"));
-    if (have.length >= kind.max) bad(`At most ${kind.max} ${req.params.kind} files.`);
-    const name = `${req.params.kind}-${crypto.randomBytes(4).toString("hex")}.${ext}`;
-    fs.writeFileSync(path.join(folder(row.id), name), body);
-    await run(`UPDATE pratibimb_models SET updated_at = ? WHERE id = ?`, [Date.now(), row.id]);
-    res.json({ ok: true, name });
+    res.json({ ok: true, name: await addFile(req, row) });
+  }));
+
+  // --- a phone or tablet adds photos by QR (not signed in: the token stands for this one model) ----
+  router.post("/api/pratibimb/models/:id/link", ...user, wrap(async (req, res) => {
+    await ensureTables();
+    const row = await own(req, req.params.id);
+    const token = crypto.randomBytes(18).toString("base64url");
+    const now = Date.now();
+    await run(`DELETE FROM pratibimb_links WHERE expires_at < ?`, [now]);
+    await run(`INSERT INTO pratibimb_links (token, model_id, username, created_at, expires_at) VALUES (?, ?, ?, ?, ?)`, [token, row.id, row.username, now, now + LINK_TTL_MS]);
+    res.json({ ok: true, token, path: `/pratibimb/capture/${token}`, expiresAt: now + LINK_TTL_MS });
+  }));
+
+  async function deviceModel(token) {
+    if (!TOKEN_RE.test(String(token))) bad("This link is not valid.", 404);
+    const link = await get(`SELECT * FROM pratibimb_links WHERE token = ?`, [token]);
+    if (!link) bad("This link is not valid.", 404);
+    if (link.expires_at < Date.now()) bad("This link has expired. Make a new one on the computer.", 410);
+    const row = await get(`SELECT * FROM pratibimb_models WHERE id = ?`, [link.model_id]);
+    if (!row || row.username !== link.username) bad("This link is not valid.", 404);
+    return row;
+  }
+  const hits = new Map();
+  const deviceLimit = (req, res, next) => {
+    const k = String(req.params.token || "");
+    const now = Date.now();
+    const h = (hits.get(k) || []).filter((t) => now - t < 60 * 1000);
+    if (h.length >= 40) return res.status(429).json({ ok: false, error: "Too many requests; wait a minute." });
+    h.push(now);
+    hits.set(k, h);
+    next();
+  };
+
+  router.get("/api/pratibimb/device/:token", deviceLimit, wrap(async (req, res) => {
+    await ensureTables();
+    const row = await deviceModel(req.params.token);
+    const v = view(row);
+    res.json({ ok: true, model: { photos: v.photos.length, shots: v.shots, videos: v.videos.length, status: v.status } });
+  }));
+
+  router.put("/api/pratibimb/device/:token/files/:kind", deviceLimit, wrap(async (req, res) => {
+    await ensureTables();
+    if (!["photo", "video"].includes(req.params.kind)) bad("Not allowed from a phone link", 403);
+    const row = await deviceModel(req.params.token);
+    res.json({ ok: true, name: await addFile(req, row) });
   }));
 
   router.delete("/api/pratibimb/models/:id/files/:name", ...user, wrap(async (req, res) => {
@@ -191,6 +329,11 @@ function createPratibimbRouter() {
     const row = await own(req, req.params.id);
     if (!FILE_RE.test(req.params.name)) bad("Not found", 404);
     fs.rmSync(path.join(folder(row.id), req.params.name), { force: true });
+    const shots = readShots(row.id);
+    if (shots[req.params.name]) {
+      delete shots[req.params.name];
+      writeShots(row.id, shots);
+    }
     res.json({ ok: true });
   }));
 
@@ -225,6 +368,7 @@ function createPratibimbRouter() {
     const row = await own(req, req.params.id);
     fs.rmSync(folder(row.id), { recursive: true, force: true });
     await run(`DELETE FROM pratibimb_models WHERE id = ?`, [row.id]);
+    await run(`DELETE FROM pratibimb_links WHERE model_id = ?`, [row.id]);
     res.json({ ok: true });
   }));
 
@@ -234,7 +378,7 @@ function createPratibimbRouter() {
     const row = await get(`SELECT * FROM pratibimb_models WHERE status = 'queued' ORDER BY updated_at ASC LIMIT 1`);
     if (!row) return res.json({ ok: true, job: null });
     await run(`UPDATE pratibimb_models SET status = 'building', stage = 'starting', updated_at = ? WHERE id = ? AND status = 'queued'`, [Date.now(), row.id]);
-    res.json({ ok: true, job: { id: row.id, options: row.options ? JSON.parse(row.options) : {}, files: listFiles(row.id).filter((f) => FILE_RE.test(f)) } });
+    res.json({ ok: true, job: { id: row.id, options: row.options ? JSON.parse(row.options) : {}, files: listFiles(row.id).filter((f) => FILE_RE.test(f)), shots: readShots(row.id) } });
   }));
 
   router.get("/api/pratibimb/worker/:id/files/:name", workerAuth, wrap(async (req, res) => {
