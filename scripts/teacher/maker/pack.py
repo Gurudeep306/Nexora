@@ -465,6 +465,8 @@ if os.path.exists(os.path.join(tdir, "train.json")):
     files["train/train.json"] = open(os.path.join(tdir, "train.json"), "rb").read()
     for m in json.load(open(os.path.join(tdir, "train.json"))):
         files[f"train/{m['file']}"] = open(os.path.join(tdir, m["file"]), "rb").read()
+        if m.get("parts") and os.path.exists(os.path.join(tdir, m["parts"])):
+            files[f"train/{m['parts']}"] = open(os.path.join(tdir, m["parts"]), "rb").read()
 
 identity_doc = {
     "face": {

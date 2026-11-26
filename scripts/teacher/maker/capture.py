@@ -435,17 +435,24 @@ for t, bgr, name in frames():
         cover = covered(bgr, lm, r["face_px"])
         fw = float(np.ptp(lm[:, 0]))
         cx, cy = lm[:, 0].mean(), lm[:, 1].mean()
-        half = fw * 1.4
+        # Head, shoulders and upper chest: the presenter is shown waist up, so the body must be learned too.
+        half = fw * 2.0
         H_, W_ = bgr.shape[:2]
-        x0, y0 = int(max(0, cx - half)), int(max(0, cy - half * 1.15))
-        x1, y1 = int(min(W_, cx + half)), int(min(H_, cy + half * 1.05))
+        x0, y0 = int(max(0, cx - half)), int(max(0, cy - half * 0.95))
+        x1, y1 = int(min(W_, cx + half)), int(min(H_, cy + half * 1.55))
         crop = bgr[y0:y1, x0:x1]
         scale = min(1.0, 768 / max(1, max(crop.shape[:2])))
         if scale < 1:
             crop = cv2.resize(crop, (int(crop.shape[1] * scale), int(crop.shape[0] * scale)), interpolation=cv2.INTER_AREA)
+        # Which pixels are the person (hair, skin, clothes) and which are background: the model is the person only.
+        seg = segmenter.segment(mp.Image(image_format=mp.ImageFormat.SRGB, data=np.ascontiguousarray(cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)))).confidence_masks
+        parts = np.argmax(np.stack([m_.numpy_view().reshape(crop.shape[:2]) for m_ in seg]), 0).astype(np.uint8)
         fn = f"{len(train_meta):03d}.jpg"
         cv2.imwrite(os.path.join(a.out, "train", fn), crop, [cv2.IMWRITE_JPEG_QUALITY, 93])
-        train_meta.append({"file": fn, "t": r["t"], "offset": [x0, y0], "scale": scale, "yaw": r["yaw"], "pitch": r["pitch"], "cover": round(cover, 4)})
+        cv2.imwrite(os.path.join(a.out, "train", fn[:-4] + "_parts.png"), parts)  # 0 bg, 1 hair, 2 body skin, 3 face, 4 clothes, 5 other
+        body = r.get("body")
+        train_meta.append({"file": fn, "parts": fn[:-4] + "_parts.png", "body": [[(q[0] - x0) * scale, (q[1] - y0) * scale, q[2]] for q in body] if body else None,
+                           "t": r["t"], "offset": [x0, y0], "scale": scale, "yaw": r["yaw"], "pitch": r["pitch"], "cover": round(cover, 4)})
 # A covered face (sticker, emoji, hand) would teach the learner the cover. Judged against the person's own usual
 # face, so a beard, stubble, moles or glasses that are there in every frame are never taken for a cover.
 if train_meta:

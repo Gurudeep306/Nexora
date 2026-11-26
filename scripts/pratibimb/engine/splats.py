@@ -60,9 +60,16 @@ class Splats(torch.nn.Module):
         c = img[yi, xi].clamp(0.02, 0.98)
         self.rgb.copy_(torch.log(c / (1 - c)))
 
-    def render(self, v, tri, hw, chunk=4096):
+    def render(self, v, tri, hw, chunk=4096, sh=None, colours=None):
+        """sh (4 x 3): the frame's light as order-1 spherical harmonics; the drawn colour is the point's own
+        colour (albedo) times that light seen from the point's normal. colours: fixed colours instead."""
         mu, u, vv, su, sv, n, k = self.place(v, tri)
         col, op = torch.sigmoid(self.rgb), torch.sigmoid(self.op)
+        if sh is not None:
+            light = sh[0][None] + n[:, 0:1] * sh[1][None] + n[:, 1:2] * sh[2][None] + n[:, 2:3] * sh[3][None]
+            col = col * light.clamp(min=0.0)
+        if colours is not None:
+            col = colours
         if HAVE_GSPLAT and v.is_cuda:
             return _render_gsplat(mu, u, vv, su, sv, n, k, col, op, hw)
         return _render_torch(mu, u, vv, su, sv, col, op, hw, chunk)

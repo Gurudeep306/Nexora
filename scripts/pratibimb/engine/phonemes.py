@@ -50,8 +50,13 @@ TARGETS = {
 MUST_CLOSE = {"PBM"}  # these never blend away: the lips meet fully at the middle of the sound
 
 
+# Some voices write diphthongs and a few sounds with single letters (Misaki style): spell them in IPA.
+SHORTHAND = {"A": "eɪ", "I": "aɪ", "O": "oʊ", "W": "aʊ", "Y": "ɔɪ", "ᵊ": "ə", "T": "ɾ"}
+
+
 def viseme(ipa):
     """The mouth class of one IPA phoneme (diacritics such as length marks fall back to the base sound)."""
+    ipa = SHORTHAND.get(ipa, ipa)
     if ipa in VISEME_OF:
         return VISEME_OF[ipa]
     base = ipa.rstrip("ːˑʰʱ̃")

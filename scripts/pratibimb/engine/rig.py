@@ -64,7 +64,8 @@ class Rig:
         L = np.asarray(landmarks, np.float64)[:, :468]
         ref = L[0].copy()
         for _ in range(3):  # align everything to an evolving mean shape
-            loc = np.array([Rig._to_local(x, ref)[0] for x in L])
+            al = [Rig._to_local(x, ref) for x in L]
+            loc = np.array([x[0] for x in al])
             ref = loc.mean(0)
         # A fixed frame for the head: origin between the eyes, x towards the person's left eye (image right),
         # y down towards the chin, z away from the camera; 1 unit = outer eye-corner distance.
@@ -85,9 +86,12 @@ class Rig:
         mean = W[-1].reshape(468, 3)  # the face with every expression value at 0
         shell_index = Rig._shell_plan()
         cavity = (INNER_LIPS, 0.35)
-        shoulders = np.array([[-1.9, 1.9, 0.6], [1.9, 1.9, 0.6], [-2.6, 3.0, 0.9], [2.6, 3.0, 0.9]])
+        shoulders = np.array([[-1.75, 2.15, 0.9], [1.75, 2.15, 0.9]])  # typical adult proportions
         if body is not None:
-            shoulders = Rig._shoulders_from_body(body, L, loc, iod) or shoulders
+            poses = [(x[1][0], x[1][1], x[1][2], o, R0, iod) for x in al]
+            got = Rig._shoulders_from_body(body, L, loc, poses)
+            if got is not None:
+                shoulders = got
         rig = Rig(mean, W, np.asarray(face_tri), shell_index, None, cavity, shoulders, list(names))
         rig.tri = rig._triangulate()
         rig.fit_error = float(np.sqrt(((X @ W - loc.reshape(len(L), -1)) ** 2).mean()))
@@ -99,8 +103,45 @@ class Rig:
         return s * xy @ R.T + t, (s, R, t)
 
     @staticmethod
-    def _shoulders_from_body(body, L, loc, iod):
-        return None  # v1: a fixed, proportion-based torso; the measured one comes with the body stage
+    def torso_grid(shoulders_local):
+        """A 5 x 7 grid over the upper body from the two shoulder points (head units): from the base of the
+        neck down to mid-chest, a little wider than the shoulders, curved back at the sides."""
+        lsh, rsh = np.asarray(shoulders_local[0]), np.asarray(shoulders_local[1])
+        mid = (lsh + rsh) / 2
+        across = rsh - lsh
+        width = float(np.linalg.norm(across))
+        xdir = across / (width + 1e-9)
+        ydir = np.array([0.0, 1.0, 0.0])
+        pts = []
+        for r, down in enumerate(np.linspace(-0.12, 1.15, 5)):
+            for c, u in enumerate(np.linspace(-0.62, 0.62, 7)):
+                # the top row narrows into the neck; the sides curve away from the camera
+                narrow = 0.55 if r == 0 else 1.0
+                p = mid + xdir * u * width * narrow + ydir * down * width * 0.55
+                p = p + np.array([0, 0, 0.35 * width * (2 * abs(u)) ** 2])
+                pts.append(p)
+        return np.array(pts)
+
+    @staticmethod
+    def _shoulders_from_body(body, L, loc_frames, poses):
+        """The person's shoulders in head units, averaged over frames where both are clearly visible."""
+        acc = []
+        for b, (s, R, t, o, R0, iod) in zip(body, poses):
+            if b is None or b[11][2] < 0.6 or b[12][2] < 0.6:
+                continue
+            pts = []
+            for k in (12, 11):  # the person's right shoulder first (image left)
+                p = np.array([b[k][0], b[k][1], 0.0])
+                # into the head frame: the frame's similarity onto the reference, then the fixed head axes
+                q = s * p @ R.T + t
+                q = (q - o) @ R0.T / iod
+                pts.append(q)
+            acc.append(pts)
+        if len(acc) < 3:
+            return None
+        sh = np.median(np.array(acc), 0)
+        sh[:, 2] = 0.9  # behind the face plane (the image gives no depth for the shoulders)
+        return sh
 
     @staticmethod
     def _shell_plan():
@@ -131,10 +172,32 @@ class Rig:
         c = ring.mean(0) + np.array([0, 0, depth])
         return np.vstack([ring.mean(0) + (ring - ring.mean(0)) * 0.6 + np.array([0, 0, depth * 0.5]), c[None]])
 
-    def vertices(self, blend):
-        """All rig points in the head's local frame: face, shell, cavity (shoulders are placed separately)."""
+    def head_vertices(self, blend):
+        """Points that move with the head: face, shell, mouth cavity (head frame)."""
         F = self.face(blend)
         return np.vstack([F, self._shell(F), self._cavity(F)])
+
+    def torso_vertices(self):
+        return Rig.torso_grid(self.shoulders)
+
+    def vertices(self, blend):
+        """All rig points at rest pose (head frame): head points then torso points."""
+        return np.vstack([self.head_vertices(blend), self.torso_vertices()])
+
+    def pose(self, blend, head, body, neck_blend=0.5):
+        """Rig points in pixels. head / body = (scale, R, t) similarities for the head and the torso. The neck
+        ring (the last shell ring) is pulled half way towards where the torso would carry it, so the neck
+        bends instead of tearing."""
+        Hp = self.head_vertices(blend)
+        Tp = self.torso_vertices()
+        h = head[0] * Hp @ head[1].T + head[2]
+        b = body[0] * Tp @ body[1].T + body[2]
+        n_face = 468
+        n_shell = len(self._shell(self.face(blend)))
+        neck = slice(n_face + n_shell - 8, n_face + n_shell)
+        hb = body[0] * Hp[neck] @ body[1].T + body[2]
+        h[neck] = (1 - neck_blend) * h[neck] + neck_blend * hb
+        return np.vstack([h, b])
 
     def _triangulate(self):
         F = self.face(np.zeros(len(self.names)))
@@ -142,12 +205,18 @@ class Rig:
         n_face, n_shell = 468, len(self._shell(F))
         tris = [tuple(t) for t in self.face_tri]
         # Shell: Delaunay on the frontal projection of the oval + shell rings, keeping triangles outside the face.
-        ids = OVAL + list(range(n_face, n_face + n_shell))
+        n_head = len(self.head_vertices(np.zeros(len(self.names))))
+        n_torso = len(self.torso_vertices())
+        ids = OVAL + list(range(n_face, n_face + n_shell)) + list(range(n_head, n_head + n_torso))
         d = Delaunay(V[ids, :2])
         oval_set = set(OVAL)
         for s in d.simplices:
             g = [ids[k] for k in s]
             if all(x in oval_set for x in g):
+                continue
+            P = V[list(g), :2]
+            e = max(np.linalg.norm(P[0] - P[1]), np.linalg.norm(P[1] - P[2]), np.linalg.norm(P[2] - P[0]))
+            if e > 1.6:  # no long slivers across empty space (e.g. from the hair over a shoulder)
                 continue
             tris.append(tuple(g))
         # Mouth cavity: inner lip ring → inner ring → back point.
