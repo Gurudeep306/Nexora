@@ -14,7 +14,7 @@ One output: a **generative digital human**. Every frame is drawn fresh from the 
 video (who), their own cloned voice (what they say) and an instruction (what they do), so any gesture or
 expression is possible and the lips come from the audio. It has its own brain (persona, memory, lesson
 content; Guru's rules for exams) and converses: it listens, reacts, then answers. No game-style 3D with fixed
-animations, no talking photo. Parts, licences and the first GPU test: `deploy/digital-human/README.md`.
+animations, no talking photo. Our own engine design (owner, 2026-11-26: build it ourselves from research, not existing pipelines): `docs/pratibimb/ENGINE.md`. Open models for comparison and the first GPU test: `deploy/digital-human/README.md`.
 The capture, identity pack and bench below stay as the inputs and the checks.
 
 ## 1. What the owner wants (fixed)
