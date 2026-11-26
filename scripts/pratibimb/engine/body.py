@@ -62,13 +62,16 @@ class Skeleton:
 def proportions(shoulder_m=None, sex="neutral", head_iod_m=0.09):
     """Body measures in metres. Measured shoulder width when known, else from the head size; the rest from
     adult anthropometric ratios (relative to the shoulder-landmark width)."""
-    sw = shoulder_m or head_iod_m * (4.0 if sex == "male" else 3.6)
+    # The body tracker's shoulder width is noisy on head-and-shoulders video: keep it within human ratios to the
+    # head (shoulder joints about 3.2–4.0 outer-eye distances apart).
+    lo, hi = head_iod_m * (3.4 if sex == "male" else 3.1), head_iod_m * (4.1 if sex == "male" else 3.7)
+    sw = float(np.clip(shoulder_m, lo, hi)) if shoulder_m else (lo + hi) / 2
     f = 1.0 if sex == "male" else 0.96
     return {
         "shoulder": sw, "upper_arm": 0.83 * sw * f, "forearm": 0.72 * sw * f, "palm": 0.27 * sw, "finger": 0.24 * sw,
-        "neck": 0.30 * sw, "torso": 1.45 * sw, "chest_w": 0.92 * sw, "chest_d": 0.62 * sw * (0.95 if sex == "female" else 1.0),
-        "waist_w": 0.78 * sw * (0.92 if sex == "female" else 1.0), "waist_d": 0.55 * sw, "neck_r": 0.16 * sw,
-        "arm_r": 0.13 * sw, "forearm_r": 0.10 * sw, "wrist_r": 0.075 * sw, "sex": sex,
+        "neck": 0.22 * sw, "torso": 1.45 * sw, "chest_w": 0.92 * sw, "chest_d": 0.62 * sw * (0.95 if sex == "female" else 1.0),
+        "waist_w": 0.78 * sw * (0.92 if sex == "female" else 1.0), "waist_d": 0.55 * sw, "neck_r": 0.145 * sw,
+        "arm_r": 0.105 * sw, "forearm_r": 0.085 * sw, "wrist_r": 0.065 * sw, "sex": sex,
     }
 
 
@@ -129,7 +132,7 @@ def tubes_for(P, outfit):
                       rings=5, seg=14, cap_end=False, cap_start=False))
         T.append(Tube(f"arm{s}", [f"shoulder{s}", f"elbow{s}", f"wrist{s}"],
                       [(P["arm_r"], P["arm_r"]), (P["forearm_r"] * 1.05, P["forearm_r"]), (P["wrist_r"], P["wrist_r"] * 0.7)],
-                      rings=14, seg=14, cap_start=True, cap_end=False))
+                      rings=14, seg=14, cap_start=False, cap_end=False))
         T.append(Tube(f"palm{s}", [f"wrist{s}", f"middle1{s}"], [(P["wrist_r"] * 1.05, P["wrist_r"] * 0.55), (P["palm"] * 0.42, P["palm"] * 0.13)],
                       rings=6, seg=14, cap_end=True))
         for fname, ids in FINGERS.items():
@@ -155,7 +158,7 @@ def tubes_for(P, outfit):
                 rr = [(P["arm_r"] * 1.12 * ease, P["arm_r"] * 1.12 * ease), (P["forearm_r"] * 1.25 * ease, P["forearm_r"] * 1.2 * ease)]
                 if sleeve > 0.5:
                     rr.append((P["wrist_r"] * 1.6, P["wrist_r"] * 1.3))
-                T.append(Tube(f"sleeve{s}", chain, rr, rings=10, seg=14, cap_start=True, cap_end=False, layer="cloth", colour=col,
+                T.append(Tube(f"sleeve{s}", chain, rr, rings=10, seg=14, cap_start=False, cap_end=False, layer="cloth", colour=col,
                               ))
                 T[-1].length = sleeve if sleeve <= 0.5 else (sleeve - 0.5) * 2
     return T
@@ -246,8 +249,8 @@ def gesture(name, P, amount=1.0):
         r = {}
         for s, sx in (("L", 1), ("R", -1)):
             # upper arm forward and in; forearm bends up and turns in so the palms meet at the chest
-            r[f"shoulder{s}"] = rot([0, 0, 1], -sx * 0.18 * a) @ rot([1, 0, 0], -0.45 * a)
-            r[f"elbow{s}"] = rot([0, 1, 0], -sx * 0.62 * a) @ rot([1, 0, 0], -2.0 * a)
+            r[f"shoulder{s}"] = rot([0, 0, 1], -sx * 0.12 * a) @ rot([1, 0, 0], -0.30 * a)
+            r[f"elbow{s}"] = rot([0, 1, 0], -sx * 0.80 * a) @ rot([1, 0, 0], -1.80 * a)
             r[f"wrist{s}"] = rot([0, 0, 1], sx * 0.35 * a)
         return r
     if name == "explain":  # both forearms up, palms open towards the student

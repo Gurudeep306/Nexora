@@ -94,7 +94,11 @@ class Twin:
         self.tri = torch.tensor(self.rig.tri)
         self.unit_m = float(z["mm_per_unit"]) / 1000 if "mm_per_unit" in z.files else 0.09
         lab = z["point_label"] if "point_label" in z.files else np.full(self.sp.rgb.shape[0], 3)
-        self.keep = torch.tensor(np.isin(lab, KEEP_LABELS))
+        # The capture's torso (its clothes and body) is replaced by our generated body: drop points on it.
+        n_head = len(self.rig.head_vertices(np.zeros(len(self.rig.names))))
+        on_torso = (self.rig.tri >= n_head).any(1)[self.sp.tri_of.numpy()]
+        self.n_head = n_head
+        self.keep = torch.tensor(np.isin(lab, KEEP_LABELS) & ~on_torso)
         with torch.no_grad():
             alb = torch.sigmoid(self.sp.rgb).numpy()
         skin_pts = alb[(lab == 3)] if (lab == 3).any() else alb
@@ -106,10 +110,10 @@ class Twin:
     def head_points(self, blend, Rw, Pw, head_turn=np.eye(3)):
         """The learned head in world metres: rig units → metres, axes (rig: y down, z away) → (y up, z towards
         the camera), turned by the head joint and the requested head turn, eyes ~0.13 m above the head joint."""
-        V = self.rig.head_vertices(blend) * self.unit_m * np.array([1, -1, -1])
+        V = self.rig.vertices(blend) * self.unit_m * np.array([1, -1, -1])  # torso points only carry dropped points
         hi = self.S.idx("head")
         R = Rw[hi] @ head_turn
-        eye_from_joint = np.array([0, 0.115, 0.035])
+        eye_from_joint = np.array([0, 0.088, 0.03])
         # turn about the top of the neck
         return (V + eye_from_joint) @ R.T + Pw[hi]
 
