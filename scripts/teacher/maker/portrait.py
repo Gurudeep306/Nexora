@@ -42,6 +42,9 @@ ap.add_argument("--size", type=int, default=512)
 ap.add_argument("--judge", help="a held-out video of the same person")
 ap.add_argument("--judge-frames", type=int, default=16)
 ap.add_argument("--k", type=int, default=3, help="real mouths / eyes blended per region")
+ap.add_argument("--demo", help="write a demo video here (needs --judge): the portrait copying the held-out clip, then\n"
+                "driven only by typed expression values")
+ap.add_argument("--demo-seconds", type=float, default=8.0)
 a = ap.parse_args()
 os.makedirs(a.out, exist_ok=True)
 t0 = time.time()
@@ -314,6 +317,98 @@ if a.judge:
         crop = lambda im: cv2.resize(im[y0:y1, x0:x1], (240, 240))  # noqa: E731
         rows.append(np.hstack([crop(img), crop(placed)]))
     cap.release()
+
+    if a.demo:
+        FPS = 12
+        sm = {}  # light smoothing over time, so the portrait does not flicker between library mouths
+
+        def smooth(key, v, k=0.55):
+            sm[key] = v if key not in sm else sm[key] * (1 - k) + v * k
+            return sm[key]
+
+        def face_crop(img, c, s, size=384):
+            x0, y0 = int(c[0] - 2.2 * s), int(c[1] - 1.9 * s)
+            M_ = np.float32([[size / (4.4 * s), 0, -x0 * size / (4.4 * s)], [0, size / (4.4 * s), -y0 * size / (4.4 * s)]])
+            return cv2.warpAffine(img, M_, (size, size), flags=cv2.INTER_CUBIC, borderValue=(128, 128, 128))
+
+        def label(img, text):
+            cv2.rectangle(img, (0, img.shape[0] - 30), (img.shape[1], img.shape[0]), (20, 20, 20), -1)
+            cv2.putText(img, text, (10, img.shape[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (240, 240, 240), 1, cv2.LINE_AA)
+            return img
+
+        frames_out = []
+        cap = cv2.VideoCapture(a.judge)
+        fps_in = cap.get(cv2.CAP_PROP_FPS) or 25
+        step = max(1, int(round(fps_in / FPS)))
+        idx = 0
+        while len(frames_out) < a.demo_seconds * FPS:
+            ok, img = cap.read()
+            if not ok:
+                break
+            idx += 1
+            if idx % step:
+                continue
+            got = read(img)
+            if got is None:
+                continue
+            xy, bl, yaw, pitch = got
+            bl = smooth("bl", bl)
+            canvas, _ = render(bl, smooth("yaw", yaw), smooth("pitch", pitch))
+            c, s, r = frame_of(xy)
+            real = label(face_crop(img, c, s), "real video (never seen)")
+            port = label(face_crop(canvas.astype(np.uint8), np.array([CX, CY]), UNIT), "portrait, same expressions")
+            frames_out.append(np.hstack([real, port]))
+        cap.release()
+
+        # Driven only by typed numbers: no video behind it.
+        def bs(**kw):
+            v = np.zeros(52)
+            for k_, x in kw.items():
+                if k_ in mi:
+                    v[mi[k_]] = x
+            return v
+        keys = [  # (seconds, expression values, yaw, pitch, caption)
+            (0.0, bs(), 0, 0, "neutral"),
+            (1.0, bs(mouthSmileLeft=0.8, mouthSmileRight=0.8, eyeSquintLeft=0.3, eyeSquintRight=0.3), 0, 0, "smile"),
+            (2.0, bs(eyeBlinkLeft=1, eyeBlinkRight=1), 0, 0, "blink"),
+            (2.6, bs(browInnerUp=0.9, browOuterUpLeft=0.7, browOuterUpRight=0.7, eyeWideLeft=0.5, eyeWideRight=0.5, jawOpen=0.2), 0, 0, "surprise"),
+            (3.6, bs(jawOpen=0.55), 0, 0, '"aah"'),
+            (4.3, bs(mouthPucker=0.8, mouthFunnel=0.4), 0, 0, '"oo"'),
+            (5.0, bs(mouthClose=0.3, mouthPressLeft=0.4, mouthPressRight=0.4), 0, 0, '"m" (lips closed)'),
+            (5.6, bs(mouthSmileLeft=0.3, mouthSmileRight=0.3), -12, 0, "turn a little"),
+            (6.4, bs(mouthSmileLeft=0.3, mouthSmileRight=0.3), 12, 0, "turn the other way"),
+            (7.2, bs(), 0, -8, "nod"),
+            (7.7, bs(), 0, 6, "nod"),
+            (8.4, bs(mouthSmileLeft=0.6, mouthSmileRight=0.6), 0, 0, "smile"),
+        ]
+        T_end = keys[-1][0]
+        n_s = int(T_end * FPS)
+        for q in range(n_s + 1):
+            t = q / FPS
+            j = max(i_ for i_ in range(len(keys)) if keys[i_][0] <= t)
+            k2 = min(j + 1, len(keys) - 1)
+            t0_, t1_ = keys[j][0], keys[k2][0]
+            u = 0.0 if t1_ == t0_ else (t - t0_) / (t1_ - t0_)
+            u = u * u * (3 - 2 * u)
+            bl = keys[j][1] * (1 - u) + keys[k2][1] * u
+            yaw = keys[j][2] * (1 - u) + keys[k2][2] * u
+            pitch = keys[j][3] * (1 - u) + keys[k2][3] * u
+            canvas, _ = render(bl, yaw, pitch)
+            port = face_crop(canvas.astype(np.uint8), np.array([CX, CY]), UNIT)
+            left = np.full_like(port, 245)
+            cv2.putText(left, "Driven only by typed", (20, 150), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (30, 30, 30), 1, cv2.LINE_AA)
+            cv2.putText(left, "numbers, no video:", (20, 180), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (30, 30, 30), 1, cv2.LINE_AA)
+            cv2.putText(left, keys[j][4] if u < 0.5 else keys[k2][4], (20, 240), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (40, 110, 40), 2, cv2.LINE_AA)
+            frames_out.append(np.hstack([left, label(port, "portrait")]))
+        tmp = a.demo + ".avi"
+        vw = cv2.VideoWriter(tmp, cv2.VideoWriter_fourcc(*"MJPG"), FPS, (frames_out[0].shape[1], frames_out[0].shape[0]))
+        for fimg in frames_out:
+            vw.write(fimg)
+        vw.release()
+        import subprocess
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", tmp, "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "22", a.demo], check=True)
+        os.remove(tmp)
+        print(f"PORTRAIT demo {len(frames_out)} frames -> {a.demo}", flush=True)
     if len(real_e) >= 3:
         Rr, P = np.array(real_e), np.array(port_e)
         ceil = float(np.mean([Rr[i] @ Rr[j] for i in range(len(Rr)) for j in range(len(Rr)) if i != j]))
