@@ -49,6 +49,8 @@ ap.add_argument("out")
 ap.add_argument("--fps", type=float, default=15.0)
 ap.add_argument("--max-seconds", type=float, default=600.0)
 ap.add_argument("--keep", type=int, default=40, help="most view / expression frames to save")
+ap.add_argument("--per-view", type=int, default=4, help="frames kept per head angle (at least 3 s apart), so a video of\n"
+                "someone who faces the camera still gives the model several photos")
 ap.add_argument("--add", action="append", default=[], help="another video or photo folder, read with the first")
 ap.add_argument("--train", type=int, default=64, help="most training frames to save for the appearance learner")
 a = ap.parse_args()
@@ -321,9 +323,15 @@ for y0, y1, yn in YAW_BINS:
     for p0, p1, pn in PITCH_BINS:
         cand = [(quality(r), i) for i, (r, b) in enumerate(records) if b is not None and neutral(r)
                 and y0 <= r["yaw"] < y1 and p0 <= r["pitch"] < p1 and r["face_px"] > 90]
-        if cand:
-            views.append((f"{yn}, {pn}", max(cand)[1]))
-        elif pn == "level":
+        took = []
+        for _, i in sorted(cand, reverse=True):
+            if len(took) >= a.per_view:
+                break
+            if all(abs(records[i][0]["t"] - records[j][0]["t"]) >= 3 for j in took):
+                took.append(i)
+        for k, i in enumerate(took):
+            views.append((f"{yn}, {pn}" + (f" {k + 1}" if k else ""), i))
+        if not took and pn == "level":
             missing.append(yn)
 EXPRESSIONS = {
     "smile": lambda b: (b.get("mouthSmileLeft", 0) + b.get("mouthSmileRight", 0)) / 2,
