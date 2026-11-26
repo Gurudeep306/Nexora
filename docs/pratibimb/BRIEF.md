@@ -13,12 +13,12 @@
 **Never used: the photo pixels themselves.** No real face, background or clothes from the photos is put on
 the model.
 
-## Output: one thing, a fully built 3D anime character, waist up, facing the student
+## Output: one thing, the person as a painted 3D character, waist up, facing the student
 
-Owner's choice (2026-11-26, replaces the realistic CG output): **advanced 3D anime**, like modern 3D anime
-games and VTubers. A real 3D model (depth, turns, light and shadow) drawn with anime shading and outlines,
-not flat 2D. It is designed from the person's features, so it is clearly *them* as an anime character.
-A style slider runs from "soft anime" to "full anime" (variations).
+**Look (owner's choice, 2026-11-26, final): the painted look of the series *Arcane*, examples 1–8 of the
+reference sheet.** Realistic human proportions, hand-painted skin and hair with visible brush work, dramatic
+key and rim light, strong readable expressions. It moves and turns like 3D, but every frame looks painted,
+not a 3D render and not a photo. (Replaces the earlier realistic-CG and anime choices.)
 
 | Part | What it is |
 |---|---|
@@ -36,4 +36,4 @@ A style slider runs from "soft anime" to "full anime" (variations).
 | Build time | 3–4 minutes on a GPU |
 
 Everything is made by our own code (`scripts/pratibimb/engine/`); research papers are read for ideas only.
-Reference for the *kind* of output (not used): 3D anime games with toon shading; VRoid Studio characters.
+Reference for the look (not used, never published): the series Arcane, portraits and scenes 1–8.
