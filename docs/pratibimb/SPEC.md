@@ -8,6 +8,15 @@ It is one fixed pipeline: every person goes through the same stages, checks and 
 This file is the owner's brief, written once so nobody has to ask again. Decisions are the owner's
 (2026-11-26) unless marked.
 
+## 0. Direction (owner, 2026-11-26, supersedes the rig and portrait outputs below)
+
+One output: a **generative digital human**. Every frame is drawn fresh from the person's consented photo and
+video (who), their own cloned voice (what they say) and an instruction (what they do), so any gesture or
+expression is possible and the lips come from the audio. It has its own brain (persona, memory, lesson
+content; Guru's rules for exams) and converses: it listens, reacts, then answers. No game-style 3D with fixed
+animations, no talking photo. Parts, licences and the first GPU test: `deploy/digital-human/README.md`.
+The capture, identity pack and bench below stay as the inputs and the checks.
+
 ## 1. What the owner wants (fixed)
 
 | Topic | Decision |
