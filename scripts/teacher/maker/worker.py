@@ -157,8 +157,11 @@ def build(job):
     api("PUT", f"/api/pratibimb/worker/{jid}/result/model.vrm", raw=open(os.path.join(work, "teacher.vrm"), "rb").read(), ctype="model/gltf-binary")
     report = json.load(open(os.path.join(work, "report.json")))
     api("PUT", f"/api/pratibimb/worker/{jid}/result/report.json", raw=json.dumps(report).encode(), ctype="application/octet-stream")
-    likeness = (report.get("stages", {}).get("done") or {}).get("likeness")
-    status(jid, "done", "done", likeness=likeness)
+    done = report.get("stages", {}).get("done") or {}
+    likeness = done.get("likeness")
+    note = None if done.get("ready") else (f"Likeness {likeness}% is below the {done.get('bar', 90)}% bar: not ready to teach yet. "
+                                           "More angles or a short video help most.")
+    status(jid, "done", "done", note=note, likeness=likeness)
     shutil.rmtree(W, ignore_errors=True)
 
 

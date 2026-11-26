@@ -571,7 +571,17 @@ function PreviewStep({ model }: { model: Model }) {
           Every feature measured from the photos and video, in one file. Keep it to rebuild this model later or on another account.
         </p>
       )}
-      {model.likeness != null && <p>Likeness to your photos (checked on photos the model was not made from): {model.likeness}%.</p>}
+      {model.likeness != null && model.likeness >= 0 && (
+        <div className="pbs-like" data-ready={model.likeness >= 90 || undefined}>
+          <span className="pbs-like-k">Likeness</span>
+          <span className="pbs-like-v">{model.likeness}%</span>
+          <span className="pbs-like-bar" role="meter" aria-label="Likeness" aria-valuemin={0} aria-valuemax={100} aria-valuenow={model.likeness}>
+            <b style={{ width: `${model.likeness}%` }} />
+            <i style={{ left: '90%' }} title="The 90% bar" />
+          </span>
+          <span className="pbs-note">{model.likeness >= 90 ? 'Ready to teach.' : 'Below the 90% bar: not ready to teach yet. Checked against photos the model was not made from.'}</span>
+        </div>
+      )}
       <TeacherPanel
         modelUrl={modelUrl(model.id)}
         look={look}

@@ -14,7 +14,7 @@ This file is the owner's brief, written once so nobody has to ask again. Decisio
 |---|---|
 | Kind of model | Made for the website only: a **waist-up presenter** in a panel, facing the student. Not a game character: no legs, no walking, no back of the head, no free camera. |
 | Look | **Real, lightly painted**: the person's real face, proportions and colours with a soft digital-painting finish. Never cartoon, never a photo pasted on a stock face. |
-| Likeness | **Above 80%**, judged twice: a face-recognition score on photos the model never learned from, and the owner's eye on side-by-side pictures. |
+| Likeness | **90% or more** (owner, 2026-11-26; was 80%), judged twice: a face-recognition score on photos the model never learned from, and the owner's eye on side-by-side pictures. |
 | Actions | Talk with exact lip sync and emotions (smile, surprise, thinking, nods, blinks, eye contact); natural hand gestures while explaining; reacting to the student (listening, thinking, pleased). The whiteboard opens beside her; she does not write on it or walk. |
 | Clothes | A switchable wardrobe (Indian and Western), chosen in the Studio. |
 | Delivery | **Hybrid**: lesson explanations made ahead in top quality; live answers (Guru) drawn live in the browser. |
@@ -44,7 +44,7 @@ This file is the owner's brief, written once so nobody has to ask again. Decisio
 | 3 | **Look** | Studio light matched to the site theme; the light painted finish as a render filter, identical live and pre-made. | — | — |
 | 4 | **Voice** | Clone from the consented sample (Chatterbox Multilingual + Hindi, MIT, watermarked). | CPU / GPU | Default Indian voice |
 | 5 | **Lip sync and motion** | wav2arkit curves scaled to the person's own mouth range (from C2's motion profile); p/b/m closure, f/v contact; blinks, head and hand habits from the motion profile. | CPU | Rule-based visemes |
-| 6 | **Likeness check** | SFace on photos/frames never learned from + side-by-side sheet for the owner. | CPU | Retry with more capture; never ship below 80% |
+| 6 | **Likeness check** | SFace on photos/frames never learned from + side-by-side sheet for the owner. | CPU | Retry with other settings (lighter painted finish first), then ask for the missing angles; never marked ready below 90% |
 | 7 | **Delivery** | Pre-made lesson clips rendered on the build machine; the live player (three-vrm + skinned splats) in the panel. | Server / browser | — |
 
 ## 4. Lip sync, measured ("95% real")

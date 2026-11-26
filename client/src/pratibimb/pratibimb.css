@@ -504,6 +504,54 @@
   .pbs-new-s {
     font-size: 13px;
   }
+  .pbs-like {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    gap: 6px 12px;
+    align-items: center;
+  }
+  .pbs-like-k {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+  .pbs-like-v {
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-state-warning);
+  }
+  .pbs-like[data-ready] .pbs-like-v {
+    color: var(--color-state-success);
+  }
+  .pbs-like-bar {
+    position: relative;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--color-bg-app);
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+  }
+  .pbs-like-bar b {
+    display: block;
+    height: 100%;
+    background: var(--color-state-warning);
+  }
+  .pbs-like[data-ready] .pbs-like-bar b {
+    background: var(--color-state-success);
+  }
+  .pbs-like-bar i {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-text-primary);
+  }
+  .pbs-like .pbs-note {
+    grid-column: 1 / -1;
+  }
   .pbs-import {
     display: grid;
     gap: 8px;

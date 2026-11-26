@@ -297,4 +297,6 @@ for tag, strength, skin_set, detail in variants:
     log("check", f"variant {tag}: likeness {s}%", **{f"variant_{tag}": {"strength": strength, "skin_photos": [r['file'] for r in skin_set], "likeness": s, "hair": hair}})
 best_s, best_tag, best_vrm = max(results)
 shutil.copy(best_vrm, f"{W}/teacher.vrm")
-log("done", f"best variant {best_tag} (likeness {best_s}%)", best=best_tag, likeness=best_s, output=f"{W}/teacher.vrm")
+READY = 90  # the owner's bar (docs/pratibimb/SPEC.md): below it the model is not offered as a teacher
+log("done", f"best variant {best_tag} (likeness {best_s}%)", best=best_tag, likeness=best_s, ready=bool(best_s is not None and best_s >= READY),
+    bar=READY, output=f"{W}/teacher.vrm")
