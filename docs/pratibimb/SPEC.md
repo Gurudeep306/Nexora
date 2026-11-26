@@ -37,6 +37,7 @@ This file is the owner's brief, written once so nobody has to ask again. Decisio
 | # | Stage | What it does | Runs | Check → fallback |
 |---|---|---|---|---|
 | C1 | **Guided capture** (browser) | Shot list with pictures; live coach on the camera (face size, angle, light, sharpness, expression, eyes open, one person) and hands-free auto-shutter; same coach on a phone by QR; uploads are checked and sorted into the shot list; optional guided video. | Any device (MediaPipe web, on the device) | A coverage meter ("Good / Great / Best") and the exact next shot to take |
+| C3 | **Identity pack** (`pack.py`) | One `.pbpack` file: 3D face in mm, measurements, colours, hair, body, expressions, motion, voice, identity vector, face texture, best views; signed; downloadable and importable on any account (`docs/pratibimb/PACK_FORMAT.md`) | CPU | Missing parts named in its quality block |
 | C2 | **Capture** (`capture.py`) | Main person found by face identity (others ignored); per frame: 478 face points, 52 expression values, head turn, 33 body points, 21 points per hand, hair/skin/clothes regions, quality; best frame per angle and per expression; the person's **motion profile** (blinks, head movement, mouth range when speaking, smiles, brows, hand habits); colours corrected by the eye whites; the voice track with speaking times. | CPU | Missing angles are named → back to C1 |
 | 1 | **Rig** (`pipeline.py`) | Upright photos, analysis, body build, face sliders + the person's 3D face points (`solve_points3d.py`, held-out checked) + safe face detail (`solve_detail.py`); VRM with skeleton, fingers, 52 ARKit + 15 viseme shapes. | CPU | Single-photo path; detail refused if it would tear |
 | 2 | **Learned appearance** | The person's look (skin, brows, eyes, lips, real hair) learned onto the rig's head and neck from every capture frame, as small 3D colour splats bound to the face mesh so they follow every expression (gsplat, Apache-2.0; our own trainer). Clothes and hands stay meshes (switchable wardrobe). | CPU (slower) or GPU | Likeness on held-out frames; v1 painted skin as fallback |
@@ -53,7 +54,10 @@ Against the person's own video: audio never more than 50 ms ahead of the lips; m
 
 ## 5. Status (keep current)
 
-- Done: v1 rig pipeline (stages 1, with all fixes of 2026-11-26), Studio page and server storage
-  (staff only), player engine, C2 capture.
-- Doing: C1 guided capture; stage 2 trainer.
-- Then: look filter, voice cloning, motion profile in the player, pre-made clips, owner's video.
+- Done: v1 rig pipeline (stage 1); Studio page with the journey; guided scan (one recording, every
+  photo picked by measurement, recording kept as the video), phone by QR, uploads of photos and videos
+  (same picking rules); consent for yourself or someone you know (their own sentence on camera);
+  capture.py over photos and videos together; **the identity pack** (`docs/pratibimb/PACK_FORMAT.md`),
+  signed, downloadable and importable on any account; the build worker (`worker.py`).
+- Next: stage 2 trainer (learned appearance), sticker check in the browser picker, face match between
+  the consent clip and the photos, look filter, voice cloning, motion profile in the player.

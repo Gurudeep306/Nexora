@@ -19,6 +19,9 @@ export interface Model {
   shots: Record<string, string>
   consentVideo: boolean
   hasModel: boolean
+  /** the identity pack (.pbpack) is ready to download */
+  hasPack?: boolean
+  pack?: { created: string | null; frames: number | null; views: number | null; signed: boolean; imported?: boolean } | null
   report: { stages: Record<string, { note: string | null; seconds: number | null }> } | null
 }
 
@@ -70,6 +73,10 @@ export const removeFile = (id: string, name: string) => call('DELETE', `/api/pra
 export const buildModel = (id: string, options: Model['options']) => call<{ model: Model }>('POST', `/api/pratibimb/models/${id}/build`, options).then((r) => r.model)
 export const deleteModel = (id: string) => call('DELETE', `/api/pratibimb/models/${id}`)
 export const modelUrl = (id: string) => apiUrl(`/api/pratibimb/models/${id}/model.vrm`)
+/** The identity pack: every extracted feature in one file, reusable on any account. */
+export const packUrl = (id: string) => apiUrl(`/api/pratibimb/models/${id}/pack`)
+export const importPack = (file: Blob) =>
+  call<{ model: Model; signed: boolean }>('POST', '/api/pratibimb/import?permission=1', file, 'application/zip')
 
 /** A voice line from the site's voice service (src/voice/tts.js): audio plus the sound timings for the lips. */
 export async function speakLine(text: string, lang: 'en-IN' | 'hi-IN' = 'en-IN') {

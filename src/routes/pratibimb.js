@@ -19,6 +19,8 @@
 //   DELETE /api/pratibimb/models/:id/files/:name   remove one file before building
 //   POST   /api/pratibimb/models/:id/build         queue the build (height, body, style)
 //   GET    /api/pratibimb/models/:id/model.vrm     the finished model (the person only)
+//   GET    /api/pratibimb/models/:id/pack          download the identity pack (.pbpack), reusable on any account
+//   POST   /api/pratibimb/import                   a new model from a pack (raw body; ?permission=1)
 //   DELETE /api/pratibimb/models/:id               delete everything, at once
 //
 // The build runs on a machine with Blender and the models (scripts/teacher/maker/worker.py), which
@@ -34,6 +36,7 @@ const path = require("path");
 const { all, get, run } = require("../db");
 const { requireAuthenticatedUser } = require("../middleware/auth");
 const { requirePerm } = require("../authz/permissions");
+const { checkPack } = require("../pratibimb/pack");
 
 const DIR = process.env.PRATIBIMB_DIR || path.join(__dirname, "..", "..", "data", "pratibimb");
 const KINDS = {
@@ -46,7 +49,8 @@ const KINDS = {
 const SHOT_RE = /^[a-z][a-z0-9-]{1,30}$/;
 const TOKEN_RE = /^[A-Za-z0-9_-]{22,64}$/;
 const LINK_TTL_MS = 2 * 60 * 60 * 1000;
-const RESULTS = { "model.vrm": 60 * 1024 * 1024, "report.json": 2 * 1024 * 1024, "preview.jpg": 4 * 1024 * 1024 };
+const RESULTS = { "model.vrm": 60 * 1024 * 1024, "report.json": 2 * 1024 * 1024, "preview.jpg": 4 * 1024 * 1024, "pack.pbpack": 300 * 1024 * 1024 };
+const PACK_BYTES = 300 * 1024 * 1024;
 const ID_RE = /^[a-f0-9]{24}$/;
 const FILE_RE = /^(photo|voice|consent|video)-[a-f0-9]{8}\.[a-z0-9]{2,4}$/;
 const STATUSES = new Set(["draft", "queued", "building", "done", "failed"]);
@@ -211,6 +215,14 @@ function view(row) {
       return Object.fromEntries(Object.entries(all_).filter(([f]) => files.includes(f)));
     })(),
     hasModel: files.includes("model.vrm"),
+    hasPack: files.includes("pack.pbpack"),
+    pack: (() => {
+      try {
+        return JSON.parse(fs.readFileSync(path.join(folder(row.id), "pack.json"), "utf8"));
+      } catch {
+        return null;
+      }
+    })(),
     report: report && { stages: report.stages ? Object.fromEntries(Object.entries(report.stages).map(([k, v]) => [k, { note: (v && v.note) || null, seconds: v && Number.isFinite(v.seconds) ? v.seconds : null }])) : {} },
   };
 }
@@ -341,8 +353,9 @@ function createPratibimbRouter() {
     await ensureTables();
     const row = await own(req, req.params.id);
     const files = listFiles(row.id);
-    if (files.filter((f) => f.startsWith("photo-")).length < 3) bad("Add at least 3 photos first.");
-    if (!files.some((f) => f.startsWith("consent-"))) bad("Record the consent sentence first.");
+    const hasPack = files.includes("pack.pbpack");
+    if (!hasPack && files.filter((f) => f.startsWith("photo-")).length < 3) bad("Add at least 3 photos first.");
+    if (!hasPack && !files.some((f) => f.startsWith("consent-"))) bad("Record the consent sentence first.");
     const b = req.body || {};
     const options = {
       body: ["female", "male", "neutral"].includes(b.body) ? b.body : "neutral",
@@ -363,6 +376,43 @@ function createPratibimbRouter() {
     res.type("model/gltf-binary").sendFile(p);
   }));
 
+  router.get("/api/pratibimb/models/:id/pack", ...user, wrap(async (req, res) => {
+    await ensureTables();
+    const row = await own(req, req.params.id);
+    const p = path.join(folder(row.id), "pack.pbpack");
+    if (!fs.existsSync(p)) bad("The pack is made during the build. Build the model first.", 404);
+    res.set("Cache-Control", "private, no-store");
+    res.attachment(`pratibimb-${row.id.slice(0, 8)}.pbpack`);
+    res.type("application/zip").sendFile(p);
+  }));
+
+  // A model from a pack made earlier (on this account or another). The pack carries the person's consent
+  // record; whoever imports it confirms they have that person's permission to use it here too.
+  router.post("/api/pratibimb/import", ...user, express.raw({ type: () => true, limit: PACK_BYTES }), wrap(async (req, res) => {
+    await ensureTables();
+    if (req.query.permission !== "1") bad("Confirm you have this person's permission to use their pack.");
+    const mine = await all(`SELECT id FROM pratibimb_models WHERE username = ?`, [req.sessionUser.username]);
+    if (mine.length >= MAX_MODELS) bad(`You can keep up to ${MAX_MODELS} models. Delete one first.`);
+    if (!Buffer.isBuffer(req.body) || !req.body.length) bad("Empty file");
+    let checked;
+    try {
+      checked = checkPack(req.body);
+    } catch (e) {
+      bad(e.message || "This pack cannot be used.");
+    }
+    if (!checked.manifest.consent) bad("This pack has no consent record, so a model cannot be made from it.");
+    const id = crypto.randomBytes(12).toString("hex");
+    const now = Date.now();
+    fs.mkdirSync(folder(id), { recursive: true });
+    fs.writeFileSync(path.join(folder(id), "pack.pbpack"), req.body);
+    fs.writeFileSync(path.join(folder(id), "pack.json"), JSON.stringify({ ...checked.summary, imported: true }));
+    const c = checked.manifest.consent;
+    const consent = { subject: "pack", packConsent: { subject: c.subject || null, at: c.at || null, sentence: c.sentence || null }, permission: true, signed: checked.signed, at: now };
+    await run(`INSERT INTO pratibimb_models (id, username, status, consent, created_at, updated_at) VALUES (?, ?, 'draft', ?, ?, ?)`, [id, req.sessionUser.username, JSON.stringify(consent), now, now]);
+    const row = await get(`SELECT * FROM pratibimb_models WHERE id = ?`, [id]);
+    res.json({ ok: true, model: view(row), signed: checked.signed });
+  }));
+
   router.delete("/api/pratibimb/models/:id", ...user, wrap(async (req, res) => {
     await ensureTables();
     const row = await own(req, req.params.id);
@@ -378,23 +428,40 @@ function createPratibimbRouter() {
     const row = await get(`SELECT * FROM pratibimb_models WHERE status = 'queued' ORDER BY updated_at ASC LIMIT 1`);
     if (!row) return res.json({ ok: true, job: null });
     await run(`UPDATE pratibimb_models SET status = 'building', stage = 'starting', updated_at = ? WHERE id = ? AND status = 'queued'`, [Date.now(), row.id]);
-    res.json({ ok: true, job: { id: row.id, options: row.options ? JSON.parse(row.options) : {}, files: listFiles(row.id).filter((f) => FILE_RE.test(f)), shots: readShots(row.id) } });
+    const files = listFiles(row.id).filter((f) => FILE_RE.test(f) || f === "pack.pbpack");
+    let consent = null;
+    try {
+      const c = JSON.parse(row.consent || "{}");
+      // The pack keeps who agreed and when (never the account's name or email).
+      consent = { subject: c.subject || "self", at: c.at || null, sentence: c.sentence || null, from_pack: c.packConsent || null };
+    } catch {
+      /* none */
+    }
+    res.json({ ok: true, job: { id: row.id, options: row.options ? JSON.parse(row.options) : {}, files, shots: readShots(row.id), consent } });
   }));
 
   router.get("/api/pratibimb/worker/:id/files/:name", workerAuth, wrap(async (req, res) => {
-    if (!ID_RE.test(req.params.id) || !FILE_RE.test(req.params.name)) bad("Not found", 404);
+    if (!ID_RE.test(req.params.id) || !(FILE_RE.test(req.params.name) || req.params.name === "pack.pbpack")) bad("Not found", 404);
     const p = path.join(folder(req.params.id), req.params.name);
     if (!fs.existsSync(p)) bad("Not found", 404);
     res.sendFile(p);
   }));
 
-  router.put("/api/pratibimb/worker/:id/result/:name", workerAuth, express.raw({ type: () => true, limit: "61mb" }), wrap(async (req, res) => {
+  router.put("/api/pratibimb/worker/:id/result/:name", workerAuth, express.raw({ type: () => true, limit: "301mb" }), wrap(async (req, res) => {
     await ensureTables();
     const max = RESULTS[req.params.name];
     if (!ID_RE.test(req.params.id) || max === undefined) bad("Not found", 404);
     if (!(await get(`SELECT id FROM pratibimb_models WHERE id = ?`, [req.params.id]))) bad("Not found", 404);
     if (!Buffer.isBuffer(req.body) || !req.body.length || req.body.length > max) bad("Bad file");
     fs.writeFileSync(path.join(folder(req.params.id), req.params.name), req.body);
+    if (req.params.name === "pack.pbpack") {
+      try {
+        fs.writeFileSync(path.join(folder(req.params.id), "pack.json"), JSON.stringify(checkPack(req.body).summary));
+      } catch (e) {
+        fs.rmSync(path.join(folder(req.params.id), "pack.pbpack"), { force: true });
+        bad(`The pack is not valid: ${e.message}`);
+      }
+    }
     res.json({ ok: true });
   }));
 

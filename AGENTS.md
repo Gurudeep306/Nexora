@@ -457,6 +457,13 @@ Hive is the staff-only multi-agent workspace at `/hive`. The full guide is
   lessons. The blueprint, defaults and phases are in `docs/voice/BLUEPRINT.md`,
   with the research in `docs/voice/research/`. Training data must not come
   from closed models' outputs (their terms forbid it).
+- **Pratibimb (staff only until the owner approves):** a waist-up presenter model made from a person's
+  photos and video (`docs/pratibimb/SPEC.md`). Studio at `/pratibimb` (`client/src/pratibimb/`): consent
+  (yourself, or someone who agreed on camera), a guided scan that picks every photo from one recording,
+  phone by QR (`/pratibimb/capture/<token>`), uploads of photos and videos. Everything extracted goes
+  into one signed, reusable **identity pack** (`.pbpack`, `docs/pratibimb/PACK_FORMAT.md`) that can be
+  downloaded and imported on any account. Build machine: `scripts/teacher/maker/worker.py`
+  (`PRATIBIMB_WORKER_KEY`, `PRATIBIMB_PACK_KEY`). Never commit anyone's photos, video or packs.
 - **AI courses (planned, not built):** the plan, agent rules, notation, the
   200-topic curriculum and the verified sources are in `docs/ai-courses/`
   (start with its README). Any agent working on AI content follows

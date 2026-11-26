@@ -15,6 +15,19 @@ const DIR = path.join(tmp, 'pratibimb');
 const stamp = Date.now().toString(36);
 const OWNER = `powner${stamp}`;
 const KEY = 'test-worker-key-0123456789abcdef';
+const PACK_KEY = 'test-pack-key-0123456789';
+const crypto = require('node:crypto');
+const { writeZip, checkPack } = require('../src/pratibimb/pack');
+
+function makePack({ sign = true, consent = { subject: 'self', at: 1 } } = {}) {
+  const files = { 'identity.json': Buffer.from(JSON.stringify({ face: { shape: 'oval' } })), 'face/mesh.obj': Buffer.from('v 0 0 0\n') };
+  const manifest = { schema: 'nexoraguru.pratibimb.pack', version: '1.0.0', consent, quality: { frames: 17, views: 8 }, files: {} };
+  for (const [k, v] of Object.entries(files)) manifest.files[k] = { bytes: v.length, sha256: crypto.createHash('sha256').update(v).digest('hex') };
+  const mb = Buffer.from(JSON.stringify(manifest));
+  const all = { 'manifest.json': mb, ...files };
+  if (sign) all['signature.json'] = Buffer.from(JSON.stringify({ alg: 'HMAC-SHA256', of: 'manifest.json', value: crypto.createHmac('sha256', PACK_KEY).update(mb).digest('hex') }));
+  return writeZip(all);
+}
 let proc;
 let base;
 let log = '';
@@ -51,7 +64,7 @@ test('pratibimb models', async (t) => {
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
     cwd: ROOT,
-    env: { ...process.env, PORT: String(port), NODE_ENV: 'test', DB_PATH: path.join(tmp, 'test.db'), PRATIBIMB_DIR: DIR, PRATIBIMB_WORKER_KEY: KEY, PRATIBIMB_OPEN: '', TURSO_DATABASE_URL: '', TURSO_AUTH_TOKEN: '', OWNER_USERNAME: OWNER, DISABLE_PUPPETEER: '1', DISABLE_SCRAPER: '1' },
+    env: { ...process.env, PORT: String(port), NODE_ENV: 'test', DB_PATH: path.join(tmp, 'test.db'), PRATIBIMB_DIR: DIR, PRATIBIMB_WORKER_KEY: KEY, PRATIBIMB_PACK_KEY: PACK_KEY, PRATIBIMB_OPEN: '', TURSO_DATABASE_URL: '', TURSO_AUTH_TOKEN: '', OWNER_USERNAME: OWNER, DISABLE_PUPPETEER: '1', DISABLE_SCRAPER: '1' },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   proc.stdout.on('data', (d) => (log += d));
@@ -133,6 +146,36 @@ test('pratibimb models', async (t) => {
   assert.equal(done.body.model.likeness, 53);
   assert.equal(done.body.model.hasModel, true);
   assert.deepEqual((await call('GET', `/api/pratibimb/models/${id}/model.vrm`, { cookie: owner })).body, Buffer.from('glTF-model'));
+
+  // The identity pack: the worker uploads it (checked), the owner downloads it, any account imports it.
+  const pack = makePack();
+  assert.equal(checkPack(pack, PACK_KEY).signed, true);
+  assert.equal((await call('PUT', `/api/pratibimb/worker/${id}/result/pack.pbpack`, { headers: auth, body: Buffer.from('not a zip') })).status, 400);
+  assert.equal((await call('PUT', `/api/pratibimb/worker/${id}/result/pack.pbpack`, { headers: auth, body: pack })).status, 200);
+  const got = await call('GET', `/api/pratibimb/models/${id}/pack`, { cookie: owner });
+  assert.equal(got.status, 200);
+  assert.deepEqual(Buffer.from(got.body), pack);
+  const withPack = await call('GET', `/api/pratibimb/models/${id}`, { cookie: owner });
+  assert.equal(withPack.body.model.hasPack, true);
+  assert.equal(withPack.body.model.pack.signed, true);
+  // Import: permission must be confirmed; a changed file is refused; an unsigned pack is allowed but marked.
+  assert.equal((await call('POST', '/api/pratibimb/import', { cookie: owner, body: pack, type: 'application/zip' })).status, 400);
+  const tampered = Buffer.from(pack);
+  tampered[tampered.indexOf(Buffer.from('oval'))] = 0x4f;
+  const bad = await call('POST', '/api/pratibimb/import?permission=1', { cookie: owner, body: tampered, type: 'application/zip' });
+  assert.equal(bad.status, 400);
+  assert.match(bad.body.error, /changed/);
+  assert.equal((await call('POST', '/api/pratibimb/import?permission=1', { cookie: owner, body: makePack({ consent: null }), type: 'application/zip' })).status, 400);
+  const imp = await call('POST', '/api/pratibimb/import?permission=1', { cookie: owner, body: pack, type: 'application/zip' });
+  assert.equal(imp.status, 200);
+  assert.equal(imp.body.signed, true);
+  assert.equal(imp.body.model.hasPack, true);
+  const unsigned = await call('POST', '/api/pratibimb/import?permission=1', { cookie: owner, body: makePack({ sign: false }), type: 'application/zip' });
+  assert.equal(unsigned.status, 200);
+  assert.equal(unsigned.body.signed, false);
+  // A model from a pack can be built without photos (the pack has them).
+  assert.equal((await call('POST', `/api/pratibimb/models/${imp.body.model.id}/build`, { cookie: owner, body: {} })).body.model.status, 'queued');
+  for (const m of [imp.body.model.id, unsigned.body.model.id]) await call('DELETE', `/api/pratibimb/models/${m}`, { cookie: owner });
 
   // Nobody else can see it (even staff see only their own).
   assert.equal((await call('GET', `/api/pratibimb/models/${id}`, { cookie: student })).status, 403);

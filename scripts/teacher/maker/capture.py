@@ -1,7 +1,10 @@
 """Pratibimb stage C (capture): everything the later stages need, from a video or a folder of photos.
 
   python3 scripts/teacher/maker/capture.py <video file | photo folder> <models dir> <out dir> \
-      [--fps 15] [--max-seconds 600] [--keep 40]
+      [--add <another video or photo folder>]... [--fps 15] [--max-seconds 600] [--keep 40]
+
+Several sources (photos and videos together) are read as one capture: the views come from all of them,
+the motion profile and the voice from the videos.
 
 Runs on CPU with MediaPipe (Apache-2.0) and OpenCV's YuNet + SFace (MIT / Apache-2.0).
 
@@ -46,6 +49,7 @@ ap.add_argument("out")
 ap.add_argument("--fps", type=float, default=15.0)
 ap.add_argument("--max-seconds", type=float, default=600.0)
 ap.add_argument("--keep", type=int, default=40, help="most view / expression frames to save")
+ap.add_argument("--add", action="append", default=[], help="another video or photo folder, read with the first")
 a = ap.parse_args()
 os.makedirs(os.path.join(a.out, "views"), exist_ok=True)
 M = lambda n: os.path.join(a.models, n)  # noqa: E731
@@ -72,26 +76,33 @@ OVAL = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379
 
 
 # --- Frames -----------------------------------------------------------------------------------------
+SOURCES = [a.source] + a.add
+VIDEOS = [x for x in SOURCES if not os.path.isdir(x)]
+
+
 def frames():
-    """(time in s, BGR image) for a video at --fps, or for each photo (time = its index)."""
-    if os.path.isdir(a.source):
-        for i, p in enumerate(sorted(f for f in glob.glob(os.path.join(a.source, "*")) if f.lower().endswith(IMG_EXT))):
+    """(time in s, BGR image, name) for every source: videos at --fps, photos one by one. Each source has
+    its own time range (videos from 0, 10000, 20000 s…; photos from 1000000) so times never collide."""
+    for k, src in enumerate(SOURCES):
+        if os.path.isdir(src):
             from PIL import Image, ImageOps
-            im = np.asarray(ImageOps.exif_transpose(Image.open(p)).convert("RGB"))[:, :, ::-1]
-            yield float(i), np.ascontiguousarray(im), os.path.basename(p)
-        return
-    cap = cv2.VideoCapture(a.source)
-    src_fps = cap.get(cv2.CAP_PROP_FPS) or 25.0
-    step = max(1, round(src_fps / a.fps))
-    i = 0
-    while True:
-        ok, im = cap.read()
-        if not ok or i / src_fps > a.max_seconds:
-            break
-        if i % step == 0:
-            yield i / src_fps, im, f"t{i / src_fps:08.3f}"
-        i += 1
-    cap.release()
+            for i, p in enumerate(sorted(f for f in glob.glob(os.path.join(src, "*")) if f.lower().endswith(IMG_EXT))):
+                im = np.asarray(ImageOps.exif_transpose(Image.open(p)).convert("RGB"))[:, :, ::-1]
+                yield 1_000_000.0 + k * 1000 + i, np.ascontiguousarray(im), os.path.basename(p)
+            continue
+        off = VIDEOS.index(src) * 10_000.0
+        cap = cv2.VideoCapture(src)
+        src_fps = cap.get(cv2.CAP_PROP_FPS) or 25.0
+        step = max(1, round(src_fps / a.fps))
+        i = 0
+        while True:
+            ok, im = cap.read()
+            if not ok or i / src_fps > a.max_seconds:
+                break
+            if i % step == 0:
+                yield off + i / src_fps, im, f"v{VIDEOS.index(src)}t{i / src_fps:08.3f}"
+            i += 1
+        cap.release()
 
 
 def detect_faces(bgr):
@@ -351,11 +362,11 @@ for label, i in views:
     saved.append({"file": fn, "label": label, "t": r["t"], "yaw": r["yaw"], "pitch": r["pitch"], "face_px": r["face_px"], "sharp": r["sharp"]})
 
 # --- How the person moves ------------------------------------------------------------------------------------
-is_video = not os.path.isdir(a.source)
+is_video = bool(VIDEOS)
 voice = None
 if is_video:
     wav = os.path.join(a.out, "voice.wav")
-    p = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", a.source, "-t", str(a.max_seconds), "-ac", "1", "-ar", "16000", wav])
+    p = subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", VIDEOS[0] if VIDEOS else a.source, "-t", str(a.max_seconds), "-ac", "1", "-ar", "16000", wav])
     if p.returncode == 0 and os.path.exists(wav):
         import wave
         with wave.open(wav) as w_:
@@ -378,7 +389,10 @@ if is_video:
     else:
         voice_spans = []
 
-profile = {"frames": len(people), "seconds": round(people[-1]["t"] - people[0]["t"], 1) if is_video else None}
+# The motion profile is about how the person moves, so it reads the first video only.
+all_people = people
+people = [r for r in all_people if r["t"] < 10_000.0] if is_video else all_people
+profile = {"frames": len(people), "seconds": round(people[-1]["t"] - people[0]["t"], 1) if is_video and people else None}
 if is_video and len(people) > 30:
     T = np.array([r["t"] for r in people])
     B = lambda k: np.array([r["blend"].get(k, 0) for r in people])  # noqa: E731
@@ -434,9 +448,10 @@ if is_video and len(people) > 30:
 med = lambda xs: (np.median(np.array(xs), 0) / 255).round(3).tolist() if xs else None  # noqa: E731
 appearance = {k: med(v) for k, v in colours.items()}
 appearance["hair_below_chin_face_widths"] = round(float(np.median(hair_len)), 2) if hair_len else None
+people = all_people
 yaws = np.array([r["yaw"] for r in people])
 summary = {
-    "source": os.path.basename(a.source.rstrip("/")), "kind": "video" if is_video else "photos",
+    "source": [os.path.basename(x.rstrip("/")) for x in SOURCES], "kind": ("video+photos" if is_video and len(VIDEOS) < len(SOURCES) else "video") if is_video else "photos",
     "frames_of_person": len(people), "views": saved, "missing_views": missing,
     "turn_range_deg": [round(float(yaws.min()), 1), round(float(yaws.max()), 1)],
     "appearance": appearance,

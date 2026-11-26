@@ -5,10 +5,10 @@
   Staff only until the owner opens it (the server answers 403 to everyone else).
 */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Camera, Check, Mic, Square, Trash2 } from 'lucide-react'
+import { Camera, Check, Download, FileUp, Mic, Square, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { BackButton } from '@/components/ui/BackButton'
-import { buildModel, createLink, createModel, deleteModel, getModel, listModels, modelUrl, PratibimbError, removeFile, speakLine, uploadFile, type Model } from './api'
+import { buildModel, createLink, createModel, deleteModel, getModel, importPack, listModels, modelUrl, packUrl, PratibimbError, removeFile, speakLine, uploadFile, type Model } from './api'
 import { CaptureStep } from './capture/CaptureStep'
 import { TeacherPanel } from './TeacherPanel'
 import type { Player, Framing } from './engine/player'
@@ -37,18 +37,10 @@ const VOICE_LINES = [
   'आज हम एक नया विषय सीखेंगे, ध्यान से सुनिए।',
 ]
 const STAGE_NAMES: Record<string, string> = {
-  upright: 'Turning photos upright',
-  analyse: 'Reading every photo',
-  body: 'Body and build',
-  reference: 'Base face',
-  shape: 'Face shape',
-  points3d: 'Your 3D face points',
-  face: 'Face controls and detail',
-  skin: 'Skin, light taken out',
-  features: 'Brows, eyes and lips',
-  look: 'Finish and eyes',
-  build: 'Rig and model',
-  check: 'Likeness check',
+  download: 'Receiving your photos and video',
+  capture: 'Reading every photo and frame',
+  pack: 'Writing your identity pack',
+  model: 'Building the 3D model',
 }
 
 const pick = <T,>(xs: T[]) => xs[Math.floor(Math.random() * xs.length)]
@@ -446,7 +438,8 @@ function BuildStep({ model, options, onStart, starting }: { model: Model; option
         <ol className="pbs-pipe" aria-live="polite">
           {keys.map((k, i) => {
             const s = stages[k]
-            const state = s?.seconds != null || (model.status === 'done' && i <= keys.length) ? 'done' : model.stage === k ? 'now' : model.status === 'failed' && i === at ? 'fail' : 'wait'
+            const state = model.status === 'done' || (at >= 0 && i < at) ? 'done' : model.stage === k ? (model.status === 'failed' ? 'fail' : 'now') : 'wait'
+
             return (
               <li key={k} data-state={state}>
                 <span className="pbs-pipe-dot" aria-hidden="true">
@@ -570,6 +563,14 @@ function PreviewStep({ model }: { model: Model }) {
   return (
     <section className="pbs-card" aria-labelledby="pbs-meet">
       <StepHead n={6} id="pbs-meet" title="Meet her" line="Say hello, open the board, change the look." />
+      {model.hasPack && (
+        <p className="pbs-note">
+          <a className="pbs-dl" href={packUrl(model.id)} download>
+            <Download className="size-4" aria-hidden="true" /> Download the identity pack
+          </a>{' '}
+          Every feature measured from the photos and video, in one file. Keep it to rebuild this model later or on another account.
+        </p>
+      )}
       {model.likeness != null && <p>Likeness to your photos (checked on photos the model was not made from): {model.likeness}%.</p>}
       <TeacherPanel
         modelUrl={modelUrl(model.id)}
@@ -678,6 +679,59 @@ function StepHead({ n, id, title, line }: { n: number; id: string; title: string
         <h2 id={id}>{title}</h2>
         <p>{line}</p>
       </div>
+    </div>
+  )
+}
+
+/* ── A pack made earlier (here or on another account) ── */
+function ImportPack({ disabled, onDone }: { disabled: boolean; onDone: (m: Model) => void }) {
+  const input = useRef<HTMLInputElement>(null)
+  const [file, setFile] = useState<File | null>(null)
+  const [agree, setAgree] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [msg, setMsg] = useState('')
+  async function go() {
+    if (!file) return
+    setBusy(true)
+    setMsg('')
+    try {
+      const r = await importPack(file)
+      setMsg(r.signed ? 'Imported. The pack is genuine and unchanged.' : 'Imported. This pack was not signed by NexoraGuru, so it is marked as unverified.')
+      setFile(null)
+      setAgree(false)
+      onDone(r.model)
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : 'This pack cannot be used')
+    } finally {
+      setBusy(false)
+    }
+  }
+  return (
+    <div className="pbs-import">
+      <span className="pbs-new-plus pbs-import-icon" aria-hidden="true">
+        <FileUp className="size-4" />
+      </span>
+      <span className="pbs-new-t">Import a pack</span>
+      <span className="pbs-new-s">A .pbpack file downloaded from a model, on this account or another. No new photos needed.</span>
+      <input ref={input} type="file" accept=".pbpack,application/zip" hidden onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+      <div className="pbs-row">
+        <Button variant="secondary" size="sm" disabled={disabled} onClick={() => input.current?.click()}>
+          {file ? 'Change file' : 'Choose pack'}
+        </Button>
+        {file && <span className="pbs-note">{file.name}</span>}
+      </div>
+      {file && (
+        <>
+          <label className="pbs-check">
+            <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} />
+            <span>I have this person's permission to make their model here.</span>
+          </label>
+          <Button size="sm" onClick={() => void go()} disabled={!agree || busy} loading={busy}>
+            Import
+          </Button>
+        </>
+      )}
+      {msg && <p className="pbs-note" role="status">{msg}</p>}
     </div>
   )
 }
@@ -818,6 +872,11 @@ export default function StudioPage() {
                       <Button size="sm" onClick={() => open(m)}>
                         {m.status === 'done' ? 'Open' : 'Continue'}
                       </Button>
+                      {m.hasPack && (
+                        <a className="pbs-dl" href={packUrl(m.id)} download aria-label="Download the identity pack">
+                          <Download className="size-4" aria-hidden="true" /> Pack
+                        </a>
+                      )}
                       <Button variant="ghost" size="sm" onClick={() => void remove(m)} aria-label="Delete this model">
                         <Trash2 aria-hidden="true" /> Delete
                       </Button>
@@ -840,6 +899,9 @@ export default function StudioPage() {
                   <span className="pbs-new-t">Make a new model</span>
                   <span className="pbs-new-s">{models.length >= 3 ? 'You can keep 3. Delete one first.' : 'About 5 minutes: consent, photos, an optional video and voice.'}</span>
                 </button>
+              </li>
+              <li>
+                <ImportPack disabled={models.length >= 3} onDone={(m) => setModels((xs) => [m, ...(xs ?? [])])} />
               </li>
             </ul>
           </section>
