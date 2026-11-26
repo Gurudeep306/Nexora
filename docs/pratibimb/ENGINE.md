@@ -16,6 +16,47 @@ thing: **a teacher, waist up, facing the student, explaining.** A narrow job let
 us on consented data, reach top quality: our warp-based test already matched 8 different people at 97–103%
 face-recognition likeness on held-out video with no training at all.
 
+## 1a. Owner's priorities (2026-11-26, later the same day)
+
+- **Inputs stay as they are**: the capture we already take (guided scan, phone, uploads, optional video,
+  consent clip with the voice). No new long recording.
+- **Building a person's model takes 3–4 minutes at most** (faster is better), with **perfection first**:
+  lip sync, face and body must match the person.
+- **Any language**: English first, built so any language can be added.
+- The output never changes: one digital human that looks like them, speaks and converses.
+
+## 1b. Building a person in 3–4 minutes (one rented GPU)
+
+The heavy learning happens **once**, in a shared model trained on consented people; each new person needs only
+a short fit. Recent work builds drivable 3D people in seconds from photos or a phone video with a model
+trained beforehand (UIKA 2601.07603, GUAVA 2505.03351, FFAvatar 2605.15320 and 2606.30347, LHM 2503.10625,
+InstantHand 2611.08330), and a short test-time adaptation on the person's own frames lifts it further
+(ELITE 2601.10200). We build our own on these ideas, on our own body model.
+
+| Time | Step |
+|---|---|
+| ~40 s | Read the capture (face points, 52 expression values, metric body measurements, voice); the identity pack |
+| ~10 s | **Our feed-forward model** turns all the person's photos and frames into a drivable 3D upper body (face, hair, body, hands, mouth layer) on our mesh |
+| ~2 min | **Polish on their own frames**: pixel loss on every frame, face-recognition identity loss, their 478 face points lock the face shape, their measured shoulders, neck and head lock the body, and their own mouth frames build the real-mouth library |
+| ~30 s | **Gates on frames it never learned from**: face likeness ≥ 95% (our bench: 97–103%), body measurements within tolerance, lip-sync check; on failure it polishes longer by itself, or names the missing photo |
+
+Every model ships with its **likeness report** (face, body, lips as numbers with pass/fail) and can be
+**rebuilt in one click** when the shared model improves, with no new recording.
+Hands are the weak spot: the current capture shows few hand shapes, so the shared model fills them in.
+One-off cost: training the shared model, roughly 150–500 GPU-hours (estimate).
+
+## 1c. Any language
+
+- Lips are driven by **sounds, not words**: every language goes through a grapheme-to-phoneme step into the
+  international phonetic alphabet (IPA), and the motion maker maps phonemes to mouth shapes. Articulation is
+  shared across languages, so a new language moves the lips correctly at once (MuEx 2510.06612: phoneme and
+  viseme alignment carries lip sync across 12 languages; Polyglot 2604.16108; AudioFace 2605.07478).
+  A few hours of that language perfect its details.
+- The voice keeps **speaker identity separate from language**, so a person's voice can speak languages they
+  never recorded.
+- **Adding a language** = its phoneme converter + a short voice fine-tune + its lip test set. The person's
+  model is never rebuilt. English first; Hindi and Hinglish next (rules in §3.5).
+
 ## 2. The five layers
 
 ```
