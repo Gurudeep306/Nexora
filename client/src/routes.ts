@@ -28,6 +28,7 @@ export const pageLoaders = {
   WorkshopPage: () => import('@/pages/WorkshopPage'),
   NexusPage: () => import('@/pages/NexusPage'),
   AnalyticsPage: () => import('@/pages/AnalyticsPage'),
+  PratibimbStudio: () => import('@/pratibimb/StudioPage'),
   AchievementsPage: () => import('@/pages/AchievementsPage'),
   LearnPage: () => import('@/pages/LearnPage'),
   SubjectPage: () => import('@/pages/SubjectPage'),

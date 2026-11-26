@@ -6180,6 +6180,8 @@ app.use(require("./routes/hand").createHandRouter());
 // is attached once socket.io is up (liveRooms.signal, below).
 // Video explanations on questions and lessons (files on disk, data/explain).
 app.use(require("./routes/explain").createExplainRouter());
+// Pratibimb: a person's own talking model from their photos and voice (files on disk, data/pratibimb).
+app.use(require("./routes/pratibimb").createPratibimbRouter());
 const liveRooms = {};
 app.use(require("./routes/live-rooms").createLiveRoomsRouter({ realtime, live: liveRooms }));
 

@@ -1,0 +1,352 @@
+/* Pratibimb: the teacher panel and the Studio page. Tokens only; light and dark; no sideways scroll. */
+@layer components {
+  .pb-panel {
+    display: grid;
+    gap: 12px;
+    color: var(--color-text-primary);
+  }
+  .pb-inline.pb-with-board {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    align-items: stretch;
+  }
+  .pb-stage {
+    position: relative;
+    height: clamp(320px, 58vh, 540px);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    overflow: hidden;
+    background: radial-gradient(120% 90% at 50% 20%, color-mix(in oklab, var(--color-bg-surface) 92%, var(--color-text-primary)), var(--color-bg-surface));
+  }
+  .pb-canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .pb-loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    color: var(--color-text-muted);
+  }
+  .pb-board {
+    order: -1;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background: var(--color-bg-surface);
+    padding: 16px;
+    animation: pb-board-in 260ms ease-out both;
+    min-width: 0;
+    display: grid;
+    align-content: center;
+  }
+  @keyframes pb-board-in {
+    from {
+      opacity: 0;
+      transform: translateX(-12px) scale(0.98);
+    }
+  }
+  .pb-caption {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 10px;
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: color-mix(in oklab, var(--color-bg-app) 82%, transparent);
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--color-text-muted);
+  }
+  .pb-caption .pb-said {
+    color: var(--color-text-primary);
+  }
+  .pb-tools {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 6px;
+  }
+  .pb-tool {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-bg-surface);
+    color: var(--color-text-secondary);
+  }
+  .pb-tool:hover {
+    color: var(--color-text-primary);
+  }
+  /* Docked beside a lesson. */
+  .pb-dock {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 40;
+    width: min(340px, calc(100vw - 32px));
+  }
+  .pb-dock .pb-stage {
+    height: 380px;
+  }
+  .pb-dock.pb-small {
+    width: 120px;
+  }
+  .pb-dock.pb-small .pb-stage {
+    height: 120px;
+    border-radius: 999px;
+  }
+  .pb-dock.pb-small .pb-caption {
+    display: none;
+  }
+  .pb-dock.pb-with-board .pb-board {
+    position: fixed;
+    right: calc(16px + min(340px, calc(100vw - 32px)) + 12px);
+    bottom: 16px;
+    width: min(520px, calc(100vw - 400px));
+    max-height: 70vh;
+    overflow: auto;
+  }
+  @media (max-width: 760px) {
+    .pb-inline.pb-with-board {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .pb-dock {
+      width: 120px;
+    }
+    .pb-dock .pb-stage {
+      height: 120px;
+      border-radius: 999px;
+    }
+    .pb-dock .pb-caption {
+      display: none;
+    }
+    .pb-dock.pb-with-board .pb-board {
+      right: 16px;
+      left: 16px;
+      width: auto;
+      bottom: 148px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pb-board {
+      animation: none;
+    }
+  }
+
+  /* Studio page. */
+  .pbs {
+    display: grid;
+    gap: 24px;
+    max-width: 60rem;
+  }
+  .pbs-head {
+    display: grid;
+    gap: 8px;
+  }
+  .pbs-title {
+    margin: 0;
+    font-size: clamp(1.8rem, 1.3rem + 1.6vw, 2.5rem);
+    line-height: 1.1;
+  }
+  .pbs-line {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 15px;
+  }
+  .pbs-steps {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .pbs-step {
+    padding: 6px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+  .pbs-step[aria-current='step'] {
+    color: var(--color-text-primary);
+    border-color: var(--color-accent-brand);
+  }
+  .pbs-step.pbs-done {
+    color: var(--color-state-success);
+  }
+  .pbs-card {
+    display: grid;
+    gap: 14px;
+    padding: 20px;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    background: var(--color-bg-surface);
+  }
+  .pbs-card h2 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  .pbs-card p {
+    margin: 0;
+    color: var(--color-text-secondary);
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .pbs-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .pbs-check {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 14.5px;
+  }
+  .pbs-check input {
+    margin-top: 3px;
+  }
+  .pbs-sentence {
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: color-mix(in oklab, var(--color-accent-brand) 8%, var(--color-bg-app));
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .pbs-video {
+    width: 100%;
+    max-width: 360px;
+    aspect-ratio: 4 / 3;
+    border-radius: 12px;
+    background: var(--color-bg-app);
+    object-fit: cover;
+  }
+  .pbs-guide {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .pbs-guide li {
+    padding: 10px;
+    border: 1px dashed var(--color-border);
+    border-radius: 12px;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+  .pbs-photos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .pbs-photo {
+    position: relative;
+    display: grid;
+    gap: 6px;
+    font-size: 12.5px;
+  }
+  .pbs-photo img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  .pbs-ok {
+    color: var(--color-state-success);
+  }
+  .pbs-warn {
+    color: var(--color-state-warning);
+  }
+  .pbs-remove {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-bg-app) 85%, transparent);
+    color: var(--color-text-primary);
+  }
+  .pbs-meter {
+    height: 8px;
+    border-radius: 999px;
+    background: var(--color-bg-app);
+    overflow: hidden;
+  }
+  .pbs-meter > span {
+    display: block;
+    height: 100%;
+    background: var(--color-accent-brand);
+    transition: width 80ms linear;
+  }
+  .pbs-voice {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+  }
+  .pbs-field {
+    display: grid;
+    gap: 6px;
+    font-size: 14px;
+  }
+  .pbs-field select,
+  .pbs-field input {
+    padding: 8px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-bg-app);
+    color: var(--color-text-primary);
+  }
+  .pbs-stages {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 14px;
+  }
+  .pbs-error,
+  .pbs-card .pbs-error {
+    color: var(--color-state-error);
+    font-size: 14px;
+  }
+  .pbs-models {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .pbs-model {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 12px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+  }
+}

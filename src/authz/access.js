@@ -53,7 +53,9 @@ const isHandDevice = (p) => /^\/api\/hand\/device\/[A-Za-z0-9_-]{20,64}(\/previe
 const isLiveDevice = (p) => /^\/api\/live\/device\/[A-Za-z0-9_-]{20,64}$/.test(canon(p));
 // A tablet recording an explanation by QR: its token is the key (src/routes/explain.js).
 const isExplainDevice = (p) => /^\/api\/explain\/device\/[A-Za-z0-9_-]{20,64}(\/videos(\/[A-Za-z0-9_-]{16,32}\/(data|finish))?)?$/.test(canon(p));
-const isPublicApi = (p) => isHandDevice(p) || isLiveDevice(p) || isExplainDevice(p) || PUBLIC_API.has(canon(p).toLowerCase()) || (/^\/api\/hive-bridge\/(hello|poll|result|script|approve|setup\.sh)$/i.test(canon(p)) || /^\/api\/hive-mcp$/i.test(canon(p)));
+// The Pratibimb build worker signs in with its own key (src/routes/pratibimb.js).
+const isPratibimbWorker = (p) => /^\/api\/pratibimb\/worker\/(next|[a-f0-9]{24}\/(files\/[a-z0-9.-]{1,40}|result\/[a-z.]{1,20}|status))$/.test(canon(p));
+const isPublicApi = (p) => isPratibimbWorker(p) || isHandDevice(p) || isLiveDevice(p) || isExplainDevice(p) || PUBLIC_API.has(canon(p).toLowerCase()) || (/^\/api\/hive-bridge\/(hello|poll|result|script|approve|setup\.sh)$/i.test(canon(p)) || /^\/api\/hive-mcp$/i.test(canon(p)));
 function isPublicPath(p) {
   if (isApi(p)) return isPublicApi(p);
   if (p === "/auth" || p.startsWith("/auth/")) return true; // sign-in page + OAuth

@@ -32,6 +32,7 @@ build/
 public/uploads/*
 # Video explanations (src/routes/explain.js) live on the server's disk.
 /data/explain/
+/data/pratibimb/
 /data/guru/
 !public/uploads/.gitkeep
 

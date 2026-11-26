@@ -62,6 +62,7 @@ const NotesFontsPage = lazy(pageLoaders.NotesFontsPage)
 const SocialPage = lazy(pageLoaders.SocialPage)
 const MessagesPage = lazy(pageLoaders.MessagesPage)
 const ExplorePage = lazy(pageLoaders.ExplorePage)
+const PratibimbStudio = lazy(pageLoaders.PratibimbStudio)
 const SocialPostPage = lazy(pageLoaders.SocialPostPage)
 const SocialTagPage = lazy(pageLoaders.SocialTagPage)
 const SubmissionsPage = lazy(pageLoaders.SubmissionsPage)
@@ -206,6 +207,7 @@ export default function App() {
             <Route path="/theme" element={<ThemeCentrePage />} />
             {/* The teacher is off until the new one is approved (voice/teacher/available.ts). */}
             <Route path="/teacher" element={TEACHER_LIVE ? <TeacherStudio /> : <Navigate to="/settings" replace />} />
+            <Route path="/pratibimb" element={<PratibimbStudio />} />
             <Route path="/ai-lab" element={<AiLabPage />} />
             <Route path="/admin" element={<AdminRoute />} />
             <Route path="/admin/problems/:id" element={<AuthorRoute />} />
