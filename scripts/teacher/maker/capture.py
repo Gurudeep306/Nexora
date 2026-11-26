@@ -353,6 +353,14 @@ views = views[: a.keep]
 # and expressions, sharp ones first. Saved as face crops (head and shoulders) with their offset, so the
 # frame's own face points still apply.
 cands = [i for i, (r, _) in enumerate(records) if r["face_px"] > 90 and r["sharp"] > 25]
+low_detail = len(cands) < 24
+if low_detail:
+    # A weak camera (small or soft face in every frame): use the best this recording has, and say so.
+    ok_ = [i for i, (r, _) in enumerate(records) if r["face_px"] > 48]
+    cut = np.percentile([records[i][0]["sharp"] for i in ok_], 30) if ok_ else 0
+    cands = [i for i in ok_ if records[i][0]["sharp"] >= cut]
+    print(f"CAPTURE low detail: faces about {int(np.median([records[i][0]['face_px'] for i in ok_] or [0]))} px wide; "
+          f"using the {len(cands)} best frames. Closer to the camera, or a phone camera, gives a better model.", flush=True)
 bins = {}
 for i in cands:
     r = records[i][0]
