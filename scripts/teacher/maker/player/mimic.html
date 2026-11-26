@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#f3eee6}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"./three/build/three.module.js","three/addons/":"./three/examples/jsm/","@pixiv/three-vrm":"./vrmlib/lib/three-vrm.module.js"}}</script></head><body>
+<script type="module">
+// Plays a Pratibimb stream (stream.py: 52 ARKit values + head pose per frame) on a VRM character.
+//   mimic.html?m=out/char.vrm&s=demo/real.json   then window.renderAt(frameIndex)
+import * as THREE from 'three'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+import { VRMLoaderPlugin } from '@pixiv/three-vrm'
+import { toonify } from './toon.js'
+const q = new URLSearchParams(location.search), W = +q.get('w') || 720, H = +q.get('h') || 720
+const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true }); r.setSize(W, H); r.outputColorSpace = THREE.SRGBColorSpace
+document.body.appendChild(r.domElement)
+const scene = new THREE.Scene(); scene.background = new THREE.Color(0xf3eee6)
+scene.add(new THREE.HemisphereLight(0xfff7ee, 0xb9a99a, 1.1))
+const rim = new THREE.DirectionalLight(0xffe6d0, 1.2); rim.position.set(1.5, 1.6, -1.8); scene.add(rim)
+const key = new THREE.DirectionalLight(0xfff0e0, 2.4); key.position.set(-1.2, 2, 2.2); scene.add(key)
+const L = new GLTFLoader(); L.register((p) => new VRMLoaderPlugin(p))
+const vrm = (await L.loadAsync(q.get('m'))).userData.vrm; scene.add(vrm.scene)
+toonify(vrm, q)
+const bone = (n) => vrm.humanoid.getNormalizedBoneNode(n)
+bone('leftUpperArm').rotation.z = -1.2; bone('rightUpperArm').rotation.z = 1.2
+bone('leftLowerArm').rotation.z = -0.12; bone('rightLowerArm').rotation.z = 0.12
+vrm.update(0)
+const head = new THREE.Vector3(); bone('head').getWorldPosition(head)
+const cam = new THREE.PerspectiveCamera(20, W / H, 0.05, 50)
+cam.position.set(head.x, head.y - 0.02, head.z + 1.25); cam.lookAt(head.x, head.y - 0.06, head.z)
+
+const S = await (await fetch(q.get('s'))).json()
+const meshes = []; vrm.scene.traverse((o) => { if (o.isMesh && o.morphTargetDictionary) meshes.push(o) })
+const D2R = Math.PI / 180, YAW = +(q.get('ys') || 1), PITCH = +(q.get('ps') || 1), ROLL = +(q.get('rs') || 1)
+window.renderAt = (k) => {
+  const f = S.frames[Math.min(k, S.frames.length - 1)]
+  // Head pose: shared between neck (40%) and head (60%), as people turn.
+  const [y, p, ro] = f.ypr
+  for (const [n, w] of [['neck', 0.4], ['head', 0.6]]) bone(n).rotation.set(PITCH * p * D2R * w, YAW * y * D2R * w, ROLL * ro * D2R * w)
+  vrm.update(1 / S.fps)
+  // The 52 values go straight onto the character's 52 ARKit shapes.
+  for (const m of meshes) S.names.forEach((n, i) => { const idx = m.morphTargetDictionary[n]; if (idx !== undefined) m.morphTargetInfluences[idx] = f.b[i] / 255 })
+  r.render(scene, cam)
+}
+window.FRAMES = S.frames.length
+window.ready = true
+</script></body></html>
