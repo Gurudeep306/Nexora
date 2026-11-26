@@ -76,19 +76,42 @@ def blender(script, *a):
     return [args.blender, "-b", "--python", os.path.join(ROOT, "scripts", "teacher", script), "--", *map(str, a)]
 
 
+# 0. upright --------------------------------------------------------------------------------------
+# Phones often strip the turn tag, so photos arrive sideways or upside down. Every later stage reads the
+# upright copies.
+out0 = run("upright", py("upright.py", args.photos, args.models, f"{W}/upright"), "UPRIGHT done")
+log("upright", next((l for l in out0.splitlines() if l.startswith("UPRIGHT done")), "upright"))
+args.photos = f"{W}/upright"
+
 # 1. analyse ---------------------------------------------------------------------------------------
 run("analyse", py("analyse.py", args.photos, args.models, f"{W}/analysis.json"), "ANALYSE summary")
 A = json.load(open(f"{W}/analysis.json"))
 S, P = A["summary"], A["photos"]
 usable = {k: v for k, v in P.items() if v["role"] != "skip"}
 log("analyse", f"{S['usable']} of {S['photos']} photos usable", summary=S, skipped={k: v["reasons"] for k, v in P.items() if v["role"] == "skip"})
-if S["usable"] < 2:
+if S["usable"] < 1:
     log("analyse", "not enough usable photos", advice=S["advice"])
     raise SystemExit("Not enough usable photos: " + " ".join(S["advice"]))
 json.dump(usable, open(f"{W}/points.json", "w"))
 ranked = sorted(usable.values(), key=lambda r: -r["quality"])
-skin_photos = [r for r in ranked if r["role"] == "skin"] or sorted([r for r in ranked if r["mouth_ok"]] or ranked, key=lambda r: r.get("light_unevenness", 1))
+# Skin photos: sharp, large, nothing on the face. The bake removes the room's light and colour cast, so
+# uneven light is allowed, but less is better. Fronts first; then the best photo turned the other way,
+# so both sides of the face come from a real view.
+def skin_ok(r):
+    return (r.get("face_px", 0) >= 180 and r.get("sharpness", 0) >= 30 and r.get("covered_eyes", 0) < 0.2
+            and r.get("foreign_on_face", 0) <= 0.05 and r.get("hair_over_face", 0) < 0.25)
+
+
+def skin_rank(r):
+    return r["quality"] - 0.4 * max(0, r.get("light_unevenness", 0.4) - 0.3) + (0.1 if r["role"] == "skin" else 0)
+
+
+cands = sorted([r for r in ranked if skin_ok(r)] or ranked, key=lambda r: -skin_rank(r))
+skin_photos = cands[:1]
+other_side = [r for r in cands[1:] if np.sign(r["yaw"]) != np.sign(cands[0]["yaw"]) and abs(r["yaw"]) > 8]
+skin_photos += other_side[:1] + [r for r in cands[1:] if r not in other_side[:1]][:1]
 best = skin_photos[0]
+log("analyse", f"skin from {[r['file'] for r in skin_photos]}", skin_photos=[r["file"] for r in skin_photos])
 
 
 def median_of(key):
@@ -101,19 +124,21 @@ hair_len = float(np.median([r["hair_below_chin"] for r in ranked if "hair_below_
 
 # 2. body ------------------------------------------------------------------------------------------
 gender = {"female": 0.0, "male": 1.0, "neutral": 0.5}[args.gender]
-bodies = [r["body"] for r in ranked if r.get("body")]
+# Body proportions don't need a sharp face: full-length photos (often too small for the face) count too.
+bodies = [r["body"] for r in P.values() if r.get("body") and "more than one face of similar size" not in r.get("reasons", [])]
 weight, muscle = 0.5, 0.5
 if bodies:
-    sw = np.median([b["shoulder_w"] for b in bodies if "shoulder_w" in b] or [0])
-    ww = np.median([b["waist_w"] for b in bodies if "waist_w" in b] or [0])
-    if sw and ww:
-        # Wider waist relative to the shoulders reads as a heavier build (clamped to a natural range).
-        weight = float(np.clip(0.5 + (ww / sw - 1.0) * 1.2, 0.25, 0.85))
+    # Waist (outer edge, clothes included) over shoulders (joint to joint), per photo, then the median.
+    # About 1.55 is an average build; clothes make it read a little wide, so the slope is gentle and the
+    # result stays in a natural range. With no full-body photo the build stays average.
+    ratios = [b["waist_w"] / b["shoulder_w"] for b in bodies if b.get("waist_w") and b.get("shoulder_w", 0) > 0.8]
+    if ratios:
+        weight = float(np.clip(0.5 + (np.median(ratios) - 1.55) * 0.6, 0.3, 0.75))
 lum = np.dot(skin_c or [0.7, 0.55, 0.45], [0.299, 0.587, 0.114])
 race = {"african": float(np.clip((0.55 - lum) * 2.5, 0, 0.8)), "asian": 0.3}
 race["caucasian"] = max(0.05, 1 - race["african"] - race["asian"])
 body = {"gender": gender, "age": args.age, "muscle": muscle, "weight": weight, "height": 0.5, "race": race}
-log("body", f"gender {gender}, weight {weight:.2f}", body=body, measured=bodies[:3])
+log("body", f"gender {gender}, weight {weight:.2f}", body=body, measured=bodies[:6])
 
 # 3. reference -------------------------------------------------------------------------------------
 recipe0 = {"body": body}
@@ -131,23 +156,50 @@ views = [f"{W}/points.json:{n}" for n in usable]
 run("shape", py("../fit/shape.py", f"{W}/shape.json", *views), "SHAPE")
 log("shape", f"face shape from {len(views)} photos")
 
+json.dump({"targets": {}}, open(f"{W}/body_face0.json", "w"))
+# 4b. the person's own 3D face points from all photos together (checked on held-out photos).
+# Needs two or more photos (one photo cannot say where a point is in depth); with one, the sliders alone
+# shape the face.
+HAVE_3D = len(views) >= 2
+if HAVE_3D:
+    out4 = run("points3d", py("solve_points3d.py", f"{W}/base.npz", f"{W}/body_face0.json",
+                              f"{W}/points.json", f"{W}/points3d.json", "--prior", "0.5", *(["--check"] if len(views) > 2 else [])), "POINTS3D")
+    log("points3d", " ".join(l for l in out4.splitlines() if l.startswith("POINTS3D")))
+else:
+    log("points3d", "one usable photo: face detail from the sliders only")
 
-def build_variant(tag, strength, skin_set):
+
+def build_variant(tag, strength, skin_set, detail=True):
     """Stages 5-9 for one variant; returns the VRM path."""
     run("face", py("solve_face.py", f"{W}/base.npz", f"{W}/shape.json", f"{W}/face_{tag}.json",
                    "--reference", f"{W}/ref_shape.json", "--strength", strength), "SOLVE")
+    # 5b. what the sliders could not reach, from the 3D points (smooth, safe; refused if it would tear).
+    if detail and HAVE_3D:
+        out5 = subprocess.run(py("solve_detail.py", f"{W}/base.npz", f"{W}/face_{tag}.json", f"{W}/shape.json", f"{W}/ref_shape.json",
+                                 f"{W}/detail_{tag}.target", "--points3d", f"{W}/points3d.json", "--strength", "1.0", "--depth", "0.7", "--sigma", "0.1"),
+                              capture_output=True, text=True, cwd=ROOT)
+        if out5.returncode == 0 and os.path.exists(f"{W}/detail_{tag}.target"):
+            f = json.load(open(f"{W}/face_{tag}.json"))
+            f["targets"][f"{W}/detail_{tag}.target"] = 1.0
+            json.dump(f, open(f"{W}/face_{tag}.json", "w"))
+            log("face", f"variant {tag}: detail added", **{f"detail_{tag}": out5.stdout.strip()[-200:]})
+        else:
+            log("face", f"variant {tag}: detail skipped ({(out5.stdout + out5.stderr).strip()[-160:]})")
     skin_base = f"{MPFB_DATA}/skins/young_asian_female/young_lightskinned_female_diffuse3.png"
     seg = os.path.join(args.models, "selfie_multiclass.tflite")
     run("skin", py("bake_skin.py", f"{W}/base.npz", f"{W}/face_{tag}.json", skin_base, f"{W}/skin_{tag}.png",
                    *[f"{W}/points.json:{r['file']}:{os.path.join(args.photos, r['file'])}" for r in skin_set]),
         "BAKE painted", env={**os.environ, "SELFIE_SEGMENTER": seg})
+    real_brows = args.style in ("painted", "real")
     run("features", py("paint_features.py", f"{W}/base.npz", f"{W}/face_{tag}.json", f"{W}/skin_{tag}.png", f"{W}/features_{tag}.png",
-                       f"{W}/points.json:{best['file']}:{os.path.join(args.photos, best['file'])}"), "PAINT wrote")
-    paint, lines = {"painted": (0.6, 0.35), "anime": (0.8, 0.8), "real": (0.0, 0.15)}[args.style]
+                       f"{W}/points.json:{best['file']}:{os.path.join(args.photos, best['file'])}"), "PAINT wrote",
+        env={**os.environ, "PAINT_BROWS": "0" if real_brows else "1"})
+    paint, lines = {"painted": (0.35, 0.18), "anime": (0.8, 0.8), "real": (0.0, 0.1)}[args.style]
     run("look", py("paint_look.py", f"{W}/skin_{tag}.png", f"{W}/features_{tag}.png", f"{W}/look_{tag}.png", "--paint", paint, "--lines", lines), "LOOK wrote")
     iris = ",".join(str(int(v * 255)) for v in (iris_c or [0.35, 0.22, 0.14]))
     tone = ",".join(str(int(v * 255)) for v in (skin_c or [0.8, 0.62, 0.52]))
-    run("look", py("anime_textures.py", skin_base, f"{MPFB_DATA}/eyes/materials/brown_eye.png", tone, iris, W), "ANIME")
+    run("look", py("anime_textures.py", skin_base, f"{MPFB_DATA}/eyes/materials/brown_eye.png", tone, iris, W), "ANIME",
+        env={**os.environ, "EYE_STYLE": "anime" if args.style == "anime" else "real"})
     # Hair by length; clothes by gender (what is installed).
     female = gender < 0.5
     if hair_len > 0.6:
@@ -170,9 +222,11 @@ def build_variant(tag, strength, skin_set):
         "hair": f"hair/{hair}/{hair}.mhclo", "clothes": clothes,
         "skin_image": f"look_{tag}.png", "skin_match": "lightskinned",
         "replace_images": {"brown_eye": "anime_eye.png"},
-        "recolour": {hair: [h, min(0.6, s_ + 0.05), max(0.08, v), 0.0], "eyebrow009": [h, 0.4, max(0.06, v * 0.8), 0.0]},
+        "recolour": {hair: [h, min(0.6, s_ + 0.05), max(0.08, v), 0.0], **({} if real_brows else {"eyebrow009": [h, 0.4, max(0.06, v * 0.8), 0.0]})},
         "decimate": {"teeth": 0.15},
     }
+    if real_brows:
+        recipe.pop("eyebrows")  # the person's own brows are in the skin; a brow mesh would double them
     json.dump(recipe, open(f"{W}/recipe_{tag}.json", "w"), indent=1)
     run("build", blender("build-vrm-teacher.py", f"{W}/recipe_{tag}.json", f"{W}/teacher_{tag}.vrm"), "BUILD export")
     return f"{W}/teacher_{tag}.vrm", hair
@@ -185,7 +239,7 @@ def score(vrm, tag, painted=()):
     lab = os.path.abspath(args.lab)
     os.makedirs(f"{lab}/out", exist_ok=True)
     shutil.copy(vrm, f"{lab}/out/pipe_{tag}.vrm")
-    shots = [[f"look.html?m=out/pipe_{tag}.vrm&v=face", f"{W}/render_{tag}_f.png"], [f"look.html?m=out/pipe_{tag}.vrm&v=side", f"{W}/render_{tag}_s.png"]]
+    shots = [[f"anime.html?m=out/pipe_{tag}.vrm&style=paint&smile=0&v=face", f"{W}/render_{tag}_f.png"], [f"anime.html?m=out/pipe_{tag}.vrm&style=paint&smile=0&v=side", f"{W}/render_{tag}_s.png"]]
     subprocess.run(["node", f"{lab}/shot.cjs", json.dumps(shots)], cwd=lab, capture_output=True)
     out = subprocess.run([sys.executable, "-I", os.path.join(HERE, "likeness.py"), args.models, "--photos",
                           # Only photos not painted onto the model judge it (otherwise it recognises its own copy).
@@ -198,10 +252,11 @@ def score(vrm, tag, painted=()):
     return None
 
 
-variants = [("a", 1.0, skin_photos[:3]), ("b", 0.75, skin_photos[:3]), ("c", 1.0, skin_photos[:1])][: args.variants]
+# Variants: two skin photos (both sides) or the single best one; with and without the face detail.
+variants = [("a", 1.0, skin_photos[:2], True), ("b", 1.0, skin_photos[:1], True), ("c", 1.0, skin_photos[:2], False)][: args.variants]
 results = []
-for tag, strength, skin_set in variants:
-    vrm, hair = build_variant(tag, strength, skin_set)
+for tag, strength, skin_set, detail in variants:
+    vrm, hair = build_variant(tag, strength, skin_set, detail)
     s = score(vrm, tag, painted={r["file"] for r in skin_set})
     results.append((s if s is not None else -1, tag, vrm))
     log("check", f"variant {tag}: likeness {s}%", **{f"variant_{tag}": {"strength": strength, "skin_photos": [r['file'] for r in skin_set], "likeness": s, "hair": hair}})

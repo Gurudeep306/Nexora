@@ -45,16 +45,9 @@ pts_path, name, img_path = view.split(":", 2)
 # --- The fitted model ------------------------------------------------------------------------------
 base = np.load(base_path)
 co = base["co"].copy()
-for tname, w in json.load(open(face_path))["targets"].items():
-    for g in ("head", "forehead", "eyebrows", "eyes", "nose", "mouth", "cheek", "chin"):
-        p = os.path.join(TARGETS, g, tname + ".target.gz")
-        if os.path.exists(p):
-            with gzip.open(p, "rt") as f:
-                for line in f:
-                    if line.strip() and not line.startswith("#"):
-                        q = line.split()
-                        co[int(q[0])] += w * (np.array([float(q[1]), float(q[2]), float(q[3])]) @ TO_LOCAL.T)
-            break
+sys.path.insert(0, HERE)
+import targets as _targets  # noqa: E402
+co = _targets.apply(co, json.load(open(face_path))["targets"])
 corr = json.load(open(os.path.join(HERE, "..", "fit", "corr.json")))["points"]
 used = [i for i, c in enumerate(corr) if c]
 L3 = np.array([sum(co[int(k)] * w for k, w in corr[i].items()) for i in used])
@@ -154,8 +147,11 @@ for idx in (NOSTRIL_R, NOSTRIL_L):
     poly = c + (poly - c) * 0.45
     d.polygon([tuple(p) for p in poly], fill=col(skin_col * 0.45, 0.55))
 
-# Brows: the real outline, filled; then darker hair-like strokes along the brow.
-for up, lo in ((BROW_R_UP, BROW_R_LO), (BROW_L_UP, BROW_L_LO)):
+# Brows: the real outline, filled; then darker hair-like strokes along the brow. Off when the photo's own
+# brows are painted on (the "painted" and "real" looks): the face points place brows less exactly than the
+# photo shows them, and the two would double up.
+DRAW_BROWS = os.environ.get("PAINT_BROWS", "1") == "1"
+for up, lo in ((BROW_R_UP, BROW_R_LO), (BROW_L_UP, BROW_L_LO)) if DRAW_BROWS else ():
     d.polygon(P(up) + P(lo)[::-1], fill=col(brow_col, 0.92))
     a, b = np.array(P(up)), np.array(P(lo))
     for k in range(9):
@@ -214,9 +210,25 @@ def dlt(X, x):
 Pcam = dlt(L3, P2[used])
 
 
-def project(X):
+def _project(X):
     h = np.c_[X, np.ones(len(X))] @ Pcam.T
     return h[:, :2] / h[:, 2:3]
+
+
+# The same small photo warp as bake_skin.py, so drawn lines sit on the photo features they trace.
+_at = _project(L3)
+_off = P2[used][:, :2] - _at
+_sig = max(4.0, float(np.ptp(P2[used][:, 0])) * float(os.environ.get("BAKE_WARP_SIGMA", "0.06")))
+_G = np.exp(-((_at[:, None] - _at[None]) ** 2).sum(2) / (2 * _sig ** 2))
+_c = np.linalg.solve(_G + 0.05 * np.eye(len(_at)), _off)
+
+
+def project(X):
+    xy = _project(X)
+    if os.environ.get("BAKE_WARP", "1") != "1":
+        return xy
+    g = np.exp(-((xy[:, None] - _at[None]) ** 2).sum(2) / (2 * _sig ** 2))
+    return xy + g @ _c
 
 
 skin = np.asarray(Image.open(skin_path).convert("RGB"), np.float32) / 255

@@ -45,8 +45,49 @@ for _ in range(2):
         side = xs - ys > 0
         cx, cy = np.median(xs[side]), np.median(ys[side])
     centres.append((cx, cy))
-r_iris = W * 0.112
+STYLE = os.environ.get("EYE_STYLE", "real")
+r_iris = W * (0.118 if STYLE == "real" else 0.112)
 img = eye.copy()
+if STYLE == "real":
+    # A real iris, painted: the person's eye colour (kept warm and deep, as photos make irises look grey
+    # from glare), fine radial fibres, a darker ring at the edge, a soft pupil and one small catch-light.
+    # The white of the eye is lifted a little so the eye does not read grey.
+    import colorsys
+    h, s_, v = colorsys.rgb_to_hsv(*np.clip(iris, 0, 1))
+    if s_ < 0.12 or v < 0.4:
+        h = 0.075  # dark eyes are brown; the photo's tint (skin light, glare) is not the iris's hue
+    base = np.array(colorsys.hsv_to_rgb(h, max(0.5, min(0.7, s_ + 0.2)), min(0.4, max(0.24, v))))
+    arr = np.asarray(img, np.float32) / 255
+    yy, xx = np.mgrid[0:W, 0:W].astype(np.float32)
+    rng = np.random.default_rng(7)
+    fib_a = rng.uniform(0, 2 * np.pi, 260)
+    fib_w = rng.uniform(0.5, 1.6, 260)
+    for cx, cy in centres:
+        dx, dy = xx - cx, yy - cy
+        r = np.sqrt(dx * dx + dy * dy) / r_iris
+        ang = np.arctan2(dy, dx)
+        near = r < 2.2
+        # Lift the white of the eye around the iris.
+        white = near & (r >= 1.0)
+        lift = np.clip((2.2 - r) / 1.2, 0, 1)[..., None] * 0.35
+        arr[..., :3] = np.where(white[..., None], arr[..., :3] * (1 - lift) + np.array([0.95, 0.93, 0.9]) * lift, arr[..., :3])
+        inside = r < 1.0
+        fib = np.zeros_like(r)
+        for a0, w0 in zip(fib_a, fib_w):
+            fib += np.exp(-((np.angle(np.exp(1j * (ang - a0)))) ** 2) / (2 * (0.012 * w0) ** 2)) * 0.18
+        fib = np.clip(fib, 0, 1)
+        shade = 0.55 + 0.75 * np.clip((r - 0.3) / 0.7, 0, 1) * (1 - np.clip((r - 0.85) / 0.15, 0, 1))
+        col = base[None, None] * (shade[..., None] * (0.8 + 0.5 * fib[..., None]))
+        col = np.where((r > 0.86)[..., None], base * 0.35, col)  # limbal ring
+        col = np.where((r < 0.36)[..., None], np.array([0.03, 0.02, 0.02]), col)  # pupil
+        soft = np.clip((1.0 - r) / 0.04, 0, 1)[..., None]
+        arr[..., :3] = np.where(inside[..., None], arr[..., :3] * (1 - soft) + col * soft, arr[..., :3])
+        hl = np.exp(-(((xx - (cx - 0.32 * r_iris)) ** 2 + (yy - (cy - 0.34 * r_iris)) ** 2) / (2 * (0.07 * r_iris) ** 2)))
+        arr[..., :3] = np.clip(arr[..., :3] + hl[..., None] * 0.85, 0, 1)
+    img = Image.fromarray((np.clip(arr, 0, 1) * 255).astype(np.uint8), "RGBA")
+    img.save(os.path.join(out, "anime_eye.png"))
+    print("ANIME real eyes at", [(round(x), round(y)) for x, y in centres], "iris", (base * 255).round().tolist())
+    raise SystemExit(0)
 d = ImageDraw.Draw(img)
 for cx, cy in centres:
     for k in range(60, 0, -1):

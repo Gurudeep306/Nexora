@@ -29,6 +29,14 @@ styl = cv2.stylization(skin, sigma_s=12, sigma_r=0.18)
 smooth = cv2.edgePreservingFilter(skin, flags=cv2.RECURS_FILTER, sigma_s=18, sigma_r=0.25)
 painted = cv2.addWeighted(styl, 0.5, smooth, 0.5, 0)
 base = cv2.addWeighted(painted, a.paint, skin, 1 - a.paint, 0)
+# Features stay crisp: where the skin has strong detail (brows, lash line, lip edge), the painted finish
+# gives way to the sharp photo skin, lightly sharpened.
+gray = cv2.cvtColor(skin, cv2.COLOR_BGR2GRAY).astype(np.float32)
+edge = np.abs(gray - cv2.GaussianBlur(gray, (0, 0), 6))
+crisp = np.clip((edge - 6) / 14, 0, 1)
+crisp = cv2.GaussianBlur(crisp, (0, 0), 2)[..., None]
+sharp = cv2.addWeighted(skin, 1.5, cv2.GaussianBlur(skin, (0, 0), 1.5), -0.5, 0)
+base = (base * (1 - crisp) + sharp * crisp).astype(np.float32)
 # Lines: only where the feature layer differs from its own base (what was drawn), laid over lightly.
 diff = np.abs(feat.astype(np.int16) - skin.astype(np.int16)).sum(2)
 mask = np.clip(diff / 60.0, 0, 1)[..., None] * a.lines

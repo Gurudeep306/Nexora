@@ -28,19 +28,9 @@ views = [a.split(":", 2) for a in sys.argv[5:]]
 base = np.load(base_path)
 co = base["co"].copy()
 face = json.load(open(face_path))["targets"]
-for name, w in face.items():
-    group = name.split("-")[0] if not name[:2] in ("l-", "r-") else name.split("-")[1]
-    path = None
-    for g in ("head", "forehead", "eyebrows", "eyes", "nose", "mouth", "cheek", "chin", group):
-        p = os.path.join(TARGETS, g, name + ".target.gz")
-        if os.path.exists(p):
-            path = p
-            break
-    with gzip.open(path, "rt") as f:
-        for line in f:
-            if line.strip() and not line.startswith("#"):
-                q = line.split()
-                co[int(q[0])] += w * (np.array([float(q[1]), float(q[2]), float(q[3])]) @ TO_LOCAL.T)
+sys.path.insert(0, HERE)
+import targets as _targets  # noqa: E402
+co = _targets.apply(co, face)
 
 corr = json.load(open(os.path.join(HERE, "..", "fit", "corr.json")))["points"]
 used = [i for i, c in enumerate(corr) if c]
@@ -57,6 +47,14 @@ vn = np.zeros_like(co)
 for k in range(3):
     np.add.at(vn, tris[:, k], fn)
 vn /= np.linalg.norm(vn, axis=1, keepdims=True) + 1e-12
+# Normals must point out of the head. The mesh's winding is not guaranteed, so check against the face
+# points: from the middle of the head, outward is away from its centre.
+_head = co[np.unique(tris[(np.linalg.norm(co[tris].mean(1) - L3.mean(0), axis=1) < np.ptp(L3[:, 0]))].ravel())]
+_c = _head.mean(0)
+_ids = np.unique(tris[(np.linalg.norm(co[tris].mean(1) - L3.mean(0), axis=1) < np.ptp(L3[:, 0]))].ravel())
+if ((co[_ids] - _c) * vn[_ids]).sum(1).mean() < 0:
+    vn = -vn
+    print("BAKE normals pointed inwards; flipped")
 
 # Face region: vertices near the face points (front of the head), with a soft edge.
 face_w = np.ptp(L3[:, 0])
@@ -92,6 +90,25 @@ def project(P, X):
     return h[:, :2] / h[:, 2:3]
 
 
+class Warp:
+    """Small 2D correction in the photo so every face point samples exactly where the face reader found it
+    (lips on the model's lips, brows on its brows), even where the model's shape is a little off.
+    A damped Gaussian interpolation of the points' leftover offsets; zero far from the face."""
+
+    def __init__(self, at, offset, face_px):
+        self.at = at
+        self.sig = max(4.0, face_px * float(os.environ.get("BAKE_WARP_SIGMA", "0.06")))
+        G = np.exp(-((at[:, None] - at[None]) ** 2).sum(2) / (2 * self.sig ** 2))
+        self.c = np.linalg.solve(G + 0.05 * np.eye(len(at)), offset)
+
+    def __call__(self, xy):
+        out = np.empty_like(xy)
+        for s_ in range(0, len(xy), 20000):
+            g = np.exp(-((xy[s_:s_ + 20000, None] - self.at[None]) ** 2).sum(2) / (2 * self.sig ** 2))
+            out[s_:s_ + 20000] = xy[s_:s_ + 20000] + g @ self.c
+        return out
+
+
 skin = np.asarray(Image.open(skin_path).convert("RGB"), dtype=np.float32) / 255
 T = skin.shape[0]
 acc = np.zeros((T, T, 3), np.float32)
@@ -102,8 +119,18 @@ for pts_path, name, img_path in views:
     img = np.asarray(ImageOps.exif_transpose(Image.open(img_path)).convert("RGB"), dtype=np.float32) / 255
     x2 = np.array(rec["landmarks"])[used][:, :2]
     P, centre = dlt(L3, x2)
+    # A face is shallow, so a camera in front and its mirror image behind the head fit the points almost
+    # equally well (the depth reversal of near-flat scenes). Only the camera's side matters for which
+    # surfaces it sees; put it in front of the face (the nose points forward).
+    front = L3[used.index(1)] - L3.mean(0)
+    front /= np.linalg.norm(front) + 1e-12
+    off = centre - L3.mean(0)
+    if off @ front < 0:
+        centre = L3.mean(0) + off - 2 * (off @ front) * front
+        print("BAKE camera for", name[:12], "was behind the head; moved to the front")
     err = np.linalg.norm(project(P, L3) - x2, axis=1).mean() / rec["face_px"]
-    photos.append((name, img, P, centre, rec))
+    warp = Warp(project(P, L3), x2 - project(P, L3), rec["face_px"]) if os.environ.get("BAKE_WARP", "1") == "1" else None
+    photos.append((name, img, P, centre, rec, warp))
     print("BAKE camera for", name[:12], "error", round(float(err), 4), "face widths")
 
 # Clean each photo before painting:
@@ -124,27 +151,131 @@ def blur(img, sigma):
     return np.asarray(Image.fromarray((np.clip(img, 0, 1) * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(sigma)), np.float32) / 255
 
 
+FACE_OVAL = [10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152, 148,
+             176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109]
+
+
+def oval_mask(shape, lm):
+    from PIL import ImageDraw
+    m = Image.new("L", (shape[1], shape[0]), 0)
+    ImageDraw.Draw(m).polygon([tuple(map(float, lm[i][:2])) for i in FACE_OVAL], fill=255)
+    return np.asarray(m.filter(ImageFilter.GaussianBlur(3)), np.float32) / 255
+
+
+def norm_blur(img, mask, sigma):
+    """Blur that only averages the masked pixels (normalised convolution)."""
+    num = blur(img * mask[..., None], sigma)
+    den = blur(np.repeat(mask[..., None], 3, 2), sigma)[..., :1]
+    return num / (den + 1e-3)
+
+
 tones = []
 cleaned = []
-for name, img, P, centre, rec in photos:
+FEATURES = [
+    [70, 63, 105, 66, 107, 55, 65, 52, 53, 46],  # right brow
+    [300, 293, 334, 296, 336, 285, 295, 282, 283, 276],  # left brow
+    [33, 246, 161, 160, 159, 158, 157, 173, 133, 155, 154, 153, 145, 144, 163, 7],  # right eye
+    [263, 466, 388, 387, 386, 385, 384, 398, 362, 382, 381, 380, 374, 373, 390, 249],  # left eye
+    [61, 185, 40, 39, 37, 0, 267, 269, 270, 409, 291, 375, 321, 405, 314, 17, 84, 181, 91, 146],  # lips
+    [98, 97, 2, 326, 327, 294, 278, 344, 440, 275, 4, 45, 220, 115, 48, 64],  # nose base and nostrils
+]
+SCLERA_R = [33, 246, 161, 160, 159, 158, 157, 173, 133, 155, 154, 153, 145, 144, 163, 7]
+SCLERA_L = [263, 466, 388, 387, 386, 385, 384, 398, 362, 382, 381, 380, 374, 373, 390, 249]
+
+
+def white_balance(img, lm):
+    """The whites of the eyes are close to neutral, so their tint is the room's light. Returns per-channel
+    gains (clamped) that make them neutral; (1, 1, 1) when they cannot be measured."""
+    from PIL import ImageDraw
+    H_, W_ = img.shape[:2]
+    m = Image.new("L", (W_, H_), 0)
+    dr = ImageDraw.Draw(m)
+    for ring in (SCLERA_R, SCLERA_L):
+        dr.polygon([tuple(map(float, lm[i][:2])) for i in ring], fill=255)
+    for c, ring in ((468, range(469, 473)), (473, range(474, 478))):
+        cx, cy = lm[c][:2]
+        rr = np.mean([np.hypot(lm[k][0] - cx, lm[k][1] - cy) for k in ring]) * 1.15
+        dr.ellipse((cx - rr, cy - rr, cx + rr, cy + rr), fill=0)
+    mask = np.asarray(m) > 0
+    px = img[mask]
+    if len(px) < 30:
+        return np.ones(3, np.float32)
+    lum = px @ np.array([0.299, 0.587, 0.114])
+    px = px[lum >= np.percentile(lum, 60)]  # the brightest part: eye white, not lashes or shadow
+    c = np.median(px, 0)
+    g = c.mean() / np.maximum(c, 1e-3)
+    # Eye whites are a little warm themselves, so only most of the tint is taken out.
+    return (np.clip(g, 0.8, 1.25) ** 0.6).astype(np.float32)
+
+
+for name, img, P, centre, rec, warp in photos:
+    gain = white_balance(img, rec["landmarks"]) if os.environ.get("BAKE_WB", "1") == "1" else np.ones(3, np.float32)
+    img = np.clip(img * gain, 0, 1)
+    print("BAKE white balance for", name[:12], gain.round(3).tolist())
     u8 = (img * 255).astype(np.uint8)
     masks = segmenter.segment(mp.Image(image_format=mp.ImageFormat.SRGB, data=np.ascontiguousarray(u8))).confidence_masks
     hair = masks[1].numpy_view().astype(np.float32).reshape(img.shape[:2])
     face_skin = masks[3].numpy_view().astype(np.float32).reshape(img.shape[:2])
-    sigma = max(4, rec["face_px"] / 14)
-    low = blur(img, sigma)
-    detail = np.clip(img / (low + 0.03), 0, 2.5)
-    skin_px = img[(face_skin > 0.8) & (hair < 0.2)]
+    # The segmenter calls eyebrows (and lashes) "hair". Inside the face outline they are the person's own
+    # brows, so hair only removes pixels outside it (fringes and strands over the cheeks' edge).
+    oval = oval_mask(img.shape, rec["landmarks"])
+    # A little wider than the face points' outline, so brow tails and the hairline's edge are kept.
+    wide = np.asarray(Image.fromarray((oval * 255).astype(np.uint8)).filter(ImageFilter.MaxFilter(int(max(5, rec["face_px"] / 12)) | 1)), np.float32) / 255
+    hair_out = hair * (1 - wide)
+    # Room light: measured from clean skin only, so lips, brows and eyes keep their own colour.
+    # Dividing by the light's brightness (not its colour) keeps the true colours of the features.
+    skin_m = ((face_skin > 0.6) & (hair < 0.3)).astype(np.float32)
+    sigma = max(6, rec["face_px"] / 6)
+    shade = norm_blur(img, skin_m, sigma)
+    shade_l = np.clip(shade @ np.array([0.299, 0.587, 0.114], np.float32), 0.05, 1)[..., None]
+    skin_px = img[skin_m > 0]
     if len(skin_px) > 50:
-        # The skin's own colour is best seen where it is well lit but not shiny: the 65–90% brightest part.
         lum = skin_px @ np.array([0.299, 0.587, 0.114])
         lo, hi = np.percentile(lum, [65, 90])
-        tones.append(np.median(skin_px[(lum >= lo) & (lum <= hi)], 0))
-    cleaned.append((name, detail, P, centre, rec, np.clip(1 - hair * 1.5, 0, 1)))
+        t = np.median(skin_px[(lum >= lo) & (lum <= hi)], 0)
+        tones.append(t)
+    else:
+        t = np.array([0.75, 0.6, 0.5], np.float32)
+    # img / shade_l is the colour under even light, relative to the skin's own brightness.
+    # On skin this is t / lum(t); dividing by that leaves 1 on skin and each feature's colour relative to
+    # the skin (lips / skin, brows / skin), so every photo meets on one tone below.
+    detail = np.clip(img / shade_l, 0, 3) / np.clip(t / float(t @ np.array([0.299, 0.587, 0.114])), 0.3, 3)
+    detail = np.clip(detail, 0, 2.5)
+    # Only paint from the person's face and neck: background, hair outside the face, and clothes get no
+    # weight, and the weight fades out over a few pixels at the face's edge so nothing smears in.
+    bg = masks[0].numpy_view().astype(np.float32).reshape(img.shape[:2])
+    clothes = masks[4].numpy_view().astype(np.float32).reshape(img.shape[:2])
+    keep = np.clip(1 - hair_out * 3, 0, 1) * np.clip(1 - bg * 2, 0, 1) * np.clip(1 - clothes * 2, 0, 1)
+    keep = np.minimum(keep, np.clip(oval * 1.2 + face_skin * 0.6, 0, 1))
+    # Outside the features themselves, pixels much darker than the skin are shadow or stray hair (the
+    # shadow under the jaw, hair at the cheek's edge): they get no weight, so they cannot smear in.
+    from PIL import ImageDraw
+    feat = Image.new("L", (img.shape[1], img.shape[0]), 0)
+    fd = ImageDraw.Draw(feat)
+    lmk = rec["landmarks"]
+    for ring in FEATURES:
+        fd.polygon([tuple(map(float, lmk[i][:2])) for i in ring], fill=255)
+    feat = np.asarray(feat.filter(ImageFilter.MaxFilter(int(max(5, rec["face_px"] / 14)) | 1)).filter(ImageFilter.GaussianBlur(3)), np.float32) / 255
+    lum_ratio = (detail @ np.array([0.299, 0.587, 0.114], np.float32))
+    not_shadow = np.clip((lum_ratio - 0.62) / 0.18, 0, 1)
+    keep = keep * np.maximum(feat, not_shadow)
+    # Never paint skin from inside the eye opening (the eyeball is its own mesh; its white and iris
+    # would land on the lids as grey "bags" wherever the fit is a pixel off).
+    eyes = Image.new("L", (img.shape[1], img.shape[0]), 0)
+    ed = ImageDraw.Draw(eyes)
+    for ring in (SCLERA_R, SCLERA_L):
+        ed.polygon([tuple(map(float, lmk[i][:2])) for i in ring], fill=255)
+    eyes = np.asarray(eyes.filter(ImageFilter.MaxFilter(int(max(3, rec["face_px"] / 60)) | 1)), np.float32) / 255
+    keep = keep * (1 - eyes)
+    keep = np.asarray(Image.fromarray((keep * 255).astype(np.uint8)).filter(ImageFilter.MinFilter(5)).filter(ImageFilter.GaussianBlur(2)), np.float32) / 255
+    cleaned.append((name, detail, P, centre, rec, keep, warp))
 tone = np.median(np.array(tones), 0)
 print("BAKE skin tone", (tone * 255).round().astype(int).tolist())
-photos = [(n, np.clip(d * tone, 0, 1), P, c, r, m) for n, d, P, c, r, m in cleaned]
+photos = [(n, np.clip(d * tone, 0, 1), P, c, r, m, wp) for n, d, P, c, r, m, wp in cleaned]
 
+MIRROR_W = float(os.environ.get("BAKE_MIRROR", "0.08"))
+# Surfaces seen nearly edge-on smear the photo; only paint from views that face them.
+FACING0 = float(os.environ.get("BAKE_FACING", "0.5"))
 # Rasterise face triangles in texture space.
 for t in range(len(tris)):
     vids = tris[t]
@@ -172,14 +303,16 @@ for t in range(len(tris)):
     N = bary @ vn[vids]
     N /= np.linalg.norm(N, axis=1, keepdims=True) + 1e-12
     reg = bary @ region[vids]
-    for name, img, P, centre, rec, keep in photos:
+    for name, img, P, centre, rec, keep, warp in photos:
         view = centre[None] - X
         view /= np.linalg.norm(view, axis=1, keepdims=True)
         facing = (N * view).sum(1)
-        w = np.clip((facing - 0.35) / 0.65, 0, 1) ** 2 * reg
+        w = np.clip((facing - FACING0) / (1 - FACING0), 0, 1) ** 2 * reg
         if not (w > 0).any():
             continue
         xy = project(P, X)
+        if warp is not None:
+            xy = warp(xy)
         ok = (xy[:, 0] >= 0) & (xy[:, 1] >= 0) & (xy[:, 0] < img.shape[1] - 1) & (xy[:, 1] < img.shape[0] - 1) & (w > 0)
         if not ok.any():
             continue
@@ -187,6 +320,24 @@ for t in range(len(tris)):
         col = img[yi, xi]
         wk = w[ok] * keep[yi, xi]
         np.add.at(acc, (p[ok, 1], p[ok, 0]), col * wk[:, None])
+        np.add.at(wsum, (p[ok, 1], p[ok, 0]), wk)
+    # The side of the face the photos see poorly is filled from its mirror image (the face is close to
+    # symmetric about x = 0), with a small weight so any real view of that side wins.
+    flip = np.array([-1.0, 1.0, 1.0])
+    Xm, Nm = X * flip, N * flip
+    for name, img, P, centre, rec, keep, warp in photos:
+        view = centre[None] - Xm
+        view /= np.linalg.norm(view, axis=1, keepdims=True)
+        w = np.clip(((Nm * view).sum(1) - FACING0) / (1 - FACING0), 0, 1) ** 2 * reg * MIRROR_W
+        xy = project(P, Xm)
+        if warp is not None:
+            xy = warp(xy)
+        ok = (xy[:, 0] >= 0) & (xy[:, 1] >= 0) & (xy[:, 0] < img.shape[1] - 1) & (xy[:, 1] < img.shape[0] - 1) & (w > 0)
+        if not ok.any():
+            continue
+        yi, xi = xy[ok, 1].astype(int), xy[ok, 0].astype(int)
+        wk = w[ok] * keep[yi, xi]
+        np.add.at(acc, (p[ok, 1], p[ok, 0]), img[yi, xi] * wk[:, None])
         np.add.at(wsum, (p[ok, 1], p[ok, 0]), wk)
 
 painted = wsum > 1e-4
@@ -197,8 +348,13 @@ face_col[painted] = acc[painted] / wsum[painted, None]
 skin_detail = np.clip(skin / (blur(skin, 24) + 0.03), 0, 2.5)
 skin2 = np.clip(skin_detail * tone, 0, 1)
 alpha = np.clip(wsum / (np.percentile(wsum[painted], 60) + 1e-6), 0, 1)
+# Trim the painted area's rim (the last few texels are the photo's edge-on, stretched pixels).
+alpha = np.asarray(Image.fromarray((alpha * 255).astype(np.uint8)).filter(ImageFilter.MinFilter(7)), np.float32) / 255
 alpha = np.asarray(Image.fromarray((alpha * 255).astype(np.uint8)).filter(ImageFilter.GaussianBlur(6)), np.float32) / 255
 out = skin2 * (1 - alpha[..., None]) + face_col * alpha[..., None]
 out[~painted] = skin2[~painted]
 Image.fromarray((np.clip(out, 0, 1) * 255).astype(np.uint8)).save(out_path)
+if os.environ.get("BAKE_DEBUG"):
+    Image.fromarray((np.clip(face_col, 0, 1) * 255).astype(np.uint8)).save(out_path + ".face.png")
+    Image.fromarray((alpha * 255).astype(np.uint8)).save(out_path + ".alpha.png")
 print("BAKE painted", int(painted.sum()), "texels; wrote", out_path)

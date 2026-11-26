@@ -50,6 +50,55 @@ def load(path):
     return np.asarray(im)
 
 
+YUNET = os.path.join(models, "face_detection_yunet_2023mar.onnx")
+
+
+class Found:
+    def __init__(self, face_landmarks, facial_transformation_matrixes, face_blendshapes, zoomed=False):
+        self.face_landmarks = face_landmarks
+        self.facial_transformation_matrixes = facial_transformation_matrixes
+        self.face_blendshapes = face_blendshapes
+        self.zoomed = zoomed
+
+
+class P:
+    __slots__ = ("x", "y", "z")
+
+    def __init__(self, x, y, z):
+        self.x, self.y, self.z = x, y, z
+
+
+def find_face(img):
+    """The face reader works on faces that fill a good part of the picture. In full-length and crowd photos
+    the face is small, so find it first (YuNet finds faces down to ~10 px), zoom in on it, read the 478
+    points there and map them back to the whole photo. Only the largest face is zoomed."""
+    r = face_lm.detect(mp.Image(image_format=mp.ImageFormat.SRGB, data=np.ascontiguousarray(img)))
+    if r.face_landmarks or not os.path.exists(YUNET):
+        return r
+    H, W = img.shape[:2]
+    s = min(1.0, 1600 / max(H, W))
+    small = cv2.resize(img, (int(W * s), int(H * s))) if s < 1 else img
+    det = cv2.FaceDetectorYN.create(YUNET, "", (small.shape[1], small.shape[0]), 0.6)
+    _, faces = det.detect(cv2.cvtColor(small, cv2.COLOR_RGB2BGR))
+    if faces is None or not len(faces):
+        return r
+    x, y, w, h = (max(faces, key=lambda f: f[2] * f[3])[:4] / s)
+    side = max(w, h) * 2.6
+    cx, cy = x + w / 2, y + h / 2
+    x0, y0 = int(max(0, cx - side / 2)), int(max(0, cy - side / 2))
+    x1, y1 = int(min(W, cx + side / 2)), int(min(H, cy + side / 2))
+    crop = img[y0:y1, x0:x1]
+    if crop.size == 0:
+        return r
+    up = cv2.resize(crop, (640, int(640 * crop.shape[0] / crop.shape[1])), interpolation=cv2.INTER_CUBIC)
+    z = face_lm.detect(mp.Image(image_format=mp.ImageFormat.SRGB, data=np.ascontiguousarray(up)))
+    if not z.face_landmarks:
+        return r
+    cw, ch = x1 - x0, y1 - y0
+    lms = [[P((x0 + q.x * cw) / W, (y0 + q.y * ch) / H, q.z * cw / W) for q in l] for l in z.face_landmarks]
+    return Found(lms, z.facial_transformation_matrixes, z.face_blendshapes, zoomed=True)
+
+
 def poly_mask(shape, pts):
     m = np.zeros(shape[:2], np.uint8)
     cv2.fillPoly(m, [np.round(pts).astype(np.int32)], 1)
@@ -72,12 +121,14 @@ for path in files:
         continue
     H, W = img.shape[:2]
     rec["size"] = [W, H]
-    r = face_lm.detect(mp.Image(image_format=mp.ImageFormat.SRGB, data=np.ascontiguousarray(img)))
+    r = find_face(img)
     if not r.face_landmarks:
         results[name] = {**rec, "role": "skip", "reasons": ["no face found"]}
         continue
     areas = [np.ptp([p.x for p in l]) * np.ptp([p.y for p in l]) for l in r.face_landmarks]
     k = int(np.argmax(areas))
+    if getattr(r, "zoomed", False):
+        rec["zoomed"] = True
     if len(areas) > 1 and sorted(areas)[-2] > 0.5 * areas[k]:
         rec["reasons"].append("more than one face of similar size")
     lm = np.array([[p.x * W, p.y * H, p.z * W] for p in r.face_landmarks[k]])
@@ -112,6 +163,19 @@ for path in files:
     rec["covered_mouth"] = round(float((m[5][mouth] + m[1][mouth]).mean()), 2) if mouth.any() else 0
     face_region = poly_mask(img.shape, lm[[10, 338, 297, 332, 284, 251, 389, 356, 454, 323, 361, 288, 397, 365, 379, 378, 400, 377, 152, 148, 176, 149, 150, 136, 172, 58, 132, 93, 234, 127, 162, 21, 54, 103, 67, 109], :2])
     rec["hair_over_face"] = round(float(m[1][face_region].mean()), 2) if face_region.any() else 0
+    # Something on the face (a sticker, emoji or drawn filter): inside the cheeks and forehead, away from the
+    # features, dark flat blobs with hard edges. Shadows are dark but soft; stickers are dark and sharp.
+    feats = mouth | eye_box | poly_mask(img.shape, lm[BROWS[:10], :2]) | poly_mask(img.shape, lm[BROWS[10:], :2]) \
+        | poly_mask(img.shape, lm[[98, 97, 2, 326, 327, 294, 278, 344, 440, 275, 4, 45, 220, 115, 48, 64], :2])
+    k_ = int(face_px / 10) | 1
+    inner = face_region & ~cv2.dilate(feats.astype(np.uint8), np.ones((k_, k_), np.uint8)).astype(bool)
+    if inner.sum() > 400:
+        L_ = cv2.cvtColor(img, cv2.COLOR_RGB2LAB)[..., 0].astype(np.float32)
+        dark = (L_ < np.median(L_[inner]) * 0.35) & inner
+        n_, _, st, _ = cv2.connectedComponentsWithStats(dark.astype(np.uint8))
+        blobs = sum(int(a_) for a_ in st[1:, 4] if a_ > (face_px / 30) ** 2) / inner.sum()
+        edges = float(((np.abs(cv2.Laplacian(cv2.cvtColor(img, cv2.COLOR_RGB2GRAY), cv2.CV_64F)) > 40) & inner).sum() / inner.sum())
+        rec["foreign_on_face"] = round(float(blobs), 3) if edges > 0.005 else 0.0
 
     # Colours.
     skin = (m[3] > 0.8) & face_region & ~mouth & ~eye_box
@@ -168,8 +232,22 @@ for path in files:
                     wy = int(((p[11, 1] + p[12, 1]) / 2 * 0.4 + (p[23, 1] + p[24, 1]) / 2 * 0.6))
                     row = ((m[2] + m[4]) > 0.5)[min(max(wy, 0), H - 1)]
                     if row.any():
-                        xs = np.nonzero(row)[0]
-                        body["waist_w"] = round(float((xs.max() - xs.min()) / face_px), 3)
+                        # Only the run of body pixels through the middle of the torso, and never past the
+                        # elbows: arms hanging by the sides would otherwise count as waist.
+                        cx = int(round((p[23, 0] + p[24, 0] + p[11, 0] + p[12, 0]) / 4))
+                        cx = min(max(cx, 0), W - 1)
+                        lo_x, hi_x = cx, cx
+                        while lo_x > 0 and row[lo_x - 1]:
+                            lo_x -= 1
+                        while hi_x < W - 1 and row[hi_x + 1]:
+                            hi_x += 1
+                        if vis[[13, 14]].all():
+                            el = sorted([p[13, 0], p[14, 0]])
+                            hip_half = abs(p[23, 0] - p[24, 0]) * 0.75
+                            lo_x = max(lo_x, int(min(el[0], cx - hip_half)))
+                            hi_x = min(hi_x, int(max(el[1], cx + hip_half)))
+                        if row[cx]:
+                            body["waist_w"] = round(float((hi_x - lo_x) / face_px), 3)
                 rec["body"] = body
 
     # Score and role.
@@ -186,6 +264,8 @@ for path in files:
         reasons.append("mouth covered")
     if rec["blink"] > 0.5:
         reasons.append("eyes closed")
+    if rec.get("foreign_on_face", 0) > 0.05:
+        reasons.append("something covers part of the face (sticker, hand or phone): used for shape only")
     turn = max(abs(rec["yaw"]), abs(rec["pitch"]) * 0.8)
     usable = face_px >= 120 and rec.get("sharpness", 0) >= 25 and rec["covered_eyes"] <= 0.4
     neutral = rec["smile"] < 0.25 and rec["jaw"] < 0.15 and rec["pucker"] < 0.4

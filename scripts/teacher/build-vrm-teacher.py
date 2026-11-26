@@ -89,7 +89,8 @@ basemesh = HumanService.create_human(
 )
 # Shape targets on top of the macros (face proportions: the soft, friendly "animated film" look).
 for target, value in recipe.get("targets", {}).items():
-    TargetService.load_target(basemesh, TargetService.target_full_path(target), weight=value, name=target)
+    path = target if os.path.isabs(target) else TargetService.target_full_path(target)
+    TargetService.load_target(basemesh, path, weight=value, name=os.path.basename(target).split('.')[0] if os.path.isabs(target) else target)
     log("target", target, value)
 # Bake the body shape now, so the face fit below edits the final shape (shape keys hide edits).
 TargetService.bake_targets(basemesh)
