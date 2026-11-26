@@ -352,11 +352,33 @@ views = views[: a.keep]
 # Training frames for the appearance learner (stage 2): up to --train frames, spread over head angles
 # and expressions, sharp ones first. Saved as face crops (head and shoulders) with their offset, so the
 # frame's own face points still apply.
-cands = [i for i, (r, _) in enumerate(records) if r["face_px"] > 90 and r["sharp"] > 25]
+# A still picture inside a video (a photo shown on screen, a title card, a frozen stream) is not the person:
+# a real face always moves, blinks or talks. A frame whose face shape does not change at all within ±2 s is
+# left out of training.
+def _layout(lm):
+    xy = np.asarray(lm)[:468, :2]
+    le, re = xy[[33, 133]].mean(0), xy[[263, 362]].mean(0)
+    d = re - le
+    ang = math.atan2(d[1], d[0])
+    R = np.array([[math.cos(-ang), -math.sin(-ang)], [math.sin(-ang), math.cos(-ang)]])
+    return (xy - (le + re) / 2) @ R.T / max(1e-6, float(np.hypot(*d)))
+
+
+still = set()
+if VIDEOS:
+    lay_t = np.array([r["t"] for r, _ in records])
+    lays = np.array([_layout(r["landmarks"]) for r, _ in records])
+    for i in range(len(records)):
+        near = np.abs(lay_t - lay_t[i]) <= 2.0
+        if near.sum() >= 4 and np.abs(lays[near] - lays[i]).mean(axis=(1, 2)).max() < 0.006:
+            still.add(i)
+    if len(still) > 10:
+        print(f"CAPTURE {len(still)} frames of a still picture in the video left out (a real face always moves)", flush=True)
+cands = [i for i, (r, _) in enumerate(records) if r["face_px"] > 90 and r["sharp"] > 25 and i not in still]
 low_detail = len(cands) < 24
 if low_detail:
     # A weak camera (small or soft face in every frame): use the best this recording has, and say so.
-    ok_ = [i for i, (r, _) in enumerate(records) if r["face_px"] > 48]
+    ok_ = [i for i, (r, _) in enumerate(records) if r["face_px"] > 48 and i not in still]
     cut = np.percentile([records[i][0]["sharp"] for i in ok_], 30) if ok_ else 0
     cands = [i for i in ok_ if records[i][0]["sharp"] >= cut]
     print(f"CAPTURE low detail: faces about {int(np.median([records[i][0]['face_px'] for i in ok_] or [0]))} px wide; "

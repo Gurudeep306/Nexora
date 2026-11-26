@@ -175,6 +175,26 @@ for f in train:
     f["gain"] = g
     f["neutral"] = np.clip(f["neutral"] * g, 0, 255)
     f["rigid"] = np.clip(f["rigid"] * g, 0, 255)
+# Frames that would mislead the fusion: exact repeats (a frozen picture or a still shown on screen must not
+# outvote real video) and frames whose light falls differently from the person's usual light in this recording.
+def light_map(f):
+    small = cv2.resize(f["neutral"], (24, 24), interpolation=cv2.INTER_AREA).astype(np.float32)
+    m = cv2.resize(face_mask, (24, 24), interpolation=cv2.INTER_NEAREST) > 0
+    g = small.mean(2)[m]
+    return g / max(1e-3, g.mean())
+
+
+uniq = []
+for f in train:
+    if all(np.abs(f["neutral"] - u["neutral"]).mean() > 1.5 for u in uniq):
+        uniq.append(f)
+maps = np.array([light_map(f) for f in uniq])
+usual = np.median(maps, 0)
+dist = np.abs(maps - usual).mean(1)
+keep = dist <= max(np.median(dist) * 2.0, 0.03)
+dropped = {"repeats": len(train) - len(uniq), "odd_light": int((~keep).sum())}
+train = [f for f, k_ in zip(uniq, keep) if k_]
+print(f"PORTRAIT left out {dropped['repeats']} repeated frames and {dropped['odd_light']} with unusual light; {len(train)} used", flush=True)
 mi = {n: k for k, n in enumerate(NAMES)}
 calm = [f for f in train if BL[f["i"], mi["jawOpen"]] < 0.12 and BL[f["i"], mi["eyeBlinkLeft"]] < 0.35
         and (BL[f["i"], mi["mouthSmileLeft"]] + BL[f["i"], mi["mouthSmileRight"]]) < 0.6]
@@ -223,7 +243,7 @@ def render(bl, yaw, pitch):
 
 model = {"W": W, "tri": TRI, "base": base.astype(np.uint8), "size": S}
 np.savez_compressed(os.path.join(a.out, "portrait.npz"), **model)
-rep = {"train_frames": len(train), "motion_frames": len(LM), "motion_fit_error_iod": round(fit_err, 4), "calm_frames": len(calm),
+rep = {"train_frames": len(train), "left_out": dropped, "motion_frames": len(LM), "motion_fit_error_iod": round(fit_err, 4), "calm_frames": len(calm),
        "size": S, "build_seconds": round(time.time() - t0)}
 
 # --- Judge on a held-out video ---------------------------------------------------------------------------------
