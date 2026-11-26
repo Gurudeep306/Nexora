@@ -310,3 +310,174 @@ phones, goal-based gestures); what changed is where the paint is made (once, on 
 method (the v2 score was provably inert and is replaced), the template's status (it largely exists in the
 repo), the teaching behaviour around the lesson and the verdict, and the build order; round 3 should check
 the look spike's plan, the matched norm and the new L22/L73 rather than the overall design.
+
+## v4
+Editor of round 3 (reviews: real-time rendering R3G, motion and speech R3M, identity and safety R3I, red
+team R3R). 93 layers → 92 (L0–L91): v3 L67 (tongue and teeth) merged into L65 as rows of one lips–jaw–tongue
+solve, so v3 L68–L92 become L67–L91; §5.12 regenerated from the layer texts (14 exist, 48 partial, 30 to
+build). Layer numbers below are v4 numbers unless marked "v3". New: S21 (gate liveness), a "Profile" column
+in §2.5 with release profiles (R1 = narrated lessons, Live = live replies), owner decisions D14 (regional
+norms) and D15 (pack portability), §2.4 notes on the pack route and uploaded consent clips, risk 16 (gates
+that cannot fail).
+
+Facts since v3, checked by the editor:
+- **Commit 5fa24edb**: `src/routes/pratibimb.js` now refuses unsigned packs on import ("not made by
+  NexoraGuru"); the rest of R3I-1 (fresh live consent and face match on every import, encryption to the
+  subject, numbers-only default, revocation by id) is still to build and is specified in L1, L2, L3, L90, D15.
+- **Same commit, `scripts/pratibimb/engine/phonemes.py`**: `ɡ`, NFD-normalised nasal vowels, `ɲ ʂ ɻ c ɟ` no
+  longer map to silence; `ə ɐ ʌ …` are a SCHWA class half as open as /a/; `h ɦ ʔ` are NEUTRAL; closures keep
+  jawOpen ≤ 0.06 instead of forcing 0. L64 is now *partial* (was *exists*): the table is fixed, but
+  diphthongs, stress scaling, the feature fallback, conditional [ʋ] (still always FV in the table), KG lip
+  dominance and the real-inventory gate remain; the aperture constraint with a free jaw is L65's.
+- **three.js r187** (`client/node_modules/three/src/renderers/webgl/WebGLMorphtargets.js`): at most three
+  slots per vertex (position, normal, colour), always Float32 over all vertices of a geometry — confirms
+  R3G's and R3R-10's arithmetic (52 × 3 × 7k × 16 B ≈ 17.5 MB; with 24 pair correctives ≈ 25.5 MB).
+- **WebGL2 / OpenGL ES 3.0**: an integer-format multisampled renderbuffer is an error (INVALID_OPERATION),
+  so v3's 8-bit id target under 4× MSAA could not be built as specified (R3R-9, R3G-3).
+
+Key judgements where reviewers converged or disagreed:
+- **Dead and unbuildable gates first** (R3R-1, -2, -4, -9, -10, -18, as the task asked). All accepted. The
+  lip gates read a gate-only region-id pass (non-multisampled, so an integer target is legal) instead of a
+  landmarker on paint; S2's foils come from a ≈ 30-person real capture pool that is also S16's extended set;
+  the certificate bounds bandwidth (≤ 2 cycles per face width for dense fields, stricter than R3R-4's
+  suggested "below 8–13", because coarse block portraits stay recognisable near 8); the id target is gone
+  (R3G-3's distance-field lines plus a hand-only hull make it unnecessary); the morph memory has a slot table
+  and half floats (≈ 14.6 MB); and release 1 is gated only on what it ships.
+- **R3R-20 dead-gate audit**: sound — a mutation test is the standard way to show a test can fail, and it
+  would have caught the v3 sclera tautology and the count-only certificate. Accepted as S21 and in L91, with
+  one change: rater gates cannot be mutated by a script, so they carry catch trials instead.
+- **Morph slots** (R3G-5 vs. R3R-10): both say write a slot table; they disagree on where the shading normal
+  goes. R3G-5's choice wins (shading normal in the normal slot, colour slot = occlusion + threshold offset),
+  because the true normal need not be morphed once rim and highlights use the shading normal, which leaves
+  colour channels spare; R3R-10's half-float texture and hand split are added on top.
+- **Lines and the id target** (R3G-3, R3R-9): converged; distance fields in the overlay and master data
+  layer, hull on hands and forearms only.
+- **Closures** (R3M-2) and the tongue merge (R3M-12): one vector QP with aperture constraints; this also
+  removes the "jaw = 0" constraint the per-value QP would have inherited. The code's interim jaw floor (0.06)
+  is recorded as interim.
+- **Identity**: R3I-1's diagnosis is confirmed in code and partly fixed; R3I-2 and R3R-5 (challenge in the
+  consent sentence) merged into L1. R3I-6's regional norm is accepted with the honest consequence that most
+  people get $\gamma = 0$ until regional norms exist (D14).
+
+Accepted (id → what changed):
+- R3R-1 → S3, S4 read the gate render's geometry buffer (L56 gate-only id pass, L91); L7 no longer feeds lip
+  gates; S3 adds renders at L72's yaws (with R3M-7).
+- R3R-2 → L0 foil and fairness pool (≈ 30 capture-only people), S2(a) foils from it, S16's extended set, D10,
+  §8.2, risk 7.
+- R3R-3 → L24 $\gamma$ pilot by paired comparison with a Bradley–Terry fit; §8.1, §8.5.
+- R3R-4 → L42 rewritten: kinds (dense, sparse, scalar), bandwidth bound, line-item table (≈ 684 of 800);
+  L21 strengths on ≤ 3 driving values; L40 bandwidth argument; D1 reframed as a bandwidth; S15.
+- R3R-5 → merged into L1's random challenge (with R3I-2).
+- R3R-6 → L60 inter-clause loudness, rate and ECAPA-spread gates; loudness normalisation and carried
+  pitch register.
+- R3R-7 → L13 rewritten (accept-with-changes: the colour chart is in bench captures only, since users have
+  none; users get the sclera estimate with a learned age- and Monk-dependent offset); the tautological gate
+  removed; risk 10.
+- R3R-8 → L50 implicit-fairing proxy instead of the eigenbasis cut.
+- R3R-9 → resolved by R3G-3 (no id target); gate-only id pass is non-multisampled.
+- R3R-10 → L37 slot table (with R3G-5's slot assignment), RGBA16F own morph path, separate hand geometry
+  (L33), garments carry body correctives (L48), recomputed memory, worker-built arrays.
+- R3R-11 → L24 identity coordinates defined (30 prior coefficients + ~20 ratios, whitened); the cosine's
+  reference includes the confidence shrinkage, so $s = 0$ always passes.
+- R3R-12 → L61 acoustics primary for must-hit intervals, lattice chooses the phone; closure-interval IoU
+  gate; Chatterbox's alignment analyser as an UNVERIFIED lead; issue #519 handled in L60.
+- R3R-13 → L91 fixed-point gate in plain shading at $s = \gamma = 0$, de-attenuation off, on heads outside
+  the template's span.
+- R3R-14 → merged with R3M-8 (L77, L73 defaults, L89 phone tier).
+- R3R-15 → L84 and L88: no intake breath or brow lift inside wait time or before turn-end ≥ 0.6; C6; S10.
+- R3R-16 → L62 agreeing/neutral tags, only neutral items before a verdict, filler cap 2/min; L85, L88; S12
+  counts bank words.
+- R3R-17 → L87 duck at onset + 120 ms, stop by 300 ms; S11 split into duck and stop.
+- R3R-18 → release profiles in §2.5, L91 gate, §8.6 step 4.
+- R3R-19 → §7.4 phrase-bank row fixed; C6 margin stated (L88 defaults); C11 principle corrected; S18 asks
+  "is the brush pattern identical?"; §8.3 and L24: the person may lower $\gamma$, never raise it; L49
+  hysteresis (with R3G-6).
+- R3R-20 → S21, L91 mutation audit with a mutant per machine gate, catch trials (L0), §8.1, §8.6, risk 16.
+- R3R risks → S13 photo-only path note (§7.1), morph build off the main thread (L37), S2(b) gated pooled
+  with per-person CIs and a 50% floor, pool consent (D10, §6.2).
+- R3R novelty → §9.3: legible pointing (Holladay et al. 2014) cited and L75's claim downgraded; lattice
+  alignment listed as prior art; certificate and identity cosine described as framings.
+- R3G-1 → L51 paint/data/id split (UASTC only on paint; RGBA8 data; R16UI ids), L52 palette atlas.
+- R3G-2 → L51 per-person stroke-variation map replaces the seed shuffle; S18 sameness on it.
+- R3G-3 → L54 rewritten (distance-field lines, hand and forearm hull), L52 line evaluation, L51 SDF channels,
+  L21/L22 references.
+- R3G-4 → L56 one forward pass into the default framebuffer; L55 context MSAA, morphological AA removed;
+  §7.2 rebudgeted (≈ 6.9 ms).
+- R3G-5 → L37 slots, L50, L53 caster–receiver matrix with face self-shadow off and a fixed frustum.
+- R3G-6 → L49 luminance from page state, 400 ms crossfade with hysteresis; S19 on Playwright screenshots.
+- R3G-7 → L89 tiers from frame-time percentiles and a micro-benchmark; L56 fixed 30 Hz cadence.
+- R3G-8 → §8.6 look spike in motion at shipping size with thresholds written before viewing; L51 stroke size
+  in screen pixels; risk 1.
+- R3G-9 → L55 screen-locked blue-noise dither.
+- R3G new idea → L51 view-indexed paint as an untested *later* option on the shared master set; §8.5.
+- R3G risks → texture-format fallback and transcoder size (§7.2, risk 5), lesson-page contention (S14, §7.2),
+  CSS upscale and DOM-only label (L56), deep-skin high-key form rating (L49, §8.6).
+- R3M-1 → L64 (with commit 5fa24edb): NFD, U+0261, diphthong split, conditional [ʋ], feature fallback from
+  our own table, real-inventory gate.
+- R3M-2 → L65 vector QP with aperture constraints and a free jaw; L66; S3 jaw-chatter measure; lip check on
+  aperture.
+- R3M-3 → L64 SCHWA and NEUTRAL classes (now in code), stress scaling, KG low lip dominance; Tamil ɻ curl in
+  L65's tongue rows.
+- R3M-4 → L65 receding horizon; L67 overlapping network windows; join gate.
+- R3M-5 → L78 lexical-affiliate anchor, provisional plan from streamed text, stroke re-timing, downgrade
+  under 250 ms lead; new gate; C6.
+- R3M-6 → L82 order of operations; L81 springs on the residual, faded under holds; L71 eyes after springs;
+  S7, S8 on the final pose.
+- R3M-7 → L72 minimum head yaw 15°; S8 gaze-only picks; S3/S4 at L72's yaws.
+- R3M-8 → L77 raised fingers for lesson counts, phalanx only as habit, phone-tier spoken count; L73 defaults.
+- R3M-9 → S6 and L67 geometric primary measure (accept-with-changes: the model side uses the 478
+  correspondence vertices on the mesh, not landmarks re-detected on paint, consistent with R3R-1).
+- R3M-10 → L16 per-axis head–prosody coupling; L70 prosody-locked impulses, not while listening; gate.
+- R3M-11 → L62 bank motion as deltas and mouth targets in L65's horizon.
+- R3M-12 → v3 L67 merged into L65 (renumbering above).
+- R3M-13 → L68 gate on five classes with "warm" merged.
+- R3M risks → §8.6 lip fixes in week 1 (done in code), per-language fusion weights in L67, no-delay rule in
+  L78, the aperture threshold checked on a known-closed render (L65).
+- R3M new idea (gesture-led prosody) → L78 untested option, ablation in §8.5.
+- R3I-1 → L1, L2, L3, L90 (pack import with fresh live consent and L2 match on the new clip; packs encrypted
+  to the subject, numbers-only by default, revocation list), §2.4, D15, C8, risk 9; part (a) done in code.
+- R3I-2 → L1 live-only capture, random challenge and unplanned actions, subject's own device in "someone you
+  know" mode, attack set (accept-with-changes: real-time puppeting that answers the challenge is a stated
+  residual risk, not a passed test).
+- R3I-3 → L1 six scopes, language-matched notice, not a condition of work; D13; §8.4.
+- R3I-4 → L3 envelope keys and 7-day licences for narration, bank and clips; exact aggregate refits and
+  k ≥ 20 (L23, §6.1, §6.2); no watermark-id reuse; nominee in L1.
+- R3I-5 → L63 rewritten (cooperative mark, server-only generation registry, C2PA manifests, "report a fake
+  of me"); L57; S17; §6.3 `c2pa-rs` UNVERIFIED.
+- R3I-6 → L23 two-level norm (pooled + regional), L24 caricature on the within-group residual only,
+  $\gamma = 0$ without a regional norm, "unspecified" sex option, regional "mocking" ratings with a Northeast
+  region (S12, L0); D14.
+- R3I-7 → L24 marks and freckles never exaggerated.
+- R3I-8 → bindi moved to L14 as an accessory toggle; L22 nothing pre-selected and the list owned by the
+  subject; L41 colour-edit policy.
+- R3I-9 → L2 reported as a consistency check with its honest bound; sibling pairs; fresh consent as the
+  other factor.
+- R3I-10 → L2's import sentence replaced (merged into R3I-1).
+- R3I-11 → L23 running mean removed until k ≥ 20 and exact refits exist.
+- R3I risks → rater consent (scope 5, L0), ethics review (D10, §8.4), minors (D13, L85, §6.2), honesty of
+  L63's purpose.
+- R3I new idea (face-shape watermark) → L63 untested *later* option, adopted only if S2 is unchanged and ABX
+  is at chance.
+
+Rejected (id → why):
+- R3G-4's "MSAA 2× fallback" → rejected: a context's sample count is fixed at creation, so tiers trade
+  internal resolution, shadows and LOD instead (L55, L89).
+- R3R-10's "shading-normal delta in colour.rgb" → rejected in favour of R3G-5's normal-slot assignment (see
+  above).
+- R3R-4's threshold "below a published recognition band (8–13 cycles per face)" → not adopted as the limit;
+  2 cycles per face width is used, since 16 × 16 block portraits (≈ 8 c/fw) are already recognisable.
+- R3M-1's "implement the fallback with PanPhon" → not adopted as a dependency until its licence is checked
+  (L3); our own small feature table is used meanwhile.
+- R3M-9's render-side measurement "through re-detection" → rejected for the same reason as R3R-1 (the
+  landmarker is out of domain on paint); mesh correspondence vertices instead.
+- R3R-12's Chatterbox alignment as the live-path prior → not adopted, only flagged for a test: unverified,
+  and the reported early-stop bug suggests it is not yet reliable.
+- R3R-19 "default students to the pilot γ unless the teacher objects" as worded → adopted as "the person
+  may lower γ, never raise it", which keeps the person's right to refuse caricature from v3.
+
+CHANGE SIZE: medium — the architecture held (stages, one template, paint once in texture space, lips from
+spoken phones, goal-based gestures), but the measurement chain was rebuilt (geometry-buffer lip gates, a
+real foil pool, paired-comparison γ, a bandwidth certificate, a mutation audit, release profiles), the
+renderer lost its id target, line pass and composite, the lips became one lips–jaw–tongue solve with a free
+jaw, and the consent chain around identity packs was redesigned; round 4 should check the new gates and the
+consent route rather than the overall design.
