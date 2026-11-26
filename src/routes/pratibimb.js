@@ -400,6 +400,9 @@ function createPratibimbRouter() {
     } catch (e) {
       bad(e.message || "This pack cannot be used.");
     }
+    // Only packs made and signed by this site's build machine: an unsigned pack has no proof of where its
+    // face and voice came from, so its consent record cannot be trusted.
+    if (!checked.signed) bad("This pack was not made by NexoraGuru (no valid signature), so a model cannot be made from it.");
     if (!checked.manifest.consent) bad("This pack has no consent record, so a model cannot be made from it.");
     const id = crypto.randomBytes(12).toString("hex");
     const now = Date.now();

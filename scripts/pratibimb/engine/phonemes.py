@@ -18,14 +18,16 @@ for ipas, vis in [
     ("p b m ɓ pʰ bʱ", "PBM"),            # lips fully closed (प फ ब भ म: closure is required)
     ("f v ʋ ɱ", "FV"),                    # lower lip on upper teeth
     ("θ ð", "TH"),                        # tongue between teeth
-    ("t d n l ɾ r ɹ tʰ dʱ s z", "TD"),    # tongue tip behind teeth, jaw slightly open
-    ("ʈ ɖ ɳ ɭ ɽ ʈʰ ɖʱ", "RETRO"),         # retroflex: as TD with a lower jaw
+    ("t d n l ɾ r ɹ tʰ dʱ s z c ɟ ɲ", "TD"),    # tongue tip behind teeth, jaw slightly open
+    ("ʈ ɖ ɳ ɭ ɽ ʈʰ ɖʱ ʂ ɻ", "RETRO"),         # retroflex: as TD with a lower jaw
     ("ʃ ʒ tʃ dʒ tʃʰ dʒʱ ɕ ʑ", "SH"),      # lips pushed forward
-    ("k g ŋ x ɣ kʰ gʱ q h ɦ ʔ", "KG"),     # back of the tongue: mouth open, lips relaxed
+    ("k g ɡ ŋ x ɣ kʰ gʱ ɡʱ q", "KG"),
+    ("h ɦ ʔ", "NEUTRAL"),                 # breath and glottal sounds take their neighbours' shape     # back of the tongue: mouth open, lips relaxed
     ("j", "EE"),
     ("w", "OO"),
     ("i iː ɪ e eː ɛ", "EE"),               # spread lips
-    ("a aː ɑ ɑː æ ʌ ə ɐ ɜ ɜː ɚ ɘ ɤ ɯ", "AA"),           # wide open jaw
+    ("a aː ɑ ɑː æ", "AA"),
+    ("ʌ ə ɐ ɜ ɜː ɚ ɘ ɤ ɯ", "SCHWA"),        # central vowels: half as open as /a/           # wide open jaw
     ("o oː ɔ ɔː ɒ ø œ", "OH"),                   # rounded, open
     ("u uː ʊ y ʏ ɨ ʉ", "OO"),                      # rounded, nearly closed
 ]:
@@ -35,7 +37,7 @@ for ipas, vis in [
 # Targets on the 52 ARKit values (only the mouth and jaw; the rest come from emotion and the motion maker).
 TARGETS = {
     "SIL": {},
-    "PBM": {"mouthClose": 0.55, "mouthPressLeft": 0.5, "mouthPressRight": 0.5, "jawOpen": 0.0},
+    "PBM": {"mouthClose": 0.55, "mouthPressLeft": 0.5, "mouthPressRight": 0.5, "jawOpen": 0.05},
     "FV": {"mouthRollLower": 0.6, "mouthUpperUpLeft": 0.15, "mouthUpperUpRight": 0.15, "jawOpen": 0.08},
     "TH": {"jawOpen": 0.15, "tongueOut": 0.35},
     "TD": {"jawOpen": 0.18, "mouthStretchLeft": 0.1, "mouthStretchRight": 0.1},
@@ -43,6 +45,8 @@ TARGETS = {
     "SH": {"mouthFunnel": 0.45, "mouthPucker": 0.3, "jawOpen": 0.12},
     "KG": {"jawOpen": 0.25},
     "EE": {"mouthStretchLeft": 0.35, "mouthStretchRight": 0.35, "mouthSmileLeft": 0.15, "mouthSmileRight": 0.15, "jawOpen": 0.12},
+    "SCHWA": {"jawOpen": 0.3, "mouthLowerDownLeft": 0.12, "mouthLowerDownRight": 0.12},
+    "NEUTRAL": {},
     "AA": {"jawOpen": 0.6, "mouthLowerDownLeft": 0.3, "mouthLowerDownRight": 0.3},
     "OH": {"jawOpen": 0.38, "mouthFunnel": 0.5, "mouthPucker": 0.25},
     "OO": {"mouthPucker": 0.75, "mouthFunnel": 0.35, "jawOpen": 0.1},
@@ -56,7 +60,9 @@ SHORTHAND = {"A": "eɪ", "I": "aɪ", "O": "oʊ", "W": "aʊ", "Y": "ɔɪ", "ᵊ":
 
 def viseme(ipa):
     """The mouth class of one IPA phoneme (diacritics such as length marks fall back to the base sound)."""
+    import unicodedata
     ipa = SHORTHAND.get(ipa, ipa)
+    ipa = "".join(ch for ch in unicodedata.normalize("NFD", ipa) if not unicodedata.combining(ch)) or ipa
     if ipa in VISEME_OF:
         return VISEME_OF[ipa]
     base = ipa.rstrip("ːˑʰʱ̃")
@@ -93,8 +99,8 @@ def mouth_track(phones, names, fps=25, lead=0.04, attack=0.06):
                 for k, x in TARGETS["PBM"].items():
                     if k in idx:
                         out[f, idx[k]] = x
-                if "jawOpen" in idx:
-                    out[f, idx["jawOpen"]] = 0.0
+                if "jawOpen" in idx:  # lips meet with the jaw nearly (not fully) closed
+                    out[f, idx["jawOpen"]] = min(out[f, idx["jawOpen"]], 0.06)
     return out
 
 

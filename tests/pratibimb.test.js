@@ -158,7 +158,7 @@ test('pratibimb models', async (t) => {
   const withPack = await call('GET', `/api/pratibimb/models/${id}`, { cookie: owner });
   assert.equal(withPack.body.model.hasPack, true);
   assert.equal(withPack.body.model.pack.signed, true);
-  // Import: permission must be confirmed; a changed file is refused; an unsigned pack is allowed but marked.
+  // Import: permission must be confirmed; a changed file and an unsigned pack are refused.
   assert.equal((await call('POST', '/api/pratibimb/import', { cookie: owner, body: pack, type: 'application/zip' })).status, 400);
   const tampered = Buffer.from(pack);
   tampered[tampered.indexOf(Buffer.from('oval'))] = 0x4f;
@@ -171,11 +171,11 @@ test('pratibimb models', async (t) => {
   assert.equal(imp.body.signed, true);
   assert.equal(imp.body.model.hasPack, true);
   const unsigned = await call('POST', '/api/pratibimb/import?permission=1', { cookie: owner, body: makePack({ sign: false }), type: 'application/zip' });
-  assert.equal(unsigned.status, 200);
-  assert.equal(unsigned.body.signed, false);
+  assert.equal(unsigned.status, 400);
+  assert.match(unsigned.body.error, /signature/);
   // A model from a pack can be built without photos (the pack has them).
   assert.equal((await call('POST', `/api/pratibimb/models/${imp.body.model.id}/build`, { cookie: owner, body: {} })).body.model.status, 'queued');
-  for (const m of [imp.body.model.id, unsigned.body.model.id]) await call('DELETE', `/api/pratibimb/models/${m}`, { cookie: owner });
+  await call('DELETE', `/api/pratibimb/models/${imp.body.model.id}`, { cookie: owner });
 
   // Nobody else can see it (even staff see only their own).
   assert.equal((await call('GET', `/api/pratibimb/models/${id}`, { cookie: student })).status, 403);

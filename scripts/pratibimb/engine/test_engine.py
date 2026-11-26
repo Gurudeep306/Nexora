@@ -8,8 +8,9 @@ NAMES = sorted({k for t in TARGETS.values() for k in t} | {"mouthClose", "jawOpe
 
 def test_every_language_sound_has_a_mouth():
     # A sample of sounds from English, Hindi, Tamil, French, German, Mandarin and Spanish.
-    for p in "p b m bʱ f v ʋ θ t d ʈ ɖ ɳ ʃ tʃ k g x ɦ j w i ɪ e ɛ a ə ɐ o ɔ ɒ u ʊ y ø œ ɯ ɨ".split():
+    for p in "p b m bʱ f v ʋ θ t d ʈ ɖ ɳ ʃ tʃ k g ɡ x j w i ɪ e ɛ a ə ɐ o ɔ ɒ u ʊ y ø œ ɯ ɨ ã ɲ ʂ ɻ c ɟ".split():
         assert viseme(p) != "SIL", p
+    assert TARGETS[viseme("ə")]["jawOpen"] < TARGETS[viseme("aː")]["jawOpen"]  # schwa is not as wide as /a/
 
 
 def test_lip_closures_and_teeth():
