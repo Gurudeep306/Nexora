@@ -1,9 +1,10 @@
 # Pratibimb: a layered, measurement-only pipeline that turns a phone capture into a painted, talking, gesturing digital teacher
 
-*NexoraGuru research paper, design version 1 (2026-11-26). Supersedes nothing: it specifies the black box
-described in `BRIEF.md`, refines the 64-layer plan in `LAYERS.md`, and keeps the engine choices in
-`ENGINE.md` and the rules in `SPEC.md`. Where those files disagree, the brief wins (§2.4 lists the
-disagreements found).*
+*NexoraGuru research paper, design version 2 (2026-11-26). Supersedes version 1 after the first review round
+(graphics, motion, speech, systems; decisions in `PAPER_CHANGELOG.md`). It specifies the black box described
+in `BRIEF.md`, refines the 64-layer plan in `LAYERS.md`, and keeps the engine choices in `ENGINE.md` and the
+rules in `SPEC.md`. Where those files disagree, the brief wins (§2.4 lists the disagreements found). Things
+only the owner can decide are collected in §2.6.*
 
 ---
 
@@ -13,28 +14,38 @@ We describe Pratibimb, a system that takes a consenting adult's ordinary capture
 phone or webcam video, plus their voice) and builds one digital human of that person: waist up, facing the
 student, recognisable as them, drawn in a hand-painted look, speaking in their cloned voice with accurate lip
 sync in any language, gesturing with arms and five-finger hands, showing emotion, listening and reacting, and
-conversing as a teacher through the site's tutor ("Guru"). The system is built as **98 layers in 11 stages**.
-Each layer has one input, one output, a stated method with its research basis, its defaults, a fallback, and
-a measurable gate that must pass before its output is used.
+conversing as a teacher through the site's tutor ("Guru"). The system is built as **95 layers (L0–L94) in
+11 stages**. Each layer has one input, one output, a stated method with its research basis, its defaults, a
+fallback, and a measurable gate that must pass before its output is used.
 
 Three constraints shape the design. (1) **No photo pixels are reproduced**: from the capture we learn only
-measurements (3D shape, proportions, bone lengths, motion habits) and colours (albedo and region palettes),
-and we prove it with a band limit and a patch-copy test on every build. (2) **Any gesture without an
-animation library**: actions are written as short goal programs (look at X, point at lesson element Y, count
-three, namaste) and solved at run time by inverse kinematics under joint limits, collision and balance
-constraints, styled by the person's own measured movement habits. (3) **Build in 3–4 minutes on one rented
-GPU and play at 30 fps in an ordinary laptop's browser**: everything heavy is learned once as shared priors;
-per person we only fit and bake; the runtime is a small skinned mesh with a painted shading model, not a
-neural renderer.
+measurements (3D shape, proportions, bone lengths, motion habits) and a small set of colour numbers (region
+palettes and smooth gradients), and every build ships an *information-budget certificate* listing each
+photo-derived number. (2) **Any gesture without an animation library**: actions are short goal programs
+(look at X, point at lesson element Y, count three, namaste) solved every frame by an analytic arm solver
+with shoulder-girdle rhythm along task-space hand paths, under joint limits and swept-capsule collision,
+followed by a spring layer, and styled by the person's own measured habits. (3) **Build in 3–4 minutes on
+one rented GPU and play at 30 fps in an ordinary laptop's browser**: heavy work is learned or authored once
+(shared priors and **one owned template mesh** with its rig, UVs and authored painting attributes); per
+person we only measure, fit the template, and bake; the runtime is a small skinned mesh with a forward,
+texture-space painted shading model, not a neural renderer and not a screen-space paint filter.
 
-The main new ideas are: measurement-only appearance with a verifiable no-copy gate; a painted look whose
-brush strokes are anchored to the surface (so frames look painted but do not flicker); lip-sync gates per
-sound class (closures, lip-teeth contact, rounding) that work in any language through IPA and include Hindi
-rules; deictic gestures that land on the exact element of the lesson animation on screen; listening
-behaviour that is contingent on whether the student is right (the teacher never nods at a wrong answer); and
-a build that grades itself on held-out frames and retries or asks for the missing photo. Most individual
-techniques are known; we state plainly which parts are new (§9.3). Status: 15 layers exist in code and 45 in part (`scripts/pratibimb/engine/`, `scripts/teacher/maker/`); the
-other 38 are specified here and still to build (index in §5.12).
+The painted look is made where the reference look makes it: **in the textures**. A build-time painter that
+sees only our own renders of the fitted template paints light, half-tone and shadow versions of every
+surface; at run time a stabilised shading normal and a key-light shadow choose between them. The paint is
+on the surface, so it cannot flicker.
+
+The main new ideas are: measurement-only appearance with a certificate of what was measured; likeness put
+back into geometry by a likeness-gated caricature term, judged by a style-independent geometric likeness
+score; lip sync driven by the phones the voice *actually spoke* (a pronunciation-lattice aligner) and solved
+as a constrained trajectory whose closures cannot be missed, with per-person coarticulation parameters that
+carry across languages through IPA; deictic gestures that land on the exact element of the lesson animation
+and are solved for how an *observer* reads a point; listening that is contingent on whether the student is
+right (the teacher never nods at a wrong answer) and that waits like a teacher after a question; and a build
+that grades itself on held-out frames and retries or asks for the missing photo. Most individual techniques
+are known; we state plainly which parts are new (§9.3). Status: 16 layers exist in code (some in part) and 43 are partial
+(`scripts/pratibimb/engine/`, `scripts/teacher/maker/`); the other 36 are specified here and still to build
+(index in §5.12).
 
 ---
 
@@ -49,11 +60,16 @@ point at the page. Game-style characters can be animated freely but do not resem
 Pratibimb (प्रतिबिम्ब, "reflection") sits between these. The output is a stylised but recognisable 3D
 person, rendered as if painted, driven by explicit controls that any layer can inspect: 52 face expression
 values, a jaw and tongue, gaze, an upper-body skeleton with 2 × 20 finger joints, and an audio clock. The
-person can be rebuilt in minutes whenever the shared priors improve, without a new recording.
+person can be rebuilt in minutes whenever the shared priors or the template improve, without a new recording.
 
 This paper is written as an engineering specification in research form, so that every layer can be built,
 tested and replaced independently. It follows a design-science method (§3): each layer is an artefact
-with a gate; a layer is "done" only when its gate passes on the bench (§8).
+with a gate; a layer is "done" only when its gate passes on the bench (L0, §8). Version 2 changes the
+design in four places after review: one fitted template instead of a per-person mesh (Stage D); painted
+light in textures instead of a screen filter (Stage F); a style-independent likeness test (S1); and a
+conversation loop built on streaming recognition, a phrase bank and lips driven by the spoken phones
+(Stages G, H, J). It also adds a running-cost budget (§7.4), a build order (§8.6) and the owner decisions
+(§2.6).
 
 ---
 
@@ -65,12 +81,12 @@ with a gate; a layer is "done" only when its gate passes on the bench (§8).
 |---|---|---|
 | Guided scan or photos (front, left, right, up, down, smile, "aah", brows) | 478 face points per view, head pose | 3D face shape and proportions |
 | The same, plus optional video | 52 expression values per frame; blinks, nods, mouth range | Personal expression model and motion habits |
-| Waist-up shot | 33 body points, 21 points per visible hand, silhouettes | Skeleton, bone lengths, body volume |
-| Colour measurements | Skin, iris, lips, brows, hair colour; hair outline and length; glasses, facial hair | Materials, hair, accessories |
-| Voice (consent clip and any speech) | Speaker identity, pitch range, speaking rate | Voice clone, prosody style |
+| Waist-up shot | 33 body points, 21 points per visible hand, silhouettes | Template fit: bone lengths, body volume |
+| Colour measurements | Skin, iris, lips, brows, hair colour; hair outline and length; glasses, facial hair | Palette, hair, accessories |
+| Voice (consent clip and any speech) | Speaker identity, pitch range, speaking rate, per-language reference spans | Voice clone, prosody style, phrase bank |
 
 No new long recording is required. Video is optional (many people cannot film themselves); it improves
-the expression model and the motion habits.
+the expression model, the motion habits and the personal coarticulation parameters.
 
 ### 2.2 Output (fixed: one digital human)
 
@@ -87,51 +103,75 @@ help during tests). Everything is labelled "AI-generated" and the audio is water
    non-commercial licence we read only the paper. Every shipped weight and asset is free for commercial use,
    recorded in the provenance ledger (L3).
 2. **No photo pixels on the model.** Colours and measurements are learned; pixels are never pasted or
-   memorised (made testable by L45).
+   memorised. The painter never sees a photo (L53); what the model keeps from the photos is listed number by
+   number (L42).
 3. **No outside body or face model with a restrictive licence.** No FLAME, SMPL/SMPL-X, MANO, original 3DGS
-   code, insightface, nvdiffrast, F5-TTS, MMS aligners (`SPEC.md` §2).
-4. **Build ≤ 3–4 minutes** per person on one rented GPU (24 GB class).
+   code, insightface, nvdiffrast, F5-TTS, MMS aligners (`SPEC.md` §2). The template (L33) is CC0 or our own.
+4. **Build ≤ 3–4 minutes** per person on one rented GPU (24 GB class), measured from a warm worker (§7.1).
 5. **Playback 30 fps in a browser** on an ordinary laptop (integrated GPU), 720p panel.
-6. **Consent first**: adults only, their own face and voice, spoken consent matched to the face, one-tap
-   delete, revocable.
+6. **Consent first**: adults only, their own face and voice, spoken consent matched to the face *and to the
+   voice*, one-tap delete, revocable.
 
 ### 2.4 Inconsistencies found in the existing documents (for the owner)
 
 - `BRIEF.md` fixes the look as the hand-painted style of reference sheet 1–8 (realistic proportions, painted
   skin and hair, dramatic key and rim light), but its part table still says "stylised to anime (larger eyes,
   simpler nose)" and "anime eyes", left from the earlier anime choice. This paper follows the newer sentence:
-  **realistic proportions with a mild, likeness-constrained stylisation** (L25), painted shading (Stage F).
-  The style slider in L25 can still reach the anime proportions if the owner wants them.
+  **realistic proportions with a mild, likeness-gated stylisation** (L24), painted in texture space
+  (Stage F). The style slider in L24 can still reach the anime proportions if the owner wants them (§2.6, D7).
 - `SPEC.md` §0 asks for a "generative digital human" whose frames are drawn fresh from the person's photo
   and video; `BRIEF.md` (later) forbids using photo pixels. The Living Portrait (`portrait.py`) re-animates
   the person's own pixels; under the brief it is kept **only as a bench baseline** (a likeness ceiling and
   a lip-sync reference), never as the shipped output.
 - The identity pack stores `face/texture.png` (pixels merged from views). Under the brief the shipped model
-  must not use it; L44–L45 use it only as a measurement source for albedo statistics.
+  must not use it; L40–L41 use it only as a measurement source for region colour statistics.
 - The lab player (`player/retarget.js`) retargets CC0 animation clips. The brief asks for gestures without
   an animation library; those clips stay as a lab comparison only.
+- Version 1 of this paper shipped a band-limited colour field whose cut-off (6 cycles per eye distance,
+  about 9 cycles per face width) sits inside the band people use to recognise faces (8–13 cycles per face
+  width, Näsänen 1999). That is a blurred copy of the face's colours, which the brief's "never used: the
+  photo pixels themselves" arguably forbids. Version 2 ships parametric colour by default and leaves the
+  field to the owner (§2.6, D1).
 
 ### 2.5 Measurable success criteria (release gates for the whole system)
 
 | # | Criterion | Measure | Target |
 |---|---|---|---|
-| S1 | Likeness (machine) | SFace cosine between neutral, front-lit renders and the person's held-out photos, as a share of the photo-to-photo ceiling; impostor controls from the other bench people | ≥ 0.90 of ceiling; every impostor below the same-person line (0.363) |
-| S2 | Likeness (human) | People who know the person pick their render from a lineup of 4 bench renders of the same sex | ≥ 90% correct (chance 25%) |
-| S3 | Lip closures | Share of p/b/m (and प फ ब भ म) with full lip closure for ≥ 1 frame inside the phone ±20 ms | 100% |
-| S4 | Lip-teeth contact | f/v (and व as [ʋ]) with lower lip at the upper teeth | ≥ 95% |
-| S5 | Audio–video offset | Measured in the browser (audio clock vs. rendered mouth) | within ±40 ms, lips never > 50 ms late |
-| S6 | Mouth range | Per-person mouth opening amplitude vs. their own held-out speech | within ±15% |
-| S7 | Gesture validity | Every action in the action library: joint limits, self-penetration | 0 violations |
-| S8 | Pointing accuracy | Fingertip ray hits the target element's box on screen | ≥ 98% of points; centre error < 2% of panel width |
+| S1 | Likeness (machine) | Rank-1 identification of neutral and three-quarter renders against the person's held-out photos, in a gallery of the other bench people's renders plus ≥ 50 synthetic hard-negative renders made by the same pipeline (L94); two scorers: the geometric likeness score (L24) and SFace cosine | Rank 1 under both scorers for every bench person, with a margin ≥ 0.05 (geometric score) over the best impostor |
+| S2 | Likeness (human) | People who know the person pick their render from a lineup of 4 bench or synthetic renders whose foils match sex, Monk group, hair length and glasses; ≥ 15 raters per person | ≥ 90% correct (chance 25%), 95% CI reported |
+| S3 | Lip closures | p/b/m (and प फ ब भ म) *as realised* (L64) show full lip closure in the displayed frame nearest the closure midpoint, measured on the **rendered pixels** (landmarks re-detected on renders) with 10% injected frame drops; plus blind raters on muted clips | 100%; raters tell p/b/m clips from others ≥ 90% |
+| S4 | Lip-teeth contact | Phones *realised* as [f] or [v] (L64; [ʋ]/[w] realisations are excluded) with lower lip at the upper teeth, on rendered pixels | ≥ 95% |
+| S5 | Audio–video offset | Measured in the browser after output-latency calibration (L92) | lips lead audio by ≤ 80 ms and lag by ≤ 40 ms |
+| S6 | Mouth range | Replay gate (L71): the person's own held-out reading driven through L64–L71 vs. the 52 values tracked from the same video | per-class amplitude within ±15%; inner-lip distance error reported |
+| S7 | Gesture validity | Every action of the library × 8 bench bodies, **every frame at 30 fps** of the trajectory | 0 limit violations; 0 penetrations > 2 mm |
+| S8 | Pointing | Observers pick the indicated lesson element from its neighbours on silent clips; the shoulder–wrist–fingertip line hits the element's box | ≥ 95% correct picks; line hits ≥ 98% |
 | S9 | Naturalness | GENEA-style human-likeness and appropriateness ratings (§8.4) vs. a real teacher video | within 1 scale point; ours ≥ "rule-based" ablation |
-| S10 | Responsiveness | Student stops talking → teacher's first visible reaction / first audio | ≤ 300 ms / ≤ 1.0 s (median) |
-| S11 | Barge-in | Student speaks over her → her audio fades | ≤ 300 ms after the student's onset |
-| S12 | Pedagogical honesty | Nods or "haan" after a wrong student answer | 0 |
-| S13 | Build time | Pack upload → signed model with report, one 24 GB GPU | median ≤ 210 s, p95 ≤ 240 s |
+| S10 | Responsiveness | Student stops → first visible reaction / first audio (phrase bank or speech) / first content clause | ≤ 300 ms / ≤ 0.8 s / ≤ 1.8 s (medians, measured end to end including recognition) |
+| S11 | Barge-in | Student speaks over her → her audio fades; she never interrupts herself through echo | ≤ 300 ms after the student's onset; 0 self-interruptions in the echo test |
+| S12 | Pedagogical honesty | Agreement signals after a wrong student answer (controls); perceptual check: Indian students judge "did she agree?" on the neutral set | 0; neutral set at chance |
+| S13 | Build time | Pack upload → signed model with report, one warm 24 GB GPU worker | median ≤ 210 s, p95 ≤ 240 s (cold start reported separately) |
 | S14 | Playback | 30 fps at 720p on an Intel Iris Xe-class laptop in Chrome; p99 frame ≤ 40 ms | pass |
-| S15 | No pixel copy | L45 patch-copy test and band-limit check | pass on every build |
-| S16 | Fairness | S1 and S2 per Monk Skin Tone group, sex and age band | no group more than 5 points below the mean |
-| S17 | Provenance | Every weight and asset in the model traces to a commercial-OK source | 100% (else the site refuses to publish) |
+| S15 | No pixel copy | Information-budget certificate complete and within budget (L42); patch-copy check; painter input audit (no photo reached L53) | pass on every build |
+| S16 | Fairness | S1, S2 and the style rating per Monk Skin Tone group, sex and age band | monitored report on the bench; gate (no group > 5 points below the mean) only on the extended set (≥ 30 people, or synthetic heads for the colour layers) |
+| S17 | Provenance | Every weight and asset in the model traces to a commercial-OK source; gate models obey the check-only rule (L3) | 100% (else the site refuses to publish) |
+| S18 | Style | Owner's rating against references 1–8 (§8.3); once the owned style kit exists, the style distance to it (L53) | ≥ 4/5; style distance ≤ the kit's own spread |
+
+### 2.6 Owner decisions needed
+
+These cannot be settled by engineering. Until the owner decides, the paper uses the default named.
+
+| # | Decision | Why it is the owner's | Default in this paper |
+|---|---|---|---|
+| D1 | **The albedo-blur question.** May the model keep a blurred colour map of the person's face (a band-limited field from the photos), or only a few hundred colour numbers (palette plus smooth per-region gradients)? | The blurred map helps likeness but sits in the band people recognise faces with; whether that counts as "photo pixels" is a reading of the brief | Parametric colour only (L40). The ablation in §8.5 measures what the field would add, so the owner decides with numbers |
+| D2 | **Template licence.** The MakeHuman licence page (checked 2026-11-26) says all core assets are CC0 and only the code is AGPL/GPL; an older GitHub readme speaks of AGPL for mesh data. Accept the CC0 reading (after a legal look) and pin the asset version, or author our own template | Licence risk on the one mesh every model is made from | MakeHuman core base mesh, exact version and hash pinned in L3, no MakeHuman code; our own template as plan B |
+| D3 | **Paying artists.** An owned style kit (30–60 painted portraits over our own plain renders), the stroke atlas, and the template's authored painting attributes need artists | Money, and who owns the work | Our own stroke atlas only; the kit is not assumed; S18 falls back to the owner's rating |
+| D4 | **Who is painted in the style kit.** Bench people (needs written consent to derivative artworks and to training a style model on them), artists' self-portraits, or fictional heads | Consent and paperwork | Fictional heads and artists' self-portraits |
+| D5 | **Running cost of live conversation.** Live cloned speech needs a GPU running while students talk (§7.4); it is not free | Money | Lesson narration pre-rendered at publish time (free at play time); live replies in the cloned voice only while a GPU worker is up, otherwise the labelled default voice or text plus the phrase bank |
+| D6 | **Check-only use of models trained on research data.** SFace (trained partly on the withdrawn MS-Celeb-1M), ECAPA speaker models (VoxCeleb) and XLSR phone recognisers (BABEL in pre-training) are used only to *check* a build (pass/fail), never to choose a shipped parameter | Legal risk appetite | Allowed as checks only (L3 rule); never ship their weights; replace each when a commercial-trained one exists |
+| D7 | **Proportions.** Confirm realistic proportions with mild stylisation (brief's newer sentence) rather than the part table's anime eyes and nose | The brief contradicts itself | Realistic, $s_{max}$ = 0.35 |
+| D8 | **Warm worker.** Keep one GPU worker warm (cost) so builds meet 3–4 minutes, or accept 30–90 s more on a cold start | Money vs. the build-time promise | Warm worker during Studio hours; cold builds report their start-up time separately |
+| D9 | **Diffusion painter.** Pursue the optional diffusion painter (L53 variant) at all: GPU time per build, a base model whose licence must be confirmed, and a style model trained only on the owned kit (D3) | Money and licence | Not pursued until D3 exists; the procedural painter is the default |
+| D10 | **The bench.** Recruit 8 adults with written consent for a second-day capture, readings and hand clips (L0) | People and paperwork; every gate depends on it | Required before any Stage C–F layer is called done |
 
 ---
 
@@ -141,10 +181,10 @@ help during tests). Everything is labelled "AI-generated" and the audio is water
 
 We follow design-science research (Hevner et al. 2004; mapped to software engineering in arXiv 1904.12742;
 taught as a method in 2407.09844). Each layer is an artefact with (a) a requirement drawn from §2, (b) a
-build, (c) an evaluation against a **gate** that is a number with a threshold, measured on the bench (§8)
+build, (c) an evaluation against a **gate** that is a number with a threshold, measured on the bench (L0)
 and on held-out data, and (d) a recorded decision. A layer that fails its gate does not ship; the build
-falls back to the layer's stated fallback, and the build report names it. The bench run is automatic and
-runs on every change (L98).
+falls back to the layer's stated fallback, and the build report names it. A 2-person smoke bench runs on
+every change; the full bench runs nightly and before a release (L94).
 
 ### 3.2 TRIZ: removing contradictions instead of trading them off
 
@@ -156,23 +196,26 @@ contradictions and their resolutions:
 
 | # | Contradiction | TRIZ principle | Resolution in Pratibimb |
 |---|---|---|---|
-| C1 | Likeness needs the person's appearance **vs.** no photo pixels may be used | Separation by scale (#1 segmentation; "separate the property from the carrier") | Likeness lives mostly in *geometry* (face shape, proportions, hair silhouette) and *low-frequency colour*. We learn exactly those and cap the colour bandwidth; high-frequency detail is *painted* by our shader, not copied (L44–L47, L45 proves it). |
-| C2 | Any gesture **vs.** no animation library or animator | Prior action (#10) + dynamism (#15) | Actions are goal programs solved at run time (IK + limits + priors). The "library" holds goals, not motion (L80–L89). |
-| C3 | Quality **vs.** an ordinary laptop | Separation in time (#10 prior action) | Heavy learning once (shared priors), fitting at build time, a small explicit model at run time (§6, §7). |
-| C4 | Painted look every frame **vs.** temporal stability (painted filters flicker) | Separation in space (#17 another dimension) | Strokes live in object space (anchored to the surface and moving with it), screen-space filtering only smooths within them (L58–L59, L64). |
-| C5 | Lips right in any language **vs.** no lip data for most languages | Intermediary (#24) | All languages pass through IPA phones; mouth shapes depend on articulation, not language (L65–L71). |
-| C6 | Respond fast **vs.** think well | Preliminary action (#10), partial action (#16) | Visible pre-reaction at 250 ms (breath, brow), first clause streamed, the rest planned while speaking (L93, L95). |
-| C7 | Expressive listening **vs.** never misleading the student | Separation by condition | Listener reactions are gated by the grader's verdict: agreement signals only after a correct step (L92). |
-| C8 | A cloned voice and face are useful **vs.** they can be misused | Self-service (#25) and "the other way round" (#13) | The model carries its own consent record, identity lock, signature, watermark and visible label; it refuses to play outside the site (L1–L3, L69, L63). |
-| C9 | Build quickly **vs.** perfect result | Feedback (#23) | The build grades itself on held-out frames and spends its remaining time budget only on failing layers (L98). |
+| C1 | Likeness needs the person's appearance **vs.** no photo pixels may be used | Separation by scale ("separate the property from the carrier"); "the other way round" (#13) | Likeness lives in *geometry* (face shape, proportions, hair silhouette) and a few colour numbers. Detail is *painted*, not copied (L40–L43, L53). Lost texture cues are put back as geometry: a likeness-gated caricature term pushes the face *away* from the average (L24). |
+| C2 | Any gesture **vs.** no animation library or animator | Prior action (#10) + dynamism (#15) | Actions are goal programs solved every frame (analytic IK + limits + task-space paths + springs). The "library" holds goals, not motion (L76–L85). |
+| C3 | Quality **vs.** an ordinary laptop | Separation in time (#10 prior action) | Heavy work once (shared priors, one authored template), fitting and baking per person, a small explicit model at run time (§6, §7). |
+| C4 | Painted look every frame **vs.** temporal stability (painted filters flicker) | Separation in space (#17 another dimension) | The paint lives in texture space on the surface: light, half-tone and shadow are each painted, and the run time only chooses between them by a stabilised shading normal (L52–L54). No screen-space paint filter. |
+| C5 | Lips right in any language **vs.** no lip data for most languages | Intermediary (#24) | All languages pass through IPA phones, aligned on the audio the voice actually spoke; mouth shapes depend on articulation, not language (L62–L71). |
+| C6 | Respond fast **vs.** think well | Preliminary action (#10), partial action (#16) | Visible pre-reaction at 250 ms, a pre-synthesised phrase from the person's own bank, speculative drafting on the partial transcript, the rest streamed clause by clause (L65, L91). |
+| C7 | Expressive listening **vs.** never misleading the student | Separation by condition | Agreement signals only after the grader marks a *final* transcript correct; nothing evaluative fires on partial transcripts (L88). |
+| C8 | A cloned voice and face are useful **vs.** they can be misused | Self-service (#25) and "the other way round" (#13) | The model carries its own consent record, face and voice lock, signature, watermark and visible label; it refuses to play outside the site (L1–L3, L66, L60). |
+| C9 | Build quickly **vs.** perfect result | Feedback (#23) | The build grades itself on held-out frames and spends its remaining time budget only on failing layers (L94). |
+| C10 | One topology for everyone **vs.** everyone's own shape | Universality (#6) + intermediary (#24) | One authored template carries every asset that must be made once (UVs, loops, weights, correctives, line and stroke attributes); only its shape is fitted per person (L33–L38). |
 
 ### 3.3 Recombination
 
 Creative results usually come from recombining proven pieces in a new arrangement (discussed for AI systems
 in 2405.01453). Pratibimb recombines: dense-landmark face fitting (2204.02776), personalised blendshapes
-(2007.06759, 2010.00560), anthropometric skeletons, heat-diffusion skinning, NPR line drawing (1810.01175),
-anisotropic Kuwahara filtering, dominance-based coarticulation, voice-activity projection for turn-taking
-(2403.06487), and an LLM tutor, under one shared clock and one set of explicit controls.
+(2007.06759, 2010.00560), template fitting by non-rigid ICP (Amberg et al. 2007), production stylised
+shading with authored normals and painted light (Motomura, GDC 2015; Arcane's texture painting as described
+in trade press), the caricature advantage in face perception (Rhodes et al. 1987), analytic arm IK with
+scapulohumeral rhythm, constrained coarticulation, voice-activity and semantic endpointing, speculative
+response generation (2609.20995), and an LLM tutor, under one shared clock and one set of explicit controls.
 
 ---
 
@@ -181,50 +224,58 @@ anisotropic Kuwahara filtering, dominance-based coarticulation, voice-activity p
 ### 4.1 Stages
 
 ```
-            BUILD (once per person, ≤ 4 min on one GPU)                      PLAY (browser, 30 fps)
+            BUILD (once per person, ≤ 4 min on one warm GPU)                 PLAY (browser, 30 fps)
  ┌──────────────────────────────────────────────────────────────┐   ┌──────────────────────────────────────┐
- │ A  Consent & provenance  L1–L3                               │   │ J  Listen & converse   L90–L95       │
+ │ A  Bench, consent & provenance  L0–L3                        │   │ J  Listen & converse   L86–L91       │
  │ B  Capture & reading     L4–L16   (on device + worker CPU)   │   │      student audio → turn state,     │
- │ C  Shape                 L17–L33  (who they are: geometry)   │   │      reactions, Guru → script        │
- │ D  Surface & rig         L34–L41  (one skinned mesh)         │   │ G  Voice               L65–L69       │
- │ E  Appearance            L42–L55  (colours, eyes, mouth,     │──►│      text → IPA → cloned audio       │
- │                                    hair, clothes)            │   │ H  Lips & face         L70–L79       │
- │ F  Painted look (bake)   L56–L64                             │   │ I  Body action         L80–L89       │
- │ K  Gates & packaging     L97–L98                             │   │ F  Painted renderer    L56–L64       │
- └──────────────────────────────────────────────────────────────┘   │ K  Clock & delivery    L96           │
+ │ C  Shape                 L17–L32  (who they are: geometry)   │   │      reactions, Guru → script        │
+ │ D  Template fit & rig    L33–L38  (one owned template)       │   │ G  Voice               L61–L66       │
+ │ E  Appearance            L39–L50  (colour numbers, eyes,     │──►│      text → IPA → cloned audio →     │
+ │                                    mouth, hair, clothes)     │   │      spoken-phone alignment          │
+ │ F  Painted look (bake)   L51–L53, L55                        │   │ H  Lips & face         L67–L75       │
+ │ G  Phrase bank           L65                                 │   │ I  Body action         L76–L85       │
+ │ K  Gates & packaging     L93–L94                             │   │ F  Painted renderer    L54–L60       │
+ └──────────────────────────────────────────────────────────────┘   │ K  Clock & delivery    L92           │
                                                                     └──────────────────────────────────────┘
 ```
 
-Stage G's voice reference, Stage H's mouth ranges and Stage I's skeleton limits are prepared at build time;
-the stages on the right run at play time on the person model the build produced.
+Stage G's voice reference and phrase bank, Stage H's mouth ranges and coarticulation parameters, Stage I's
+skeleton limits and rest poses, and Stage F's painted band textures are prepared at build time; the stages on
+the right run at play time on the person model the build produced. Lesson narration is synthesised once, at
+publish time, through Stages G–H on the server (§7.4).
 
 ### 4.2 Data flow at run time (one clock: the audio)
 
 ```
- student mic ─► L90 VAD/ASR ─► L91 turn state ─┬─► L92 listening reactions (gated by Guru's grader) ──┐
-                                               └─► L93 Guru brain ─► validated script clauses        │
-                                                     │ L94 barge-in, L95 latency hiding               │
-            ┌────────────────────────────────────────┴───────────────────────┐                        │
-            ▼                                                                ▼                        ▼
-   L65 text norm ─► L66 G2P (IPA) ─► L67 cloned voice ─► audio ─► L96 clock (master)     L80 action language
-                                        │ phone times (L68), L69 watermark  │ time t     L81 gesture plan
-                                        ▼                                   │            L82 target (DOM → 3D)
-   L70 visemes ─► L71 coarticulation ─► L72 jaw/lip ─► L73 tongue ─► L74 refine          L83 IK, L84 hands
-   L75 prosody ─► L76 emotion, L77 blinks/brows, L78 head, L79 gaze ──┐     │            L85 phases, L86 balance
-                                                                      ▼     ▼            L87 collisions, L88 idle
-                                     L89 mixer: pose(t) = {52 face values, jaw, tongue, eyes, skeleton} ◄──┘
-                                                                      ▼
-                    L40 skinning + morphs ─► L53 hair / L55 cloth (XPBD) ─► L56–L64 painted frame ─► panel
+ student mic ─► L86 VAD / streaming ASR / echo guard ─► L87 turn state ─┬─► L88 reactions (final transcript + grader) ─┐
+                                                                         └─► L89 Guru: streamed clauses, Leak Guard     │
+                                                                               │ L90 barge-in, L91 speculation + bank    │
+            ┌──────────────────────────────────────────────────────────────────┴──────────────┐                         │
+            ▼                                                                                 ▼                         ▼
+   L61 text norm ─► L62 G2P lattice ─► L63 cloned voice ─► audio ─► L64 align spoken phones   L76 action language
+                     (server)            │ L66 watermark         + prosody (server)           L77 gesture plan
+                                         ▼                                │                    L78 target (DOM → 3D)
+   L67 visemes ─► L68 constrained coarticulation ─► L69 jaw/lip ─► L70 tongue ─► L71 refine   L79 arm solver, L80 hands
+   (server, shipped with each audio chunk as 52 values + events)                              L81 trajectories, L82 collisions
+   L72 emotion, L73 blinks/brows, L74 head, L75 gaze (+VOR) ──┐                               L83 rest/idle/breath
+                                                              ▼                               L84 springs
+                                     L85 mixer: pose(t) = {52 face values, jaw, tongue, eyes, skeleton} ◄──┘
+                                                              ▼ (L92 audio clock, closure hold)
+                    L37 skinning + morphs + correctives ─► L48 hair / L50 garment springs ─► L54–L60 painted frame ─► panel
 ```
 
 ### 4.3 The person model (what a build produces)
 
-One signed file (`.pbmodel`, an extension of the identity pack format in `PACK_FORMAT.md`):
-mesh and LODs (≤ 60k triangles at LOD0), skin weights, 52 personal expression targets + correctives, the
-skeleton with bone lengths and joint limits, hand parameters, region-palette albedo (band-limited, ≤ 512²),
-feature curves (brows, lids, lips), eye, teeth and tongue parameters, hair cards, wardrobe fit, motion-habit
-profile, voice reference (speaker embedding and optional adapter), consent record, provenance ledger and
-the build report. Target download size ≤ 8 MB.
+One signed file (`.pbmodel`, an extension of the identity pack format in `PACK_FORMAT.md`): a reference to
+the pinned template version plus the person's fitted vertex positions (template topology, so UVs, weights,
+correctives and authored attributes come from the template), LOD positions, 52 personal expression targets,
+the skeleton with bone lengths and joint limits, hand parameters, the colour model (palette and smooth
+per-region gradients; ≤ a few hundred numbers), painted band textures (light, half-tone, shadow per chart),
+feature curves (brows, lids, lips), eye, teeth and tongue parameters, the hair clump fit, wardrobe fit,
+motion-habit profile and rest poses, coarticulation parameters, voice reference (speaker embedding,
+per-language reference spans, optional adapter), the phrase bank (audio, phones, motion), consent record,
+provenance ledger, information-budget certificate and the build report. Target download ≤ 8 MB (phrase bank
+streamed separately, ≤ 2 MB).
 
 ---
 
@@ -237,33 +288,58 @@ papers are idea sources only); **Ours** (what is new or specific to us, if anyth
 **Fails → fallback**; **Gate** (measurable pass/fail); **Status** (*exists* = in code today, with the file;
 *partial*; *to build*). Units: metres for the body, "head units" (1 = outer eye-corner distance, ≈ 9 cm)
 for the face, seconds for time, 25 or 30 fps for motion. Expression values follow the 52 ARKit names that
-MediaPipe's face landmarker outputs (2006.10962 for the face mesh). "Bench" means the 8-person bench of §8.2;
-"held-out" means frames from the end of the capture or another day, never used for fitting.
+MediaPipe's face landmarker outputs (2006.10962 for the face mesh). "Bench" means the 8-person bench of L0
+and §8.2; "held-out" means frames from the end of the capture or another day, never used for fitting.
+Distribution comparisons between a render and the person use effect sizes (Wasserstein-1 distance, or median
+and 90th-percentile ratios within ±20%), never "a test failed to reject", which short clips always pass.
 
 ---
 
-### Stage A: Consent, identity and provenance (L1–L3)
+### Stage A: Bench, consent, identity and provenance (L0–L3)
+
+#### L0 The bench (first deliverable)
+- **Purpose.** Almost every gate in this paper is measured on the bench; it must exist before any layer
+  is called done.
+- **In → Out.** Eight consenting adults (§8.2) → per person: the standard guided capture, a second-day
+  capture, 5 minutes of reading in English and Hindi/Hinglish with the face visible, 2 minutes of free
+  explanation with hands visible, a ruler measurement of hand length and palm width; the written consent
+  records; a synthetic hard-negative gallery (≥ 50 heads per person sampled from the head prior near that
+  person, L23) for S1.
+- **Method.** Recruit to the coverage of §8.2; written consent naming the bench use, retention and
+  deletion; store encrypted with the same crypto-shredding as models (L3). The synthetic gallery is made by
+  sampling head-prior coefficients at a fixed distance from the person's (hard negatives), rendered by the
+  same pipeline.
+- **Research.** Design-science evaluation (1904.12742); impostor controls in face verification (2205.12010).
+- **Ours.** A bench of second-day captures with hard synthetic impostors for stylised likeness.
+- **Defaults.** 8 people; smoke bench = 2 of them (one light, one deep Monk group).
+- **Fails → fallback.** None: without the bench, layers stay "unverified" in the index.
+- **Gate.** All 8 people's material complete and consented (owner decision D10).
+- **Status.** *To build*.
 
 #### L1 Consent capture and verification
-- **Purpose.** Nothing is built unless the person shown agreed, on camera, in their own words.
+- **Purpose.** Nothing is built unless the person shown agreed, on camera, in their own words, in their own
+  voice.
 - **In → Out.** Consent clip (video + audio), account, declared age ≥ 18 → signed consent record
-  `{who, by_whom, sentence, transcript, time, clip_hash, scope}`.
+  `{who, by_whom, sentence, transcript, time, clip_hash, scope, voice_match}`.
 - **Method.** The person reads a fixed sentence naming NexoraGuru, the purpose (teaching presenter) and
-  the right to delete. Speech recognition (L90's recogniser) transcribes it; a normalised word error rate
+  the right to delete. Speech recognition (L86's recogniser) transcribes it; a normalised word error rate
   against the sentence must be low. Liveness: the face must move (blink, mouth motion correlated with the
-  audio envelope, r ≥ 0.3), which rejects a still photo held to the camera. "Someone you know" mode records
-  that person's own sentence, never the uploader's.
+  audio envelope, r ≥ 0.3), which rejects a still photo held to the camera. **Voice match**: the voice
+  reference chosen in L15 must be the same speaker as the consent clip (ECAPA cosine above the same-speaker
+  line, a check-only model, L3), so nobody else's audio can be cloned under a valid face consent. "Someone
+  you know" mode records that person's own sentence, never the uploader's.
 - **Research.** Consent and authorised use of synthetic talking heads (avatar fingerprinting 2305.03713);
-  ethics of identity in synthetic media (2604.12490, 2104.05030). India's IT Rules (2026) labelling duty,
-  as noted in `SPEC.md`.
-- **Ours.** Audio–mouth liveness from the same signals we already extract; scope stored with the record
-  (teaching presenter only).
-- **Defaults.** WER ≤ 0.25 after normalisation; liveness r ≥ 0.3; age is declared (we do not estimate age
-  from faces: estimates are biased and unreliable).
+  ethics of identity in synthetic media (2604.12490, 2104.05030); ECAPA-TDNN (2005.07143). India's IT Rules
+  (2026) labelling duty, as noted in `SPEC.md`.
+- **Ours.** Audio–mouth liveness from the same signals we already extract; face *and* voice bound to the
+  consent; scope stored with the record (teaching presenter only).
+- **Defaults.** WER ≤ 0.25 after normalisation; liveness r ≥ 0.3; ECAPA same-speaker line calibrated on the
+  bench; age is declared (we do not estimate age from faces: estimates are biased and unreliable).
 - **Fails → fallback.** Ask to record again with the reason in plain words; nothing is built.
 - **Gate.** 100% of builds have a valid record; bench replay attacks (photo, screen replay of someone
-  else) rejected 100%.
-- **Status.** *Partial*: consent record and clip in `worker.py`/`pack.py`; ASR check and liveness *to build*.
+  else) and voice swaps rejected 100%.
+- **Status.** *Partial*: consent record and clip in `worker.py`/`pack.py`; ASR check, liveness and voice
+  match *to build*.
 
 #### L2 Identity lock
 - **Purpose.** The face in the consent clip must be the face the model is made of, and every later build
@@ -271,7 +347,8 @@ MediaPipe's face landmarker outputs (2006.10962 for the face mesh). "Bench" mean
 - **In → Out.** Consent clip frames, capture frames → identity vector (SFace, 128-d), match score, lock.
 - **Method.** YuNet face detection, SFace embedding (2205.12010) of the 5 sharpest consent frames and
   of the capture's main person (L6); take the maximum cosine over pairs; also store the mean capture
-  embedding in the model as the lock. A rebuild or an imported pack must match the lock.
+  embedding in the model as the lock. A rebuild or an imported pack must match the lock. Photo-to-photo
+  comparison only (SFace's own domain); it is a check, not a chooser (L3).
 - **Research.** SFace (2205.12010); YuNet/SFace from the OpenCV model zoo (MIT/Apache-2.0).
 - **Ours.** The lock travels inside the signed model, so a model cannot be re-dressed with another
   person's capture.
@@ -283,20 +360,26 @@ MediaPipe's face landmarker outputs (2006.10962 for the face mesh). "Bench" mean
 #### L3 Provenance ledger, labelling and revocation
 - **Purpose.** Prove that every part of a model is commercially usable, label all output, and make
   deletion total.
-- **In → Out.** Build inputs (datasets, weights, assets, code version) → ledger in the model manifest;
-  `publishable: true/false`; label and watermark settings; a deletion key.
-- **Method.** Every prior and weight file carries a licence tag; the ledger is the union of tags over the
-  build; any tag not in the allow list (`COMMERCIAL_OK` in `build.py`) makes the model research-only and the
-  site refuses to publish it. The model is encrypted with a per-person key held by the server; deletion
-  destroys the key and the files (crypto-shredding), so stray copies become unreadable.
+- **In → Out.** Build inputs (datasets, weights, assets, template version, code version) → ledger in the
+  model manifest; `publishable: true/false`; label and watermark settings; a deletion key.
+- **Method.** Every prior, weight and asset file carries a licence tag and a content hash; the ledger is the
+  union of tags over the build; any tag not in the allow list (`COMMERCIAL_OK` in `build.py`) makes the
+  model research-only and the site refuses to publish it. **Check-only rule**: a model whose training data
+  is not commercial-OK (SFace, ECAPA, XLSR phone recognisers) may only produce pass/fail on a build; it may
+  never choose a shipped parameter, and its weights are never shipped (owner decision D6). The ledger records
+  each check-only model and what it checked. The template is pinned by version and hash (D2). The model is
+  encrypted with a per-person key held by the server; deletion destroys the key and the files
+  (crypto-shredding), so stray copies become unreadable.
 - **Research.** Provenance tracking for synthetic media (FakeTagger 2009.09869; proactive defence
   2607.20564).
-- **Ours.** Licence provenance as a hard build gate, not documentation.
+- **Ours.** Licence provenance as a hard build gate, not documentation, including which models were allowed
+  to judge and which to choose.
 - **Defaults.** Allow list: own consented data, CC0, CC-BY, MIT, Apache-2.0, BSD (§6.3).
 - **Fails → fallback.** Research-only model, never shown to students.
-- **Gate.** S17: 100% traced; a deletion test leaves no readable model on server or cache.
+- **Gate.** S17: 100% traced; no check-only model on a parameter-choosing path (static check of the build
+  graph); a deletion test leaves no readable model on server or cache.
 - **Status.** *Partial*: `--datasets`/`COMMERCIAL_OK` in `scripts/pratibimb/engine/build.py`; signed pack in
-  `pack.py`; crypto-shred *to build*.
+  `pack.py`; check-only rule and crypto-shred *to build*.
 
 ---
 
@@ -313,7 +396,7 @@ worker CPU for photos and uploads. Its output is the identity pack (`PACK_FORMAT
 - **Method.** A coverage vector over required cells: head yaw {−60, −30, 0, 30, 60}° × pitch {−20, 0, 20}°;
   expressions {neutral, smile, "aah", "ooh", "ee", brows up, frown, eyes closed}; hands {open palm front,
   back of hand, point, count 1–5}; waist-up front. Each cell has a quality floor (L5). The coach asks for the
-  cell with the largest expected gain to the gates that are weakest (e.g., the side silhouette for L24).
+  cell with the largest expected gain to the gates that are weakest (e.g., the side silhouette for L23).
 - **Research.** The camera coach idea of `ENGINE.md` §3.6; dense landmarks integrate shape across frames
   (2204.02776).
 - **Ours.** Coverage driven by downstream gates: the coach asks for what will raise the weakest gate.
@@ -353,7 +436,8 @@ worker CPU for photos and uploads. Its output is the identity pack (`PACK_FORMAT
 - **Purpose.** The basis of face shape and expression: 478 3D points per frame.
 - **In → Out.** Frame + face box → 478 points (468 face + 10 iris), image pixels, z scaled like x.
 - **Method.** MediaPipe Face Landmarker on a crop zoomed so the face fills the input (small faces in
-  webcam frames otherwise lose accuracy); points mapped back to the full frame.
+  webcam frames otherwise lose accuracy); points mapped back to the full frame. The same landmarker is run
+  on our renders by the geometric likeness score (L24) and the rendered-pixel lip gates (S3, S4).
 - **Research.** Attention Mesh (2006.10962); dense landmarks beat sparse ones for fitting and integrate
   across frames (2204.02776).
 - **Ours.** Zoom crop before detection (exists).
@@ -406,14 +490,16 @@ worker CPU for photos and uploads. Its output is the identity pack (`PACK_FORMAT
 - **Status.** *Exists* in part: `capture.py`, `pack.py`, `proportions()` in `body.py`.
 
 #### L11 Hand points
-- **Purpose.** Finger lengths, palm size and the person's hand habits.
+- **Purpose.** Hand size, the person's handedness and hand habits.
 - **In → Out.** Frames → 21 points per visible hand, handedness, confidence.
 - **Method.** MediaPipe Hands (2006.10214) on crops around the wrist points; keep hands that are
-  unoccluded (all 21 points inside the frame, confidence ≥ 0.8, not overlapping the face box).
+  unoccluded (all 21 points inside the frame, confidence ≥ 0.8, not overlapping the face box). Per-phalanx
+  lengths are **not** read from these points (monocular hand "world" coordinates lean towards the tracker's
+  prior and are biased by foreshortening); L29 fits three numbers per hand instead.
 - **Research.** MediaPipe Hands 2006.10214; hand-pose review 1604.06195.
 - **Ours.** —
-- **Defaults.** ≥ 10 good hand frames to measure fingers.
-- **Fails → fallback.** Proportional hands (L30 fallback), flagged in the report.
+- **Defaults.** ≥ 10 good hand frames.
+- **Fails → fallback.** Proportional hands (L29 fallback), flagged in the report.
 - **Gate.** ≥ 10 hand frames, or the report says the hands are estimated.
 - **Status.** *Exists*: `capture.py`.
 
@@ -425,7 +511,7 @@ worker CPU for photos and uploads. Its output is the identity pack (`PACK_FORMAT
 - **Research.** Standard segmentation; masks for hair silhouettes (2306.05872).
 - **Ours.** —
 - **Defaults.** Erosion 2 px at 512 px.
-- **Fails → fallback.** Face-oval-only colours; hair from the default shape for the measured length.
+- **Fails → fallback.** Face-oval-only colours; hair from the default style for the measured length.
 - **Gate.** Mask IoU between consecutive calm frames ≥ 0.9.
 - **Status.** *Exists*: `_parts.png` masks in `capture.py`.
 
@@ -453,43 +539,52 @@ worker CPU for photos and uploads. Its output is the identity pack (`PACK_FORMAT
   person's forehead skin. Head covering: hair mask replaced by a cloth-coloured region above the forehead.
 - **Research.** Avatar diversity and self-presentation (2208.11170); facial hair capture (2606.08041,
   for ideas only).
-- **Ours.** Accessories stored as parameters, not pixels; redrawn by our own generators (L33).
+- **Ours.** Accessories stored as parameters, not pixels; redrawn by our own generators (L32).
 - **Defaults.** Region thresholds learned on the synthetic set (§6.1).
 - **Fails → fallback.** Ask "Do you wear glasses in lessons?" in the Studio.
 - **Gate.** Bench: glasses and facial-hair presence correct 8/8.
 - **Status.** *To build*.
 
 #### L15 Voice extraction and quality
-- **Purpose.** A clean reference for the voice clone and the person's prosody statistics.
-- **In → Out.** Audio tracks → 16 kHz mono speech, speaking spans, SNR, pitch range, rate.
+- **Purpose.** Clean references for the voice clone, per language, and the person's prosody statistics.
+- **In → Out.** Audio tracks → 16 kHz mono speech, speaking spans with a language label, SNR, pitch range,
+  rate; the chosen reference span per language.
 - **Method.** Voice activity detection; SNR from speech vs. non-speech energy; F0 by autocorrelation
-  (YIN-style) over voiced frames; syllable rate from energy peaks. Choose the best 10–30 s for the voice
-  reference.
-- **Research.** Voice cloning needs clean references (survey 2505.00579).
-- **Ours.** —
-- **Defaults.** SNR ≥ 20 dB for the reference.
-- **Fails → fallback.** Ask for a 30 s reading in a quiet room; default Indian voice until then.
-- **Gate.** Reference ≥ 10 s at SNR ≥ 20 dB.
-- **Status.** *Partial*: `voice.wav` and spans in `capture.py`; SNR and pitch *to build*.
+  (YIN-style) over voiced frames; syllable rate from energy peaks. Spoken-language ID per span. Choose the
+  best 10–30 s reference **per language**: a reference in another language than the target makes the clone
+  inherit that accent (the Chatterbox README's own warning), so Hindi output uses a Hindi reference when one
+  exists. The chosen spans are checked against the consent voice (L1).
+- **Research.** Voice cloning needs clean references (survey 2505.00579); Chatterbox README (accent
+  transfer from the reference).
+- **Ours.** Per-language reference selection tied to the consent voice.
+- **Defaults.** SNR ≥ 20 dB for a reference.
+- **Fails → fallback.** Ask for a 30 s reading in a quiet room (in each language the person teaches in);
+  default Indian voice until then.
+- **Gate.** One reference ≥ 10 s at SNR ≥ 20 dB per language used, matching the consent voice.
+- **Status.** *Partial*: `voice.wav` and spans in `capture.py`; SNR, pitch and language ID *to build*.
 
 #### L16 Motion-habit profile
 - **Purpose.** How this person moves: the "style" for every motion layer.
 - **In → Out.** Per-frame values and pose → profile: blinks/min and blink duration; head speed and range
   per axis; nod rate; mouth range per viseme class while speaking; smile and brow-raise share; hand
-  visibility, height and gesture rate; pause lengths.
+  visibility, height, rest position and gesture rate; pause lengths.
 - **Method.** Event detection on the calibrated values (blink = mean eyeBlink > 0.5); robust statistics
-  (median, 10th/90th percentiles). Mouth range per class uses L68's phone times when the capture has speech.
+  (median, 10th/90th percentiles). Mouth range per class uses L64's phone times when the capture has speech.
+  Rest positions of the hands (clasped at the waist, hand on wrist, arms down) are clustered from the free
+  explanation video where present (L83).
 - **Research.** Blink statistics in conversation (Bentivoglio et al. 1997); speaking style capture (VOCA
   1905.03079); personalised audio-driven motion by retrieval (2604.23692).
-- **Ours.** Per-viseme-class mouth range from the person's own speech (drives L72).
+- **Ours.** Per-viseme-class mouth range from the person's own speech (drives L69).
 - **Defaults.** Population values when a statistic has fewer than 20 events.
 - **Fails → fallback.** Population defaults.
 - **Gate.** Blink rate on two halves of the capture agree within ±20%.
-- **Status.** *Exists* in part: profile in `capture.py`; per-class range *to build*.
+- **Status.** *Exists* in part: profile in `capture.py`; per-class range and rest positions *to build*.
 
 ---
 
-### Stage C: The person's shape (L17–L33)
+### Stage C: The person's shape (L17–L32)
+
+Stage C measures *who they are* as geometry: targets that Stage D fits the template to.
 
 #### L17 Canonical face
 - **Purpose.** The person's neutral 3D face in a fixed head frame.
@@ -502,7 +597,7 @@ worker CPU for photos and uploads. Its output is the identity pack (`PACK_FORMAT
 - **Ours.** Neutral as the regression intercept, not a single "neutral" frame.
 - **Defaults.** Ridge λ = 0.05·n.
 - **Fails → fallback.** Best single front frame.
-- **Gate.** Held-out face error < 2% of eye distance (measured 1.05%).
+- **Gate.** Held-out face error < 2% of eye distance (measured 1.05%, same-session; second-day to be measured).
 - **Status.** *Exists*: `Rig.build` in `rig.py`.
 
 #### L18 Metric scale
@@ -532,34 +627,27 @@ worker CPU for photos and uploads. Its output is the identity pack (`PACK_FORMAT
 - **Gate.** Profile-view reprojection error drops ≥ 20% vs. single-view depth; held-out view error < 2%.
 - **Status.** *Partial*: `solve_multiview.py`, `solve_points3d.py` (for the older rig); port to the engine *to build*.
 
-#### L20 Personal expression basis
+#### L20 Personal expression basis (with optional pair correctives)
 - **Purpose.** This person's own way of smiling, opening the mouth, raising brows.
 - **In → Out.** Canonical-frame face per frame + 52 calibrated values → linear map $F(b) = \bar F +
-  \sum_k b_k D_k$ (52 personal deltas $D_k$).
+  \sum_k b_k D_k$ (52 personal deltas $D_k$), plus corrective deltas $C_{ij}$ only where the data supports
+  them.
 - **Method.** Ridge regression $W = (X^\top X + \lambda I)^{-1} X^\top Y$ with $X = [b, 1]$, $Y$ the flattened
   local faces. Values the person never showed get a population delta (from the synthetic set, scaled to
-  their face) blended by a confidence weight equal to the value's observed range.
+  their face) blended by a confidence weight equal to the value's observed range. Pair correctives: for
+  pairs $(i,j)$ that co-occur in ≥ 30 frames (rare in a phone capture), fit $Y - F(b) \approx \sum b_i b_j
+  C_{ij}$ and keep a pair only if it lowers held-out error; otherwise shared population correctives (from
+  the synthetic set) are used once they exist.
 - **Research.** Personalised blendshapes (2007.06759, 2010.00560); FLARE (2310.17519); example-based
-  rigging (Li et al. 2010).
+  rigging (Li et al. 2010); corrective shapes (2105.02451; Lewis et al. 2014).
 - **Ours.** Population fallback weighted by observed range, so unseen expressions stay plausible.
-- **Defaults.** λ = 0.05·n.
-- **Fails → fallback.** Population deltas only.
-- **Gate.** Held-out shape error < 2%; mouth opening follows the real mouth r ≥ 0.9 (measured 0.97).
-- **Status.** *Exists*: ridge map in `rig.py`; population fallback *to build*.
+- **Defaults.** λ = 0.05·n; ≤ 24 pair correctives.
+- **Fails → fallback.** Population deltas only; no correctives.
+- **Gate.** Held-out shape error < 2%; mouth opening follows the real mouth r ≥ 0.9 (measured 0.97);
+  a kept corrective lowers combination error ≥ 20%.
+- **Status.** *Exists*: ridge map in `rig.py`; population fallback and correctives *to build*.
 
-#### L21 Expression correctives
-- **Purpose.** Linear blendshapes fail on combinations (smile + "oo"); add the missing correction.
-- **In → Out.** Residuals of L20 → corrective deltas for value pairs.
-- **Method.** For pairs $(i,j)$ that co-occur in ≥ 30 frames, fit $Y - F(b) \approx \sum_{(i,j)} b_i b_j C_{ij}$
-  by ridge regression, keeping only pairs that reduce held-out error.
-- **Research.** Corrective shapes in skinning and blendshape rigs (2105.02451; Lewis et al. 2014).
-- **Ours.** Correctives only where the person's own data supports them.
-- **Defaults.** ≤ 24 corrective pairs.
-- **Fails → fallback.** No correctives.
-- **Gate.** Combination error drops ≥ 20% on held-out frames, else none kept.
-- **Status.** *To build*.
-
-#### L22 Symmetry and asymmetry
+#### L21 Symmetry and asymmetry
 - **Purpose.** Keep the person's real asymmetry (it is part of likeness), remove noise.
 - **In → Out.** Neutral face and deltas → symmetric part + measured asymmetry, smoothed.
 - **Method.** Mirror map of the face mesh (MediaPipe topology is symmetric); decompose $F = F_s + F_a$;
@@ -572,73 +660,91 @@ worker CPU for photos and uploads. Its output is the identity pack (`PACK_FORMAT
 - **Gate.** Asymmetry measured on two halves of the capture agrees (correlation ≥ 0.8).
 - **Status.** *To build*.
 
-#### L23 Face detail curves
+#### L22 Face detail curves
 - **Purpose.** Lines that make a face theirs: nasolabial folds, eye bags, forehead lines, dimples.
 - **In → Out.** Views + face mesh → a small set of crease curves on the mesh with strength and where
   they appear (always, or only with smile).
 - **Method.** On aligned, light-normalised face crops, detect ridge/valley lines (Hessian of luminance at
-  two scales); keep lines that appear at the same mesh position in ≥ 3 views; store them as curves in mesh
-  barycentric coordinates, with a strength per expression value (regressed against $b$). Painted by L60 as
-  lines, never as pixels.
+  two scales); keep lines that appear at the same mesh position in ≥ 3 views. Luminance Hessians on phone
+  images also pick up cast shadows, make-up and compression edges, so a curve is kept only if (a) its
+  strength correlates with the expression values it should follow (or it is present in every view, for
+  permanent lines) **and** (b) it does not appear as a fixed image-space edge across head poses. Store as
+  curves in mesh barycentric coordinates with a strength per expression value. Drawn by L56 as lines,
+  never as pixels.
 - **Research.** Dense-landmark detail (2204.02776); implicit detail recovery (2203.09692); SPARK
   (2409.07984).
 - **Ours.** Detail as *vector curves bound to the mesh*, which keeps it pixel-free and paintable.
-- **Defaults.** ≤ 12 curves; strength < 1 never darker than the shading band.
+- **Defaults.** ≤ 12 curves; strength < 1 never darker than the shadow band.
 - **Fails → fallback.** None (a clean face).
 - **Gate.** Curves stable across views (mean positional disagreement < 3% of eye distance) and the owner's
   side-by-side check (§8.3) prefers with-curves for ≥ 6/8 people.
 - **Status.** *To build* (`solve_detail.py` is the older pixel-based version).
 
-#### L24 Full head completion
-- **Purpose.** A closed head (skull, back, crown) from a mostly frontal capture.
-- **In → Out.** Canonical face + side silhouettes → closed head surface.
-- **Method.** Our own statistical head prior: principal components of closed heads built from (a) the
-  synthetic CC0 MakeHuman heads (§6.1) and (b) consented bench people. Fit by least squares: face points
-  as hard-ish constraints, side and top silhouettes (L12) as a chamfer loss on the projected contour; 30
-  PCA coefficients with a Gaussian prior.
+#### L23 Full head completion
+- **Purpose.** A closed head (skull, back, crown) from a mostly frontal capture, as the target for the
+  template fit.
+- **In → Out.** Canonical face + side silhouettes → head-prior coefficients and a closed head surface.
+- **Method.** Our own statistical head prior: principal components of closed heads in the **template's
+  topology**, built from (a) the CC0 MakeHuman heads (§6.1) and (b) consented bench people. Fit by least
+  squares: face points as hard-ish constraints, side and top silhouettes (L12) as a chamfer loss on the
+  projected contour; 30 PCA coefficients with a Gaussian prior. The prior's mean head $\bar F$ is also the
+  "average face" of L24's caricature term and the sampler of L0's hard negatives.
 - **Research.** Complete head models (1911.08008); combining face and head models (1903.03785); SPHEAR
   (2311.02461); one-shot full heads (2604.13856, 2602.11693) for ideas only.
-- **Ours.** A head prior trained only on CC0 synthetic and consented heads (no FLAME).
+- **Ours.** A head prior trained only on CC0 and consented heads (no FLAME), in the template's own topology.
 - **Defaults.** 30 components, prior weight 1.0.
-- **Fails → fallback.** The ellipsoid shell of `anime.py` / `rig.py`.
+- **Fails → fallback.** The template's mean head scaled to the face.
 - **Gate.** Side-silhouette IoU ≥ 0.9.
 - **Status.** *Partial*: ellipsoidal shell in `rig.py` and `anime.py`; prior *to build*.
 
-#### L25 Likeness-constrained stylisation
-- **Purpose.** The painted look has gently stylised proportions; stylisation must never cost likeness.
-- **In → Out.** Neutral face, style $s\in[0,1]$ → stylised face map $M_s$ (a 468×468 linear map per axis),
-  applied to every expression.
-- **Method.** Smooth local scalings around the eyes, nose, mouth and jaw (as in `anime.py`), written as a
-  linear map so all 52 expressions remain morph targets. Choose $s$ by a line search that maximises
-  "painterly" strength subject to the likeness gate: render the neutral face at $s$, compute SFace
-  similarity to the held-out photos as a share of the ceiling, and stop at the largest $s$ above 0.92.
+#### L24 Likeness-gated stylisation and caricature
+- **Purpose.** The painted look has gently stylised proportions; stylisation must never cost likeness, and
+  the likeness lost with the photo texture is put back into geometry.
+- **In → Out.** Neutral face $F$, population mean $\bar F$ (L23), style $s\in[0,1]$, caricature $\gamma \in
+  [0, 0.3]$ → stylised face map applied to every expression:
+  $F_{s,\gamma} = M_s\big(\bar F + (1+\gamma)(F-\bar F)\big)$, with $M_s$ a linear map so all 52 expressions
+  remain morph targets.
+- **Method.** $M_s$: smooth local scalings around the eyes, nose, mouth and jaw (as in `anime.py`).
+  Caricature: exaggerating a face's deviation from the average is recognised as well as or better than the
+  veridical drawing (the "caricature advantage", Rhodes, Brennan and Carey 1987); unlike $M_s$, which pulls
+  every face towards one style, $\gamma$ pushes each face away from the average. Deviation is shrunk by
+  L21's confidence first, so noise is not exaggerated. **Geometric likeness score** (style-independent):
+  run L7's landmarker on the neutral and two three-quarter renders, and combine (a) the Procrustes residual
+  against the captured canonical face and (b) a vector of ~20 identity ratios (eye spacing / face width,
+  nose length / face height, jaw angle, lip thickness, brow height…) normalised by the spread of the bench
+  impostors; the score is the margin to the best impostor. Choose $(s, \gamma)$ by a small grid search
+  that maximises $s$ and the score subject to the score's margin ≥ 0.05; SFace may veto a choice (check
+  only, L3) but never selects it.
 - **Research.** Stylised avatars that keep identity: AgileAvatar (2211.07818), ToonifyGB (2505.10072),
-  exemplar-based portrait stylisation (2104.14559), LeGO (2403.15227).
-- **Ours.** The style strength is set by a likeness constraint per person, not by taste.
-- **Defaults.** $s_{max}$ = 0.35 for the painted look (realistic proportions); 0.8 reproduces the
-  earlier anime proportions.
-- **Fails → fallback.** $s = 0$.
-- **Gate.** S1 holds at the chosen $s$.
-- **Status.** *Partial*: `stylise_map` in `anime.py`; likeness-constrained search *to build*.
+  exemplar-based portrait stylisation (2104.14559), LeGO (2403.15227); the caricature advantage (Rhodes et
+  al. 1987, *Cognitive Psychology*; cited from the classic literature, not re-read in this round); SFace
+  is trained on photographs (2205.12010), so its scores on painted renders are out of domain.
+- **Ours.** Style strength and caricature set per person by a style-independent likeness constraint; the
+  pixel ban answered by geometry, not texture. (Novelty **UNVERIFIED**.)
+- **Defaults.** $s_{max}$ = 0.35 for the painted look (realistic proportions; 0.8 reproduces the earlier
+  anime proportions, owner decision D7); $\gamma$ grid {0, 0.1, 0.2, 0.3}.
+- **Fails → fallback.** $s = 0$, $\gamma = 0$.
+- **Gate.** S1 and S2 hold at the chosen $(s, \gamma)$; ablation $\gamma = 0$ vs. chosen (§8.5).
+- **Status.** *Partial*: `stylise_map` in `anime.py`; caricature, geometric score and search *to build*.
 
-#### L26 Ears
+#### L25 Ears
 - **Purpose.** Ear size and position are identity cues in three-quarter views.
-- **In → Out.** Side views, head → ear placement, size and outline (parametric ear).
-- **Method.** A parametric ear (helix, lobe, concha as a low-poly template we model ourselves) placed by
-  proportion (top at brow height, bottom near the nose base) and refined to the side silhouette and the
-  ear region of the hair mask.
+- **In → Out.** Side views, head → ear placement, size and outline as template ear morphs.
+- **Method.** The template's ear (helix, lobe, concha) carries a few authored morphs (size, protrusion,
+  lobe); placed by proportion (top at brow height, bottom near the nose base) and refined to the side
+  silhouette and the ear region of the hair mask.
 - **Research.** Ears as head-model components (1911.08008).
-- **Ours.** Our own ear template, CC0.
+- **Ours.** —
 - **Defaults.** Length 0.68 × nose length; 15° backward tilt.
 - **Fails → fallback.** Proportional placement; hidden under hair if the mask says so.
 - **Gate.** Ear in the profile view within 3 px at 512 px.
 - **Status.** *To build*.
 
-#### L27 Neck and throat
+#### L26 Neck and throat
 - **Purpose.** A neck of the right width and length joining head and torso.
-- **In → Out.** Head, shoulders, silhouettes → neck profile (radius along its length).
+- **In → Out.** Head, shoulders, silhouettes → neck profile (radius along its length), a target for L34.
 - **Method.** Elliptical sections from the jaw to the clavicle; width from the front silhouette between
-  jaw and shoulders; length from L10. Adam's apple as a small bump for male-presenting people.
+  jaw and shoulders; length from L10. Adam's apple as a template morph for male-presenting people.
 - **Research.** Anthropometric tables (Drillis and Contini 1966).
 - **Ours.** —
 - **Defaults.** Neck radius 0.145 × shoulder width (in `body.py`).
@@ -646,21 +752,25 @@ worker CPU for photos and uploads. Its output is the identity pack (`PACK_FORMAT
 - **Gate.** Front silhouette IoU ≥ 0.9 in the neck band.
 - **Status.** *Partial*: `neck_r` in `body.py`; silhouette fit *to build*.
 
-#### L28 Skeleton and bone lengths
+#### L27 Skeleton and bone lengths
 - **Purpose.** The upper-body skeleton the person moves with.
-- **In → Out.** Bone lengths (L10) → joint hierarchy: pelvis, spine, chest, neck, head, clavicles,
-  shoulders, elbows, wrists, and 5 fingers × 4 joints per hand (`build_skeleton` in `body.py`).
+- **In → Out.** Bone lengths (L10) → the template's joint hierarchy scaled to the person: pelvis, spine,
+  chest, neck, head, clavicles, scapulae, shoulders, elbows, wrists, 5 fingers × 4 joints per hand, plus
+  helper joints: 1–2 upper-arm twist, 2–3 forearm twist, and a deltoid helper per side.
 - **Method.** Measured lengths where known; the rest from anthropometric ratios scaled to the shoulder
-  width; clamp each ratio to the 5th–95th adult range.
+  width; clamp each ratio to the 5th–95th adult range. Twist and helper joints are driven by fixed rules
+  (twist share along the bone; deltoid helper from arm elevation), so shoulders and forearms deform
+  predictably without many correctives.
 - **Research.** Anthropometric ratios (Drillis and Contini; NASA-STD-3000); bone-based pose decomposition
-  (2002.10322).
+  (2002.10322); twist and helper bones are standard production rigging practice.
 - **Ours.** —
-- **Defaults.** As in `proportions()`.
+- **Defaults.** As in `proportions()`; bind pose an A-pose (arms ≈ 45° down), so the common arms-down poses
+  deform least.
 - **Fails → fallback.** Ratios only.
 - **Gate.** Skeleton reprojection onto frames < 4% of shoulder width.
-- **Status.** *Exists*: `body.py`.
+- **Status.** *Partial*: skeleton in `body.py`; twist and helper joints *to build*.
 
-#### L29 Posture and spine
+#### L28 Posture and spine
 - **Purpose.** People stand differently (upright, forward head, one shoulder lower).
 - **In → Out.** Body points over time → rest pose offsets: spine curve, head forward offset, shoulder
   tilt and roll.
@@ -673,55 +783,59 @@ worker CPU for photos and uploads. Its output is the identity pack (`PACK_FORMAT
 - **Gate.** Posture reprojection error < 4% of shoulder width.
 - **Status.** *To build*.
 
-#### L30 Hand skeleton and finger lengths
+#### L29 Hand skeleton and finger lengths
 - **Purpose.** Hands that look like theirs and bend like hands.
-- **In → Out.** Hand points (L11), palm size → per-finger phalanx lengths, metacarpal spread, thumb
-  carpometacarpal axis.
-- **Method.** Phalanx lengths = median distances between consecutive points over good hand frames,
-  scaled metrically via the wrist–palm distance against the forearm length; the thumb CMC joint gets two
-  axes (flexion and abduction) oblique to the palm.
+- **In → Out.** Hand points (L11) → three numbers per hand (hand length, palm width, finger-length index),
+  then per-finger phalanx lengths, metacarpal spread and the thumb carpometacarpal axes.
+- **Method.** Fit the three numbers by 2D reprojection of the template hand across all good hand frames
+  (robust loss), not by medians of the tracker's 3D points; phalanx ratios from anthropometric tables; the
+  thumb CMC joint gets two oblique axes (flexion and abduction) with enough opposition range to reach every
+  finger segment (needed for the South Asian count on the phalanges, L80).
 - **Research.** Anatomical hand models: PIANO (2106.10893), NIMBLE (2202.04533) (papers only;
   MRI-derived models are non-commercial); finger biomechanics with IK (2605.09258).
 - **Ours.** Hands from the person's own points, with no outside hand model.
 - **Defaults.** Ratio defaults in `build_skeleton`.
-- **Fails → fallback.** Ratios.
-- **Gate.** Fingertip reprojection < 5 px at 512 px on held-out hand frames.
-- **Status.** *Partial*: ratio hands in `body.py`; measured lengths *to build*.
+- **Fails → fallback.** Ratios scaled to the hand length.
+- **Gate.** Hand length within ±5% of the bench ruler measurement (L0); fingertip reprojection reported.
+- **Status.** *Partial*: ratio hands in `body.py`; reprojection fit *to build*.
 
-#### L31 Joint limits and pose plausibility
+#### L30 Joint limits
 - **Purpose.** No impossible pose, ever.
-- **In → Out.** Anatomy → per-joint limits (swing cone + twist range) and a plausibility score $p(\theta)$.
+- **In → Out.** Anatomy → per-joint limits (swing cone + twist range), finger coupling, and a discomfort cost
+  used by the arm solver (L79).
 - **Method.** Shoulders and wrists use swing–twist decomposition with an elliptical swing cone; elbows and
-  finger joints are hinges with ranges; coupling rules for fingers (DIP ≈ ⅔ PIP). Plausibility: distance
-  to the manifold of captured poses, learned as an unsigned distance field over joint rotations.
-- **Research.** Biomechanical limits (2509.06607, 2605.09258); NRDF (2403.03122) for distance-field pose
-  priors; hand synergies (Santello et al. 1998).
+  finger joints are hinges with ranges; coupling rules for fingers (DIP ≈ ⅔ PIP; ring and little finger
+  enslavement). No learned plausibility field: the shippable pose sets are non-commercial and our own
+  captures are minutes long; analytic limits, coupling and the swivel cost already exclude impossible
+  poses. A hand synergy space (L80) is added only if our consented hand captures are large enough.
+- **Research.** Biomechanical limits (2509.06607, 2605.09258); hand synergies (Santello et al. 1998).
 - **Ours.** —
 - **Defaults.** Elbow 0–150°; MCP −20–90°; PIP 0–110°; DIP 0–80°; wrist flexion −70–80°.
 - **Fails → fallback.** Hard clamp.
-- **Gate.** S7: 0 library poses outside limits.
+- **Gate.** S7 (limits after every layer, including the spring layer L84).
 - **Status.** *To build*.
 
-#### L32 Torso and arm volume
-- **Purpose.** The body's thickness and shape.
+#### L31 Torso and arm volume
+- **Purpose.** The body's thickness and shape, as a target for the template fit.
 - **In → Out.** Skeleton + silhouettes → radius profiles (ellipse sections) per bone chain.
-- **Method.** "Generalised tubes": rings of points along each chain, radii from anthropometric profiles
-  scaled to the person; front silhouette widths fit the x radii; depth from population ratios with sex
-  and build (no side-view body photo is required).
+- **Method.** Rings along each chain, radii from anthropometric profiles scaled to the person; front
+  silhouette widths fit the x radii; depth from population ratios with sex and build (no side-view body
+  photo is required).
 - **Research.** Silhouette carving; anthropometric estimation from images (2512.06434).
-- **Ours.** Tube body from measurements only (exists).
+- **Ours.** Body volume from measurements only.
 - **Defaults.** `torso_profile` in `body.py`.
 - **Fails → fallback.** Ratios.
 - **Gate.** Front silhouette IoU ≥ 0.9.
 - **Status.** *Partial*: `tubes_for`, `torso_profile` in `body.py`; silhouette fit *to build*.
 
-#### L33 Glasses and facial-hair geometry
+#### L32 Glasses and facial-hair geometry
 - **Purpose.** Redraw L14's accessories as our own geometry.
 - **In → Out.** Accessory parameters → glasses mesh (rims, bridge, temples) fitted to the head; facial
-  hair as dense short cards or a painted region on the face.
+  hair as painted regions with clump edges.
 - **Method.** Glasses: superellipse rims swept as tubes, bridge on the nose points, temples to the ears
-  (L26); lens as a transparent layer with a faint highlight. Facial hair: regions on the face mesh with
-  density and colour; at "decent" quality, a painted region with stroke texture (L58) and a soft edge.
+  (L25); lens as a transparent layer with a faint painted highlight. Facial hair: regions on the template's
+  face with density and colour, painted by L53 with hair strokes and given a broken outline of small cards
+  along the edge.
 - **Research.** Strand-level facial hair capture (2606.08041) for the regions only.
 - **Ours.** Accessories rebuilt from parameters.
 - **Defaults.** Rim thickness from L14; lens tint none.
@@ -731,133 +845,128 @@ worker CPU for photos and uploads. Its output is the identity pack (`PACK_FORMAT
 
 ---
 
-### Stage D: One surface and its rig (L34–L41)
+### Stage D: The template and its fit (L33–L38)
 
-#### L34 Watertight surface and head–body join
-- **Purpose.** One closed, manifold mesh of head, neck, torso, arms and hands.
-- **In → Out.** Head (L24), ears (L26), neck (L27), tubes (L32), hands → one mesh.
-- **Method.** Express each part as a signed distance function (the head mesh by its winding-number
-  distance; tubes and hands as swept ellipses); union with a smooth minimum
-  $d = -k\log(e^{-d_1/k}+e^{-d_2/k})$ so the neck blends into head and shoulders; extract with marching cubes
-  on a 192³ grid (GPU), then keep the original face vertices exactly (the face region is copied from the
-  head mesh and stitched along the oval, so the expression map stays valid).
-- **Research.** Implicit surfaces and marching cubes (Lorensen and Cline 1987); the smooth-minimum union
-  (Quilez; graphics practice, not peer-reviewed).
-- **Ours.** Exact face region kept inside an implicit body, so personal blendshapes stay linear in the face
-  points.
-- **Defaults.** $k$ = 1.5 cm at the neck, 0.5 cm at fingers.
-- **Fails → fallback.** Separate parts with overlapping seams (the current `body.py` tubes).
-- **Gate.** Manifold, no holes, no self-intersection in the rest pose.
-- **Status.** *To build* (parts exist separately in `anime.py` and `body.py`).
+Version 1 built a new mesh for every person (implicit union, marching cubes, remeshing, per-person UVs and
+weights, the face stitched in along its oval). Every person then had different topology, so nothing could
+be authored once, and the stitch showed as a hard line in banded shading. Version 2 fits **one owned
+template** to each person, which is how production character systems work: one topology, fitted identity.
 
-#### L35 Remeshing and edge loops
-- **Purpose.** Triangles that deform well: dense where things bend, sparse elsewhere.
-- **In → Out.** Mesh → isotropic remesh with density targets.
-- **Method.** Isotropic remeshing (split/collapse/flip/relax) with a sizing field: fine at mouth, eyes,
-  knuckles and elbows; coarse on the back and torso; feature-preserving at the face stitch.
-- **Research.** Botsch and Kobbelt (2004) remeshing.
-- **Ours.** Sizing field derived from joint positions and the face's motion variance (where the person's
-  face moves most).
-- **Defaults.** 45k triangles total; 12k in the face.
-- **Fails → fallback.** Marching-cubes mesh with Laplacian smoothing.
-- **Gate.** Minimum angle > 20° on 99% of triangles.
+#### L33 The template mesh (authored once)
+- **Purpose.** Everything that must be made by hand, made once, for everyone.
+- **In → Out.** Authoring (once) → a waist-up template: animation edge loops, five-finger hands, mouth bag,
+  eye sockets, ears, teeth and tongue, UV charts, skeleton with twist and helper joints (L27), skin weights,
+  pose correctives, LODs, and the **authored painting attributes** per vertex: shading-normal blend weights
+  and forced light/dark offsets (L52), line width and colour controls (L56), stroke layout and orientation
+  per chart (L53), garment cages (L49), the hair scalp (L47).
+- **Method.** Start from the MakeHuman base mesh (core assets CC0 per the MakeHuman licence page; asset
+  version and hash pinned in L3; no MakeHuman code used; owner decision D2), cut to waist-up, retopologised
+  where our face binding (L35) and the mouth need denser loops; or, if D2 says no, model our own. The face
+  region gets a fixed correspondence to MediaPipe's 468 points, made once.
+- **Research.** Production practice of one topology per character family; MakeHuman licence pages
+  (makehumancommunity.org); Guilty Gear Xrd authored normals and line control (Motomura, GDC 2015).
+- **Ours.** A template whose painting attributes are authored once and inherited by every person.
+- **Defaults.** LOD0 ≈ 45k triangles (≈ 12k face), LOD1 20k, LOD2 8k; A-pose bind.
+- **Fails → fallback.** None at build time (the template is a fixed asset); a template change re-runs the
+  bench.
+- **Gate.** Manifold, no self-intersection; library poses (S7) deform without flipped triangles on 8 bench
+  bodies; owner approves the authored attributes on the bench renders.
+- **Status.** *To build* (`anime.py` and `body.py` parts are replaced).
+
+#### L34 Template fit
+- **Purpose.** The template takes the person's shape without losing its loops, UVs or rig.
+- **In → Out.** Template, canonical face (L17–L22, stylised by L24), head (L23), ears (L25), neck (L26),
+  skeleton (L27), posture (L28), body volume (L31) → fitted vertex positions in template topology.
+- **Method.** (1) Fixed landmark correspondences (face points → template face vertices, skeleton joints →
+  template joints). (2) Non-rigid ICP with stiffness annealing (Amberg, Romdhani and Vetter 2007) to the
+  completed head and the silhouette-fitted body profiles. (3) Laplacian detail preservation (Sorkine et al.
+  2004) so edge loops and authored regions keep their layout. (4) Joint positions re-derived from the fitted
+  surface and the measured bone lengths. One sparse solve per stage on the GPU.
+- **Research.** Optimal-step non-rigid ICP (Amberg et al., CVPR 2007); Laplacian surface editing (Sorkine
+  et al., SGP 2004); deformation transfer (Sumner and Popović 2004).
+- **Ours.** —
+- **Defaults.** Stiffness schedule 50 → 1 over 6 steps.
+- **Fails → fallback.** Fit to the face and skeleton only, body volumes from ratios.
+- **Gate.** Face points within 0.5% of eye distance of L17–L24's face; head, neck and body silhouette IoU
+  ≥ 0.9; no flipped triangles.
 - **Status.** *To build*.
 
-#### L36 UV layout
-- **Purpose.** Texture coordinates for the small albedo and stroke maps.
-- **In → Out.** Mesh → UVs, seams in hidden places.
-- **Method.** Charts: face (MediaPipe's canonical UVs kept), head back, torso front/back, each arm, each
-  hand; least-squares conformal maps per chart; seams placed behind the hair, under the arms and along
-  the sides of the fingers.
-- **Research.** LSCM (Lévy et al. 2002).
-- **Ours.** —
-- **Defaults.** Texel density 2× on the face.
-- **Fails → fallback.** Per-vertex colours only (the albedo is band-limited anyway).
-- **Gate.** Area stretch < 10% on 95% of triangles.
-- **Status.** *To build* (face UVs exist in `pack.py`'s `face/mesh.obj`).
-
-#### L37 Face-to-mesh binding
-- **Purpose.** Every face, lid, lip and brow vertex follows the 468 personal points.
-- **In → Out.** Mesh + face points → sparse linear map $V = G\,P + d$.
-- **Method.** Face vertices are the points themselves; surrounding vertices (head shell, brows, lashes,
-  mouth cavity rim) are fixed linear combinations of nearby points with falloff weights, as in `anime.py`.
-  Because $G$ is linear, each personal delta $D_k$ becomes a morph target $G D_k$ of the whole head.
-- **Research.** Rig-space binding (2003.09820, ideas).
-- **Ours.** The binding that turns the person's measured expressions into GPU morph targets (exists).
+#### L35 Face binding and expression morphs
+- **Purpose.** Every face, lid, lip and brow vertex follows the person's 468 points, so their measured
+  expressions become GPU morph targets.
+- **In → Out.** Fitted template + face points → sparse linear map $V = G\,P + d$ on the face region;
+  52 morph targets $G D_k$ (and kept correctives $G C_{ij}$).
+- **Method.** Template face vertices are fixed linear combinations of nearby points (radial falloff,
+  computed once on the template, re-normalised after the fit); because $G$ is linear, each personal delta
+  becomes a morph target of the whole head. No seam: the face region *is* template topology.
+- **Research.** Rig-space binding (2003.09820, ideas); deformation transfer (Sumner and Popović 2004).
+- **Ours.** The binding that turns the person's measured expressions into template morph targets.
 - **Defaults.** Falloff 2.5 rings beyond the face oval.
 - **Fails → fallback.** —
-- **Gate.** Max vertex error vs. direct evaluation < 0.1 mm.
-- **Status.** *Exists*: `Character.build` in `anime.py`.
+- **Gate.** Max vertex error vs. direct evaluation < 0.1 mm; no shading discontinuity across the old oval
+  line (band-boundary test, L52).
+- **Status.** *Partial*: the binding exists for the older face mesh (`Character.build` in `anime.py`);
+  template binding *to build*.
 
-#### L38 Skin weights
+#### L36 Skin weights
 - **Purpose.** How much each bone moves each vertex.
-- **In → Out.** Mesh + skeleton → ≤ 4 weights per vertex.
-- **Method.** Heat diffusion from the bones (solve $(-\Delta + H)w_j = H p_j$ per bone with $H$ the
-  inverse squared distance to the nearest visible bone), then a learned correction: a small graph network
-  trained once on synthetic MakeHuman (CC0) rigs with artist weights predicts a residual; finally
-  normalise and keep the top 4.
-- **Research.** Pinocchio heat diffusion (Baran and Popović 2007); robust biharmonic skinning (2406.00238);
-  learned skinning: VINECS (2307.00842), HumanRig (2412.02317), SkinningNet (2203.04746), RigMo
-  (2601.06378).
-- **Ours.** Heat diffusion plus a residual net trained only on CC0 rigs.
-- **Defaults.** 4 influences; finger weights restricted to their own chain.
-- **Fails → fallback.** Plain heat diffusion.
-- **Gate.** No tearing or folding (flipped triangles = 0) in every library pose.
-- **Status.** *Partial*: ring-to-bone weights for tubes in `body.py`; general weights *to build*.
+- **In → Out.** Template weights + fitted mesh → ≤ 4 weights per vertex.
+- **Method.** The template's authored weights are carried through the fit (same topology); only
+  re-normalised, and finger weights restricted to their own chain. Shoulder weights are smoothed under the
+  arm for garments that must not ride up when an arm is raised above 90° (L49).
+- **Research.** Pinocchio heat diffusion (Baran and Popović 2007) for authoring; robust biharmonic skinning
+  (2406.00238).
+- **Ours.** —
+- **Defaults.** 4 influences.
+- **Fails → fallback.** —
+- **Gate.** No tearing or folding (flipped triangles = 0) on every frame of every library action.
+- **Status.** *Partial*: ring-to-bone weights for tubes in `body.py`; template weights *to build*.
 
-#### L39 Skinning method: linear and dual-quaternion blend
-- **Purpose.** Avoid the "candy wrapper" collapse of twisting wrists and the bulge of dual quaternions.
-- **In → Out.** Weights + bone transforms → deformed vertices.
-- **Method.** Per vertex, blend linear blend skinning (LBS) and dual-quaternion skinning (DQS) with a
-  weight $\alpha$ that is high near twisting joints (forearm, wrist) and low near bending joints (elbow
-  crease, knuckles); both computed in the vertex shader.
-- **Research.** Dual-quaternion skinning (Kavan et al. 2008); velocity skinning for secondary effects
-  (2104.04934).
-- **Ours.** Joint-type-dependent blend.
-- **Defaults.** $\alpha$ = 0.8 on the forearm, 0.2 at the elbow crease.
-- **Fails → fallback.** LBS.
-- **Gate.** Volume change at elbows and wrists < 10% across the library poses.
+#### L37 Runtime deformer: correctives and skinning
+- **Purpose.** Elbows, shoulders and knuckles keep their shape; wrists do not "candy-wrap"; dual
+  quaternions do not bulge.
+- **In → Out.** 52 face values, joint angles → deformed vertices.
+- **Method.** On the GPU: 52 face morphs (only active targets: a viseme frame uses fewer than 15) from a
+  float texture, then template pose correctives driven by a radial basis of the joint swing angles
+  (keyed on the combined clavicle + glenohumeral angle at the shoulder, L79), then a per-vertex blend of
+  linear (LBS) and dual-quaternion (DQS) skinning with weight $\alpha$ high near twisting joints (forearm,
+  wrist) and low at bending creases. With twist and helper joints (L27) few correctives are needed.
+- **Research.** Dual-quaternion skinning (Kavan et al. 2008); neural blend shapes (2105.02451);
+  pose-dependent deformation distilled for mobile (TaoAvatar 2503.17032); velocity skinning (2104.04934).
+- **Ours.** Correctives as template assets scaled by the fit (no per-person training).
+- **Defaults.** $\alpha$ = 0.8 on the forearm, 0.2 at the elbow crease; 3 correctives per shoulder, 2 per
+  elbow, 1 per knuckle row.
+- **Fails → fallback.** LBS, no correctives.
+- **Gate.** Volume change at elbows and wrists < 10% and silhouette error at a 90° elbow bend ≥ 20% lower
+  than without correctives, across the library.
 - **Status.** *To build*.
 
-#### L40 Pose correctives and runtime deformer
-- **Purpose.** Elbows, shoulders and knuckles keep their shape when bent.
-- **In → Out.** Joint angles → corrective shapes; runtime deformation (morphs + correctives + skinning).
-- **Method.** For each major joint, a few corrective shapes driven by a radial basis of the joint's swing
-  angles, fitted once on synthetic CC0 bodies and scaled to the person; at run time the GPU applies
-  52 face morphs, correctives, then LBS/DQS.
-- **Research.** Neural blend shapes (2105.02451); pose-dependent deformation distilled for mobile
-  (TaoAvatar 2503.17032).
-- **Ours.** Correctives as a shared prior scaled by bone lengths (no per-person training).
-- **Defaults.** 3 correctives per shoulder, 2 per elbow, 1 per knuckle row.
-- **Fails → fallback.** No correctives.
-- **Gate.** Silhouette error at 90° elbow bend drops ≥ 20% vs. no correctives.
-- **Status.** *To build*.
-
-#### L41 Levels of detail
+#### L38 Levels of detail
 - **Purpose.** Hold 30 fps on weak GPUs.
-- **In → Out.** Mesh → LOD0 (45k), LOD1 (20k), LOD2 (8k) with the face at full detail in all.
-- **Method.** Quadric error decimation away from the face, with weights and UVs carried; morph targets only
-  on face vertices, which are never decimated.
-- **Research.** Garland and Heckbert (1997); level-of-detail perception for Gaussian crowds (2501.17085).
-- **Ours.** Face-preserving LODs.
-- **Defaults.** Switch by measured frame time (L96).
+- **In → Out.** Template LODs + the fit → LOD0, LOD1, LOD2 positions, face at full detail in all.
+- **Method.** The template's LODs are authored once; per person each LOD vertex is a fixed barycentric
+  combination of LOD0 vertices, so the fit carries over with no decimation at build time.
+- **Research.** Garland and Heckbert (1997) for authoring; level-of-detail perception (2501.17085).
+- **Ours.** —
+- **Defaults.** Switch by measured frame time (L92).
 - **Fails → fallback.** LOD0 only.
 - **Gate.** LOD2 silhouette IoU ≥ 0.97 vs. LOD0 at panel size.
 - **Status.** *To build*.
 
 ---
 
-### Stage E: Appearance, eyes, mouth, hair and clothes (L42–L55)
+### Stage E: Appearance, eyes, mouth, hair and clothes (L39–L50)
 
-The rule of this stage (contradiction C1): we learn **colours and shapes**, never pixels. L45 checks it.
+The rule of this stage (contradiction C1): we learn **colour numbers and shapes**, never pixels. Every
+photo-derived number is listed in the information-budget certificate (L42).
 
-#### L42 Per-frame light estimation
+#### L39 Per-frame light estimation
 - **Purpose.** Separate the person's colours from the room's light.
-- **In → Out.** Frames + posed mesh (normals) → order-2 spherical-harmonic light per frame.
+- **In → Out.** Frames + posed fitted mesh (normals) → order-2 spherical-harmonic light per frame.
 - **Method.** For face-skin pixels with normals $n$ from the posed mesh, solve
-  $I(x) \approx a\,(\sum_{lm} L_{lm} Y_{lm}(n))$ jointly for a single skin albedo $a$ and per-frame
-  coefficients $L$ (9 per channel) by alternating least squares, with a prior that keeps $L$ near
-  "mostly frontal, soft" light.
+  $I(x) \approx a\,(\sum_{lm} L_{lm} Y_{lm}(n))$ jointly for region albedos $a$ and per-frame coefficients
+  $L$ (9 per channel) by alternating least squares, with a prior that keeps $L$ near "mostly frontal, soft"
+  light.
 - **Research.** Spherical-harmonic lighting (Ramamoorthi and Hanrahan 2001); intrinsic decomposition for
   avatars (IntrinsicAvatar 2312.05210; SGIA 2407.15212; FLARE 2310.17519).
 - **Ours.** —
@@ -866,108 +975,115 @@ The rule of this stage (contradiction C1): we learn **colours and shapes**, neve
 - **Gate.** Recovered skin albedo agrees across frames: ΔE₀₀ < 3 between the 25th and 75th percentile frames.
 - **Status.** *Partial*: order-1 SH in `build.py`.
 
-#### L43 Albedo field
-- **Purpose.** The person's colour over the whole visible surface (skin, lips, under-eye, cheeks).
-- **In → Out.** Light-normalised frames + UVs → a low-resolution albedo field on the mesh.
-- **Method.** Per texel, the weighted median of light-divided colours over frames that see it well
-  (weight = cos(view angle) × sharpness × mask confidence), solved as a smooth field: minimise
-  $\sum (A(u)-c)^2 + \mu\|\nabla A\|^2$ on the mesh. Then band-limit (L45).
+#### L40 Colour model (parametric by default)
+- **Purpose.** The person's colours over the visible surface (skin, lips, under-eye, cheeks), as numbers.
+- **In → Out.** Light-normalised frames, template UV regions → per region: a base colour and a smooth
+  gradient (a low-order polynomial, ≤ 6 coefficients per channel, over the region's UV chart); hair, iris,
+  brow and lip colours. A few hundred numbers in all.
+- **Method.** Per region, robust (weighted median) light-divided colour over frames that see it well
+  (weight = cos(view angle) × sharpness × mask confidence), then a least-squares fit of the low-order
+  gradient (captures e.g. warmer cheeks, darker under-eye, lip gradient) with a ridge prior to the region
+  mean. **Variant, only if the owner allows it (D1):** a band-limited field on the face chart (smooth
+  least-squares field, low-passed below $f_c$), checked by L42's band test. The ablation (§8.5) reports
+  what the field adds over the parametric model.
 - **Research.** Inverse rendering on avatars (2312.05210, 2407.15212); albedo estimation without
-  light-skin bias (2205.03962, 2406.13149, 2411.12002).
-- **Ours.** Median over frames plus smoothness, followed by a hard band limit.
-- **Defaults.** 256² face chart, 128² elsewhere, before band limiting.
-- **Fails → fallback.** Region palette only (L44).
-- **Gate.** Mean ΔE₀₀ to measured skin colour (L13) < 3; no texel darker than 3σ of its region (no baked
-  shadows).
-- **Status.** *Partial*: colour-point appearance in `splats.py`/`build.py` (fits pixels; to be replaced by
-  this band-limited field); `pack.py` measures colours.
+  light-skin bias (2205.03962, 2406.13149, 2411.12002); spatial frequencies used in face recognition
+  (Näsänen 1999, *Vision Research* 39).
+- **Ours.** Parametric colour as the shipped model, low information by design.
+- **Defaults.** 14 regions; polynomial order 2.
+- **Fails → fallback.** One colour per region.
+- **Gate.** Mean ΔE₀₀ to measured skin colour (L13) < 3; no region darker than 3σ of its own frames (no
+  baked shadows).
+- **Status.** *Partial*: colour-point appearance in `splats.py`/`build.py` (fits pixels; replaced by this
+  model); `pack.py` measures colours.
 
-#### L44 Region palette and skin tone
-- **Purpose.** A painter's palette: a few colours per region, which is what a painting of a face uses.
-- **In → Out.** Albedo field → regions (forehead, cheeks, nose, lips, under-eye, chin, neck, ears, hands)
-  each with base, shadow-side and light-side colours; Monk Skin Tone class.
-- **Method.** Regions from the face mesh; per region, k-means (k = 3) in CIELAB over its texels; the shadow
-  and light colours shift hue as a painter would (warm lights, cooler, slightly more saturated shadows)
-  by a learned shift per Monk class. Skin tone class by nearest Monk swatch in CIELAB.
-- **Research.** Skin-tone fairness (2205.03962); Gooch cool-to-warm shading (Gooch et al. 1998).
-- **Ours.** Region palette as the shipped colour model (low information by design).
-- **Defaults.** 3 colours per region.
-- **Fails → fallback.** Single skin colour.
-- **Gate.** Region colours stable between two halves of the capture (ΔE₀₀ < 3).
-- **Status.** *Partial*: Monk class and colours in `pack.py`.
+#### L41 Region palette, skin tone and shine
+- **Purpose.** A painter's palette: a few colours per region, which is what a painting of a face uses, and
+  where the skin shines.
+- **In → Out.** Colour model → regions (forehead, cheeks, nose, lips, under-eye, chin, neck, ears, hands)
+  each with light, half-tone, shadow and terminator colours, a shine level (none/low/high), a subsurface
+  tint; Monk Skin Tone class.
+- **Method.** Skin tone class by nearest Monk swatch in CIELAB. The light/shadow colours shift hue as a
+  painter would (warm lights, cooler, slightly more saturated shadows) by an **artist-authored table** for
+  all ten Monk classes, painted over reference swatches and checked by S16 (no learned shift, which would
+  need training data we do not have). On deep skin the value contrast between bands is low; form is carried
+  by rim, painted highlight and warm bounce instead, so the table raises those rather than darkening the
+  shadow. Shine: one level per region with a per-Monk default, adjusted only when a clear highlight is seen
+  in several frames (measured specular roughness is not used: oil, make-up, compression and auto-exposure
+  confound it). Subsurface tint from the palette, not from a photo's terminator. Colours are applied **per
+  texel** through the region gradient (L40), so cheek, lip and under-eye variation survives banding.
+- **Research.** Skin-tone fairness (2205.03962); Gooch cool-to-warm shading (Gooch et al. 1998); painted
+  light on dark skin (art practice; no paper verified).
+- **Ours.** Monk-aware painterly palette rules authored for every class.
+- **Defaults.** 4 colours per region; shine "low" on forehead and nose.
+- **Fails → fallback.** Single skin colour per band.
+- **Gate.** Region colours stable between two halves of the capture (ΔE₀₀ < 3); owner's form-readability
+  check per Monk group on the bench.
+- **Status.** *Partial*: Monk class and colours in `pack.py`; authored table *to build*.
 
-#### L45 No-copy guard (band limit and patch test)
-- **Purpose.** Prove that no photo pixels are on the model.
-- **In → Out.** Albedo field, all textures → band-limited textures; pass/fail report.
-- **Method.** (1) **Band limit**: low-pass every learned texture so its maximum spatial frequency is
-  below $f_c$ cycles per eye distance (detail finer than that can only come from our painted strokes).
-  (2) **Patch test**: render the model's albedo in the head frame and compare 16×16 patches with every
-  source frame's light-normalised, aligned face by normalised cross-correlation after high-pass filtering
-  both; the 99th percentile of the best-match NCC must be below a threshold calibrated on *different*
-  people (so it measures copying, not similarity). (3) Clothes and background textures are never
-  learned (garments come from the wardrobe, L54).
+#### L42 No-copy guard: information-budget certificate
+- **Purpose.** Prove that no photo pixels are on the model, in a way a copy would fail.
+- **In → Out.** The `.pbmodel` and the build graph → a certificate listing every photo-derived number
+  (name, count, precision, layer) with its total, and a pass/fail report.
+- **Method.** (1) **Certificate**: the build graph tags each value derived from photo pixels (as opposed to
+  landmarks or masks); the certificate sums them; the budget is fixed in code (parametric colour: a few
+  hundred numbers). A copied image cannot fit in the budget. (2) **Painter audit**: the painter's inputs
+  (L53) are only renders of our own fitted template; the audit checks that no photo or photo-derived image
+  is on that path. (3) **Patch check** as a sanity test: compare 16×16 patches of the final painted textures
+  with every source frame's aligned face by NCC, against a threshold calibrated on *different* people. (4)
+  **Only if the colour field is allowed (D1)**: the v1 test (high-pass both, NCC) cannot fail on a
+  low-passed field, so it is replaced by a test in the band 2–6 cycles per eye distance: the field's NCC to
+  the person's own aligned faces in that band must not exceed the 99th percentile of its NCC to *other*
+  bench people's faces by more than a margin. (5) Clothes and background are never learned (L49).
 - **Research.** Nearest-neighbour matching against training images is a common way to audit generative
-  models for memorisation (general practice; no single source verified here: **UNVERIFIED**); here it is
-  applied to a deterministic pipeline.
-- **Ours.** A *verifiable* pixel-free appearance. We did not find this as a stated build check in prior
-  avatar work.
-- **Defaults.** $f_c$ = 6 cycles per eye distance; NCC threshold = 99th percentile of the cross-person
+  models for memorisation (general practice; no single source verified here: **UNVERIFIED**).
+- **Ours.** A certificate of what was measured, rather than a test of what was not copied. We did not find
+  this as a stated build check in prior avatar work.
+- **Defaults.** Budget 600 numbers (parametric); patch NCC threshold = 99th percentile of the cross-person
   distribution on the bench.
-- **Fails → fallback.** Halve $f_c$ and repeat; if still failing, region palette only.
+- **Fails → fallback.** Drop to one colour per region; if the painter audit fails, the build stops.
 - **Gate.** S15 on every build.
 - **Status.** *To build*.
 
-#### L46 Feature curves: brows, lids, lip line, lashes
+#### L43 Feature curves: brows, lids, lip line, lashes
 - **Purpose.** Brows, eyes and lips carry most of a face's identity at a glance; draw them crisp.
 - **In → Out.** Face points + masks → vector features: brow shapes (upper and lower outline, thickness
   along the brow, colour), lash line weight, lip outline and colour gradient (upper darker), eye-line shape.
 - **Method.** Brow outline: from the brow landmark pairs (`BROW_L/R` in `anime.py`) refined to the brow
   mask edge by 1-D search along normals; thickness profile sampled at 9 stations. Lips: the outer and inner
-  rings give the outline; colour from L44's lip region.
+  rings give the outline; colour from L41's lip region. Curves are numbers (control points), counted in L42.
 - **Research.** Line drawings (1810.01175); stylised feature rendering in ToonifyGB (2505.10072).
-- **Ours.** Features measured as vectors and painted by our shader.
+- **Ours.** Features measured as vectors and painted by our painter and shader.
 - **Defaults.** 9 thickness stations per brow.
 - **Fails → fallback.** Landmark-only brows.
 - **Gate.** Brow-shape IoU ≥ 0.8 vs. the masks in the front view.
 - **Status.** *Partial*: brow ribbons from landmarks in `anime.py`.
 
-#### L47 Shine, warmth and subsurface parameters
-- **Purpose.** Where the skin shines (forehead, nose) and how warm the light bleed looks.
-- **In → Out.** Frames + light → per-region specular strength and roughness; subsurface tint.
-- **Method.** Specular strength from residual brightness above the SH-diffuse prediction at the
-  highlight positions predicted by L42's dominant light; roughness from the highlight spread; subsurface
-  tint as the hue of the shadow-terminator band (redder for most skin).
-- **Research.** PBR inverse rendering of avatars (2407.15212); relightable avatars (2312.03704,
-  2506.06271) for ideas.
-- **Ours.** Only a few scalars per region, painted by L57.
-- **Defaults.** Clamp specular so it never exceeds the painted highlight band.
-- **Fails → fallback.** Population values per Monk class.
-- **Gate.** Highlight position in renders within 5% of eye distance of the measured position on 6/8 bench
-  people.
-- **Status.** *To build*.
-
-#### L48 Eyes
-- **Purpose.** Eyes that look at the student, with the person's iris colour, and never show the inside
-  of the head.
-- **In → Out.** Eye rings, iris centre and radius, iris colour → two eyeballs (sclera, iris disc with
-  layered pattern, pupil, cornea bulge), placed and sized in mm.
+#### L44 Eyes
+- **Purpose.** Eyes that look at the student, with the person's iris colour, never a "sticker" at
+  three-quarter angles, and never showing the inside of the head.
+- **In → Out.** Eye rings, iris centre and radius, iris colour → two eyeballs (sclera, iris with layered
+  pattern, pupil, cornea), placed and sized in mm; a tear-line strip and a caruncle.
 - **Method.** Eyeball radius 12 mm; centre behind the iris by the iris–centre distance; iris radius
-  measured (L18). The iris is shaded procedurally (radial fibres + limbal ring + darker collarette), in
-  the measured colour; the cornea adds a moving highlight from the key light. Rotation by gaze angles
-  (L79) with pupil size tied to scene brightness.
-- **Research.** Eye modelling (EyeNeRF 2206.08428; Bérard et al. 2014); gaze redirection (2411.12981).
+  measured (L18). The iris is shaded procedurally (radial fibres + limbal ring + darker collarette), in the
+  measured colour. **Optics**: iris parallax (cornea refraction approximated by offsetting the iris UV along
+  the view ray by the anterior-chamber depth), limbal darkening growing with view angle, a wet tear-line
+  (meniscus) strip along the lower lid and a caruncle at the inner corner. Rotation by gaze angles (L75) with
+  pupil size tied to scene brightness.
+- **Research.** Eye modelling (Bérard et al. 2014; EyeNeRF 2206.08428); gaze redirection (2411.12981).
 - **Ours.** Measured, procedurally painted iris; no iris pixels.
-- **Defaults.** Gaze range ±30° horizontal, ±20° vertical.
+- **Defaults.** Gaze range ±30° horizontal, ±20° vertical; anterior chamber 3 mm.
 - **Fails → fallback.** Dark-brown iris.
-- **Gate.** No head-interior pixels visible at ±30° gaze; iris colour ΔE₀₀ < 5 vs. L13.
-- **Status.** *Partial*: generated eye spheres and shader eyes in `anime.py`.
+- **Gate.** No head-interior pixels visible at ±30° gaze; iris colour ΔE₀₀ < 5 vs. L13; owner judges the
+  three-quarter eye "not flat" on 8/8.
+- **Status.** *Partial*: generated eye spheres and shader eyes in `anime.py`; optics *to build*.
 
-#### L49 Eyelids and lashes
+#### L45 Eyelids and lashes
 - **Purpose.** Lids that hug the eyeball and follow gaze; lashes and blinks.
 - **In → Out.** Eye rings, personal expression deltas → lid geometry that slides over the eyeball.
 - **Method.** Upper and lower lid vertices are projected onto a sphere 0.5 mm larger than the eyeball
   each frame (so no gap appears); vertical gaze lifts the upper lid by 0.4 × pitch; lash strips are
-  ribbons along the upper lid with thickness from L46.
+  ribbons along the upper lid with thickness from L43.
 - **Research.** Lid–gaze coupling in eye animation (Bérard et al. 2014; codec avatars with gaze 2008.05023).
 - **Ours.** —
 - **Defaults.** Lid follow 0.4.
@@ -975,196 +1091,233 @@ The rule of this stage (contradiction C1): we learn **colours and shapes**, neve
 - **Gate.** No lid–eyeball gap at any gaze in ±30°; full closure at eyeBlink = 1.
 - **Status.** *Partial*: lid ribbons in `anime.py`.
 
-#### L50 Teeth, gums and mouth cavity
-- **Purpose.** A mouth that is solid inside; teeth visible exactly when lips part.
-- **In → Out.** Inner lip ring, jaw → upper teeth (fixed to the skull), lower teeth (on the jaw), gums,
-  a dark-shaded cavity.
-- **Method.** Teeth arcs as our own parametric arch (width from the mouth-corner distance; height from
-  the inner-lip opening in "aah" frames), upper arch fixed to the head, lower to the jaw rotation derived
-  from jawOpen; the cavity is a fan from the inner lip ring to points behind the teeth, shaded darker with
-  depth (exists in `rig.py`).
-- **Research.** Full-head models with teeth (1911.08008); mouth interiors in Gaussian heads (2409.11951).
-- **Ours.** Measured arch size; teeth colour from the "aah" frames' teeth region median, band-limited.
-- **Defaults.** 8 visible teeth per arch at LOD0.
-- **Fails → fallback.** Dark cavity only.
-- **Gate.** No see-through mouth at any expression; teeth visible iff inner lips separate > 1 mm.
-- **Status.** *Partial*: cavity in `rig.py`; teeth spheres in `anime.py`.
+#### L46 Teeth, gums, mouth cavity and tongue
+- **Purpose.** A mouth that is solid inside; teeth visible exactly when lips part; a tongue for the
+  sounds where it shows.
+- **In → Out.** Inner lip ring, jaw, tongue controls (L70) → upper teeth (fixed to the skull), lower teeth
+  (on the jaw), gums, a dark-shaded cavity, tongue pose.
+- **Method.** The template's teeth arch is scaled per person (width from the mouth-corner distance; height
+  from the inner-lip opening in "aah" frames); upper arch fixed to the head, lower to the jaw rotation from
+  jawOpen; the cavity is the template's mouth bag, shaded darker with depth. The tongue is the template's
+  tongue on a 4-bone chain (root, body, blade, tip) with 5 key poses: rest, tip up (t, d, n, l), tip between
+  teeth (θ, ð), back raised (k, g), out; retroflex (ʈ, ɖ, ɳ) curls the tip only, inside the mouth (no lip
+  or jaw claim, L67).
+- **Research.** Full-head models with teeth (1911.08008); mouth interiors in Gaussian heads (2409.11951);
+  articulatory models (2408.05641, DYNARTmo 2507.20343); tongue reconstruction (2106.12302).
+- **Ours.** Measured arch size; teeth colour from the palette (a per-Monk-neutral ivory adjusted by the "aah"
+  frames' median, one number).
+- **Defaults.** 8 visible teeth per arch at LOD0; tongue visible only when jawOpen > 0.15 or tongueOut > 0.
+- **Fails → fallback.** Dark cavity; tongue at rest.
+- **Gate.** No see-through mouth at any expression; teeth visible iff inner lips separate > 1 mm; tongue
+  visible on "th" and "l" in close-up renders and never through the teeth.
+- **Status.** *Partial*: cavity in `rig.py`; teeth spheres and a tongue shape in `anime.py`.
 
-#### L51 Tongue
-- **Purpose.** Visible tongue for th, l, t/d and some vowels.
-- **In → Out.** Tongue controls (L73) → tongue pose.
-- **Method.** A tongue mesh on a 4-bone chain (root, body, blade, tip) with 6 key poses: rest, tip up (t, d,
-  n, l), tip between teeth (θ, ð), retroflex (ʈ, ɖ, ɳ: tip curled back), back raised (k, g), and out.
-- **Research.** Articulatory models: phoneme-to-articulatory EMA (2408.05641), DYNARTmo (2507.20343);
-  tongue reconstruction (2106.12302).
-- **Ours.** A retroflex pose for Indian languages.
-- **Defaults.** Tongue visible only when jawOpen > 0.15 or tongueOut > 0.
-- **Fails → fallback.** Tongue at rest.
-- **Gate.** Tongue visible on "th" and "l" in close-up renders; never through the teeth.
-- **Status.** *To build* (a tongue shape exists in `anime.py`).
+#### L47 Hair shape (library first)
+- **Purpose.** Their hairstyle, length, parting and volume, as large painted clumps, which is how the
+  reference look draws hair.
+- **In → Out.** Hair masks from several views, hair colour, length, parting, head covering → a fitted style
+  from an owned parametric clump library, plus a few flyaway ribbons.
+- **Method.** (1) **Library**: owned parametric clump-hair meshes (short, crop, side part, curls, bob,
+  shoulder, long straight, long wavy, bun, braid, ponytail, and head coverings: turban, dupatta over the
+  head, hijab, cap), each with control points for parting, fringe, length, volume and clump count (in the
+  spirit of CHARM's control points, 2509.21114). (2) **Fit**: choose the style and its parameters by
+  matching the visual-hull silhouettes of the hair masks in front and three-quarter views (chamfer + IoU),
+  parting position from the front view. (3) **Detail**: 10–30 guided ribbons for flyaways and lock edges,
+  grown along a smoothed 2D orientation field where views allow; this is optional and never on the critical
+  path. Clumps are opaque, with alpha-to-coverage tips (L58), so no transparency sorting is needed.
+- **Research.** Hair cards from one image (HairDeck 2610.40599), CGHair (2604.03716); control-point
+  hairstyles (CHARM 2509.21114); multi-view strand reconstruction needs dense video and long optimisation
+  (Neural Haircut 2306.05872; EfficientMonoHair 2604.05794), so it stays research.
+- **Ours.** A pixel-free hair pipeline: only masks, length, parting and colour select and shape owned clumps.
+- **Defaults.** 20–40 clumps; 6 segments each.
+- **Fails → fallback.** The nearest library style at default parameters for the measured length.
+- **Gate.** Hair silhouette IoU ≥ 0.8 in front and three-quarter views; owner judges the style "theirs" on
+  ≥ 7/8.
+- **Status.** *Partial*: locks from measured length/volume/parting in `make_hair` (`anime.py`); library
+  *to build*.
 
-#### L52 Hair shape
-- **Purpose.** Their hairstyle, length, parting and volume, as painted locks.
-- **In → Out.** Hair masks from several views, hair colour, length, parting → a hair volume and ≤ 300
-  locks (tapered, curved ribbons or cards) on the scalp.
-- **Method.** (1) Volume: carve a voxel grid around the head with the hair masks from each view (visual
-  hull), intersected with a band above the scalp. (2) Guide field: a 3D direction field inside the volume,
-  from 2D orientation maps (structure tensor on the hair region, as in `paint.py`) lifted to 3D and
-  smoothed, with growth from the parting line. (3) Locks: seed roots on the scalp by Poisson-disk sampling,
-  grow each lock along the guide field until it leaves the volume, then fit tapered ribbons. Long hair
-  behind the shoulders is generated from the measured length.
-- **Research.** Neural Haircut (2306.05872); EfficientMonoHair (2604.05794); hair cards: HairDeck
-  (2610.40599), CGHair (2604.03716); anime hairstyles by control points (CHARM 2509.21114); strand-based
-  real-time rendering with LOD (2405.10565).
-- **Ours.** A pixel-free hair pipeline: only masks, orientation and colour.
-- **Defaults.** 180 locks short hair, 300 long; 6 segments each.
-- **Fails → fallback.** Template styles (short, bob, long straight, bun, braid) chosen by silhouette match.
-- **Gate.** Hair silhouette IoU ≥ 0.8 in front and three-quarter views.
-- **Status.** *Partial*: locks from measured length/volume/parting in `make_hair` (`anime.py`); visual hull
-  and guide field *to build*.
-
-#### L53 Hair motion
+#### L48 Hair motion
 - **Purpose.** Hair that sways a little with the head and never passes through it.
-- **In → Out.** Head motion → lock segment positions.
-- **Method.** Each lock is a chain of particles with distance constraints and a bending constraint to its
-  rest shape (a "ghost" rest configuration keeps the style), solved with extended position-based dynamics
-  (XPBD) for 4 iterations per frame in a web worker; collisions against 3 head/neck/shoulder capsules.
+- **In → Out.** Head motion → clump spine poses.
+- **Method.** Each clump has a spine of 3–6 spring bones: a damped second-order follow of its rest
+  orientation (stiff at the root, softer at the tip), solved in the worker; collisions of spine points
+  against 3 head/neck/shoulder capsules by projection. The clump mesh is skinned to its spine.
 - **Research.** Augmented mass–spring hair with a ghost rest shape (2412.17144); XPBD (Macklin et al.
-  2016); neural hair simulation (2507.05191) for ideas.
+  2016) for the optional particle variant; neural hair simulation (2507.05191) for ideas.
 - **Ours.** —
-- **Defaults.** Stiffness high near roots, damping 0.2.
+- **Defaults.** 20–40 spines; root frequency 4 Hz, tip 1.5 Hz, damping ratio 0.7.
 - **Fails → fallback.** Rigid hair.
-- **Gate.** No hair particle inside a head capsule; stable at 30 fps for 10 min.
+- **Gate.** No spine point inside a head capsule; stable at 30 fps for 10 min.
 - **Status.** *To build*.
 
-#### L54 Wardrobe and garment fit
+#### L49 Wardrobe and garment fit
 - **Purpose.** New clothes (Indian and Western) that fit their body; nothing from the photos.
-- **In → Out.** Body mesh + outfit parameters (garment type, colour, sleeve, collar, ease) → garment mesh
+- **In → Out.** Fitted body + outfit parameters (garment type, colour, sleeve, collar, ease) → garment mesh
   skinned to the same bones.
-- **Method.** Garments as parametric offset surfaces of the torso and arm tubes (ease factor, hem height,
-  neckline curve, sleeve length) plus garment-specific parts (kurta placket, dupatta as a draped strip,
-  saree pallu over one shoulder, shirt collar, blazer lapels); skin weights copied from the nearest body
-  vertex; a min-distance constraint keeps cloth outside the body.
-- **Research.** Garment-aware rigging (TailorRig 2611.02902); bone-driven garment simulation
-  (HyperBones 2605.20460); made-to-measure garments (2405.17609, ideas only).
-- **Ours.** A wardrobe of parameters with Indian garments.
+- **Method.** Garments are authored once on the template (cages, UVs, painted fold strokes), so per person
+  they follow the template fit; parameters set ease, hem height, neckline curve and sleeve length;
+  garment-specific parts (kurta placket, dupatta strip, saree pallu over one shoulder, shirt collar, blazer
+  lapels). Skin weights from the template's smoothed shoulder weights (L36), so garments do not ride up
+  when an arm is raised; a min-distance constraint keeps cloth outside the body.
+- **Research.** Garment-aware rigging (TailorRig 2611.02902); bone-driven garments (HyperBones 2605.20460);
+  made-to-measure garments (2405.17609, ideas only).
+- **Ours.** A wardrobe of parameters with Indian garments, authored once on the template.
 - **Defaults.** 6 garments at launch: kurta, saree (pallu), shirt, blazer, T-shirt, sweater.
 - **Fails → fallback.** Plain shirt.
-- **Gate.** No body vertex outside the garment in any library pose.
+- **Gate.** No body vertex outside the garment on any frame of the library, including arms above 90°.
 - **Status.** *Partial*: offset tubes and outfit colours in `body.py`.
 
-#### L55 Cloth motion
-- **Purpose.** Folds at elbows and waist; dupatta and pallu that move.
+#### L50 Garment motion
+- **Purpose.** Dupatta and pallu that move; folds at elbows and waist.
 - **In → Out.** Body motion → garment deformation.
-- **Method.** Skinned garment plus XPBD on loose parts only (dupatta, pallu, sleeve ends): ≈ 1,500
-  particles, distance and bending constraints, capsule collisions; fold detail at elbows as
-  angle-driven corrective shapes (painted folds, L58).
-- **Research.** XPBD; position-based inelasticity (2405.11694) for ideas.
-- **Ours.** Simulate only what flows; skin the rest.
-- **Defaults.** 8 iterations, 2 substeps.
+- **Method.** Skinned garments; loose parts (dupatta, pallu, sleeve ends, kurta hem) get 3–6 secondary
+  spring bones each, solved like L48 with capsule collisions; fold detail as angle-driven correctives and
+  painted fold strokes (L53). Particle cloth (XPBD) is deferred to research: waist-up garments under
+  gesturing arms give the most collision artefacts for the least gain.
+- **Research.** XPBD (Macklin et al. 2016); position-based inelasticity (2405.11694), ideas only.
+- **Ours.** Simulate only what flows, with springs; skin the rest.
+- **Defaults.** 4 spring chains per loose garment.
 - **Fails → fallback.** Skinned only.
-- **Gate.** Stable at 30 fps; 0 cloth–body penetrations in the library.
+- **Gate.** Stable at 30 fps; 0 cloth–body penetrations > 2 mm on every frame of the library.
 - **Status.** *To build*.
 
 ---
 
-### Stage F: The painted look (L56–L64)
+### Stage F: The painted look (L51–L60)
 
 The target is the hand-painted style of the brief's reference sheet: realistic proportions, painted skin
 and hair with visible brushwork, a dramatic key light and a coloured rim light, strong readable expressions.
-It must move like 3D and look painted in every frame, at 30 fps on an integrated GPU. All of it is our own
-shader code (WebGL2 first, WebGPU when present). The offline painter `paint.py` is the reference that the
-real-time version must match.
+By the accounts available, that look's studio painted light, shadow and brushwork **into the textures** of
+its 3D models (trade-press breakdowns of its texturing and an FMX 2025 session; studio details
+**UNVERIFIED** beyond those secondary sources). Version 1 instead put a screen-space Kuwahara filter over
+toon bands: a nonlinear sector choice that shimmers in motion, gives a generic "oil filter" look, and was the
+most expensive pass of the frame. Version 2 paints in texture space at build time and only *chooses* paint at
+run time. All of it is our own code (WebGL2 complete; WebGPU as an optimisation). The offline painter
+`paint.py` becomes the build-time painter.
 
-#### L56 Lighting rig
+#### L51 Lighting rig
 - **Purpose.** The light that makes the painted forms read: a warm key, a cool fill, a coloured rim.
-- **In → Out.** Site theme (light/dark, accent) → three lights + ambient, fixed in the panel frame.
+- **In → Out.** Site theme (light/dark, accent), the person's shape → three lights + ambient, fixed in the
+  panel frame.
 - **Method.** Key upper-left in front, fill right, rim behind (as `STUDIO` in `twin.py`), with colours
   from the theme palette; the key's direction is fixed relative to the camera so the face never goes dark.
+  **Option (untested, off until its ablation passes):** a distinctiveness-aimed key: inside an
+  art-direction cone (azimuth ±35°, elevation 10–45°), pick the direction that maximises the energy of the
+  banded shading difference between the person's face and the mean face $\bar F$, weighted by L21's
+  confidence (30-direction grid of low-resolution renders, < 0.1 s).
 - **Research.** Studio three-point lighting; theme matching per `docs/ui/premium.md`.
-- **Ours.** Rim colour follows the site theme (e.g., the Himalaya palette's cool blue at dusk).
+- **Ours.** Rim colour follows the site theme; the distinctiveness key is our own idea (**UNVERIFIED** as
+  novelty).
 - **Defaults.** Key 0.85, fill 0.35, rim 0.35, ambient 0.28 (as in `twin.py`).
-- **Fails → fallback.** Default palette.
+- **Fails → fallback.** Default palette and fixed key.
 - **Gate.** Face mean luminance in [0.45, 0.75] for every bench person and theme.
 - **Status.** *Exists* in part: `twin.py`.
 
-#### L57 Painted shading model
-- **Purpose.** Light and shadow as painted shapes, not smooth CG gradients.
-- **In → Out.** Normal, albedo region palette, lights → shaded colour per pixel.
-- **Method.** Diffuse term $d = \mathrm{wrap}(n\cdot l)$ passed through a soft step with 2–3 bands
-  (smoothstep edges of width 0.08) — the painter's "light, half-tone, shadow". Colour is chosen from the
-  region's three palette colours (L44) by band, not by multiplying albedo with light, so shadows are
-  cooler and more saturated (Gooch-style). A warm terminator band (subsurface feel, L47 tint) sits between
-  light and shadow. Specular is a small painted highlight shape on forehead, nose and lips where L47 says.
-  Rim: $r = (1-n\cdot v)^p \cdot \max(0, n \cdot l_{rim})$, coloured.
-- **Research.** Cool-to-warm shading (Gooch et al. 1998); toon/cel shading with MToon-like bands (the lab
-  `toon.js`); painterly harmonisation (2312.10263, ideas).
-- **Ours.** Palette-indexed bands from the person's measured region palette (their colours, painted).
-- **Defaults.** 3 bands on skin, 2 on hair and cloth; rim power 4.
-- **Fails → fallback.** Two-tone toon shading (current `toon.js`).
-- **Gate.** Owner's style check against references 1–8 (§8.3) ≥ 4/5; skin luminance contrast between
-  bands ≥ 15%.
-- **Status.** *Partial*: MToon-based lab shader in `player/toon.js`; palette bands *to build*.
-
-#### L58 Surface-anchored brush strokes
-- **Purpose.** Visible brushwork that stays on the face when it moves (no "shower door" effect).
-- **In → Out.** UVs, principal curvature directions, band index → stroke modulation of the shaded colour.
-- **Method.** A small tileable stroke atlas (our own painted strokes, 8 shapes × 3 sizes) is splatted in
-  **texture space** along a direction field on the surface (principal curvature on the body, the hair
-  guide field on hair, radial around the eyes and mouth). At bake time we write a stroke-orientation map
-  and a stroke-id map per chart (256² face, 128² elsewhere). At run time the shader samples the atlas
-  along that orientation and modulates the band colour by ±6% value and ±3% hue; strokes are larger in
-  shadow and smaller near features (as painters do). Because strokes are attached to the surface they move
-  with it and do not swim.
-- **Research.** Painterly rendering of 3D scenes in real time (recursive camera painting 2312.12392);
-  stylised Gaussian scenes (StyleGaussian 2403.07807; Tune-Your-Style 2602.00618; ARF 2206.06360); classic
-  object-space painterly rendering (Meier 1996).
-- **Ours.** Strokes oriented by the person's own geometry and hair field, sized by the shading band;
-  baked once, so the run-time cost is two texture reads.
-- **Defaults.** Modulation ±6% value; stroke length 3–8% of eye distance.
-- **Fails → fallback.** No strokes (filter only).
-- **Gate.** Temporal stability (L64) and owner's style check.
+#### L52 Shading-normal field
+- **Purpose.** Banded shading has no in-between tones, so tiny normal noise becomes a blotch; painted faces
+  read through large, simple light shapes.
+- **In → Out.** Fitted mesh, template's authored attributes → a per-vertex shading normal and per-vertex
+  threshold offsets, baked per person (and per morph target).
+- **Method.** Shading normal $= \mathrm{normalize}(\mathrm{lerp}(n_{true}, n_{proxy}, w))$, where
+  $n_{proxy}$ is the normal of a heavily smoothed proxy (a Laplacian-smoothed head; cylinders for neck and
+  arms) and $w$ is authored on the template (≈ 0.6–0.8 on cheeks and forehead, ≈ 0.2 on the nose bridge and
+  lips). Threshold offsets force areas lit or dark as painters do (under the nose, eye sockets, under the
+  lower lip, the neck under the jaw). Morph targets carry shading-normal deltas, so expressions shade cleanly.
+- **Research.** Authored normals and shading thresholds for stylised 3D (Motomura, *Guilty Gear Xrd's art
+  style*, GDC 2015 slides).
+- **Ours.** —
+- **Defaults.** As above; bake ≈ 2 s.
+- **Fails → fallback.** True normals with a wider soft step.
+- **Gate.** In a slow head turn and a speech clip, band islands smaller than 1% of the face area: 0.
 - **Status.** *To build*.
 
-#### L59 Screen-space painterly filter
-- **Purpose.** Merge pixels into painted planes and soften CG edges.
-- **In → Out.** Shaded frame + G-buffer → filtered frame.
-- **Method.** An anisotropic Kuwahara filter: local orientation from the structure tensor of the shaded
-  frame (or directly from the G-buffer normals, which is cheaper and stable); in each of 4 sectors of an
-  oriented ellipse, take mean and variance; output the mean of the lowest-variance sector (weighted
-  version). Run at half resolution on the skin and hair only (ids from the G-buffer), so eyes, lips and
-  lines stay crisp, and upsample with a joint bilateral filter.
-- **Research.** Kuwahara (1976); anisotropic Kuwahara (Kyprianidis et al. 2009); flow-aligned smoothing
-  and line integral convolution (Cabral and Leedom 1993), all used offline in `paint.py`.
-- **Ours.** Orientation from the G-buffer instead of the image, so the filter cannot pick up noise.
-- **Defaults.** Radius 4 px at 720p (half-res); 4 sectors; sharpness q = 8.
-- **Fails → fallback.** Skip (quality tier "light").
-- **Gate.** GPU time ≤ 3 ms on the reference laptop (§7.2).
-- **Status.** *Partial*: offline version in `paint.py`; shader *to build*.
+#### L53 Build-time painter: painted band textures
+- **Purpose.** The brushwork and the painted light, on the surface, in the person's colours.
+- **In → Out.** Renders of our own fitted template only (UV-space region ids, palette colours, curvature and
+  hair-flow directions, feature curves) → per UV chart, three painted textures: **light**, **half-tone**,
+  **shadow**, plus a terminator-warmth mask; for hair and garments, two bands.
+- **Method.** *Default (procedural)*: our offline painter (`paint.py`) paints each band in texture space
+  from the L41 palette and gradients with the owned stroke atlas (8 shapes × 3 sizes), stroke orientation
+  following curvature on the body, the hair flow on hair and radial directions around eyes and mouth (the
+  stroke layout is authored once on the template, L33); strokes larger in shadow and smaller near features;
+  feature curves (L43) and facial-hair regions (L32) painted in; flow-aligned smoothing (anisotropic
+  Kuwahara and line integral convolution) used here as offline tools to merge strokes into planes. *Variant
+  for artist control*: a lit-sphere exemplar per palette family painted by an artist, transferred with
+  normal guidance in the spirit of StyleBlit. *Variant, optional (owner decision D9)*: a diffusion painter
+  conditioned only on those renders (normals, depth, region colours, curves), with synchronised multi-view
+  denoising in UV space and lit/unlit separation, one pass per band, its style taken only from an owned
+  style kit (D3, D4); never trained on or shown frames of the series. The painter never sees a photo (L42
+  audit). Once an owned style kit exists, a *style distance* (feature-statistics distance of bench renders to
+  the kit) becomes a machine gate beside the owner's rating (S18).
+- **Research.** Painterly rendering for animation (Meier 1996); StyleBlit (Sýkora et al. 2019, 1807.03249);
+  SyncMVD (2311.12891), MVPaint (2411.02336), Paint3D (2312.13913), TEXTure (2302.01721) for the diffusion
+  variant; anisotropic Kuwahara (Kyprianidis et al. 2009) and LIC (Cabral and Leedom 1993) as bake tools;
+  stylised scene methods (StyleGaussian 2403.07807; ARF 2206.06360) for ideas.
+- **Ours.** Painted light as separate band textures painted from measured colour numbers on an owned
+  template, chosen per pixel at run time (L54).
+- **Defaults.** 256² face chart, 128² elsewhere per band (≈ +1 MB); bake ≈ 8 s (procedural, estimate).
+- **Fails → fallback.** Flat palette bands (no strokes).
+- **Gate.** S18; flicker (L58) ≤ the plain shaded render; L42 painter audit passes.
+- **Status.** *Partial*: offline painter in `paint.py`; texture-space bands *to build*.
 
-#### L60 Lines
+#### L54 Painted shading model (run time)
+- **Purpose.** Light and shadow as painted shapes, not smooth CG gradients.
+- **In → Out.** Shading normal (L52), shadow map and occlusion (L55), lights, band textures (L53) → shaded
+  colour per pixel.
+- **Method.** Band coordinate $d = \mathrm{wrap}(n_s\cdot l) \cdot$ shadow $\cdot$ occlusion + threshold
+  offset; the painted light, half-tone and shadow textures are blended with a soft step on $d$ (edge width
+  0.08), and the terminator-warmth mask adds the warm band between them. Shadows are therefore cooler and
+  more saturated because they were *painted* so (L41), not because of multiplying albedo by light.
+  Specular is a small painted highlight shape where L41 says. Rim: $r = (1-n\cdot v)^p \cdot \max(0, n
+  \cdot l_{rim})$, coloured, stronger on deep skin per the L41 table.
+- **Research.** Cool-to-warm shading (Gooch et al. 1998); toon/cel shading (the lab `toon.js`); painterly
+  harmonisation (2312.10263, ideas).
+- **Ours.** Run-time choice between painted band textures by a stabilised normal.
+- **Defaults.** 3 bands on skin, 2 on hair and cloth; rim power 4.
+- **Fails → fallback.** Two-tone toon shading (current `toon.js`).
+- **Gate.** S18; form readable per Monk group (owner's check on the bench).
+- **Status.** *Partial*: MToon-based lab shader in `player/toon.js`; band blending *to build*.
+
+#### L55 Key-light cast shadow and baked occlusion
+- **Purpose.** Readability in the reference look comes from cast shadows (hair on the forehead, nose on the
+  cheek, chin on the neck, the pointing hand on the chest) and darkened eye sockets and under-chin areas.
+- **In → Out.** Deformed meshes, key light → a stylised shadow term; per-vertex occlusion.
+- **Method.** One 1024² shadow map for the key light covering head, hair and hands; hard-edged, sampled with
+  a small fixed kernel, and fed into the band coordinate (so a shadow selects the painted shadow texture,
+  tinted by the region's palette). Per-vertex ambient occlusion baked at build time on the rest pose and on
+  each of the 52 targets, interpolated with the morphs.
+- **Research.** Shadow mapping and baked occlusion (standard real-time practice).
+- **Ours.** —
+- **Defaults.** 1024² map; ~25k shadow-casting triangles.
+- **Fails → fallback.** Occlusion only (tier "basic").
+- **Gate.** GPU time ≤ 1.2 ms on the reference laptop (estimate 0.8–1.2 ms, **UNVERIFIED** until the spike,
+  §8.6); no shadow acne in the head-turn clip.
+- **Status.** *To build*.
+
+#### L56 Lines
 - **Purpose.** Painted outlines and feature lines: eyelids, lip line, brows, nose side, jaw contour,
-  creases (L23).
-- **In → Out.** G-buffer (depth, normal, ids) + feature curves → line layer.
-- **Method.** Occluding contours from normal·view sign changes on the mesh (object-space, so they are
-  stable) drawn as tapered strokes; screen-space depth and normal discontinuities as a cheap complement;
-  feature curves (L46, L23) rendered as textured ribbons whose weight follows the light (thinner in light,
-  thicker in shadow) and the expression (crease strength from $b$).
-- **Research.** Line drawings from 3D models (1810.01175); difference-of-Gaussians lines (XDoG, Winnemöller
-  et al. 2012) as used in `paint.py`.
+  creases (L22).
+- **In → Out.** Deformed meshes, authored line attributes, feature curves → line layer.
+- **Method.** WebGL2 path: an **inverted-hull** outline extruded in clip space for constant pixel width,
+  with per-vertex width and colour authored on the template (thinner in light, thicker in shadow, broken at
+  authored places), plus screen-space depth/id edges for interior contours. WebGPU path: compute-shader
+  skinning, then occluding contours from face-normal sign changes on the deformed mesh. Feature curves
+  (L43, L22) drawn as textured ribbons whose weight follows the light and the expression.
+- **Research.** Line drawings from 3D models (1810.01175); line control in stylised 3D (Motomura 2015);
+  XDoG (Winnemöller et al. 2012) as used offline in `paint.py`.
 - **Ours.** Expression-driven crease lines from measured curves.
 - **Defaults.** Line colour = darkest palette colour of the region, never black.
 - **Fails → fallback.** Screen-space edges only.
-- **Gate.** No line flicker (L64) and lines present on all 8 features in every bench render.
+- **Gate.** No line flicker (L58) and lines present on all 8 features in every bench render.
 - **Status.** *Partial*: offline lines in `paint.py`; outline in `toon.js`.
 
-#### L61 Painted eyes and hair highlights
+#### L57 Painted eyes and hair highlights
 - **Purpose.** The two places where painted characters are most expressive.
 - **In → Out.** Eye and hair materials → specialised shading.
 - **Method.** Eyes: a painted catch-light shape fixed to the key light direction, iris shadow under the
-  upper lid (an occlusion band driven by lid position), sclera tinted towards the skin's shadow colour at
-  the corners. Hair: a two-lobe anisotropic highlight shifted along the lock tangent (Kajiya–Kay / Marschner
-  style simplified), drawn as a broken painted band.
+  upper lid (an occlusion band driven by lid position), sclera tinted towards the skin's shadow colour at the
+  corners, with L44's parallax and limbal darkening. Hair: a two-lobe anisotropic highlight shifted along
+  the clump tangent (Kajiya–Kay style, simplified), drawn as a broken painted band.
 - **Research.** Real-time strand rendering (2405.10565); light-aware Gaussian hair (2402.10483, ideas).
 - **Ours.** —
 - **Defaults.** Catch-light radius 12% of iris.
@@ -1172,175 +1325,240 @@ real-time version must match.
 - **Gate.** Catch-light visible in both eyes in 100% of frames with gaze within ±20°.
 - **Status.** *Partial*: matcap highlights in `toon.js`.
 
-#### L62 Render graph
-- **Purpose.** Do all of the above within the frame budget.
-- **In → Out.** Deformed meshes → G-buffer → shading → filter → lines → composite.
-- **Method.** WebGL2 (WebGPU when available): pass 1 renders body, garments, hair and eyes into a G-buffer
-  (normal, depth, region id, band, UV-stroke sample); pass 2 shades; pass 3 filters at half resolution;
-  pass 4 draws lines; pass 5 composites with premultiplied alpha. Morph targets live in a float texture
-  (52 × face vertices) to avoid attribute limits.
-- **Research.** Skinned Gaussian avatars on the web run 40–50 fps on a phone and 240 fps on a laptop GPU
-  (2510.13978), which bounds what a mesh pipeline should reach.
+#### L58 Anti-aliasing and temporal stability
+- **Purpose.** Banded edges and thin dark lines alias badly at 720p; nothing may crawl or flicker.
+- **In → Out.** The forward pass → an anti-aliased, stable frame.
+- **Method.** 4× MSAA in the forward pass (WebGL2 multisampled renderbuffers, then a blit), alpha-to-coverage
+  for hair tips and lash edges (no sorting); a cheap morphological AA on the "basic" tier. Because the paint
+  is on the surface, temporal reprojection is **off** by default (without sub-pixel jitter it only smears a
+  fast mouth); a jittered TAA restricted to skin and hair ids may be enabled later if the flicker gate needs
+  it.
+- **Research.** Temporal coherence in stylised animation (Bénard, Thollot, Collomosse, CGF 2011, cited from
+  memory); temporal anti-aliasing practice.
 - **Ours.** —
-- **Defaults.** 720p panel, half-res filter.
-- **Fails → fallback.** Drop passes by tier (L96).
+- **Defaults.** MSAA 4×; TAA off.
+- **Fails → fallback.** MSAA 2× or morphological AA.
+- **Gate.** Edge-crawl and flicker metrics (mean absolute frame difference after motion compensation) on a
+  slow head-turn clip ≤ 1.5× the plain shaded render.
+- **Status.** *To build*.
+
+#### L59 Render graph
+- **Purpose.** Do all of the above within the frame budget of an integrated GPU, which is limited by
+  memory bandwidth.
+- **In → Out.** Deformed meshes → shadow pass → forward MSAA pass (colour + one id/velocity target) → line
+  pass → composite.
+- **Method.** WebGL2 complete (WebGPU, now in Chrome/Edge and Safari and partly in Firefox, as an
+  optimisation for compute skinning and contours): pass 1 shadow map; pass 2 forward shading of body,
+  garments, hair and eyes with band textures; pass 3 lines; pass 4 composite with premultiplied alpha.
+  No five-target G-buffer and no half-resolution filter pass. Morph targets live in a float texture
+  (52 × face vertices), only active targets evaluated.
+- **Research.** Skinned Gaussian avatars on the web run 40–50 fps on a phone and 240 fps on a laptop GPU
+  (2510.13978), which bounds what a mesh pipeline should reach; WebGPU browser status (web.dev, 2025).
+- **Ours.** —
+- **Defaults.** 720p panel.
+- **Fails → fallback.** Drop passes by tier (L92).
 - **Gate.** S14.
 - **Status.** *Partial*: three.js lab players in `scripts/teacher/maker/player/`.
 
-#### L63 Compositing, transparency and the AI label
+#### L60 Compositing, transparency and the AI label
 - **Purpose.** The person only, over the lesson, always labelled.
 - **In → Out.** Frame → premultiplied RGBA in the panel, with a visible "AI-generated" badge and an
   invisible frame watermark.
-- **Method.** Alpha from coverage; a soft edge of 1 px. The label is part of the panel UI and cannot be
-  hidden by the page. Recorded lesson clips carry the label burned in and a frame watermark (a low-amplitude
-  spread-spectrum pattern in the chroma of the background-free region).
+- **Method.** Alpha from MSAA coverage, premultiplied before any pass reads neighbours (otherwise the
+  lesson background bleeds dark fringes into hair edges); a soft edge of 1 px. The label is part of the
+  panel UI and cannot be hidden by the page. Recorded lesson clips carry the label burned in and a frame
+  watermark (a low-amplitude spread-spectrum pattern in the chroma of the person region).
 - **Research.** Audio-visual tamper-resistant watermarking (LAVA 2604.23957; cross-modal 2507.12723, ideas).
 - **Ours.** Label enforced in the player component.
 - **Defaults.** Badge always on.
 - **Fails → fallback.** Player refuses to render without the label component.
 - **Gate.** 100% of rendered frames and exported clips carry the label; watermark detected after
-  re-encoding at 1 Mbps.
+  re-encoding at 1 Mbps; no dark fringe on hair over a white lesson background.
 - **Status.** *To build* (transparent output exists in `perform.py`).
-
-#### L64 Temporal stability
-- **Purpose.** No flicker or swimming, which is the usual failure of painterly rendering in motion.
-- **In → Out.** Current and previous frames, motion vectors → stabilised frame.
-- **Method.** Motion vectors from the deformed mesh (current vs. previous positions). Reproject the
-  previous filtered frame and blend $c = \mathrm{lerp}(c_{prev}, c_{now}, \beta)$ with neighbourhood colour
-  clamping (as in temporal anti-aliasing) only on skin and hair ids; lines and eyes are not blended.
-- **Research.** Temporal anti-aliasing practice; consistency of stylised toon video (Diffutoon
-  2401.16224, ideas only).
-- **Ours.** Object-space strokes (L58) make most of the image stable by construction; TAA handles the rest.
-- **Defaults.** β = 0.25.
-- **Fails → fallback.** β = 1 (off).
-- **Gate.** Flicker metric (mean absolute frame difference after motion compensation) on a slow head-turn
-  clip ≤ 1.5× that of the plain shaded render.
-- **Status.** *To build*.
 
 ---
 
-### Stage G: Voice (L65–L69)
+### Stage G: Voice (L61–L66)
 
-#### L65 Text normalisation and language routing
+Voice runs on the server: lesson narration once at publish time, live replies on demand (§7.4). Each audio
+chunk is shipped to the browser with its aligned phones, prosody and the 52 mouth values of Stage H.
+
+#### L61 Text normalisation and language routing
 - **Purpose.** Turn Guru's text (English, Hindi in Devanagari, Hinglish in Latin script, code, maths) into
   speakable words in the right language per span.
-- **In → Out.** Text → spans `{lang, script, words}`.
+- **In → Out.** Text → clauses of spans `{lang, script, words}`.
 - **Method.** Rules for numbers, units, symbols and code identifiers (spoken as the lesson speaks them:
   `arr[i]` → "arr of i"); script detection per token; Hinglish tokens in Latin script are tagged by a
-  small language-ID classifier trained on a Hinglish corpus and transliterated to Devanagari when Hindi.
+  small language-ID classifier and transliterated to Devanagari when Hindi. Inside Hindi-dominant clauses,
+  English loanwords are respelled in Devanagari (the Indian-English phonology Hinglish speakers use), so a
+  whole clause is synthesised in one call (L63) instead of being stitched from language spans.
 - **Research.** Code-mixed TTS (2409.10969, 2412.19043); script-first multilingual TTS (2510.25178);
   Hindi–English code-switching corpus (1810.00662).
 - **Ours.** Code- and maths-aware normalisation from our lesson vocabulary.
-- **Defaults.** English unless a span is classified Hindi with p ≥ 0.7.
+- **Defaults.** English unless a span is classified Hindi with p ≥ 0.7; a clause's language is its
+  dominant span language.
 - **Fails → fallback.** English pronunciation.
 - **Gate.** Round trip: ASR of the synthesised Hinglish set has character error rate ≤ 15%.
 - **Status.** *To build* (voice rules in `docs/voice/` apply).
 
-#### L66 Grapheme to phoneme (IPA)
-- **Purpose.** Every language becomes the same sound alphabet, which drives the lips (contradiction C5).
-- **In → Out.** Words per language → IPA phones with stress and syllables.
+#### L62 Grapheme to phoneme: a pronunciation lattice
+- **Purpose.** Every language becomes the same sound alphabet, which drives the lips (contradiction C5),
+  with the alternatives a real voice may choose.
+- **In → Out.** Words per language → a lattice of IPA phone paths with stress and syllables.
 - **Method.** English: a pronunciation dictionary with a neural fallback for unknown words. Hindi: the
   script is nearly phonemic except **schwa deletion**, handled by a classifier on the orthography; nasal
   vowels and anusvara resolved by the following consonant's place. Other Indian languages: rule tables per
-  script.
+  script. The lattice adds the alternatives a zero-shot voice may realise: optional schwa, [ʋ]/[w]/[v],
+  Indian-English retroflex t/d, nasal vowel vs. nasal + stop for anusvara. L64 picks the path from the audio.
 - **Research.** Hindi and Punjabi schwa deletion (2004.10353); multilingual G2P (2204.03067, 1708.01464);
-  IPA-based cross-lingual alignment (2311.08323).
-- **Ours.** Anusvara and nasal rules that also feed the lips (no closure unless a labial follows).
-- **Defaults.** —
-- **Fails → fallback.** Letter-to-sound rules.
-- **Gate.** Phone error rate ≤ 5% on a 500-word Hindi and a 500-word English test list.
-- **Status.** *Partial*: the voice server returns phones for English; Hindi G2P *to build*.
+  IPA-based cross-lingual alignment (2311.08323); speaker and regional variation in Indian English (Indic
+  TIMIT, 2204.06502).
+- **Ours.** Anusvara and nasal rules that also feed the lips (no closure unless a labial follows); the
+  lattice as the lips' input instead of one predicted string.
+- **Defaults.** ≤ 4 alternatives per word.
+- **Fails → fallback.** Letter-to-sound rules, single path.
+- **Gate.** Phone error rate of the best lattice path ≤ 5% on a 500-word Hindi and a 500-word English list.
+- **Status.** *Partial*: the voice server returns phones for English; Hindi G2P and lattice *to build*.
 
-#### L67 Cloned voice synthesis
+#### L63 Cloned voice synthesis
 - **Purpose.** Their voice, any sentence, any supported language.
-- **In → Out.** Text spans + the person's reference clip (and optional adapter) → 24 kHz audio, streamed in
-  chunks.
-- **Method.** Zero-shot cloning from the 10–30 s reference with a commercially licensed multilingual model
-  (Chatterbox Multilingual, MIT, with its built-in watermark); our Indic fine-tune (a LoRA on consented
-  Hindi/Hinglish data) improves Hindi; an optional per-person adapter trained after the build (not in
-  the 4-minute budget) from 30–60 min of their reading. Streaming: synthesis per clause; the first clause
-  is short to cut latency.
-- **Research.** Zero-shot multilingual TTS: CosyVoice (2407.05407, Apache-2.0), cross-lingual cloning
-  (2608.11650), compact TTS (2610.14776), mobile zero-shot TTS (2402.09378), StyleTTS 2 (2306.07691);
-  Indian-language TTS (2211.09536, 2507.15272, 2505.18609); voice cloning survey (2505.00579).
-- **Ours.** Indic adapter on consented data; speaker identity kept separate from language.
-- **Defaults.** Reference 20 s; first-clause target 150–250 ms to first audio on the GPU server.
-- **Fails → fallback.** Default Indian voice (Kokoro via HeadTTS, Apache-2.0), labelled as not their voice.
-- **Gate.** Speaker similarity (ECAPA-TDNN cosine, 2005.07143) between synthesis and held-out real speech
-  ≥ 0.75 × the real-vs-real ceiling; intelligibility by ASR round trip (WER ≤ 8% English, CER ≤ 12% Hindi);
-  MOS ≥ 3.8 in the listening test.
+- **In → Out.** Clauses + the person's per-language reference (L15) and optional adapter → 24 kHz audio per
+  clause.
+- **Method.** Zero-shot cloning with Chatterbox Multilingual (MIT; Hindi among its 23 languages), using the
+  dedicated Hindi checkpoint (`Chatterbox-Multilingual-hi`, MIT per its model card) for Hindi clauses. The
+  project is archived ("retired research, no longer maintained", README, August 2026), so the weights and
+  code are vendored and pinned by hash (L3), and a maintained second engine sits behind the same slot
+  interface (CosyVoice, once its checkpoint licence is confirmed). One clause per call (no stitched
+  Hinglish: pitch and energy reset at joins); reference in the clause's language, and with only a
+  cross-language reference, the reference-adherence weight (`cfg_weight`) set to 0 as the README advises.
+  Arousal (L72) maps to the model's `exaggeration` (0.3–0.7), paired with a lower `cfg_weight` because
+  exaggeration speeds speech. Optional per-person adapter from 30–60 min of their reading, trained after
+  the build (not in the 4-minute budget).
+- **Research.** Chatterbox README and Hindi model card; zero-shot multilingual TTS: CosyVoice (2407.05407),
+  cross-lingual cloning (2608.11650), compact TTS (2610.14776), mobile zero-shot TTS (2402.09378), StyleTTS
+  2 (2306.07691); Indian-language TTS (2211.09536, 2507.15272, 2505.18609); voice cloning survey (2505.00579).
+- **Ours.** Per-language references and clause-level synthesis for code-mixed speech.
+- **Defaults.** Reference 20 s; first clause ≤ 12 words. First-chunk latency is **UNVERIFIED** and must be
+  measured: the one-step-decoder Turbo model is English-only, and the multilingual model keeps a multi-step
+  decoder, so Hindi first audio is slower.
+- **Fails → fallback.** Default Indian voice (Kokoro via HeadTTS, Apache-2.0), labelled as not their voice;
+  or text plus the phrase bank (L65).
+- **Gate.** Speaker similarity (ECAPA-TDNN cosine, check-only, 2005.07143) between synthesis and held-out
+  real speech ≥ 0.75 × the real-vs-real ceiling; intelligibility by ASR round trip (WER ≤ 8% English, CER ≤
+  12% Hindi); F0 jump at clause joins < 2 semitones; MOS ≥ 3.8 in the listening test.
 - **Status.** *Partial*: HeadTTS fixed voices in use (`perform.py`); cloning *to build* on the GPU worker.
 
-#### L68 Phone timing
-- **Purpose.** Exact start and end time of every phone in the audio — the lips' clock.
-- **In → Out.** Audio + phones → `[(ipa, t0, t1)]`.
-- **Method.** Take durations from the TTS when it exposes them; otherwise align with a small CTC phone
-  recogniser over IPA (trained on CC0/CC-BY speech) by Viterbi forced alignment.
+#### L64 Spoken-phone alignment and prosody
+- **Purpose.** The exact phones the voice *actually spoke*, with their times, plus stress, pitch and
+  pauses — the clock and the content of the lips. The audio is the single truth.
+- **In → Out.** Audio + the L62 lattice → `[(ipa, t0, t1)]` on the chosen path; per-syllable pitch (z-scored
+  to the speaker), energy, duration, stress flag, phrase boundaries, pause lengths.
+- **Method.** A CTC phone recogniser over IPA scores every lattice path; Viterbi picks the path and the
+  boundaries; the chosen path, not the G2P string, drives L67–L70. It runs on every clause (Chatterbox
+  exposes no durations), on streaming chunks. If alignment confidence is low, closure times are taken from
+  acoustics (a stop gap or a nasal murmur on energy and spectrum), never from uniform durations. The same
+  10 ms pass computes F0 and energy; stress = local maxima of a weighted sum of pitch excursion, energy and
+  duration; phrase ends at pauses > 180 ms or falling pitch. Recogniser: for prototypes a ready zero-shot
+  IPA recogniser (XLSR-53 fine-tuned with espeak phones, 2109.11680, or Allophant, 2306.04306), as a check
+  until its licence is confirmed (BABEL in pre-training; D6); to ship, our own trained on Common Voice (CC0)
+  and LibriTTS-R (CC BY).
 - **Research.** IPA-based forced alignment in any language (2311.08323); neural forced alignment
-  (2606.25460, 2406.19363); alignment evaluation (2608.28508).
-- **Ours.** —
-- **Defaults.** 10 ms frames.
-- **Fails → fallback.** Uniform durations within words from TTS word times.
-- **Gate.** Median boundary error ≤ 20 ms on a hand-labelled 200-phone set per language.
-- **Status.** *Partial*: HeadTTS gives timings; aligner *to build*.
+  (2606.25460, 2406.19363); alignment evaluation (2608.28508); prosody for gesture and head motion
+  (2210.14800, SemTalk 2412.16563).
+- **Ours.** Lattice alignment of synthetic speech so the mouth shows what was said, not what was predicted.
+- **Defaults.** 10 ms frames; stress threshold z ≥ 1.0.
+- **Fails → fallback.** Acoustic closure detection for must-hit events; lexical stress from G2P.
+- **Gate.** Median boundary error ≤ 20 ms on a hand-labelled 200-phone set per language; logged rate of
+  must-hit events where lattice choice and acoustics disagree; stress agreement with a hand-labelled set
+  ≥ 80%.
+- **Status.** *Partial*: HeadTTS gives timings; `lipsync/prosody.py` computes prosody; lattice aligner
+  *to build*.
 
-#### L69 Audio watermark and provenance
+#### L65 Personal phrase bank
+- **Purpose.** Backchannels and latency fillers need about zero synthesis latency.
+- **In → Out.** The person's voice reference → 30–60 short items in their cloned voice, each in 2–3 prosodic
+  variants (haan, achha, hmm, theek hai, dekho, ek second, bolo, sahi, "let's see", "good question", safe
+  canned hints for L89), with aligned phones, prosody and precomputed mouth and head motion.
+- **Method.** Synthesised in one batch at build time through L63–L71; items chosen at run time by L88 and
+  L91 by context and variant rotation (no repeat within 30 s).
+- **Research.** Latency hiding in streaming digital-human agents (2608.24909).
+- **Ours.** A per-person bank in the cloned voice, with its motion baked.
+- **Defaults.** 40 items × 2 variants; ≤ 2 MB, streamed after the model.
+- **Fails → fallback.** Visual-only backchannels.
+- **Gate.** Every item passes L63's speaker and intelligibility gates and S3–S4.
+- **Status.** *To build*.
+
+#### L66 Audio watermark and provenance
 - **Purpose.** Every cloned sentence can be proven synthetic and traced to the model.
 - **In → Out.** Audio → watermarked audio; detector.
-- **Method.** Keep the TTS model's own watermark and add a localised, sample-level watermark carrying a
-  16-bit model id, so clips cut from lessons are still detectable.
+- **Method.** One gated mark: AudioSeal (code and weights MIT, per its README since April 2024), localised,
+  carrying a 16-bit model id, so clips cut from lessons are still detectable. The TTS's own Perth mark is kept
+  only if its licence is confirmed and a test shows the two do not interfere; otherwise it is removed.
 - **Research.** AudioSeal localised watermarking (2401.17264); timbre watermarking (2312.03410); robustness
   across codecs (2611.04716).
 - **Ours.** Model id in the mark ties audio to its consent record.
 - **Defaults.** Imperceptible setting; detection on 1 s windows.
 - **Fails → fallback.** No publish.
-- **Gate.** Detection ≥ 99% after MP3/Opus re-encoding at 32 kbps; no audible artefacts in the listening
-  test (ABX at chance).
-- **Status.** *To build* (licence of the chosen watermark weights to be checked: **UNVERIFIED**).
+- **Gate.** Detection ≥ 99% after MP3/Opus re-encoding at 32 kbps; no audible artefacts (ABX at chance).
+- **Status.** *To build*.
 
 ---
 
-### Stage H: Lips and face performance (L70–L79)
+### Stage H: Lips and face performance (L67–L75)
 
-#### L70 Phones to visemes
+Stage H's mouth path (L67–L71) runs on the server next to the voice and ships 52 values plus must-hit events
+with each audio chunk; the browser only mixes and holds closures (L85, L92). The face layers L72–L75 run in
+the browser worker.
+
+#### L67 Phones to visemes
 - **Purpose.** One articulation table for every language.
-- **In → Out.** IPA phone → viseme class and mouth targets on the 52 values.
-- **Method.** 13 classes by articulation: PBM (lips closed), FV (lower lip to upper teeth), TH, TD,
-  RETRO (retroflex, lower jaw), SH (lips forward), KG, EE, AA, OH, OO, W, silence; targets as in
-  `phonemes.py`. Aspirated stops get a longer release; व as [ʋ] maps to FV.
+- **In → Out.** IPA phone (as realised, L64) → viseme class and mouth targets on the 52 values.
+- **Method.** 12 classes by articulation: PBM (lips closed), FV (lower lip to upper teeth), TH, TD
+  (dental, alveolar and retroflex stops share it; the difference is barely visible from outside and lives
+  only in the tongue, L70), SH (lips forward), KG, EE, AA, OH, OO, W, silence; targets as in `phonemes.py`.
+  Aspirated stops get a longer release; [ʋ] maps to FV only when realised with lip–teeth contact.
 - **Research.** Viseme classes (Fisher 1968); VisemeNet (1805.09488); viseme dynamics (2301.06059);
   multilingual lip-sync data (2406.14272).
 - **Ours.** A single table for all languages with Hindi additions (exists).
-- **Defaults.** As in `phonemes.py`.
+- **Defaults.** As in `phonemes.py`, with RETRO merged into TD.
 - **Fails → fallback.** Unknown phone → nearest class by articulatory features.
 - **Gate.** All IPA phones in the test set map to a class (exists: `test_every_language_sound_has_a_mouth`).
-- **Status.** *Exists*: `scripts/pratibimb/engine/phonemes.py`.
+- **Status.** *Exists*: `scripts/pratibimb/engine/phonemes.py` (RETRO merge *to do*).
 
-#### L71 Coarticulation
-- **Purpose.** Each sound's mouth shape blends with its neighbours, as in real speech.
-- **In → Out.** Viseme timeline → smooth trajectories of each mouth value.
-- **Method.** Dominance functions (Cohen and Massaro 1993): each phone $i$ has, per value $k$, a target
-  $T_{ik}$ and a dominance $D_{ik}(t) = \alpha_{ik} e^{-\theta_{ik}|t-c_i|^{c}}$; the trajectory is
-  $x_k(t) = \sum_i D_{ik}(t)T_{ik} / \sum_i D_{ik}(t)$. Lip closures (PBM) and lip–teeth contacts (FV) have
-  very high dominance for the closure values, so they always happen ("must-hit" constraints, then a
-  local correction enforces the closure frame if blending missed it). Lip rounding spreads further
-  (anticipatory rounding before /u/).
+#### L68 Coarticulation as a constrained trajectory
+- **Purpose.** Each sound's mouth shape blends with its neighbours, as in real speech, and the closures
+  viewers watch most can never be missed or kinked.
+- **In → Out.** Viseme timeline (with must-hit intervals) → smooth trajectories of each mouth value.
+- **Method.** Per clause and per mouth value, a small banded quadratic programme:
+  minimise $\sum_t \sum_i w_i(t)\,(x_t - T_i)^2 + \lambda \sum_t (\Delta^3 x_t)^2$, with **equality
+  constraints** at must-hit frames (PBM closure, FV contact, held for at least max(acoustic closure, 1.5
+  frames)) and bounds from the person's range (L69). Lip rounding has a low weight over a wide window
+  (anticipatory rounding before /u/). Dominance functions (Cohen and Massaro 1993) give the weights $w_i$.
+  **Personal coarticulation (untested):** per viseme class four parameters (target scale, spread window,
+  closure hold, lead) are fitted to the person's capture speech by minimising the replay error of L71; 12 × 4
+  numbers ship in the model, and because they sit on articulatory classes, they carry to languages the
+  person never recorded.
 - **Research.** Cohen and Massaro (1993); quantitative coarticulation from articulatory models
   (2408.05641); a geometric coarticulation measure (2610.03436); visible articulation directions
-  (spreading, opening, protrusion; 2609.30517).
-- **Ours.** Must-hit constraints per class plus the geometric measure of 2610.03436 used as a gate.
-- **Defaults.** Lead 40 ms (audio-visual lead of the mouth); attack 60 ms (in `phonemes.py`).
-- **Fails → fallback.** Per-phone targets with attack/release smoothing (exists).
-- **Gate.** S3 and S4 (exists as `lip_check`); coarticulation path ratio (2610.03436) within the range of
-  the person's real speech.
-- **Status.** *Partial*: smoothing and lip check in `phonemes.py`; dominance model *to build*.
+  (2609.30517); audio-visual asynchrony in natural speech varies by sound (Schwartz and Savariaux 2014, PLoS
+  Comput Biol).
+- **Ours.** Hard must-hit constraints with smooth approaches; personal class parameters fitted from a short
+  capture and transferred through IPA (novelty **UNVERIFIED**).
+- **Defaults.** Lead per class (not one constant; start at 40 ms, fitted per person); λ from a validation
+  sweep. Solve < 1 ms per clause.
+- **Fails → fallback.** Per-phone targets with attack/release smoothing and closure enforcement (exists).
+- **Gate.** S3 and S4 by construction on controls and on rendered pixels; coarticulation path ratio
+  (2610.03436) within the range of the person's real speech.
+- **Status.** *Partial*: smoothing and lip check in `phonemes.py`; QP solver and personal parameters
+  *to build*.
 
-#### L72 Jaw–lip split and personal mouth range
+#### L69 Jaw–lip split and personal mouth range
 - **Purpose.** Loud speech opens the jaw, not the lips; each person's mouth opens to their own extent.
 - **In → Out.** Trajectories + loudness + motion profile → jawOpen and lip values separately, scaled.
 - **Method.** Two independent controls per frame as in JALI: jaw $j(t)$ scales with the vowel's openness
   and the syllable's loudness; lip intensity $l(t)$ with articulation clarity. Then scale each class by
-  the person's measured range (L16): $x \leftarrow x \cdot r_{class}^{person}/r_{class}^{pop}$.
+  the person's measured range (L16): $x \leftarrow x \cdot r_{class}^{person}/r_{class}^{pop}$. These
+  ranges are the bounds of L68's programme.
 - **Research.** JALI (Edwards et al. 2016); speech–lip intensity correlation (SLCC in 2503.20308).
 - **Ours.** Per-class personal range from their own speech.
 - **Defaults.** Jaw gain 0.6–1.2 with loudness.
@@ -1348,63 +1566,64 @@ real-time version must match.
 - **Gate.** S6; SLCC on held-out speech ≥ the value of the person's own video (2503.20308 metric).
 - **Status.** *To build* (global gains exist in the lip-sync slot).
 
-#### L73 Tongue and teeth visibility control
-- **Purpose.** Drive L51's tongue and decide teeth visibility from the sounds.
+#### L70 Tongue and teeth visibility control
+- **Purpose.** Drive L46's tongue and decide teeth visibility from the sounds.
 - **In → Out.** Phones → tongue pose weights, teeth-show weight.
-- **Method.** Tongue poses keyed by class (TD → tip up, TH → between teeth, RETRO → curled, KG → back up)
-  with the same dominance blending as L71; teeth-show = smooth function of inner-lip separation and FV/EE.
+- **Method.** Tongue poses keyed by class (TD → tip up, retroflex phones → tip curled inside the mouth,
+  TH → between teeth, KG → back up) with the same trajectory solve as L68; teeth-show = smooth function of
+  inner-lip separation and FV/EE.
 - **Research.** Articulatory models (2507.20343, 2408.05641).
-- **Ours.** Retroflex tongue for Indian languages.
+- **Ours.** Retroflex tongue for Indian languages (no visual claim outside the mouth).
 - **Defaults.** —
 - **Fails → fallback.** Tongue at rest.
 - **Gate.** Tongue visible on 100% of θ/ð and ≥ 80% of l in close-up; teeth never visible with closed lips.
 - **Status.** *To build*.
 
-#### L74 Learned lip refiner
-- **Purpose.** Rules get the important events right; a learned model adds the natural in-between motion.
-- **In → Out.** Audio (16 kHz) + rule trajectories → refined 52 values at 30 fps.
+#### L71 Learned lip refiner and the replay gate
+- **Purpose.** Rules get the important events right; a learned model adds the natural in-between motion;
+  a replay of the person's own speech proves the whole mouth path.
+- **In → Out.** Audio (16 kHz) + constrained trajectories → refined 52 values at 30 fps (on the server, sent
+  with each audio chunk); a replay report.
 - **Method.** An audio-to-expression network (default: wav2arkit, Apache-2.0; later our fine-tune on
-  consented Hindi/English video) predicts values; the output is fused with L71/L72 by a per-value weight
-  (rules dominate closure and contact values, the network dominates cheeks, mouth corners and press);
-  must-hit constraints are re-applied after fusion.
+  consented Hindi/English video) predicts values; fusion by a per-value weight (rules dominate closure and
+  contact values, the network dominates cheeks, mouth corners and press); must-hit constraints are re-applied
+  after fusion by re-solving L68 with the fused values as targets. **Replay gate**: each bench person's own
+  5-minute reading (L0) is fed through L64–L71 and compared frame by frame with the 52 values MediaPipe
+  tracks on the same video: per-value correlation, inner-lip distance error (the LVE idea), and a histogram
+  of closure-onset offsets. The Fréchet Oral Distance (2611.01705) may be reported as a secondary rank check
+  (its reference set is English-only and its licence **UNVERIFIED**; evaluation only).
 - **Research.** FaceFormer (2112.05329); SAiD blendshape diffusion (2401.08655); ARTalk (2502.20323);
   personalised causal motion (2604.23692); multilingual 3D talking heads (2406.14272).
-- **Ours.** Rule–network fusion with constraints re-applied (rules as guarantees, learning as style).
+- **Ours.** Rule–network fusion with constraints re-solved; a per-person, language-independent replay gate.
 - **Defaults.** Fusion weights per value from a validation sweep.
 - **Fails → fallback.** Rules only.
-- **Gate.** S3–S6 still hold after fusion; PLRS (2503.20308) ≥ rules-only.
-- **Status.** *Partial*: wav2arkit slot in `slots.json`, `lipsync/wav2arkit-run.mjs`; fusion *to build*.
+- **Gate.** S3–S6 still hold after fusion; PLRS (2503.20308) ≥ rules-only; replay correlation on the mouth
+  values ≥ rules-only.
+- **Status.** *Partial*: wav2arkit slot in `slots.json`, `lipsync/wav2arkit-run.mjs`; fusion and replay
+  *to build*.
 
-#### L75 Prosody features
-- **Purpose.** Stress, pitch and pauses drive brows, nods, beats and gesture strokes.
-- **In → Out.** Audio + phones → per-syllable pitch (z-scored to the speaker), energy, duration, stress
-  flag, phrase boundaries, pause lengths.
-- **Method.** F0 and RMS per 10 ms; syllables from phones; stress = local maxima of a weighted sum of
-  pitch excursion, energy and duration; phrase ends at pauses > 180 ms or falling pitch.
-- **Research.** Prosody for gesture and head motion (2210.14800, 2412.16563 SemTalk).
-- **Ours.** —
-- **Defaults.** Stress threshold z ≥ 1.0.
-- **Fails → fallback.** Stress from the TTS's lexical stress.
-- **Gate.** Stress agreement with a hand-labelled set ≥ 80%.
-- **Status.** *Exists* in part: `scripts/teacher/maker/lipsync/prosody.py`.
-
-#### L76 Emotion layer
-- **Purpose.** Readable emotions that match what she says.
+#### L72 Emotion layer (face and body)
+- **Purpose.** Readable emotions that match what she says, in the face and in how she moves.
 - **In → Out.** Script tags `{valence, arousal}` + discrete cue (pleased, curious, concerned, thinking,
-  surprised) → expression offsets on non-mouth values, plus voice style hints.
+  surprised) → expression offsets on non-mouth values; body scalars (gesture tempo, amplitude, frequency,
+  expansiveness, head height); voice style hints (L63).
 - **Method.** Each discrete cue is a small set of action units (e.g., pleased = cheekSquint + mouthSmile
   at 0.3–0.6; concerned = browInnerUp 0.4 + browDown 0.2); continuous valence/arousal interpolate between
-  them; mouth values from the cue are limited during speech so lip sync wins (priority mixer, L89).
+  them; mouth values from the cue are limited during speech so lip sync wins (mixer, L85). Arousal scales
+  gesture velocity, amplitude and frequency (L81); valence scales expansiveness (open vs. closed postures,
+  head up vs. down, L83); both are multiplied with the personal style scalars (L85).
 - **Research.** Continuous valence–arousal control (CETalk 2608.15110); AU-controlled emotional heads
   (2602.09534); verbal–nonverbal mismatch for training agents (2608.22731); LLM interpretation of
-  valence–arousal (2502.06875).
-- **Ours.** Emotion intensity is scaled by the person's own expressiveness (smile and brow share from L16).
+  valence–arousal (2502.06875); Laban Effort mappings for agents (EMOTE, Chi et al. 2000; citation details
+  **UNVERIFIED**).
+- **Ours.** Emotion intensity scaled by the person's own expressiveness (smile and brow share from L16).
 - **Defaults.** Emotion decay 1.5 s unless refreshed.
 - **Fails → fallback.** Neutral-pleasant.
-- **Gate.** Observers recognise the 5 cues from silent clips ≥ 70% (chance 20%).
+- **Gate.** Observers recognise the 5 cues from silent clips ≥ 70% (chance 20%), with the face and with the
+  face blurred (body only) reported separately.
 - **Status.** *To build*.
 
-#### L77 Blinks, brows and micro-motion
+#### L73 Blinks, brows and micro-motion
 - **Purpose.** The face is never frozen.
 - **In → Out.** Time, prosody, gaze shifts → eyeBlink values, brow raises, small mouth-corner motion.
 - **Method.** Blinks as a renewal process with the person's rate and duration (L16), plus blinks at phrase
@@ -1417,54 +1636,64 @@ real-time version must match.
 - **Gate.** Blinks per minute within ±20% of the person's own (from L16).
 - **Status.** *Exists* in part: rules in `perform.py`.
 
-#### L78 Head motion
+#### L74 Head motion
 - **Purpose.** Nods, tilts and turns that follow speech and listening.
 - **In → Out.** Prosody, turn state, gaze target → head yaw/pitch/roll.
 - **Method.** Nods (pitch dips) on stressed syllables and at affirmations; slow drift from an
-  Ornstein–Uhlenbeck process with the person's measured head speed and range; head turns lead gaze
-  shifts above 15° (eyes first, head follows after 50–100 ms).
+  Ornstein–Uhlenbeck process with the person's measured head speed and range; for gaze shifts the eyes
+  start first (or together) and land first, the head continues and the eyes counter-rotate (L75); the
+  head's share of a gaze shift grows smoothly with its amplitude (a contribution curve, not a 15° switch).
 - **Research.** Naturalistic head motion from speech (2210.14800); speech-driven head pose (2310.20240,
-  2502.20323).
+  2502.20323); eye–head coordination in gaze shifts (Freedman 2008, *Biol. Cybern.*; exact figures
+  **UNVERIFIED**).
 - **Ours.** Person's own range and speed.
-- **Defaults.** Nod amplitude 3–6°.
+- **Defaults.** Nod amplitude 3–6°; head share 0 below 10°, rising to ≈ 0.7 at 40°.
 - **Fails → fallback.** Drift only.
-- **Gate.** Head speed distribution matches the person's own (two-sample KS p > 0.05) on 6/8 bench people.
+- **Gate.** Head speed distribution matches the person's own: median and 90th percentile within ±20% on
+  6/8 bench people.
 - **Status.** *Partial*: nods in `perform.py`.
 
-#### L79 Gaze
-- **Purpose.** Look at the student, at the board element being discussed, or away while thinking.
-- **In → Out.** Script gaze tag, lesson target position (L82), turn state → eye and head angles.
+#### L75 Gaze
+- **Purpose.** Look at the student, at the board element being discussed, or away while thinking — and
+  keep looking at the student while the head moves.
+- **In → Out.** Script gaze tag, lesson target position (L78), turn state, mixed head pose → eye angles.
 - **Method.** A small state machine: *student* (camera) while asking and listening; *board* at the target
   element when pointing or referring; *away* (up-left or down) briefly when "thinking" or at the start of
   a long answer (gaze aversion), returning before the key point; saccades between targets with
-  main-sequence velocity; micro-saccades during fixation.
+  main-sequence velocity; micro-saccades during fixation. **Vestibulo-ocular stabilisation**: eye angles are
+  computed in world space from the gaze target *after* the head pose is mixed, so the eyes counter-rotate
+  during every nod, tilt and drift and mutual gaze holds.
 - **Research.** Gaze in conversation (Kendon 1967); speech-driven gaze (TalkingEyes 2501.09921); expressive
   gaze dynamics (2610.19635); turn-level interactive heads (2512.15340); spatially aware agents (SARAH
   2602.18432).
 - **Ours.** Gaze that knows the lesson's element positions.
 - **Defaults.** Mutual gaze 60–70% of speaking time.
 - **Fails → fallback.** Student gaze with idle saccades.
-- **Gate.** Gaze lands within 2° of the target element's centre within 250 ms of the cue.
+- **Gate.** Gaze lands within 2° of the target element's centre within 250 ms of the cue; during fixation
+  the gaze direction error stays < 1° while the head moves.
 - **Status.** *To build*.
 
 ---
 
-### Stage I: Physical actions of the upper body (L80–L89)
+### Stage I: Physical actions of the upper body (L76–L85)
 
 The aim is "every physical thing a person does with the upper body", without an animation library and
-without an animator (contradiction C2). Actions are **goal programs** solved on the skeleton at run time.
+without an animator (contradiction C2). Actions are **goal programs**, solved every frame along task-space
+paths, not once per key pose: most "robotic avatar" failures happen *between* key poses, so every Stage I
+gate is measured on every frame of the trajectory at 30 fps.
 
-#### L80 Action language
+#### L76 Action language
 - **Purpose.** One small, checkable language for every action.
 - **In → Out.** Script action tags → a goal program: a list of timed goals.
 - **Method.** Grammar (JSON): `{act, hand: L|R|both|auto, target?, shape?, count?, at: word index |
   time, hold_ms, strength}`. Goals are primitives: `reach(hand, point)`, `orient(palm, dir)`,
   `shape(hand, name)`, `look(target)`, `lean(dir, amount)`, `nod(n)`, `shrug()`, `touch(hand, body_part)`,
-  `beat(hand)`. A named action expands to primitives, e.g. `namaste` = both hands `touch(chest_front)`,
-  palms `orient(facing each other)`, `shape(flat)`, head `nod(1)`, gaze student; `count(3)` =
-  `reach(R, chest-height front)`, `shape(count3)`, `orient(palm to student)`; `point(target)` =
-  `reach(R, ray towards target at 70% arm length)`, `shape(point)`, `look(target)`. A new action is a new
-  expansion entry, no code.
+  `beat(hand)`, and `join(hands, frame)` for closed two-hand chains: a shared contact frame (midline point
+  and orientation) is solved first and each hand is an offset from it. A named action expands to
+  primitives, e.g. `namaste` = `join(both, sternum, palms together, fingers up, elbows slightly out)`,
+  `shape(flat)`, a small bow of the head and neck (not a nod), gaze student; `count(3)` = `reach(R,
+  chest-height front)`, `shape(count3)`, `orient(palm to student)`; `point(target)` = `reach(R, observer
+  line to target, L78)`, `shape(point)`, `look(target)`. A new action is a new expansion entry, no code.
 - **Research.** Intention-aware hierarchical motion (2506.01563); LLM-driven pedagogical expression
   (2603.09536); behaviour markup traditions (BML, Kopp et al. 2006).
 - **Ours.** Actions as goals over primitives, validated against limits before they run.
@@ -1473,301 +1702,388 @@ without an animator (contradiction C2). Actions are **goal programs** solved on 
   apart), steeple, rub hands, cross arms, hands on hips, emphasise (chop), offer (palm up), stop (palm out),
   welcome, clap, write-in-air, number-on-fingers, look-at-board, come-closer, okay-sign).
 - **Fails → fallback.** Unknown or invalid action → nearest named action or none, logged.
-- **Gate.** Every action in the list parses and expands; every expansion solvable (L83) for all 8 bench
-  bodies.
+- **Gate.** Every action parses and expands; every expansion solvable (L79) for all 8 bench bodies;
+  two-hand actions: palm gap ≤ 5 mm and no interpenetration on every frame.
 - **Status.** *Partial*: four hand-posed gestures in `body.py` (`gesture`); language *to build*.
 
-#### L81 Gesture planner
-- **Purpose.** Decide which gesture, with which hand, when — including the many gestures nobody writes in
-  the script (beats, open palms).
-- **In → Out.** Sentence, word times, prosody, explicit action tags, the person's gesture rate → a gesture
-  schedule `[act, start, stroke, end, strength]`.
-- **Method.** Explicit tags first (namaste, point at, count). Then a learned scorer picks rhythm and
-  metaphoric gestures (beat, open palms, "this much", offer) on stressed words: features = word class,
-  stress, position in phrase, semantic cues ("first/second" → count, "this/here/look" → point, "big/small"
-  → size); constraints: one gesture per phrase on average, rest between gestures ≥ 300 ms, rate matched to
-  the person's measured gesture rate (L16).
-- **Research.** Semantic co-speech gestures (SemTalk 2412.16563; SemConFlow 2603.26553; SARGes
-  2503.20202); labelling sentences with deictic gestures (2407.02151); review of data-driven gesture
-  generation (2301.05339); motion matching for digital humans (TRiMM 2506.01077).
+#### L77 Gesture planner
+- **Purpose.** Decide which gesture, with which hand, when — including gestures nobody writes in the
+  script (beats, open palms) — and keep them inside the frame.
+- **In → Out.** Sentence, word times, prosody, explicit action tags, the person's gesture rate, the camera
+  frame → a gesture schedule `[act, start, apex, end, strength]`.
+- **Method.** Explicit tags first (namaste, point at, count): Guru (L89) already writes `gesture` fields,
+  and LLM gesture selection is published and works. Then rules add beats and metaphoric gestures (open
+  palms, "this much", offer) on stressed words: word class, stress, position in phrase, cue words
+  ("first/second" → count, "this/here/look" → point, "big/small" → size); constraints: one gesture per phrase
+  on average, rest between gestures ≥ 300 ms, rate matched to the person's measured gesture rate (L16) and
+  scaled by arousal (L72). **Framing**: the panel is waist-up and fixed, so hand targets carry the camera
+  frustum minus a safe margin as a soft constraint, default gesture height is slightly above real life (as
+  presenters do), and beats and counts are planned at chest height, never below the crop. No learned scorer
+  until our own commercial-OK gesture data exists.
+- **Research.** LLM gesture selection (2503.14408); semantic co-speech gestures (SemTalk 2412.16563;
+  SemConFlow 2603.26553; SARGes 2503.20202); labelling sentences with deictic gestures (2407.02151);
+  gesture space (McNeill 1992); review of data-driven gesture generation (2301.05339).
 - **Ours.** The planner outputs goal programs, not motion, so any gesture it picks is physically solved.
-- **Defaults.** Rule scorer at launch; the learned scorer (slot `gestures`) replaces it.
+- **Defaults.** Rules plus LLM tags.
 - **Fails → fallback.** Beats on stressed words only.
-- **Gate.** Appropriateness rating (GENEA-style, §8.4) ≥ the rule baseline; no two strokes < 300 ms apart.
+- **Gate.** Appropriateness rating (GENEA-style, §8.4) ≥ the rule baseline; no two apexes < 300 ms apart;
+  hands visible on ≥ 95% of stroke frames and never clipped by the frame edge mid-stroke.
 - **Status.** *Partial*: word rules in `perform.py`; gesture slot in `slots.json`.
 
-#### L82 Target resolution: lesson element to 3D point
-- **Purpose.** "Point at node 7 at step `swap`" must land on node 7 on the student's screen.
-- **In → Out.** Target id (lesson step or element id), panel and page layout → a 3D target point in the
-  teacher's space, updated as the page scrolls or the animation moves.
-- **Method.** The lesson player already names its steps and elements (`swap`, `cmp`, `found`, …). The
-  player publishes the element's screen rectangle each frame. The teacher's camera is known, so the
-  rectangle's centre is un-projected to a ray; the target point is where that ray meets a plane in front of
-  the teacher at arm's reach ("the board plane"), chosen so the finger ray from the shoulder passes through
-  the element on screen. If the element is outside the reachable cone, she points with the far hand or
-  turns her torso (L86).
-- **Research.** Pointing in situated agents (2509.12507); avatar-led explanations judged on whether they
-  point at the content (VisualTalk-Bench 2611.25444).
-- **Ours.** Deixis bound to the live layout of our own lesson animations. We did not find a prior system
-  that points at elements of a live web lesson.
-- **Defaults.** Board plane 0.55 m in front of the chest.
+#### L78 Target resolution: lesson element to 3D point, for the observer
+- **Purpose.** "Point at node 7 at step `swap`" must make the *student* look at node 7.
+- **In → Out.** Target id (lesson step or element id), panel and page layout, the candidate elements nearby
+  → a 3D target for the shoulder–wrist–fingertip line, a gaze target, and, if needed, a disambiguator.
+- **Method.** The lesson player names its steps and elements (`swap`, `cmp`, `found`, …) and publishes each
+  element's screen rectangle every frame. The teacher's camera is known, so the element's centre is
+  un-projected to a ray. Observers do not extend the finger ray: they read the arm–finger line, and read
+  points as higher than intended. So the arm line (shoulder–wrist–fingertip), not only the finger, is set on
+  the element, with a vertical bias correction, and head and gaze turn to the target too. A held point
+  follows a moving element (scroll, animation) through a critically damped target filter with a velocity
+  cap; if the element leaves the reachable cone, she retracts and re-points rather than twisting the torso
+  past ≈ 30°. **Observer-solved deixis (untested):** a small observer model (arm–finger extrapolation with
+  the published bias, plus the gaze line, over the known candidate boxes) predicts which element a student
+  would pick; the pose is adjusted until the intended element wins by a margin over its neighbours, and
+  when no pose achieves it (dense nodes), a disambiguator is added: a short trace in the air along the
+  element, a spoken label ("node 7"), or a step-highlight request to the lesson player.
+- **Research.** Interpretation of pointing (Herbort and Kunde 2016, *JEP:HPP* 42; Herbort et al. on bent
+  pointing); pointing in situated agents (2509.12507); avatar-led explanations judged on whether they point
+  at the content (VisualTalk-Bench 2611.25444).
+- **Ours.** Deixis bound to the live layout of our own lesson animations and solved for an observer, with
+  the candidate set known exactly because the lesson publishes its elements (novelty **UNVERIFIED**).
+- **Defaults.** Board plane 0.55 m in front of the chest; disambiguate when the margin < 20%.
 - **Fails → fallback.** Gaze-only reference ("here") with an open-palm gesture towards the side.
 - **Gate.** S8.
 - **Status.** *To build* (step ids exist in the lesson engine).
 
-#### L83 Reaching by inverse kinematics
-- **Purpose.** Put a hand (fingertip, palm or wrist) at any goal, naturally.
-- **In → Out.** Goal (position, optional orientation) → shoulder, elbow, wrist rotations.
-- **Method.** FABRIK on the clavicle–shoulder–elbow–wrist chain with joint limits applied in each backward
-  and forward pass; the elbow swivel angle (redundancy) chosen by a comfort cost (elbow low and slightly
-  out, as in natural reaching) plus the person's habit (L89); clavicle contributes when the target is high
-  or far. A final damped least-squares step meets the fingertip goal exactly with finger joints fixed.
-- **Research.** FABRIK (Aristidou and Lasenby 2011); real-time multi-constraint IK (JAX-IK 2507.00792);
-  neural IK (2506.17996); physically plausible real-time synthesis (2508.02106).
-- **Ours.** Swivel chosen by comfort + measured personal habit.
-- **Defaults.** 10 FABRIK iterations, tolerance 2 mm.
-- **Fails → fallback.** Nearest reachable point on the goal ray.
-- **Gate.** Target error < 2% of arm length; 0 limit violations.
+#### L79 Arm solver: analytic IK with shoulder girdle and torso
+- **Purpose.** Put a hand (fingertip, palm or wrist) at any goal, naturally, every frame, without elbow pops.
+- **In → Out.** Hand goal (position, optional orientation) per frame → clavicle, scapula, shoulder, elbow,
+  wrist rotations, and spine/chest offsets for far reaches.
+- **Method.** (1) **Shoulder girdle**: arm elevation is shared between the glenohumeral joint and the
+  shoulder girdle by a fixed scapulohumeral curve (glenohumeral nearly alone below ≈ 30°, then about 2:1,
+  clinically 1.7:1 to 2.3:1 across the arc), plus a little clavicle elevation and protraction for forward
+  reach; applied before the arm solve, and correctives (L37) key on the combined angle. (2) **Analytic
+  two-bone IK**: elbow flexion by the law of cosines; the one redundant degree of freedom, the swivel angle
+  about the shoulder–wrist axis, is chosen by a cost mixing joint displacement and discomfort (L30), biased
+  by the person's habit (L16), and filtered over time so it cannot jump; wrist orientation analytically. (3)
+  **Torso extension**: beyond 85% of reach, the remaining distance goes to chest rotation and spine lean as
+  a weighted extension of the same chain (clavicle → chest → spine), keeping the head level. (4) Damped
+  least squares only for the final fingertip refinement with finger joints fixed.
+- **Research.** Scapulohumeral rhythm (Inman et al. 1944; McClure et al. 2001, *J Shoulder Elbow Surg*);
+  swivel-angle prediction (Li et al., ICRA 2012, Rosen group; Chen and Li, *Robotica* 2022: neither
+  displacement nor discomfort alone predicts natural postures); FABRIK (Aristidou and Lasenby 2011) for
+  comparison; real-time multi-constraint IK (JAX-IK 2507.00792).
+- **Ours.** Swivel chosen by comfort plus measured personal habit.
+- **Defaults.** Max lean 12°; swivel filter 8 Hz.
+- **Fails → fallback.** Nearest reachable point on the goal line.
+- **Gate.** Target error < 2% of arm length; 0 limit violations; no single-frame swivel change > 5° while the
+  target moves smoothly.
 - **Status.** *To build*.
 
-#### L84 Hand shapes
+#### L80 Hand shapes
 - **Purpose.** Natural hands for every named shape and for the in-between.
 - **In → Out.** Shape name or count → 20 finger joint angles per hand.
-- **Method.** Named shapes as joint-angle sets (point, count 1–5 in the Indian counting style and the
-  Western style as a setting, open, flat, relaxed, fist, OK, thumbs up, pinch, steeple); in-between shapes
-  move in a low-dimensional synergy space (PCA of captured hand poses: 5–6 components explain most
-  variance); finger coupling (DIP ≈ ⅔ PIP) applied; relaxed hands curl a little more on the ulnar side.
-- **Research.** Hand synergies (Santello et al. 1998); hand pose priors (NRDF 2403.03122); hand motion
-  completion with priors (2607.05938); biomechanical finger tracking (2605.09258).
+- **Method.** Named shapes as joint-angle sets (point, count 1–5 in the Indian styles — fingers raised, or
+  the thumb touching the phalanges — and the Western style as a setting, open, flat, relaxed, fist, OK,
+  thumbs up, pinch, steeple); in-between shapes interpolate with finger coupling (DIP ≈ ⅔ PIP) applied, in a
+  synergy space (PCA of our consented hand captures) only if those captures are large enough; relaxed
+  hands curl a little more on the ulnar side. At 720p a hand is about 60–90 px tall, so shapes are judged as
+  rendered, painted silhouettes.
+- **Research.** Hand synergies (Santello et al. 1998); hand motion completion with priors (2607.05938);
+  biomechanical finger tracking (2605.09258).
 - **Ours.** Counting style as a setting, learned from the person's own counting frames when captured
-  (styles differ between people and regions; which styles to offer is to be checked with teachers:
-  **UNVERIFIED**).
+  (which styles to offer is to be checked with teachers: **UNVERIFIED**).
 - **Defaults.** Relaxed shape between gestures.
 - **Fails → fallback.** Relaxed hand.
-- **Gate.** Every named shape within L31's limits; observers identify counts 1–5 from renders ≥ 95%.
+- **Gate.** Every named shape within L30's limits; observers identify counts 1–5 from rendered, painted
+  clips ≥ 95%.
 - **Status.** *Partial*: point and count curls in `body.py`.
 
-#### L85 Gesture phases and timing curves
-- **Purpose.** Gestures that look human: preparation, stroke, hold, retraction, with the stroke on the word.
-- **In → Out.** Gesture schedule + IK poses → time-parameterised joint trajectories.
-- **Method.** Each gesture has four phases; the stroke's peak velocity is placed 0–100 ms *before* the
-  stressed syllable's onset (gesture strokes lead speech slightly); trajectories between key poses use
-  minimum-jerk profiles in joint space for the arm and in the synergy space for fingers; consecutive
-  gestures co-articulate (skip retraction when the next preparation starts within 400 ms).
+#### L81 Trajectories and gesture phases
+- **Purpose.** Gestures that look human: preparation, stroke, hold, retraction, with the apex on the word,
+  and hands that travel like hands.
+- **In → Out.** Gesture schedule + goals → per-frame hand goals (task space) and finger shapes over time.
+- **Method.** Human reaching is roughly straight in hand space with a bell-shaped speed profile, so the
+  wrist/fingertip path is planned in **task space** (minimum jerk), with a via-point that keeps clearance
+  from the torso capsules; L79 solves it every frame. Duration from distance and precision (Fitts-like:
+  precise pointing gets a longer deceleration tail). The stroke **apex** (maximum extension, velocity
+  minimum) is placed on the pitch-accented vowel (L64) within ±60 ms, and the stroke onset is solved
+  backwards from the stroke duration; apexes are also aligned with energy peaks of our own audio, which is
+  physically consistent with how gesture impulses shape speech. Fingers move in their shape space;
+  consecutive gestures co-articulate (skip retraction when the next preparation starts within 400 ms) and
+  gesture units return to a rest pose (L83) only at unit ends.
 - **Research.** Gesture phases (McNeill 1992; Kita et al. 1998); minimum-jerk motion (Flash and Hogan 1985);
-  social gesture with synchronised speech (2610.06153); streaming gesture generation (GestureFAR
-  2609.21576; LiveGesture 2604.10927).
+  apex–prosody alignment (Leonard and Cummins 2011; spread from Pouw and Dixon 2019 as summarised in citing
+  work, exact numbers **UNVERIFIED**); gesture–speech physics (Pouw, Paxton, Harrison, Dixon 2020, *PNAS*
+  117(21)); streaming gesture generation (GestureFAR 2609.21576; LiveGesture 2604.10927).
 - **Ours.** —
-- **Defaults.** Stroke lead 60 ms; hold 150–400 ms.
-- **Fails → fallback.** Linear blends with ease-in/out.
-- **Gate.** Stroke within 100 ms of the target stress in 95% of gestures.
+- **Defaults.** Hold 150–400 ms.
+- **Fails → fallback.** Joint-space blends with ease-in/out.
+- **Gate.** |apex − accent| ≤ 100 ms in 95% of beats.
 - **Status.** *Partial*: ease in/out in `perform.py`.
 
-#### L86 Balance, lean and torso compensation
-- **Purpose.** When she reaches far, the torso helps; when she leans in, the head stays level.
-- **In → Out.** Goals + IK result → spine, chest and pelvis offsets.
-- **Method.** If the hand goal is beyond 85% of arm reach, distribute the remaining distance to chest
-  rotation and spine lean (weights 0.6/0.4); keep the projected centre of mass of the upper body over the
-  pelvis base by a small counter-lean; head orientation is stabilised to keep gaze on target (vestibulo-
-  ocular style compensation).
-- **Research.** Physically plausible real-time motion (2508.02106); physics-based interaction priors
-  (2609.06591).
-- **Ours.** —
-- **Defaults.** Max lean 12°.
-- **Fails → fallback.** Arm-only reach.
-- **Gate.** Centre of mass projection inside the base region in all library actions.
-- **Status.** *To build*.
-
-#### L87 Self-collision avoidance
-- **Purpose.** Hands never pass through the body, the other hand or the face.
-- **In → Out.** Pose → corrected pose.
-- **Method.** Capsules for torso, neck, head, upper arms, forearms, palms and finger segments; after IK,
-  detect capsule penetrations and push the end effector out along the separating normal, re-solving IK;
-  `touch` goals use a contact offset (the palm stops 5 mm above the chest).
+#### L82 Self-collision avoidance
+- **Purpose.** Hands never pass through the body, the other hand or the face, on any frame.
+- **In → Out.** Per-frame pose and its predecessor → corrected pose.
+- **Method.** Capsules for torso, neck, head, upper arms, forearms, palms and finger segments (≈ 40);
+  tested as **swept** capsules between consecutive frames (continuous collision); on contact the hand goal
+  is pushed out along the separating normal and L79 re-solves; `touch` and `join` goals use a 5 mm contact
+  offset.
 - **Research.** Physics-based interaction priors (2609.06591) for ideas; capsule collision practice.
 - **Ours.** —
 - **Defaults.** 3 resolve iterations.
-- **Fails → fallback.** Abort the gesture and return to relaxed.
-- **Gate.** S7: 0 penetrations deeper than 2 mm in the library × 8 bodies.
+- **Fails → fallback.** Abort the gesture and return to the rest pose.
+- **Gate.** S7: 0 penetrations deeper than 2 mm on every frame of the library × 8 bodies.
 - **Status.** *To build*.
 
-#### L88 Idle life and breathing
-- **Purpose.** Alive while listening or waiting; never frozen.
-- **In → Out.** Time, turn state → breathing, weight shifts, micro head and hand motion.
-- **Method.** Breathing as a chest and shoulder rise (period 3.5–5 s), with inhalations placed at phrase
-  starts when speaking (she breathes before she speaks); slow weight shifts every 8–20 s; Perlin-noise
-  micro-motion on head and hands at small amplitude; occasional self-adjustments (shoulder roll, hand
-  re-clasp) at turn boundaries.
-- **Research.** Procedural noise (Perlin 1985); listening behaviour (2409.20188, 2112.13548).
-- **Ours.** Breaths synchronised with the speech plan.
+#### L83 Rest poses, idle life and breathing
+- **Purpose.** Alive while listening or waiting; never frozen; never "floating".
+- **In → Out.** Time, turn state, speech plan → rest pose, breathing, sway, discrete adjustments.
+- **Method.** **Rest poses**: 3–4 home poses (hands loosely clasped at the waist, one hand on the other
+  wrist, arms down and relaxed, a hand resting on the desk edge), chosen per person from L16; switched only
+  at turn boundaries. **Breathing while speaking** follows the speech plan: a fast chest and shoulder rise
+  (≈ 0.3–0.6 s) in the pause before each phrase, scaled by the next phrase's length, then a slow linear fall
+  through the phrase; **quiet breathing** (≈ 4 s period, about 40/60 in/out) only while listening or idle;
+  coordinated with any audible breaths the voice produces. **Sway**: a slow (≈ 0.1–0.3 Hz), small lateral
+  shift visible as a shoulder-line tilt with a head counter-roll. Hands hold still apart from the spring
+  layer (L84) and the breathing passed through the chest; occasional discrete self-adjustments (shoulder
+  roll, re-clasp, solved with `join`) at turn boundaries. Noise remains only on the head (L74) and brows
+  (L73).
+- **Research.** Speech breathing (Winkworth et al., *JSHR* 1994/1995; the year varies across citations,
+  **UNVERIFIED** which); gesture units (Kendon); listening behaviour (2409.20188, 2112.13548).
+- **Ours.** Breaths placed by the speech plan; rest poses from the person's own video.
 - **Defaults.** Breathing amplitude 4 mm at the sternum.
-- **Fails → fallback.** Breathing only.
-- **Gate.** No interval > 2 s with all joint velocities below 0.2°/s.
+- **Fails → fallback.** Arms-down rest with quiet breathing.
+- **Gate.** No interval > 2 s with all joint velocities below 0.2°/s; inhalation onsets in pauses ≥ 95%.
 - **Status.** *To build*.
 
-#### L89 Motion mixer and personal style
-- **Purpose.** Combine all motion sources with clear priorities, in the person's own style.
-- **In → Out.** Lip, emotion, blink, head, gaze, gesture, idle streams → one pose per frame.
-- **Method.** Layered mixing with priorities per channel: mouth values (lips > emotion > idle); eyes (blink
-  > gaze); arms (explicit action > planned gesture > idle). Additive layers (breathing, micro-motion) are
-  applied on top in joint space. Personal style: amplitude and tempo of gestures, head and brows scaled
-  by the person's profile (L16), and a preferred hand (handedness from L11).
+#### L84 Secondary dynamics
+- **Purpose.** Real arms overshoot slightly, wrists and fingers lag the forearm on fast strokes, and the
+  head settles after a nod; a purely kinematic figure looks robotic.
+- **In → Out.** Mixed pose (L85) → filtered pose.
+- **Method.** A per-joint second-order (spring–damper) filter on the mixed rotations: higher frequency and
+  near-critical damping near the root, lower frequency and more damping at wrist and fingers; clamped to
+  L30's limits *after* filtering. Microseconds per joint, in the worker.
+- **Research.** Complementary dynamics for flesh (2303.11886, the published reference; a joint-level spring
+  is enough for our budget).
+- **Ours.** —
+- **Defaults.** Shoulder 6 Hz / ζ 0.9; wrist 3 Hz / ζ 0.7; fingers 2.5 Hz / ζ 0.8.
+- **Fails → fallback.** Off.
+- **Gate.** No added limit violations; apex timing (L81) still within tolerance after filtering.
+- **Status.** *To build*.
+
+#### L85 Motion mixer and personal style
+- **Purpose.** Combine all motion sources with clear priorities, in the person's own style, without pops.
+- **In → Out.** Lip, emotion, blink, head, gaze, gesture, rest and idle streams → one pose per frame.
+- **Method.** Per-joint masks with priorities per channel: mouth values (lips > emotion > idle), eyes (blink
+  > gaze), arms (explicit action > planned gesture > rest/idle); changes of the winning source crossfade over
+  150–250 ms with quaternion blending; additive layers (breathing, sway, micro-motion) on top; then L84's
+  springs; then a **post-mix clamp** to L30's limits. Must-hit mouth events from L68 are re-asserted last.
+  Personal style: amplitude and tempo of gestures, head and brows scaled by the person's profile (L16) and
+  by emotion (L72); preferred hand from L11.
 - **Research.** Motion layering practice; speaking-style capture (1905.03079); identity-aware motion
   (2604.25164).
 - **Ours.** Style as measured scalars, not a style network.
-- **Defaults.** —
+- **Defaults.** Crossfade 200 ms.
 - **Fails → fallback.** Unstyled defaults.
-- **Gate.** Mouth closures (S3) never broken by other layers; style scalars within ±2σ of the population.
+- **Gate.** Mouth closures (S3) never broken by other layers; angular acceleration per joint bounded (no
+  single-frame spikes) across a 10-minute conversation; style scalars within ±2σ of the population.
 - **Status.** *To build*.
 
 ---
 
-### Stage J: Listening and conversation (L90–L95)
+### Stage J: Listening and conversation (L86–L91)
 
-#### L90 Listening: voice activity and recognition
-- **Purpose.** Know when the student speaks and what they say, in English, Hindi or Hinglish.
-- **In → Out.** Student microphone (with echo cancellation of the teacher's own audio) → speech/no-speech
-  per 30 ms, streaming partial transcripts, final transcript.
-- **Method.** Browser echo cancellation; a small VAD on device; streaming ASR on the server (IndicConformer
-  or Whisper, both MIT) or the site's voice chain (`docs/voice/`, Admin → Voice recognition), which already
-  routes among free providers.
-- **Research.** Whisper (2212.04356); Indian-language ASR benchmarks (2604.19151, 2305.15386, 2609.24199);
-  code-switched speech (2406.10993).
-- **Ours.** Reuses the site's free speech chain; no audio stored.
-- **Defaults.** End-of-speech silence 500 ms as a last resort (L91 usually decides earlier).
-- **Fails → fallback.** Typed input.
-- **Gate.** WER/CER on the Hinglish classroom set within 10% relative of the best single provider.
-- **Status.** *Exists* in the site (`src/voice/stt.js`, `client/src/voice/`).
+The site's speech chain today is batch: it posts a whole recording (`src/voice/stt.js`, up to 3 MB) to
+cloud providers. A live teacher needs streaming. No commercially licensed two-channel Hindi conversation
+corpus is known, and the original voice-activity-projection models are trained on Switchboard (an LDC
+corpus; commercial terms **UNVERIFIED**, 2205.09812), so version 2 starts from hybrid rules and streaming
+recognition, and adds learned turn models only on our own consented data.
 
-#### L91 Turn-taking
-- **Purpose.** Answer at the right moment; do not cut the student off; do not leave dead air.
-- **In → Out.** Both audio channels + partial transcript → each 50 ms: keep listening, prepare, answer,
+#### L86 Listening: voice activity, streaming recognition and echo guard
+- **Purpose.** Know when the student speaks and what they say, in English, Hindi or Hinglish, fast — and
+  never mistake her own voice for the student's.
+- **In → Out.** Student microphone (with echo cancellation) + the played reference signal → speech/no-speech
+  per 30 ms, streaming partial transcripts with confidence and n-best, final transcript.
+- **Method.** A small VAD (Silero-class, MIT) on device; a turn-aware streaming ASR on the server (a LoRA on
+  Qwen3-ASR-0.6B as in 2609.04225, Apache-2.0 per its model tag — to confirm in L3), biased towards the
+  lesson vocabulary (keyword boosting); the site's free cloud chain (Admin → Voice recognition) is kept for
+  the final transcript where it is better. **Echo guard**: we know the exact playback signal, so a residual
+  echo test (normalised cross-correlation between the mic and the played reference) and a speaker check (the
+  voice is not the cloned teacher) must both say "student" before an onset counts. When the browser reports
+  no echo cancellation and no headphones, push-to-talk is the default.
+- **Research.** Whisper (2212.04356); turn-aware streaming ASR (2609.04225: 0.97 boundary recall at 0.39 s
+  median); Indian-language ASR benchmarks (2604.19151, 2305.15386, 2609.24199); code-switched speech
+  (2406.10993).
+- **Ours.** Reuses the site's free speech chain for finals; echo guard from our own known playback.
+- **Defaults.** End-of-speech silence 500 ms as a last resort (L87 usually decides earlier).
+- **Fails → fallback.** The batch chain with silence endpointing; typed input.
+- **Gate.** WER/CER on the Hinglish classroom set within 10% relative of the best single provider; S11's
+  echo test (her own speech on laptop speakers never triggers barge-in).
+- **Status.** *Partial*: batch chain in the site (`src/voice/stt.js`, `client/src/voice/`); streaming and
+  echo guard *to build*.
+
+#### L87 Turn-taking, with a teacher's wait time
+- **Purpose.** Answer at the right moment; do not cut the student off; do not leave dead air — and after
+  she asks a question, wait like a teacher.
+- **In → Out.** VAD, partial transcript, tutoring state → each 50 ms: keep listening, prepare, answer,
   backchannel, stop (student interrupted), ignore (noise).
-- **Method.** A voice-activity-projection model: a small causal transformer over both channels predicts
-  the probability that each speaker talks in the next 2 s bins; combined with a semantic end-of-turn score
-  from the streaming transcript (question complete? sentence complete?) as in FastTurn. Decision rules on
-  the two scores with hysteresis.
-- **Research.** Voice activity projection, multilingual (2403.06487), real-time (2401.04868), noise-robust
-  (2503.06241); FastTurn (2604.01897); full-duplex dialogue (2410.00037, 2604.21406, 2509.22243).
-- **Ours.** Trained on consented two-channel Hindi/English tutoring conversations (§6).
-- **Defaults.** Answer when P(student continues) < 0.25 and semantic end ≥ 0.6.
-- **Fails → fallback.** Silence threshold (L90).
-- **Gate.** False cut-ins ≤ 5% of student turns; median gap after a true end ≤ 300 ms to first reaction.
+- **Method.** Hybrid endpointing: silence hysteresis plus the streaming ASR's turn boundary plus a semantic
+  completeness score from the transcript (question complete? sentence complete? a numeric answer parsed by
+  the grader?). **Wait time**: after she has asked the student a question, the end-of-turn threshold is a
+  teaching policy, not a conversation one: she waits at least 3 s, showing visible "thinking with you"
+  listening and no filler; "ruko / ek minute" holds the floor indefinitely; a parsed complete answer ends the
+  wait early. A learned turn model (voice-activity projection) is trained later, only on our own consented
+  two-channel tutoring recordings.
+- **Research.** Wait time (Rowe 1986, *J. Teacher Education* 37(1)); voice activity projection
+  (2403.06487, 2401.04868, 2503.06241); FastTurn (2604.01897); speculative and hybrid turn control
+  (Voice-Light 2609.20995: a learned policy alone reached 12.5% recall at a safe cut-off rate); full-duplex
+  dialogue (2410.00037, 2604.21406, 2509.22243); IndicFDB behaviours as a comparison benchmark (via
+  2604.23295; licence **UNVERIFIED**, comparison only).
+- **Ours.** Tutoring-state-aware wait time.
+- **Defaults.** Answer when silence ≥ 350 ms and (ASR boundary or semantic end ≥ 0.6); after a question,
+  wait ≥ 3 s.
+- **Fails → fallback.** Silence threshold (L86).
+- **Gate.** False cut-ins ≤ 5% of student turns; median gap after a true end ≤ 300 ms to first reaction;
+  after questions, 0 cut-ins inside 3 s.
 - **Status.** *To build*.
 
-#### L92 Listening reactions, contingent on correctness
-- **Purpose.** She shows she is listening (nods, "haan", "achha", brows), and never signals agreement with a
-  wrong answer.
-- **In → Out.** Turn state, prosody of the student, partial transcript, **the grader's running verdict**
-  → backchannel events (nod type, short vocal token, facial reaction).
-- **Method.** A backchannel predictor (VAP fine-tuned, as in 2410.15929; nod types as in 2507.23298) gives
-  timing and type. A gate filters them: when the student is stating an answer or a step, Guru's grader
-  (the same one that checks answers today) scores it; agreement tokens ("haan", affirmative nod) are
-  allowed only if the step is correct; otherwise only neutral attention signals (slight head tilt, "hmm",
-  steady gaze) are allowed. When confusion cues appear (long pauses, "umm", rising pitch), she shows
-  concern and the hint ladder may step (on device; no frame leaves it).
+#### L88 Listening reactions, contingent on correctness
+- **Purpose.** She shows she is listening, and never signals agreement with a wrong answer.
+- **In → Out.** Turn state, the student's prosody, transcripts with confidence, **the grader's verdict** →
+  backchannel events (nod type, short vocal token from the bank, facial reaction).
+- **Method.** Timing and type by rules (pause-based opportunities, prosodic cues), with a learned
+  predictor later on our own data. A gate filters them: **agreement** ("haan", an affirmative nod) only after
+  a *final* transcript with ASR confidence above a threshold *and* a grader verdict "correct"; **concern or
+  negative faces never fire on partial transcripts**; otherwise only neutral attention (steady gaze, slight
+  forward lean, a brow lift). Because "hmm" and a lateral head tilt or wobble are commonly read as assent in
+  Hindi conversation (**UNVERIFIED** as a measured effect), the neutral set is chosen by the perceptual test
+  of S12, not assumed. While the student talks, backchannels are visual only (vocal tokens cause
+  echo-cancellation double-talk and damage recognition); vocal tokens only in pauses ≥ 250 ms. When
+  confusion cues appear (long pauses, "umm", rising pitch), she shows concern and the hint ladder may step.
 - **Research.** Backchannel prediction (2410.15929, 2304.04472, 2607.22729); nodding types (2507.23298);
-  listening heads (2112.13548, 2409.20188, 2609.40317 GLARE); dyadic behaviour (2510.04637, 2506.22554);
-  confusion detection (2206.02436).
-- **Ours.** Correctness-contingent backchannels. We found backchannel timing and type models, but none
-  that conditions agreement on a correctness check; for a teacher this matters.
-- **Defaults.** ≤ 1 vocal backchannel per 6 s.
+  listening heads (2112.13548, 2409.20188, GLARE 2609.40317); dyadic behaviour (2510.04637, 2506.22554);
+  confusion detection (2206.02436); Hindi backchannel rates (IndicFDB numbers quoted in 2604.23295).
+- **Ours.** Correctness-contingent backchannels on final transcripts. We found backchannel timing and type
+  models, but none that conditions agreement on a correctness check.
+- **Defaults.** ≈ 1 backchannel per 12 s (human Hindi listeners ≈ 0.079/s), calibrated on the bench.
 - **Fails → fallback.** Neutral attention only.
-- **Gate.** S12 = 0 agreement signals after wrong steps on the scripted test set; backchannel timing rated
-  natural ≥ 3.5/5.
+- **Gate.** S12; backchannel timing rated natural ≥ 3.5/5.
 - **Status.** *To build* (the grader and hint ladder exist in Guru: `src/voice/guru.js`).
 
-#### L93 Brain and performance script
-- **Purpose.** What she says and how: words, emotion, gaze, gestures and targets, one clause at a time.
-- **In → Out.** Student turn, lesson context, student memory → validated performance script clauses.
+#### L89 Brain and streamable performance script
+- **Purpose.** What she says and how: words, emotion, gaze, gestures and targets, clause by clause, and
+  nothing unsafe ever reaches the voice.
+- **In → Out.** Student turn, lesson context, student memory → a stream of speakable text with inline tags,
+  parsed into validated clauses.
 - **Method.** Guru (`src/voice/guru.js`, `docs/voice/GURU_SPEC.md`): free providers with failover, the hint
-  ladder, Leak Guard, no help in tests. It is asked to write clauses in the schema
-  `{say, lang, emo:{valence, arousal}, cue, gaze, gesture, target, emphasis, pause_ms}` (from `ENGINE.md`).
-  A validator checks every field against the action list (L80) and the lesson's real element ids (L82);
-  anything invalid is dropped or replaced by rules, never executed blindly. "Honest face": when retrieval
-  confidence is low, the script gets `cue: thinking`, a hedge, and a pointer to the source.
-- **Research.** LLM-driven pedagogical agents (2603.09536, 2604.12253); embodied LLM agents with
-  nonverbal planning (2308.15214, 2603.03282); backend-agnostic embodiment layers (BASE 2611.30388).
-- **Ours.** A validated script tied to real lesson element ids; honest-face behaviour.
+  ladder, Leak Guard, no help in tests. It streams **plain speakable text with light inline tags**
+  (`⟨g:point|el42⟩`, `⟨emo:curious⟩`, `⟨gaze:board⟩`), parsed as the text arrives (a JSON object per clause
+  cannot be spoken until it closes). A validator checks every tag against the action list (L76) and the
+  lesson's real element ids (L78); anything invalid is dropped or replaced by rules. **Leak Guard per
+  clause, before synthesis**: speech cannot be unsaid, so each clause is checked before L63; a failing clause
+  is replaced by a safe canned hint from the bank (L65) and the rest of that clause's tokens are dropped.
+  "Honest face": when retrieval confidence is low, the clause gets `emo:thinking`, a hedge, and a pointer to
+  the source.
+- **Research.** LLM-driven pedagogical agents (2603.09536, 2604.12253); embodied LLM agents with nonverbal
+  planning (2308.15214, 2603.03282); backend-agnostic embodiment layers (BASE 2611.30388).
+- **Ours.** A streamed, validated script tied to real lesson element ids, with a clause-level Leak Guard.
 - **Defaults.** First clause ≤ 12 words.
 - **Fails → fallback.** Text answer with neutral gestures.
-- **Gate.** 100% of executed tags valid; Leak Guard tests pass (existing voice tests).
-- **Status.** *Partial*: Guru exists; script schema and validator *to build*.
+- **Gate.** 100% of executed tags valid; Leak Guard tests pass, including a new test of streaming order (no
+  clause reaches the voice before its check).
+- **Status.** *Partial*: Guru exists; streaming tags, validator and clause guard *to build*.
 
-#### L94 Barge-in and repair
+#### L90 Barge-in and repair
 - **Purpose.** When the student interrupts, she stops quickly and politely, and knows what was heard.
-- **In → Out.** Student onset during her speech → fade-out, state update, repair line.
-- **Method.** If student speech lasts > 300 ms and is not a backchannel (L91 decides), fade her audio over
+- **In → Out.** Student onset during her speech (confirmed by L86's echo guard) → fade-out, state update,
+  repair line.
+- **Method.** If student speech lasts > 300 ms and is not a backchannel (L87 decides), fade her audio over
   80 ms, freeze the gesture into a hold, turn gaze to the student, and cut Guru's context to the words
-  actually played (the audio clock knows them). Repair: "haan, bolo" and, after the student, an offer to
-  finish the point.
-- **Research.** Overlap handling benchmarks (2507.23159); full-duplex systems (2509.06502).
-- **Ours.** Context cut at the audio clock's played-word position.
+  actually played (the audio clock knows them; rendered audio is the durable history, as in Voice-Light).
+  Repair: "haan, bolo" from the bank and, after the student, an offer to finish the point.
+- **Research.** Overlap handling benchmarks (2507.23159); full-duplex systems (2509.06502); Voice-Light
+  (2609.20995) for "rendered audio is authoritative".
+- **Ours.** — (the context cut follows Voice-Light).
 - **Defaults.** As above.
 - **Fails → fallback.** Finish the clause, then stop.
 - **Gate.** S11.
 - **Status.** *To build*.
 
-#### L95 Latency hiding
-- **Purpose.** No dead pauses even when the brain takes a second.
-- **In → Out.** Predicted end of turn → visible pre-reaction and early speech.
-- **Method.** At P(end) > 0.5, start preparing (send the partial transcript to the brain); at 250 ms after
-  the end, show an intake breath and a brow lift; for long answers, the first clause is a short
-  acknowledgement generated by the fast model; lesson answers known in advance come from the lesson cache.
-- **Research.** Response-time studies in full-duplex dialogue (2604.21406); streaming agents for digital
-  humans (2608.24909).
-- **Ours.** Pre-speech body cues as part of the latency budget.
-- **Defaults.** Pre-reaction at 250 ms.
-- **Fails → fallback.** Thinking cue (L76) until audio starts.
+#### L91 Latency hiding: speculation and the bank
+- **Purpose.** No dead pauses even when recognition and the brain take a second or more.
+- **In → Out.** Partial transcripts, predicted end of turn → a private draft, visible pre-reaction, a bank
+  phrase, early speech.
+- **Method.** Generate privately from the partial transcript (speculative drafting); start synthesis only
+  once the end of turn is confirmed; throw the draft away if the transcript changes. At 250 ms after the end,
+  an intake breath and a brow lift; at confirmation, a bank phrase in her own voice ("achha", "dekho…")
+  covers the first clause's synthesis; lesson answers known in advance come from the lesson cache
+  (pre-rendered, §7.4).
+- **Research.** Voice-Light speculative generation (2609.20995); response-time studies in full-duplex
+  dialogue (2604.21406); streaming agents for digital humans (2608.24909); human Hindi response gaps ≈ 0.26 s
+  and the best Hindi duplex model ≈ 2.0 s (2604.23295).
+- **Ours.** Pre-speech body cues and a personal phrase bank as part of the latency budget.
+- **Defaults.** Pre-reaction at 250 ms; bank phrase only when the first clause will be later than 700 ms.
+- **Fails → fallback.** Thinking cue (L72) until audio starts.
 - **Gate.** S10.
 - **Status.** *To build*.
 
 ---
 
-### Stage K: Clock, delivery and gates (L96–L98)
+### Stage K: Clock, delivery and gates (L92–L94)
 
-#### L96 Clock, scheduler and adaptive quality
-- **Purpose.** Lips and audio in step on every device; 30 fps held by trading quality, not timing.
-- **In → Out.** Audio playback position, motion streams, frame times → the pose at the audio time; a
-  quality tier.
-- **Method.** The audio context's playback time is the master clock; each frame evaluates every motion
-  stream at that time (not at "frame count"), so dropped frames never desync lips. Motion runs 160 ms
-  ahead in chunks in a worker (phone times are known in advance because we synthesise the voice). Quality
-  tiers by measured GPU time over the last 60 frames: *full* → *light* (filter at quarter resolution, LOD1)
-  → *basic* (no filter, LOD2, no cloth sim).
-- **Research.** Streaming embodiment on one timeline (BASE 2611.30388); real-time portrait animation
-  (Teller 2503.18429).
-- **Ours.** Audio-master evaluation of explicit controls.
+#### L92 Clock, scheduler and adaptive quality
+- **Purpose.** Lips and audio in step on every device, including Bluetooth earbuds and dropped frames; 30 fps
+  held by trading quality, not timing.
+- **In → Out.** Audio playback position and output latency, motion streams, frame times → the pose at the
+  audio time; a quality tier.
+- **Method.** The audio context's playback time, corrected by `AudioContext.getOutputTimestamp()` and
+  `outputLatency`, is the master clock; each frame evaluates every motion stream at that time, so dropped
+  frames never desync lips. **Closure hold**: if a must-hit interval overlaps a frame's display interval
+  [t, t + Δ], that frame is rendered closed (a 2–3-frame /p/ cannot be skipped by a dropped frame). Where
+  output latency is large or unreported (many Bluetooth devices), a one-tap "lips early / late"
+  calibration is offered and saved per device. Motion for each chunk arrives with the audio (Stage H on the
+  server); the worker runs the face and body layers 160 ms ahead. Tiers by measured GPU time over the last
+  60 frames: *full* → *light* (no cast shadow, MSAA 2×, LOD1) → *basic* (occlusion only, morphological AA,
+  LOD2, no garment springs).
+- **Research.** Lip-sync detectability asymmetry (ITU-R BT.1359; figures from memory, **UNVERIFIED**);
+  streaming embodiment on one timeline (BASE 2611.30388); real-time portrait animation (Teller 2503.18429).
+- **Ours.** Audio-master evaluation of explicit controls with closure hold and output-latency calibration.
 - **Defaults.** Tier change hysteresis 2 s.
 - **Fails → fallback.** Basic tier.
-- **Gate.** S5 and S14 on the reference laptops.
-- **Status.** *Partial*: frame-exact `renderAt(t)` in the lab player; worker scheduling *to build*.
+- **Gate.** S5 and S14 on the reference laptops; S3 with 10% injected frame drops.
+- **Status.** *Partial*: frame-exact `renderAt(t)` in the lab player; worker scheduling, closure hold and
+  latency calibration *to build*.
 
-#### L97 Model packaging and signing
+#### L93 Model packaging and signing
 - **Purpose.** One file that carries the person model, its consent and its report.
 - **In → Out.** All build outputs → `.pbmodel` (zip: manifest with SHA-256 of every file, signature,
-  consent record, provenance ledger, build report, mesh, morphs, weights, palette, curves, hair, wardrobe
-  fit, motion profile, voice reference).
+  consent record, provenance ledger, information-budget certificate, build report, template version, fitted
+  positions, morphs, palette, band textures, curves, hair fit, wardrobe fit, motion profile, coarticulation
+  parameters, voice reference); the phrase bank as a companion file.
 - **Method.** As the identity pack (`PACK_FORMAT.md`), signed with the server key; encrypted at rest with
-  the person's key (L3); the player verifies the signature and the lock before loading.
+  the person's key (L3); the player verifies the signature, the template hash and the lock before loading.
 - **Research.** —
 - **Ours.** The model refuses to load without its consent record and label component.
-- **Defaults.** ≤ 8 MB.
+- **Defaults.** ≤ 8 MB (bank ≤ 2 MB extra).
 - **Fails → fallback.** —
-- **Gate.** Tampered files rejected 100%; size ≤ 8 MB.
+- **Gate.** Tampered files rejected 100%; size within budget.
 - **Status.** *Partial*: signed identity pack exists (`pack.py`); model format *to build*.
 
-#### L98 Self-grading build, bench and release gates
+#### L94 Self-grading build, bench and release gates
 - **Purpose.** Every build checks itself; every change to any layer is checked on the bench.
 - **In → Out.** The built model + held-out frames → report with every gate's number and pass/fail; retries;
   release decision.
 - **Method.** After the build, render held-out views (the end of the capture, or another day's photos) with
-  the frames' own head pose and expression values, and run: likeness (S1), shape error, lip checks (S3–S6
-  with the person's own audio), limits and collisions over the whole action library (S7), pointing (S8),
-  no-copy (S15), size and a browser-speed proxy. If a gate fails and time remains, re-run only the layers
-  upstream of that gate with the next fallback setting (e.g., lower style $s$, more hair locks); else
-  ship the report with the failure named and the missing input asked for ("one more photo of your left
-  side"). The bench (8 people, §8.2) runs on every pull request touching the engine.
+  the frames' own head pose and expression values, and run: likeness (S1, with the gallery of L0), shape
+  error, lip checks on rendered pixels (S3–S6 with the person's own audio and the replay gate), limits and
+  collisions on every frame of the action library (S7), pointing (S8, geometric part), no-copy (S15), size
+  and a browser-speed proxy. If a gate fails and time remains, re-run only the layers upstream of that gate
+  with the next fallback setting (e.g., lower style $s$ or $\gamma$, another hair style); else ship the
+  report with the failure named and the missing input asked for ("one more photo of your left side"). A
+  2-person smoke bench runs on every pull request touching the engine; the full 8-person bench nightly and
+  before a release (8 builds × 4 GPU-minutes per pull request would be paid compute).
 - **Research.** Design-science evaluation (1904.12742).
 - **Ours.** Time-budgeted retry targeted at the failing gate.
 - **Defaults.** Retry budget = 240 s − elapsed.
@@ -1776,179 +2092,189 @@ without an animator (contradiction C2). Actions are **goal programs** solved on 
 - **Status.** *Partial*: held-out time split and gates in `build.py`; `bench.py`, `likeness.py`;
   `test_engine.py`.
 
+
 ### 5.12 Layer index (build checklist)
 
 | # | Layer | Status | Gate (short) |
 |---|---|---|---|
-| L1 | Consent capture and verification | partial | 100% of builds have a valid record; bench replay attacks (photo, screen replay of someone |
+| L0 | The bench (first deliverable) | to build | All 8 people's material complete and consented (owner decision D10). |
+| L1 | Consent capture and verification | partial | 100% of builds have a valid record; bench replay attacks (photo, screen replay of someone else) and voice … |
 | L2 | Identity lock | exists | Bench: all 8 genuine pairs pass; all 56 cross pairs fail. |
-| L3 | Provenance ledger, labelling and revocation | partial | S17: 100% traced; a deletion test leaves no readable model on server or cache. |
+| L3 | Provenance ledger, labelling and revocation | partial | S17: 100% traced; no check-only model on a parameter-choosing path (static check of the build graph); a … |
 | L4 | Capture coach and coverage planner | partial | On the bench, coached captures reach "Good" coverage in ≤ 3 min for 8/8 people. |
 | L5 | Frame quality, liveness and shot cuts | exists | ≥ 40 usable frames, or the build stops with a named reason. |
 | L6 | Main-person tracking | exists | Other people never used (manual audit of bench clips with bystanders: 0 frames). |
-| L7 | Dense face points | exists | Detection on ≥ 95% of usable frames; mean landmark jitter on static frames < 0.5% of … |
+| L7 | Dense face points | exists | Detection on ≥ 95% of usable frames; mean landmark jitter on static frames < 0.5% of eye distance. |
 | L8 | Expression reading and per-person calibration | partial | Neutral frames read ≤ 0.1 on every value after calibration. |
 | L9 | Head pose | exists | Pose jitter on still frames < 1°. |
-| L10 | Body points and metric lift | partial | Bone-length coefficient of variation < 5% across frames. |
+| L10 | Body points and metric lift | exists | Bone-length coefficient of variation < 5% across frames. |
 | L11 | Hand points | exists | ≥ 10 hand frames, or the report says the hands are estimated. |
 | L12 | Part segmentation | exists | Mask IoU between consecutive calm frames ≥ 0.9. |
 | L13 | Colour calibration | exists | Sclera chroma after correction ≤ 4 (CIELAB a,b) on bench frames. |
 | L14 | Accessories and facial hair | to build | Bench: glasses and facial-hair presence correct 8/8. |
-| L15 | Voice extraction and quality | partial | Reference ≥ 10 s at SNR ≥ 20 dB. |
-| L16 | Motion-habit profile | partial | Blink rate on two halves of the capture agree within ±20%. |
-| L17 | Canonical face | exists | Held-out face error < 2% of eye distance (measured 1.05%). |
+| L15 | Voice extraction and quality | partial | One reference ≥ 10 s at SNR ≥ 20 dB per language used, matching the consent voice. |
+| L16 | Motion-habit profile | exists | Blink rate on two halves of the capture agree within ±20%. |
+| L17 | Canonical face | exists | Held-out face error < 2% of eye distance (measured 1.05%, same-session; second-day to be measured). |
 | L18 | Metric scale | exists | Uncertainty < 8%. |
-| L19 | Multi-view depth refinement | partial | Profile-view reprojection error drops ≥ 20% vs. single-view depth; held-out view error … |
-| L20 | Personal expression basis | exists | Held-out shape error < 2%; mouth opening follows the real mouth r ≥ 0.9 (measured 0.97). |
-| L21 | Expression correctives | to build | Combination error drops ≥ 20% on held-out frames, else none kept. |
-| L22 | Symmetry and asymmetry | to build | Asymmetry measured on two halves of the capture agrees (correlation ≥ 0.8). |
-| L23 | Face detail curves | to build | Curves stable across views (mean positional disagreement < 3% of eye distance) and the … |
-| L24 | Full head completion | partial | Side-silhouette IoU ≥ 0.9. |
-| L25 | Likeness-constrained stylisation | partial | S1 holds at the chosen $s$. |
-| L26 | Ears | to build | Ear in the profile view within 3 px at 512 px. |
-| L27 | Neck and throat | partial | Front silhouette IoU ≥ 0.9 in the neck band. |
-| L28 | Skeleton and bone lengths | exists | Skeleton reprojection onto frames < 4% of shoulder width. |
-| L29 | Posture and spine | to build | Posture reprojection error < 4% of shoulder width. |
-| L30 | Hand skeleton and finger lengths | partial | Fingertip reprojection < 5 px at 512 px on held-out hand frames. |
-| L31 | Joint limits and pose plausibility | to build | S7: 0 library poses outside limits. |
-| L32 | Torso and arm volume | partial | Front silhouette IoU ≥ 0.9. |
-| L33 | Glasses and facial-hair geometry | to build | Owner's side-by-side check: accessories judged "right" for 8/8 bench people. |
-| L34 | Watertight surface and head–body join | to build | Manifold, no holes, no self-intersection in the rest pose. |
-| L35 | Remeshing and edge loops | to build | Minimum angle > 20° on 99% of triangles. |
-| L36 | UV layout | to build | Area stretch < 10% on 95% of triangles. |
-| L37 | Face-to-mesh binding | exists | Max vertex error vs. direct evaluation < 0.1 mm. |
-| L38 | Skin weights | partial | No tearing or folding (flipped triangles = 0) in every library pose. |
-| L39 | Skinning method: linear and dual-quaternion blend | to build | Volume change at elbows and wrists < 10% across the library poses. |
-| L40 | Pose correctives and runtime deformer | to build | Silhouette error at 90° elbow bend drops ≥ 20% vs. no correctives. |
-| L41 | Levels of detail | to build | LOD2 silhouette IoU ≥ 0.97 vs. LOD0 at panel size. |
-| L42 | Per-frame light estimation | partial | Recovered skin albedo agrees across frames: ΔE₀₀ < 3 between the 25th and 75th … |
-| L43 | Albedo field | partial | Mean ΔE₀₀ to measured skin colour (L13) < 3; no texel darker than 3σ of its region (no … |
-| L44 | Region palette and skin tone | partial | Region colours stable between two halves of the capture (ΔE₀₀ < 3). |
-| L45 | No-copy guard (band limit and patch test) | to build | S15 on every build. |
-| L46 | Feature curves: brows, lids, lip line, lashes | partial | Brow-shape IoU ≥ 0.8 vs. the masks in the front view. |
-| L47 | Shine, warmth and subsurface parameters | to build | Highlight position in renders within 5% of eye distance of the measured position on … |
-| L48 | Eyes | partial | No head-interior pixels visible at ±30° gaze; iris colour ΔE₀₀ < 5 vs. L13. |
-| L49 | Eyelids and lashes | partial | No lid–eyeball gap at any gaze in ±30°; full closure at eyeBlink = 1. |
-| L50 | Teeth, gums and mouth cavity | partial | No see-through mouth at any expression; teeth visible iff inner lips separate > 1 mm. |
-| L51 | Tongue | to build | Tongue visible on "th" and "l" in close-up renders; never through the teeth. |
-| L52 | Hair shape | partial | Hair silhouette IoU ≥ 0.8 in front and three-quarter views. |
-| L53 | Hair motion | to build | No hair particle inside a head capsule; stable at 30 fps for 10 min. |
-| L54 | Wardrobe and garment fit | partial | No body vertex outside the garment in any library pose. |
-| L55 | Cloth motion | to build | Stable at 30 fps; 0 cloth–body penetrations in the library. |
-| L56 | Lighting rig | partial | Face mean luminance in [0.45, 0.75] for every bench person and theme. |
-| L57 | Painted shading model | partial | Owner's style check against references 1–8 (§8.3) ≥ 4/5; skin luminance contrast between |
-| L58 | Surface-anchored brush strokes | to build | Temporal stability (L64) and owner's style check. |
-| L59 | Screen-space painterly filter | partial | GPU time ≤ 3 ms on the reference laptop (§7.2). |
-| L60 | Lines | partial | No line flicker (L64) and lines present on all 8 features in every bench render. |
-| L61 | Painted eyes and hair highlights | partial | Catch-light visible in both eyes in 100% of frames with gaze within ±20°. |
-| L62 | Render graph | partial | S14. |
-| L63 | Compositing, transparency and the AI label | to build | 100% of rendered frames and exported clips carry the label; watermark detected after |
-| L64 | Temporal stability | to build | Flicker metric (mean absolute frame difference after motion compensation) on a slow … |
-| L65 | Text normalisation and language routing | to build | Round trip: ASR of the synthesised Hinglish set has character error rate ≤ 15%. |
-| L66 | Grapheme to phoneme (IPA) | partial | Phone error rate ≤ 5% on a 500-word Hindi and a 500-word English test list. |
-| L67 | Cloned voice synthesis | partial | Speaker similarity (ECAPA-TDNN cosine, 2005.07143) between synthesis and held-out real … |
-| L68 | Phone timing | partial | Median boundary error ≤ 20 ms on a hand-labelled 200-phone set per language. |
-| L69 | Audio watermark and provenance | to build | Detection ≥ 99% after MP3/Opus re-encoding at 32 kbps; no audible artefacts in the … |
-| L70 | Phones to visemes | exists | All IPA phones in the test set map to a class (exists: … |
-| L71 | Coarticulation | partial | S3 and S4 (exists as `lip_check`); coarticulation path ratio (2610.03436) within the … |
-| L72 | Jaw–lip split and personal mouth range | to build | S6; SLCC on held-out speech ≥ the value of the person's own video (2503.20308 metric). |
-| L73 | Tongue and teeth visibility control | to build | Tongue visible on 100% of θ/ð and ≥ 80% of l in close-up; teeth never visible with … |
-| L74 | Learned lip refiner | partial | S3–S6 still hold after fusion; PLRS (2503.20308) ≥ rules-only. |
-| L75 | Prosody features | partial | Stress agreement with a hand-labelled set ≥ 80%. |
-| L76 | Emotion layer | to build | Observers recognise the 5 cues from silent clips ≥ 70% (chance 20%). |
-| L77 | Blinks, brows and micro-motion | partial | Blinks per minute within ±20% of the person's own (from L16). |
-| L78 | Head motion | partial | Head speed distribution matches the person's own (two-sample KS p > 0.05) on 6/8 bench … |
-| L79 | Gaze | to build | Gaze lands within 2° of the target element's centre within 250 ms of the cue. |
-| L80 | Action language | partial | Every action in the list parses and expands; every expansion solvable (L83) for all 8 … |
-| L81 | Gesture planner | partial | Appropriateness rating (GENEA-style, §8.4) ≥ the rule baseline; no two strokes < 300 … |
-| L82 | Target resolution: lesson element to 3D point | to build | S8. |
-| L83 | Reaching by inverse kinematics | to build | Target error < 2% of arm length; 0 limit violations. |
-| L84 | Hand shapes | partial | Every named shape within L31's limits; observers identify counts 1–5 from renders ≥ 95%. |
-| L85 | Gesture phases and timing curves | partial | Stroke within 100 ms of the target stress in 95% of gestures. |
-| L86 | Balance, lean and torso compensation | to build | Centre of mass projection inside the base region in all library actions. |
-| L87 | Self-collision avoidance | to build | S7: 0 penetrations deeper than 2 mm in the library × 8 bodies. |
-| L88 | Idle life and breathing | to build | No interval > 2 s with all joint velocities below 0.2°/s. |
-| L89 | Motion mixer and personal style | to build | Mouth closures (S3) never broken by other layers; style scalars within ±2σ of the … |
-| L90 | Listening: voice activity and recognition | exists | WER/CER on the Hinglish classroom set within 10% relative of the best single provider. |
-| L91 | Turn-taking | to build | False cut-ins ≤ 5% of student turns; median gap after a true end ≤ 300 ms to first … |
-| L92 | Listening reactions, contingent on correctness | to build | S12 = 0 agreement signals after wrong steps on the scripted test set; backchannel … |
-| L93 | Brain and performance script | partial | 100% of executed tags valid; Leak Guard tests pass (existing voice tests). |
-| L94 | Barge-in and repair | to build | S11. |
-| L95 | Latency hiding | to build | S10. |
-| L96 | Clock, scheduler and adaptive quality | partial | S5 and S14 on the reference laptops. |
-| L97 | Model packaging and signing | partial | Tampered files rejected 100%; size ≤ 8 MB. |
-| L98 | Self-grading build, bench and release gates | partial | All system gates of §2.5 green before release; the owner approves a video with sound. |
+| L19 | Multi-view depth refinement | partial | Profile-view reprojection error drops ≥ 20% vs. single-view depth; held-out view error < 2%. |
+| L20 | Personal expression basis (with optional pair correctives) | exists | Held-out shape error < 2%; mouth opening follows the real mouth r ≥ 0.9 (measured 0.97); a kept corrective … |
+| L21 | Symmetry and asymmetry | to build | Asymmetry measured on two halves of the capture agrees (correlation ≥ 0.8). |
+| L22 | Face detail curves | to build | Curves stable across views (mean positional disagreement < 3% of eye distance) and the owner's … |
+| L23 | Full head completion | partial | Side-silhouette IoU ≥ 0.9. |
+| L24 | Likeness-gated stylisation and caricature | partial | S1 and S2 hold at the chosen $(s, \gamma)$; ablation $\gamma = 0$ vs. chosen (§8.5). |
+| L25 | Ears | to build | Ear in the profile view within 3 px at 512 px. |
+| L26 | Neck and throat | partial | Front silhouette IoU ≥ 0.9 in the neck band. |
+| L27 | Skeleton and bone lengths | partial | Skeleton reprojection onto frames < 4% of shoulder width. |
+| L28 | Posture and spine | to build | Posture reprojection error < 4% of shoulder width. |
+| L29 | Hand skeleton and finger lengths | partial | Hand length within ±5% of the bench ruler measurement (L0); fingertip reprojection reported. |
+| L30 | Joint limits | to build | S7 (limits after every layer, including the spring layer L84). |
+| L31 | Torso and arm volume | partial | Front silhouette IoU ≥ 0.9. |
+| L32 | Glasses and facial-hair geometry | to build | Owner's side-by-side check: accessories judged "right" for 8/8 bench people. |
+| L33 | The template mesh (authored once) | to build | Manifold, no self-intersection; library poses (S7) deform without flipped triangles on 8 bench bodies; … |
+| L34 | Template fit | to build | Face points within 0.5% of eye distance of L17–L24's face; head, neck and body silhouette IoU ≥ 0.9; no … |
+| L35 | Face binding and expression morphs | partial | Max vertex error vs. direct evaluation < 0.1 mm; no shading discontinuity across the old oval line … |
+| L36 | Skin weights | partial | No tearing or folding (flipped triangles = 0) on every frame of every library action. |
+| L37 | Runtime deformer: correctives and skinning | to build | Volume change at elbows and wrists < 10% and silhouette error at a 90° elbow bend ≥ 20% lower than without … |
+| L38 | Levels of detail | to build | LOD2 silhouette IoU ≥ 0.97 vs. LOD0 at panel size. |
+| L39 | Per-frame light estimation | partial | Recovered skin albedo agrees across frames: ΔE₀₀ < 3 between the 25th and 75th percentile frames. |
+| L40 | Colour model (parametric by default) | partial | Mean ΔE₀₀ to measured skin colour (L13) < 3; no region darker than 3σ of its own frames (no baked shadows). |
+| L41 | Region palette, skin tone and shine | partial | Region colours stable between two halves of the capture (ΔE₀₀ < 3); owner's form-readability check per … |
+| L42 | No-copy guard: information-budget certificate | to build | S15 on every build. |
+| L43 | Feature curves: brows, lids, lip line, lashes | partial | Brow-shape IoU ≥ 0.8 vs. the masks in the front view. |
+| L44 | Eyes | partial | No head-interior pixels visible at ±30° gaze; iris colour ΔE₀₀ < 5 vs. L13; owner judges the three-quarter … |
+| L45 | Eyelids and lashes | partial | No lid–eyeball gap at any gaze in ±30°; full closure at eyeBlink = 1. |
+| L46 | Teeth, gums, mouth cavity and tongue | partial | No see-through mouth at any expression; teeth visible iff inner lips separate > 1 mm; tongue visible on … |
+| L47 | Hair shape (library first) | partial | Hair silhouette IoU ≥ 0.8 in front and three-quarter views; owner judges the style "theirs" on ≥ 7/8. |
+| L48 | Hair motion | to build | No spine point inside a head capsule; stable at 30 fps for 10 min. |
+| L49 | Wardrobe and garment fit | partial | No body vertex outside the garment on any frame of the library, including arms above 90°. |
+| L50 | Garment motion | to build | Stable at 30 fps; 0 cloth–body penetrations > 2 mm on every frame of the library. |
+| L51 | Lighting rig | exists | Face mean luminance in [0.45, 0.75] for every bench person and theme. |
+| L52 | Shading-normal field | to build | In a slow head turn and a speech clip, band islands smaller than 1% of the face area: 0. |
+| L53 | Build-time painter: painted band textures | partial | S18; flicker (L58) ≤ the plain shaded render; L42 painter audit passes. |
+| L54 | Painted shading model (run time) | partial | S18; form readable per Monk group (owner's check on the bench). |
+| L55 | Key-light cast shadow and baked occlusion | to build | GPU time ≤ 1.2 ms on the reference laptop (estimate 0.8–1.2 ms, **UNVERIFIED** until the spike, §8.6); no … |
+| L56 | Lines | partial | No line flicker (L58) and lines present on all 8 features in every bench render. |
+| L57 | Painted eyes and hair highlights | partial | Catch-light visible in both eyes in 100% of frames with gaze within ±20°. |
+| L58 | Anti-aliasing and temporal stability | to build | Edge-crawl and flicker metrics (mean absolute frame difference after motion compensation) on a slow … |
+| L59 | Render graph | partial | S14. |
+| L60 | Compositing, transparency and the AI label | to build | 100% of rendered frames and exported clips carry the label; watermark detected after re-encoding at 1 … |
+| L61 | Text normalisation and language routing | to build | Round trip: ASR of the synthesised Hinglish set has character error rate ≤ 15%. |
+| L62 | Grapheme to phoneme: a pronunciation lattice | partial | Phone error rate of the best lattice path ≤ 5% on a 500-word Hindi and a 500-word English list. |
+| L63 | Cloned voice synthesis | partial | Speaker similarity (ECAPA-TDNN cosine, check-only, 2005.07143) between synthesis and held-out real speech … |
+| L64 | Spoken-phone alignment and prosody | partial | Median boundary error ≤ 20 ms on a hand-labelled 200-phone set per language; logged rate of must-hit … |
+| L65 | Personal phrase bank | to build | Every item passes L63's speaker and intelligibility gates and S3–S4. |
+| L66 | Audio watermark and provenance | to build | Detection ≥ 99% after MP3/Opus re-encoding at 32 kbps; no audible artefacts (ABX at chance). |
+| L67 | Phones to visemes | exists | All IPA phones in the test set map to a class (exists: `test_every_language_sound_has_a_mouth`). |
+| L68 | Coarticulation as a constrained trajectory | partial | S3 and S4 by construction on controls and on rendered pixels; coarticulation path ratio (2610.03436) … |
+| L69 | Jaw–lip split and personal mouth range | to build | S6; SLCC on held-out speech ≥ the value of the person's own video (2503.20308 metric). |
+| L70 | Tongue and teeth visibility control | to build | Tongue visible on 100% of θ/ð and ≥ 80% of l in close-up; teeth never visible with closed lips. |
+| L71 | Learned lip refiner and the replay gate | partial | S3–S6 still hold after fusion; PLRS (2503.20308) ≥ rules-only; replay correlation on the mouth values ≥ … |
+| L72 | Emotion layer (face and body) | to build | Observers recognise the 5 cues from silent clips ≥ 70% (chance 20%), with the face and with the face … |
+| L73 | Blinks, brows and micro-motion | exists | Blinks per minute within ±20% of the person's own (from L16). |
+| L74 | Head motion | partial | Head speed distribution matches the person's own: median and 90th percentile within ±20% on 6/8 bench people. |
+| L75 | Gaze | to build | Gaze lands within 2° of the target element's centre within 250 ms of the cue; during fixation the gaze … |
+| L76 | Action language | partial | Every action parses and expands; every expansion solvable (L79) for all 8 bench bodies; two-hand actions: … |
+| L77 | Gesture planner | partial | Appropriateness rating (GENEA-style, §8.4) ≥ the rule baseline; no two apexes < 300 ms apart; hands … |
+| L78 | Target resolution: lesson element to 3D point, for the observer | to build | S8. |
+| L79 | Arm solver: analytic IK with shoulder girdle and torso | to build | Target error < 2% of arm length; 0 limit violations; no single-frame swivel change > 5° while the target … |
+| L80 | Hand shapes | partial | Every named shape within L30's limits; observers identify counts 1–5 from rendered, painted clips ≥ 95%. |
+| L81 | Trajectories and gesture phases | partial | |apex − accent| ≤ 100 ms in 95% of beats. |
+| L82 | Self-collision avoidance | to build | S7: 0 penetrations deeper than 2 mm on every frame of the library × 8 bodies. |
+| L83 | Rest poses, idle life and breathing | to build | No interval > 2 s with all joint velocities below 0.2°/s; inhalation onsets in pauses ≥ 95%. |
+| L84 | Secondary dynamics | to build | No added limit violations; apex timing (L81) still within tolerance after filtering. |
+| L85 | Motion mixer and personal style | to build | Mouth closures (S3) never broken by other layers; angular acceleration per joint bounded (no single-frame … |
+| L86 | Listening: voice activity, streaming recognition and echo guard | partial | WER/CER on the Hinglish classroom set within 10% relative of the best single provider; S11's echo test … |
+| L87 | Turn-taking, with a teacher's wait time | to build | False cut-ins ≤ 5% of student turns; median gap after a true end ≤ 300 ms to first reaction; after … |
+| L88 | Listening reactions, contingent on correctness | to build | S12; backchannel timing rated natural ≥ 3.5/5. |
+| L89 | Brain and streamable performance script | partial | 100% of executed tags valid; Leak Guard tests pass, including a new test of streaming order (no clause … |
+| L90 | Barge-in and repair | to build | S11. |
+| L91 | Latency hiding: speculation and the bank | to build | S10. |
+| L92 | Clock, scheduler and adaptive quality | partial | S5 and S14 on the reference laptops; S3 with 10% injected frame drops. |
+| L93 | Model packaging and signing | partial | Tampered files rejected 100%; size within budget. |
+| L94 | Self-grading build, bench and release gates | partial | All system gates of §2.5 green before release; the owner approves a video with sound. |
 
-Totals: 98 layers; 15 exist, 45 partial, 38 to build.
+Totals: 95 layers (L0–L94); 16 exist, 43 partial, 36 to build.
+
 
 ---
 
 ## 6. Training and data
 
-### 6.1 What is learned once (shared priors) and what per person
+### 6.1 What is learned or authored once (shared) and what per person
 
-| Learned once (shared, rebuilt when improved) | Layer | Data | Size / cost (estimate) |
+| Learned or authored once (shared, rebuilt when improved) | Layer | Data | Size / cost (estimate) |
 |---|---|---|---|
+| The template: topology, UVs, loops, skeleton with twist/helper joints, weights, correctives, LODs, authored painting attributes, garment cages, scalp | L33 | MakeHuman CC0 core base mesh (pinned) or our own model; our artists (D3) | authoring weeks, once |
 | Face-controls / face-shape regressor (points → shape) | L19, L20 fallback | Synthetic CC0 MakeHuman people rendered in Blender (`training/face_controls`) | 20–50k people; CPU or ≈ 10 GPU-h render |
-| Population expression deltas | L20 | Same synthetic set + consented bench | — |
-| Head prior (30 PCA components) | L24 | Synthetic CC0 heads + consented bench | minutes on CPU |
-| Skin-weight residual net | L38 | CC0 MakeHuman rigs posed randomly | ≈ 5 GPU-h |
-| Pose correctives (RBF) | L40 | CC0 MakeHuman bodies, simulated | ≈ 1 GPU-h |
+| Population expression deltas and pair correctives | L20 | Same synthetic set + consented bench | — |
+| Head prior (30 PCA components, template topology) | L23, L24, L0 | CC0 heads + consented bench | minutes on CPU |
 | Accessory and facial-hair detectors | L14 | Synthetic renders with CC0 glasses/beards we model | ≈ 5 GPU-h |
-| Hand synergy space and pose prior | L31, L84 | Consented hand captures (counting, pointing, palms) + synthetic | small |
-| Stroke atlas | L58 | Painted by our own artists (owned) | — |
-| Lip refiner (audio → 52 values) | L74 | Consented Hindi/Hinglish/English face video (1–3 h start), `training/lipsync` | ≈ 20 GPU-h fine-tune |
-| Indic voice adapter | L67 | Consented readings, 30–60 min per voice; CC0 Common Voice Hindi for robustness | ≈ 10 GPU-h |
-| Phone aligner (IPA CTC) | L68 | CC0 / CC-BY speech (Common Voice, LibriTTS-R) | ≈ 20 GPU-h |
-| Language-ID for Hinglish | L65 | Our own lesson text + consented transcripts | CPU |
-| Gesture scorer | L81 | Consented teaching videos (pose + transcript) | ≈ 5 GPU-h |
-| Turn-taking / backchannel model | L91, L92 | Consented two-channel tutoring conversations (10–20 h) | ≈ 10 GPU-h |
+| Monk-class painterly palette table | L41 | Authored by our artists over reference swatches | — |
+| Hair clump library | L47 | Modelled by us (owned) | authoring, once |
+| Stroke atlas and stroke layout | L53 | Painted by our own artists (owned) | — |
+| Owned style kit (optional) | L53, S18 | 30–60 portraits painted by our artists over our own plain renders of fictional heads or self-portraits (D3, D4) | — |
+| Hand synergy space (optional) | L80 | Consented hand captures (counting, pointing, palms) | small |
+| Lip refiner (audio → 52 values) | L71 | Consented Hindi/Hinglish/English face video (1–3 h start), `training/lipsync` | ≈ 20 GPU-h fine-tune |
+| Indic voice adapter | L63 | Consented readings, 30–60 min per voice; CC0 Common Voice Hindi for robustness | ≈ 10 GPU-h |
+| Phone recogniser for the lattice aligner (IPA CTC) | L64 | CC0 / CC-BY speech (Common Voice, LibriTTS-R) | ≈ 20 GPU-h |
+| Language-ID for Hinglish | L61 | Our own lesson text + consented transcripts | CPU |
+| Turn-aware streaming ASR adapter | L86 | Consented Hinglish classroom speech | ≈ 5 GPU-h |
+| Turn-taking / backchannel models (later) | L87, L88 | Consented two-channel tutoring conversations (10–20 h) | ≈ 10 GPU-h |
 
 | Per person (in the 3–4 minute build) | Layers |
 |---|---|
 | Neutral 3D face, metric scale, multi-view refinement | L17–L19 |
-| Personal expression deltas, correctives, asymmetry, crease curves | L20–L23 |
-| Head completion coefficients, ears, neck, stylisation strength | L24–L27, L25 |
-| Skeleton, posture, hands, limits, body volume, accessories | L28–L33 |
-| Mesh, UVs, binding, weights, LODs | L34–L41 |
-| Light, albedo field (band-limited), palette, features, shine, eyes, teeth, hair | L42–L53 |
-| Garment fit | L54 |
-| Stroke orientation maps | L58 |
-| Motion-habit profile, mouth ranges | L16, L72 |
-| Voice reference (embedding); optional adapter later, outside the budget | L67 |
+| Personal expression deltas (and kept correctives), asymmetry, crease curves | L20–L22 |
+| Head completion, stylisation and caricature strength, ears, neck | L23–L26 |
+| Skeleton, posture, hands, limits, body volume, accessories | L27–L32 |
+| Template fit, face binding, weights, LODs | L34–L38 |
+| Light, colour model, palette, certificate, features, eyes, teeth, hair style fit | L39–L47 |
+| Garment fit | L49 |
+| Shading normals, occlusion, painted band textures | L52, L53, L55 |
+| Motion-habit profile, mouth ranges, coarticulation parameters, rest poses | L16, L68, L69, L83 |
+| Voice references per language, phrase bank; optional adapter later, outside the budget | L15, L63, L65 |
 
 ### 6.2 Rules for data
 
 - Only data we own, CC0, or licences that allow commercial training; recordings of people who agreed **in
   writing** that their recordings train NexoraGuru's models (`TRAINING.md`). Never scraped faces, voices or
   art. Never commit anyone's photos, video or packs.
+- No frame, still or derivative of the reference series enters any training set, style kit, metric or test
+  set; the look is a reference for people only.
 - Our own lessons and solutions were drafted with AI agents, so they are lookup material only, never training
   data (`docs/voice/TRAINING.md`); this applies to any text model trained here.
 - Research datasets with non-commercial terms are used **only to compare with published numbers**, never to
-  train anything shipped.
+  train anything shipped. Models trained on such data are **check-only** (L3, D6).
 
 ### 6.3 Datasets and models with licences
 
 | Item | Use | Licence | Ship-OK? |
 |---|---|---|---|
-| MakeHuman base mesh and assets | Synthetic training people and heads | CC0 (per repo notes) | yes |
+| MakeHuman core base mesh and assets | Template (L33), synthetic training people and heads | Core assets CC0 per the MakeHuman licence page (checked 2026-11-26); code AGPL/GPL (not used); an older readme says otherwise (D2) | yes, after D2; version pinned |
 | Blender | Rendering synthetic data | GPL (tool only; outputs are ours) | yes (outputs) |
 | Mozilla Common Voice | Aligner, voice robustness | CC0 | yes |
 | LibriTTS-R | Aligner | CC BY 4.0 | yes (attribute) |
 | AI4Bharat IndicVoices / Kathbath | Hindi ASR/aligner | CC BY 4.0 — **UNVERIFIED** | only after checking |
 | IIT-Madras IndicTTS | Voice | custom licence — **UNVERIFIED**, treat as no | no |
 | RASMALAI (2505.18609) | Indic TTS | **UNVERIFIED** | only after checking |
-| BEAT2, AMASS, MEAD, HDTF, VOCASET, Seamless Interaction, VoxCeleb, FFHQ | Comparison only | non-commercial or research terms | no |
-| MediaPipe face/pose/hands/segmentation | Stage B | Apache-2.0 | yes |
-| YuNet / SFace (OpenCV zoo) | L2, L6, gates | MIT / Apache-2.0 | yes |
-| Chatterbox Multilingual | L67 | MIT (with watermark) | yes |
-| Kokoro via HeadTTS | L67 fallback | Apache-2.0 (Kokoro); HeadTTS licence **UNVERIFIED** | yes after check |
-| CosyVoice (2407.05407) | L67 alternative | Apache-2.0 (per authors) — **UNVERIFIED** for every checkpoint | check |
-| wav2arkit_cpu; LAM Audio2Expression | L74 | Apache-2.0 (per `slots.json`, `TRAINING.md`) | yes |
-| Whisper; IndicConformer | L90 | MIT | yes |
+| IndicFDB | Conversation benchmark | **UNVERIFIED** | comparison only |
+| BEAT2, AMASS, MEAD, HDTF, VOCASET, Seamless Interaction, VoxCeleb, FFHQ, Switchboard | Comparison only | non-commercial, research or LDC terms | no |
+| MediaPipe face/pose/hands/segmentation | Stage B, geometric likeness score, rendered-pixel lip gates | Apache-2.0 | yes |
+| YuNet / SFace (OpenCV zoo) | L2, L6, S1 check | MIT / Apache-2.0 weights; trained partly on MS-Celeb-1M (withdrawn) | check-only (D6); not shipped |
+| Chatterbox Multilingual + `Chatterbox-Multilingual-hi` | L63 | MIT; archived and unmaintained since August 2026 (vendored, pinned) | yes |
+| Chatterbox-Nano (English, CPU) | §7.4 option for English live replies on CPU | licence and cloning quality **UNVERIFIED** | check |
+| Kokoro via HeadTTS | L63 fallback | Apache-2.0 (Kokoro); HeadTTS licence **UNVERIFIED** | yes after check |
+| CosyVoice (2407.05407) | L63 second engine | Apache-2.0 (per authors) — **UNVERIFIED** for every checkpoint | check |
+| wav2arkit_cpu; LAM Audio2Expression | L71 | Apache-2.0 (per `slots.json`, `TRAINING.md`) | yes |
+| Whisper; IndicConformer | L86 | MIT | yes |
+| Qwen3-ASR-0.6B | L86 streaming ASR | Apache-2.0 per its model tag — **UNVERIFIED** in L3 | check |
+| Silero VAD | L86 | MIT | yes |
+| XLSR-53 phone recogniser (2109.11680); Allophant (2306.04306) | L64 prototypes | weights **UNVERIFIED**; BABEL (LDC) in pre-training | check-only until confirmed |
+| AudioSeal (2401.17264) | L66 | MIT, code and weights (README, April 2024) | yes |
+| Perth watermark (in Chatterbox) | L66 (optional) | **UNVERIFIED** | only after checking |
+| ECAPA-TDNN (SpeechBrain) | L1 voice match, L63 gate | Apache-2.0 code; weights trained on VoxCeleb | check-only (D6) |
+| Diffusion base model for the optional painter (e.g. FLUX.1-schnell) | L53 variant | **UNVERIFIED** | only after checking (D9) |
 | gsplat (2409.06765) | Bench comparisons, optional | Apache-2.0 | yes |
-| AudioSeal (2401.17264) | L69 | code MIT; weights **UNVERIFIED** | check |
-| ECAPA-TDNN (SpeechBrain) | Evaluation only | Apache-2.0 code; weights trained on VoxCeleb | evaluation only |
 | Qwen3-8B, sarvam-m | Guru options | Apache-2.0 (per `ENGINE.md`) | yes |
 | FLAME, SMPL/SMPL-X, MANO, 3DGS code, insightface, nvdiffrast, F5-TTS, MMS | — | non-commercial | **never** |
 
@@ -1956,68 +2282,95 @@ Totals: 98 layers; 15 exist, 45 partial, 38 to build.
 
 ## 7. Runtime budgets
 
-### 7.1 Build: ≤ 240 s on one 24 GB GPU (e.g., L4 / A10 / RTX 4090 class)
+### 7.1 Build: ≤ 240 s on one warm 24 GB GPU (e.g., L4 / A10 / RTX 4090 class)
 
 Stage B mostly runs on the person's device during capture, so the server starts from the identity pack.
-Times are design targets (**UNVERIFIED** until measured on the bench); CPU work runs in parallel with GPU work
-where the dependency graph allows.
+The clock starts on a **warm** worker (weights loaded); container start, weight loading and pack download
+add an estimated 30–90 s on a cold rented GPU (**UNVERIFIED**) and are reported separately (D8). Times are
+design targets (**UNVERIFIED** until measured on the bench); CPU work runs in parallel with GPU work where
+the dependency graph allows.
 
 | Step | Layers | Device | Target (s) |
 |---|---|---|---|
-| Unpack, verify signature, consent and lock | L1–L3 | CPU | 5 |
+| Unpack, verify signature, consent, face lock, voice match | L1–L3 | CPU | 6 |
 | Re-read any uploads not processed on device | L5–L16 | CPU (parallel) | 0–40, overlapped |
-| Canonical face, scale, multi-view BA, expression basis, correctives, asymmetry | L17–L22 | CPU/GPU | 12 |
-| Crease curves, head prior fit, stylisation search (renders + SFace) | L23–L25 | GPU | 12 |
-| Ears, neck, skeleton, posture, hands, limits, volume, accessories | L26–L33 | CPU | 8 |
-| Implicit surface + marching cubes, remesh, UVs, binding | L34–L37 | GPU + CPU | 18 |
-| Weights (sparse solves + residual net), correctives, LODs | L38–L41 | GPU | 12 |
-| Light + albedo field (alternating least squares on GPU) | L42–L43 | GPU | 30 |
-| Palette, no-copy guard, features, shine | L44–L47 | GPU | 12 |
-| Eyes, lids, teeth, tongue | L48–L51 | CPU | 3 |
-| Hair visual hull, guide field, locks | L52 | GPU | 15 |
-| Garment fit | L54 | CPU | 4 |
-| Stroke orientation bake | L58 | GPU | 6 |
-| Voice reference embedding, mouth ranges | L67, L72 | GPU | 10 |
-| Gates: held-out renders, SFace, lip checks, action library × limits/collisions, no-copy, perf proxy | L98 | GPU + CPU | 35 |
-| Package, sign, upload | L97 | CPU | 5 |
-| **Total (sequential critical path)** | | | **≈ 187** |
-| Retry budget for failing gates | L98 | | up to 53 |
+| Canonical face, scale, multi-view BA, expression basis, asymmetry | L17–L21 | CPU/GPU | 10 |
+| Crease curves, head prior fit | L22–L23 | GPU | 8 |
+| Stylisation and caricature search (renders + landmarks) | L24 | GPU | 8 |
+| Ears, neck, skeleton, posture, hands, limits, volume, accessories | L25–L32 | CPU | 8 |
+| Template fit (sparse solves), face binding, weights, LODs | L34–L38 | GPU + CPU | 6 |
+| Light + parametric colour model + palette | L39–L41 | GPU | 15 |
+| Information-budget certificate, patch check | L42 | CPU | 3 |
+| Features, eyes, lids, mouth | L43–L46 | CPU | 3 |
+| Hair style fit | L47 | GPU | 6 |
+| Garment fit | L49 | CPU | 2 |
+| Shading normals and occlusion bake (rest + 52 targets) | L52, L55 | GPU | 6 |
+| Painted band textures (procedural painter) | L53 | GPU | 10 |
+| Voice references, mouth ranges, coarticulation fit | L15, L63, L68, L69 | GPU | 12 |
+| Phrase bank synthesis (batched; mostly overlapped with CPU stages) | L65 | GPU | 10 on the critical path (≈ 20 in all) |
+| Gates: held-out renders, likeness gallery, rendered-pixel lip checks, replay, action library × limits/collisions per frame, certificate, perf proxy | L94 | GPU + CPU | 35 |
+| Package, sign, upload | L93 | CPU | 5 |
+| **Total (sequential critical path)** | | | **≈ 153** |
+| Retry budget for failing gates | L94 | | up to 87 |
+
+The template removes about 30 s of v1's critical path (implicit surface, remesh, UVs, heat diffusion); the
+painter and the phrase bank spend part of it. The optional diffusion painter (D9) would add an estimated
+20–40 s (**UNVERIFIED**) and is not in this budget.
 
 ### 7.2 Playback: 30 fps at 720p on an ordinary laptop
 
 Reference devices: an Intel Iris Xe-class integrated GPU laptop and a 2020 MacBook Air (M1), Chrome and
 Safari. Frame budget 33.3 ms; target GPU ≤ 15 ms and main thread ≤ 6 ms so the lesson page stays smooth.
-Estimates, to be measured (**UNVERIFIED**):
+Estimates, to be measured (**UNVERIFIED**) by the spike frame of §8.6 before any Stage F code is written:
 
 | Work | Where | Target |
 |---|---|---|
-| Motion streams (lips, emotion, blinks, head, gaze), IK, hands, collisions, mixer | Worker | 2.0 ms |
-| Hair XPBD (300 locks × 6) and cloth XPBD (≈ 1.5k particles) | Worker | 2.5 ms |
-| Upload pose (≈ 60 bones + 52 values + correctives) | Main | 0.3 ms |
-| Skinning + morphs (face 6k vertices × 52 targets in a float texture; body 25k) | GPU VS | 1.5 ms |
-| G-buffer pass | GPU | 3.0 ms |
-| Painted shading + strokes + highlights | GPU | 2.0 ms |
-| Kuwahara filter at half resolution + joint-bilateral upsample | GPU | 3.0 ms |
-| Lines | GPU | 1.0 ms |
-| Temporal stabilisation + composite | GPU | 1.0 ms |
-| **GPU total** | | **≈ 11.5 ms** |
+| Face and body layers (blinks, head, gaze, emotion), arm solver, hands, swept collisions, springs, mixer (mouth values arrive from the server) | Worker | 2.0 ms |
+| Hair and garment spring chains (≈ 60 spines) | Worker | 0.5 ms |
+| Upload pose (≈ 70 bones + 52 values + correctives) | Main | 0.3 ms |
+| Skinning + active morphs (≤ 15 of 52 per frame, float texture; body 25k vertices) | GPU VS | 1.5 ms |
+| Key-light shadow map 1024² | GPU | 1.0 ms |
+| Forward 4× MSAA pass: band textures, shading, rim, highlights, eyes | GPU | 4.0 ms |
+| Lines (inverted hull + edges) | GPU | 1.0 ms |
+| Resolve + composite | GPU | 0.7 ms |
+| **GPU total** | | **≈ 8.2 ms** |
 
-Download ≤ 8 MB per teacher (mesh ≈ 2 MB compressed, morph targets ≈ 2 MB at fp16, textures ≈ 1 MB, hair
-and garments ≈ 0.5 MB). As a sanity bound, skinned Gaussian avatars reach 40–50 fps on a phone and 240 fps on
-a laptop GPU in a web/mobile system (2510.13978); our mesh pipeline is lighter than that per frame, but the
-painterly passes are extra.
+Download ≤ 8 MB per teacher (fitted positions and LODs ≈ 1.5 MB compressed, morph targets ≈ 2 MB at fp16,
+band textures ≈ 2 MB, hair and garments ≈ 0.5 MB; the template itself is cached once for all teachers), plus
+the phrase bank ≤ 2 MB. As a sanity bound, skinned Gaussian avatars reach 40–50 fps on a phone and 240 fps
+on a laptop GPU in a web/mobile system (2510.13978).
 
 ### 7.3 Conversation latency (student stops → teacher)
 
+Version 1 left out recognition time. With it:
+
 | Step | Target |
 |---|---|
-| End-of-turn decision (L91) | 150–300 ms after the last word |
-| Visible pre-reaction (L95) | 250 ms |
-| Brain first clause (server GPU, streamed) | 300–500 ms |
-| Voice first audio chunk (L67) | 150–250 ms |
-| Motion for the first chunk (L70–L89) | < 20 ms |
+| End-of-turn decision (streaming ASR boundary + silence + semantics, L86–L87) | 350–500 ms after the last word (2609.04225 reports a 0.39 s median) |
+| Visible pre-reaction (L91) | 250 ms after the last word, in parallel |
+| Bank phrase audio (local, L65) | ≈ 100 ms after the decision → first audio ≈ 0.5–0.7 s |
+| Brain first clause (streamed; the speculative draft may already exist) | 0.3–0.6 s |
+| Clause Leak Guard (L89) | < 50 ms |
+| Voice first chunk, multilingual model (L63) | 0.3–0.6 s (**UNVERIFIED**; Hindi slower than English) |
+| Alignment and mouth path for the chunk (L64–L71, server) | < 50 ms |
 | Network both ways | 50–100 ms |
-| **First audio** | **≈ 0.7–1.1 s** (S10 target median ≤ 1.0 s) |
+| **First content clause** | **≈ 1.2–1.8 s** (S10 median ≤ 1.8 s); lower when speculation was right |
+
+For comparison: human Hindi listeners respond in about 0.26 s, and the best published Hindi duplex model
+takes about 2.0 s (2604.23295).
+
+### 7.4 Server cost and concurrency (the "free where possible" budget)
+
+| Load | When | Cost |
+|---|---|---|
+| Lesson narration (audio, phone times, 52 values, gestures) | Once per lesson × teacher model, at publish time, on the build GPU | One-off GPU time; play time is static files (free) |
+| Phrase bank | In the build (§7.1) | Inside the build budget |
+| Live replies in the cloned voice | Per clause while a student talks | **Not free**: needs a GPU worker up during sessions. Concurrent streams per GPU and cost per student-hour (GPU-hour price ÷ concurrent streams × share of time she speaks) are measured on the bench before launch; no number is assumed here |
+| Streaming ASR | Per student turn | Small model on GPU or CPU — **UNVERIFIED**; the free cloud chain for finals |
+| Brain | Per turn | Guru's free providers with failover (existing) |
+| CPU fallbacks | When no GPU is up | Labelled default voice (Kokoro); for English, Chatterbox-Nano on CPU is worth measuring (its README reports 3× real time on 8 CPU cores; ARM speed, cloning quality and licence **UNVERIFIED**); otherwise text plus the phrase bank |
+
+The owner chooses whether live cloned replies are offered at all (D5).
 
 ---
 
@@ -2027,27 +2380,30 @@ painterly passes are extra.
 
 | Family | Metric | Used in |
 |---|---|---|
-| Likeness (machine) | SFace cosine of neutral, front-lit renders vs. held-out photos, as share of the person's photo-to-photo ceiling; impostor controls | S1, L25, L98 |
-| Likeness (human) | 4-alternative lineup by people who know the person; owner's side-by-side sheet | S2 |
-| Shape | Face point error (% of eye distance) on held-out frames; silhouette IoU for head, hair, body | L17–L33 |
-| Lip sync | Per-class closure and contact rates (S3, S4), mouth range ratio (S6), browser A/V offset (S5); secondary: MTM, PLRS, SLCC (2503.20308) and the coarticulation path measure (2610.03436). SyncNet-style scores (2008.10010) are reported only for comparison, because they reward timing even when shapes are wrong (`ENGINE.md` §4) | L70–L74 |
-| Voice | ECAPA speaker similarity vs. real-vs-real ceiling; ASR round-trip WER/CER; MOS; watermark detection | L67, L69 |
-| Physical | Joint-limit violations, penetrations, pointing error, centre-of-mass checks, stroke–stress offset | L80–L89 |
-| Conversation | First-reaction and first-audio latency, barge-in stop time, false cut-ins, missed stops, backchannel timing, S12 | L90–L95 |
-| Rendering | fps and p99 frame time on reference laptops; flicker metric (L64) | L56–L64, L96 |
-| Fairness | All of the above by Monk Skin Tone group, sex, age band, glasses, facial hair | S16 |
-| Integrity | No-copy test, provenance completeness, label presence, deletion test | L3, L45, L63 |
+| Likeness (machine) | Rank-1 identification against the L0 gallery under the geometric likeness score (L24) and SFace (check-only); margin to the best impostor | S1, L24, L94 |
+| Likeness (human) | 4-alternative lineup with matched foils, ≥ 15 raters per person, CIs; owner's side-by-side sheet | S2 |
+| Shape | Face point error (% of eye distance) on held-out frames; silhouette IoU for head, hair, body | L17–L34 |
+| Lip sync | On rendered pixels: per-class closure and contact rates (S3, S4) on realised phones, with injected frame drops; mouth range and the replay gate (S6, L71); browser A/V offset (S5); secondary: MTM, PLRS, SLCC (2503.20308) and the coarticulation path measure (2610.03436). SyncNet-style scores (2008.10010) are reported only for comparison, because they reward timing even when shapes are wrong (`ENGINE.md` §4) | L67–L71 |
+| Voice | ECAPA speaker similarity vs. real-vs-real ceiling (check-only); ASR round-trip WER/CER; F0 continuity at joins; MOS; watermark detection | L63, L66 |
+| Physical | Per-frame joint-limit violations and penetrations, pointing perception and line error, apex–accent offset, angular-acceleration spikes, hands-in-frame share | L76–L85 |
+| Conversation | First-reaction, first-audio and first-clause latency including recognition, barge-in stop time, self-interruptions, false cut-ins, wait-time cut-ins, backchannel timing, S12 | L86–L91 |
+| Rendering | fps and p99 frame time on reference laptops; band-island count (L52); flicker and edge crawl (L58); style rating and style distance (S18) | L51–L60, L92 |
+| Fairness | All of the above by Monk Skin Tone group, sex, age band, glasses, facial hair (monitored on the bench; gated on the extended set) | S16 |
+| Integrity | Information-budget certificate, painter audit, provenance completeness, check-only rule, label presence, deletion test | L3, L42, L60 |
 
-### 8.2 The bench: 8 people
+### 8.2 The bench: 8 people (L0)
 
 Eight adults who consented in writing to being on the bench (or whose material has a licence allowing this
 use), chosen to cover: both sexes; Monk Skin Tone groups from light to deep (at least 3 people in groups 6–10);
 ages 20–60; glasses (2); beard or moustache (2); long hair (2), short hair (2), a head covering if a
 volunteer agrees; one capture on a cheap 480p webcam and one on a good phone. Each person gives: the standard
 guided capture; a **second-day** capture for held-out tests (harder than the same-session split used so far);
-5 minutes of reading in English and Hindi/Hinglish with the face visible (for lip and voice gates);
-2 minutes of free explanation with hands visible (for gesture style). Controls: every person's model is also
-scored against the other seven (impostors).
+5 minutes of reading in English and Hindi/Hinglish with the face visible (for lip, replay and voice gates);
+2 minutes of free explanation with hands visible (for gesture style and rest poses); a ruler measurement of
+hand length and palm width. Controls: every person's model is scored against the other seven and against
+≥ 50 synthetic hard negatives near them (impostors). Eight people cannot support per-group fairness gates
+(S16): they are reported, and gated only on an extended set of ≥ 30 people or synthetic heads for the
+colour layers.
 
 ### 8.3 Owner review
 
@@ -2068,7 +2424,8 @@ against references 1–8 (1–5). Nothing ships without the owner approving a vi
 - **Measures.** 7-point ratings: naturalness, lip sync, "felt listened to", trust, clarity; GENEA-style
   human-likeness and appropriateness of gestures (2208.10441, 2308.12646, 2608.10839; evaluation practice
   review 2101.03769); a 5-question quiz on the content (learning outcome); "was this a real person?" (to check
-  that the AI label is understood, not to deceive); open comments.
+  that the AI label is understood, not to deceive); "did she agree with the answer?" on scripted wrong
+  answers (S12); open comments.
 - **Analysis.** Linear mixed-effects models with participant and lesson as random effects; pre-registered
   hypotheses: H1 A ≥ B on "felt listened to" and appropriateness; H2 A within 1 point of C on clarity; H3 quiz
   scores of A not worse than C (equivalence margin 10%). Report effect sizes with confidence intervals.
@@ -2077,10 +2434,29 @@ against references 1–8 (1–5). Nothing ships without the owner approving a vi
 
 ### 8.5 Ablations (to show each new idea earns its place)
 
-No-copy band limit on/off (likeness cost); object-space strokes on/off (flicker); per-class personal mouth
-range on/off (S6); rule–network fusion vs. network only (S3, PLRS); correctness gate on backchannels on/off
-(S12, trust); DOM-bound pointing vs. fixed "towards the board" pointing (S8, appropriateness); stylisation
-by likeness constraint vs. a fixed style strength (S1 vs. owner's style rating).
+Parametric colour vs. a band-limited colour field (S1, S2: the numbers for owner decision D1); caricature
+$\gamma$ = 0 vs. chosen (S1, S2); painted band textures vs. v1's toon bands plus screen-space Kuwahara
+(flicker, S18, GPU time); shading-normal field on/off (band islands); cast shadow on/off (owner's style
+rating); distinctiveness key vs. fixed key (S2, style); lattice alignment vs. G2P-string timing (S3, S4 on
+realised phones); personal coarticulation parameters on/off (replay error, cross-language on the Hindi
+reading when fitted on English only); rule–network fusion vs. network only (S3, PLRS); task-space paths plus
+springs vs. joint-space key poses (S7 per frame, S9); observer-solved pointing vs. finger-ray pointing (S8);
+correctness gate on backchannels on/off (S12, trust); speculation plus phrase bank vs. neither (S10);
+likeness-gated stylisation vs. a fixed style strength (S1 vs. the owner's style rating).
+
+### 8.6 Build order: a vertical slice first
+
+Thirty-odd layers built in sequence would be a waterfall. The order is:
+
+1. **Week 1, spike frame**: a throwaway 45k-triangle skinned mesh with 52 morphs, a 1024² shadow map, 4×
+   MSAA and inverted-hull lines on an Iris Xe laptop and an M1; GPU-timer numbers committed before any
+   Stage F code. In parallel: recruit the bench (L0, D10) and settle D2 (template licence).
+2. **Vertical slice**: template fit (L33–L38) with parametric colour (L40–L42), the procedural painter
+   (L52–L54), rule lips with the lattice aligner and constrained coarticulation (L62, L64, L67–L69), six
+   gestures (namaste, point, count, open palms, beat, nod) on the arm solver with task-space paths and
+   springs (L76, L79, L81–L85), and silence-plus-ASR-boundary turn-taking with the phrase bank (L65, L86, L87).
+3. **Gate and grow**: every further layer enters only with its gate measured on the smoke bench; the full
+   bench before each release.
 
 ---
 
@@ -2088,68 +2464,90 @@ by likeness constraint vs. a fixed style strength (S1 vs. owner's style rating).
 
 ### 9.1 Top risks
 
-1. **Stylisation and the pixel ban vs. likeness.** Face recognisers are trained on photos; a painted render
-   may score lower even when people recognise it. Mitigation: human lineup (S2) as the primary likeness test,
-   SFace as a secondary; likeness-constrained style (L25); the gap between machine and human scores is itself
-   measured on the bench.
+1. **Stylisation and the pixel ban vs. likeness.** Photo-trained recognisers score painted renders out of
+   domain, and the parametric colour model carries less identity than a colour map. Mitigation: geometry
+   carries likeness (template fit, caricature term, distinctiveness key as an option); a style-independent
+   geometric score and a rank-based S1; the human lineup (S2) with matched foils as the primary test; the
+   D1 ablation gives the owner the cost in numbers.
 2. **Hands.** Few hand shapes are captured, fingers occlude each other, and hand animation is where avatars
-   look wrong first. Mitigation: goal-based hands with limits and synergies (L84), hand-shape coverage in the
-   coach (L4), conservative gesture amplitude.
-3. **Hindi/Hinglish voice and lips.** Cloned Hindi still trails the best commercial voices; code-mixed text
-   causes pronunciation errors; lip-sync models are mostly trained on English. Mitigation: Indic adapter on
-   consented data, transliteration (L65), IPA rules with Hindi additions (L66, L70), per-class gates.
-4. **Browser performance on weak laptops.** The painterly passes may not fit integrated GPUs. Mitigation:
-   quality tiers (L96), filter at quarter resolution, strokes baked into textures.
-5. **3–4 minute build with hair, surface and albedo.** The estimate in §7.1 is unmeasured. Mitigation: GPU
-   marching cubes and least squares, lower resolutions, retry only failing layers.
-6. **Misuse of a cloned voice and face.** Mitigation: consent and identity lock, crypto-shredding, signed
-   models that load only in our player, visible label, audio and frame watermarks, scope limited to teaching.
-7. **Bias.** Albedo and skin-tone estimation are biased towards light skin (2205.03962, 2411.12002); face
-   recognisers vary by group. Mitigation: eye-white calibration, Monk-class-aware palettes, fairness gate S16
-   with a deliberately diverse bench.
-8. **Licence contamination.** One non-commercial weight would taint the model. Mitigation: L3 ledger as a hard
-   gate; UNVERIFIED items in §6.3 are not used until checked.
-9. **Uncanny or cold behaviour.** Rule-based gestures can look robotic. Mitigation: learned gesture scorer,
-   personal style scalars, user study with ablations.
-10. **Pedagogical harm.** A teacher who nods at a wrong answer or bluffs damages learning. Mitigation: L92's
-    correctness gate and the honest-face behaviour (L93); S12 = 0.
+   look wrong first. Mitigation: template five-finger hands with three measured numbers per hand, goal-based
+   shapes with limits and coupling, per-frame collision, hand-shape coverage in the coach (L4), shapes judged
+   as rendered painted silhouettes.
+3. **Hindi/Hinglish voice and lips.** Cloned Hindi still trails the best commercial voices; the chosen TTS is
+   archived; code-mixed text causes pronunciation errors; lip-sync models are mostly trained on English.
+   Mitigation: the dedicated Hindi checkpoint, per-language references, clause-level synthesis, a maintained
+   second engine behind the same slot, lattice alignment on the spoken audio, per-class gates on realised
+   phones.
+4. **Browser performance on weak laptops.** Unmeasured until the spike (§8.6). Mitigation: forward rendering
+   with no screen-space paint pass, quality tiers (L92), active-morph evaluation.
+5. **Template licence or fit quality.** If D2 fails or the fit cannot reach some body types, every model is
+   affected. Mitigation: our own template as plan B; the fit's gates on the bench's diverse bodies.
+6. **Live-conversation cost and latency.** Live cloned speech needs a running GPU (not free) and the
+   multilingual model's first-chunk latency is unmeasured. Mitigation: pre-rendered narration, phrase bank,
+   speculation, honest S10, CPU fallbacks, owner decision D5.
+7. **Misuse of a cloned voice and face.** Mitigation: consent with face and voice match, identity lock,
+   crypto-shredding, signed models that load only in our player, visible label, audio and frame watermarks,
+   scope limited to teaching.
+8. **Bias.** Albedo and skin-tone estimation are biased towards light skin (2205.03962, 2411.12002); banded
+   shading reads poorly on deep skin if it relies on value contrast; face recognisers vary by group.
+   Mitigation: eye-white calibration, the authored Monk palette table that carries form by rim and bounce,
+   fairness reported per group and gated on an extended set.
+9. **Licence contamination.** One non-commercial weight would taint the model, and research-trained models
+   might choose parameters. Mitigation: L3 ledger as a hard gate, the check-only rule (D6), UNVERIFIED items
+   in §6.3 not used until checked.
+10. **Uncanny or cold behaviour.** Kinematic gestures look robotic between key poses. Mitigation: shoulder
+    rhythm, task-space paths, springs, rest poses, speech-planned breathing, per-frame gates, user study with
+    ablations.
+11. **Pedagogical harm.** A teacher who nods at a wrong answer, looks disapproving at a mis-heard partial
+    transcript, or bluffs damages learning. Mitigation: agreement and concern only on final, confident
+    transcripts; neutral set chosen by a perceptual test; honest-face behaviour (L89); S12.
+12. **Schedule.** Mitigation: the vertical slice of §8.6; the bench first.
 
 ### 9.2 Open problems
 
 - A painted look that people *and* machines recognise as the person: there is no accepted likeness metric
-  for stylised portraits.
+  for stylised portraits; our geometric score is a proposal to be validated against S2.
+- How much likeness the parametric colour model costs against a colour field (D1's ablation).
 - Reliable 3D hands from a few phone frames without a hand model trained on non-commercial MRI or scan data.
 - Lip-sync gates for languages beyond English and Hindi without per-language video (the IPA route should
   generalise; it must be tested per language).
 - Turn-taking in Hinglish tutoring: no public two-channel corpus with commercial terms; we must record our own.
+- Whether Hindi-speaking students read "hmm" and the head wobble as agreement (S12's perceptual test).
 - A second-day held-out test is harder than the same-session test reported so far for the Living Portrait
   (97–103% of ceiling); expect lower numbers.
 
 ### 9.3 What is genuinely new here, and what is not
 
-Not new (prior art we build on): dense-landmark face fitting, personalised blendshapes, anthropometric
-skeletons, heat-diffusion skinning and DQS, SH light estimation, toon and Kuwahara-style painterly filters,
-line drawing from 3D, dominance coarticulation and JALI, FABRIK, gesture phases, voice activity projection,
-zero-shot voice cloning, audio watermarking, LLM tutors. Each is cited at its layer.
+Not new (prior art we build on): dense-landmark face fitting, personalised blendshapes, template fitting by
+non-rigid ICP, authored shading normals and painted light in stylised production, shadow maps, inverted-hull
+lines, SH light estimation, dominance coarticulation and JALI, analytic arm IK and scapulohumeral rhythm,
+minimum-jerk reaching, gesture phases, voice activity projection and semantic endpointing, speculative
+response generation and context cuts at the played audio (Voice-Light 2609.20995), zero-shot voice cloning,
+audio watermarking, LLM tutors, the caricature advantage. Each is cited at its layer.
 
 New or, to our knowledge, not previously combined this way (to be confirmed by a wider literature search
 before any external publication — **UNVERIFIED as novelty claims**):
 
-1. **Measurement-only appearance with a verifiable no-copy gate** (L43–L45): a band limit plus a cross-person
-   calibrated patch test, run on every build, so "no photo pixels" is a tested property, not a promise.
-2. **Likeness-constrained stylisation** (L25): the style strength is chosen per person as the largest value
-   that keeps a likeness threshold.
-3. **Painted look stable in motion through surface-anchored strokes oriented by the person's own geometry and
-   hair field** (L58, L64), combined with a G-buffer-oriented Kuwahara filter (L59), at laptop frame rates.
-4. **Per-sound-class lip gates that work in any language through IPA**, with Hindi-specific rules (aspirates,
-   retroflex jaw, ʋ as lip–teeth, anusvara) and per-person mouth ranges per class (L66, L70–L72).
-5. **Deixis bound to a live web lesson**: finger and gaze land on the exact element of the animation step
-   being discussed, solved through the page layout each frame (L82).
-6. **Correctness-contingent listening**: agreement backchannels gated by the tutor's grader (L92).
-7. **Gestures as validated goal programs over a measured skeleton**, styled by measured habits, with no motion
-   clips (L80–L89).
-8. **A self-grading, time-budgeted build** that retries only the layers upstream of a failing gate and otherwise
-   names the missing photo (L98).
+1. **Measurement-only appearance with an information-budget certificate** (L40–L42): the model lists every
+   photo-derived number and a copy cannot fit in the budget; the painter provably never sees a photo.
+2. **Likeness-gated stylisation with caricature compensation** (L24): style strength and exaggeration away
+   from the average are chosen per person under a style-independent geometric likeness score, putting back in
+   geometry what the pixel ban removes from texture.
+3. **Painted band textures from measured colour numbers on an owned template, chosen per pixel by a
+   stabilised shading normal** (L52–L54), for a painted look that is stable by construction at laptop frame
+   rates.
+4. **Lips from the phones actually spoken**: a pronunciation lattice aligned on synthetic speech, a
+   constrained trajectory with hard must-hit events, and **personal coarticulation parameters per
+   articulatory class that transfer across languages** (L62, L64, L68).
+5. **Deixis bound to a live web lesson and solved for the observer** (L78): the arm line lands on the exact
+   element of the animation step, checked by a model of how a student reads a point, with automatic
+   disambiguation when elements are dense.
+6. **Correctness-contingent listening with a teacher's wait time** (L87, L88): agreement only after a final,
+   confident, graded transcript, and question-aware waiting instead of the shortest gap.
+7. **Gestures as validated goal programs over a measured skeleton**, solved every frame along task-space
+   paths with springs, styled by measured habits, with no motion clips (L76–L85).
+8. **A self-grading, time-budgeted build** that retries only the layers upstream of a failing gate and
+   otherwise names the missing photo (L94).
 
 ---
 
@@ -2172,21 +2570,25 @@ alignment). 2007.07227 (MeTRAbs). 2002.10322 (bone-based pose). 1604.06195 (hand
 (iris area). 2205.03962, 2411.12002, 2406.13149 (skin tone and albedo bias). Hashemi et al. (2015) corneal
 diameter. Bentivoglio et al. (1997) blink rate, Movement Disorders 12(6).
 
-**Face and head shape.** Gower (1975) generalised Procrustes, Psychometrika 40. Umeyama (1991), IEEE TPAMI
-13(4). 2007.12494, 2107.04277, 1910.06007 (multi-view face). 2007.06759, 2010.00560, 2508.08429 (personalised
-rigs). 2310.17519 (FLARE). 2105.02451 (neural blend shapes). 1911.08008, 1903.03785, 2311.02461 (head models).
-2604.13856, 2602.11693 (one-shot full heads). 2203.09692, 2409.07984 (detail; SPARK). 2211.07818, 2505.10072,
-2104.14559, 2403.15227 (stylised identity-preserving avatars). Lewis et al. (2014) blendshape practice,
-Eurographics STAR. Li, Weise, Pauly (2010) example-based facial rigging, SIGGRAPH.
+**Face and head shape, likeness.** Gower (1975) generalised Procrustes, Psychometrika 40. Umeyama (1991),
+IEEE TPAMI 13(4). 2007.12494, 2107.04277, 1910.06007 (multi-view face). 2007.06759, 2010.00560, 2508.08429
+(personalised rigs). 2310.17519 (FLARE). 2105.02451 (neural blend shapes). 1911.08008, 1903.03785, 2311.02461
+(head models). 2604.13856, 2602.11693 (one-shot full heads). 2203.09692, 2409.07984 (detail; SPARK).
+2211.07818, 2505.10072, 2104.14559, 2403.15227 (stylised identity-preserving avatars). Lewis et al. (2014)
+blendshape practice, Eurographics STAR. Li, Weise, Pauly (2010) example-based facial rigging, SIGGRAPH.
+Rhodes, Brennan, Carey (1987) identification and ratings of caricatures, *Cognitive Psychology* 19. Näsänen
+(1999) spatial frequency bandwidth used in the recognition of facial images, *Vision Research* 39.
 
-**Body, hands, rig.** Drillis and Contini (1966) body segment parameters. 2509.06607, 2605.09258 (biomechanics).
-2106.10893 (PIANO), 2202.04533 (NIMBLE) — papers only. 2403.03122 (NRDF). 2607.05938 (hand motion priors).
-Santello, Flanders, Soechting (1998) postural hand synergies, J. Neuroscience. 2512.06434 (anthropometrics).
-Baran and Popović (2007) automatic rigging, SIGGRAPH. 2406.00238 (robust biharmonic skinning). 2307.00842
-(VINECS). 2412.02317 (HumanRig). 2203.04746 (SkinningNet). 2601.06378 (RigMo). Kavan et al. (2008) dual
-quaternion skinning, ACM TOG. 2104.04934 (velocity skinning). 2503.17032 (TaoAvatar). Lorensen and Cline
-(1987) marching cubes. Botsch and Kobbelt (2004) remeshing. Lévy et al. (2002) LSCM. Garland and Heckbert
-(1997) quadric simplification. 2003.09820 (rig-space rendering). 2501.17085 (LOD perception).
+**Template, body, hands, rig.** MakeHuman licence pages (makehumancommunity.org, "about/license", checked
+2026-11-26). Amberg, Romdhani, Vetter (2007) optimal step non-rigid ICP, CVPR. Sorkine et al. (2004)
+Laplacian surface editing, SGP. Sumner and Popović (2004) deformation transfer, SIGGRAPH. Drillis and Contini
+(1966) body segment parameters. 2509.06607, 2605.09258 (biomechanics). 2106.10893 (PIANO), 2202.04533 (NIMBLE)
+— papers only. 2607.05938 (hand motion priors). Santello, Flanders, Soechting (1998) postural hand synergies,
+J. Neuroscience. 2512.06434 (anthropometrics). Baran and Popović (2007) automatic rigging, SIGGRAPH.
+2406.00238 (robust biharmonic skinning). Kavan et al. (2008) dual quaternion skinning, ACM TOG. 2104.04934
+(velocity skinning). 2503.17032 (TaoAvatar). Garland and Heckbert (1997) quadric simplification. 2003.09820
+(rig-space rendering). 2501.17085 (LOD perception). Inman, Saunders, Abbott (1944) shoulder function, J Bone
+Joint Surg. McClure et al. (2001) 3-D scapular kinematics, J Shoulder Elbow Surg 10.
 
 **Appearance, eyes, mouth, hair, clothes.** Ramamoorthi and Hanrahan (2001) SH irradiance, SIGGRAPH.
 2312.05210 (IntrinsicAvatar). 2407.15212 (SGIA). 2312.03704, 2506.06271 (relightable heads). Gooch et al.
@@ -2198,55 +2600,72 @@ LOD rendering). 2402.10483 (GaussianHair). 2412.17144 (augmented mass–spring h
 Macklin, Müller, Chentanez (2016) XPBD, MIG. 2611.02902 (TailorRig). 2605.20460 (HyperBones). 2405.17609
 (GarmentCodeData). 2405.11694 (XPBI). 2606.08041 (facial hair capture).
 
-**Painted rendering.** 1810.01175 (line drawings from 3D). 2312.12392 (recursive camera painting).
-2403.07807 (StyleGaussian). 2602.00618 (Tune-Your-Style). 2206.06360 (ARF). 2312.10263 (painterly
-harmonisation). 2401.16224 (Diffutoon). Meier (1996) painterly rendering for animation, SIGGRAPH.
-Kuwahara et al. (1976) processing of RI-angiocardiographic images. Kyprianidis, Kang, Döllner (2009)
-anisotropic Kuwahara filtering, Computer Graphics Forum. Cabral and Leedom (1993) line integral convolution,
-SIGGRAPH. Winnemöller, Kyprianidis, Olsen (2012) XDoG, Computers & Graphics. 2510.13978 (instant skinned
-Gaussian avatars for web). 2308.04079 (3D Gaussian splatting; paper only). 2409.06765 (gsplat).
-2404.19398 (Gaussian blendshapes). 2604.23957, 2507.12723 (audio-visual watermarking).
+**Painted rendering.** Motomura (2015) *Guilty Gear Xrd's art style: the X factor between 2D and 3D*, GDC
+slides. Trade-press accounts of the reference series' texturing (80.lv, "A closer look at texturing in
+Arcane", parts 1–2) and FMX 2025 session "Achieving Arcane's hand-painted style with Mari" (secondary; studio
+details unverified). 1807.03249 (StyleBlit). 2311.12891 (SyncMVD). 2411.02336 (MVPaint). 2312.13913
+(Paint3D). 2302.01721 (TEXTure). 1810.01175 (line drawings from 3D). Bénard, Thollot, Collomosse (2011)
+temporal coherence for stylized animations, CGF. 2312.12392 (recursive camera painting). 2403.07807
+(StyleGaussian). 2602.00618 (Tune-Your-Style). 2206.06360 (ARF). 2312.10263 (painterly harmonisation).
+2401.16224 (Diffutoon). Meier (1996) painterly rendering for animation, SIGGRAPH. Kuwahara et al. (1976)
+processing of RI-angiocardiographic images. Kyprianidis, Kang, Döllner (2009) anisotropic Kuwahara filtering,
+Computer Graphics Forum. Cabral and Leedom (1993) line integral convolution, SIGGRAPH. Winnemöller,
+Kyprianidis, Olsen (2012) XDoG, Computers & Graphics. 2510.13978 (instant skinned Gaussian avatars for web).
+web.dev (2025) WebGPU supported in major browsers. 2308.04079 (3D Gaussian splatting; paper only). 2409.06765
+(gsplat). 2404.19398 (Gaussian blendshapes). 2604.23957, 2507.12723 (audio-visual watermarking).
 
-**Voice.** 2505.00579 (voice cloning survey). 2407.05407 (CosyVoice). 2608.11650 (cross-lingual zero-shot
-TTS). 2610.14776 (compact TTS). 2402.09378 (MobileSpeech). 2306.07691 (StyleTTS 2). 2211.09536, 2507.15272,
-2505.18609, 2410.14197 (Indian-language TTS). 2409.10969, 2412.19043, 2510.25178 (code-switched TTS).
-1810.00662 (Hindi–English code-switching corpus). 2004.10353 (Hindi schwa deletion). 2204.03067, 1708.01464
-(multilingual G2P). 2311.08323 (IPA alignment). 2606.25460, 2406.19363, 2608.28508 (forced alignment).
-2401.17264 (AudioSeal). 2312.03410 (timbre watermarking). 2611.04716 (cross-codec watermark robustness).
-2005.07143 (ECAPA-TDNN).
+**Voice.** Chatterbox README and `Chatterbox-Multilingual-hi` model card (Resemble AI; archived August 2026).
+AudioSeal README (licence update, April 2024). 2505.00579 (voice cloning survey). 2407.05407 (CosyVoice).
+2608.11650 (cross-lingual zero-shot TTS). 2610.14776 (compact TTS). 2402.09378 (MobileSpeech). 2306.07691
+(StyleTTS 2). 2211.09536, 2507.15272, 2505.18609, 2410.14197 (Indian-language TTS). 2409.10969, 2412.19043,
+2510.25178 (code-switched TTS). 1810.00662 (Hindi–English code-switching corpus). 2004.10353 (Hindi schwa
+deletion). 2204.03067, 1708.01464 (multilingual G2P). 2204.06502 (Indic TIMIT, Indian English variation).
+2311.08323 (IPA alignment). 2109.11680 (zero-shot cross-lingual phoneme recognition). 2306.04306 (Allophant).
+2606.25460, 2406.19363, 2608.28508 (forced alignment). 2401.17264 (AudioSeal). 2312.03410 (timbre
+watermarking). 2611.04716 (cross-codec watermark robustness). 2005.07143 (ECAPA-TDNN).
 
 **Lips and face performance.** Fisher (1968) visemes, J. Speech and Hearing Research. Cohen and Massaro
 (1993) coarticulation in visual speech, Models and Techniques in Computer Animation. Edwards, Landreth,
-Fiume, Singh (2016) JALI, ACM TOG. 1805.09488 (VisemeNet). 2301.06059 (viseme dynamics). 2408.05641
-(phoneme-to-articulatory coarticulation). 2507.20343 (DYNARTmo). 2609.30517 (visible articulation).
-2610.03436 (geometric coarticulation measure). 2503.20308 (perceptual lip-sync metrics). 2406.14272
-(MultiTalk). 2112.05329 (FaceFormer). 2401.08655 (SAiD). 2502.20323 (ARTalk). 2604.23692 (personalised
-causal facial motion). 1905.03079 (VOCA). 2008.10010 (Wav2Lip / SyncNet expert). 2608.15110 (CETalk).
-2602.09534 (AUHead). 2608.22731 (verbal–nonverbal mismatch). 2502.06875 (LLMs and valence–arousal).
-2110.04527 (upper-face generation). 2210.14800 (head motion from speech). 2310.20240 (head pose with speech).
-Kendon (1967) gaze in conversation, Acta Psychologica 26. 2501.09921 (TalkingEyes). 2610.19635 (gaze dynamics).
-2512.15340 (turn-level interactive heads). 2602.18432 (SARAH).
+Fiume, Singh (2016) JALI, ACM TOG. Schwartz and Savariaux (2014) No, there is no 150 ms lead of visual speech
+on auditory speech, PLoS Comput Biol 10(7). ITU-R BT.1359 (relative timing of sound and vision). 1805.09488
+(VisemeNet). 2301.06059 (viseme dynamics). 2408.05641 (phoneme-to-articulatory coarticulation). 2507.20343
+(DYNARTmo). 2609.30517 (visible articulation). 2610.03436 (geometric coarticulation measure). 2503.20308
+(perceptual lip-sync metrics). 2611.01705 (Fréchet Oral Distance). 2406.14272 (MultiTalk). 2112.05329
+(FaceFormer). 2401.08655 (SAiD). 2502.20323 (ARTalk). 2604.23692 (personalised causal facial motion).
+1905.03079 (VOCA). 2008.10010 (Wav2Lip / SyncNet expert). 2608.15110 (CETalk). 2602.09534 (AUHead).
+2608.22731 (verbal–nonverbal mismatch). 2502.06875 (LLMs and valence–arousal). Chi, Costa, Zhao, Badler
+(2000) EMOTE, SIGGRAPH. 2110.04527 (upper-face generation). 2210.14800 (head motion from speech). 2310.20240
+(head pose with speech). Freedman (2008) coordination of the eyes and head during visual orienting, Biol.
+Cybern. Kendon (1967) gaze in conversation, Acta Psychologica 26. 2501.09921 (TalkingEyes). 2610.19635 (gaze
+dynamics). 2512.15340 (turn-level interactive heads). 2602.18432 (SARAH).
 
-**Physical actions.** Aristidou and Lasenby (2011) FABRIK, Graphical Models 73(5). 2507.00792 (JAX-IK).
-2506.17996 (neural IK). 2508.02106 (physically plausible synthesis). 2506.01563 (intention-aware motion).
-Kopp et al. (2006) Behavior Markup Language, IVA. McNeill (1992) *Hand and Mind*. Kita, van Gijn, van der
-Hulst (1998) gesture phases. Flash and Hogan (1985) minimum-jerk, J. Neuroscience. Perlin (1985) image
-synthesiser, SIGGRAPH. 2412.16563 (SemTalk). 2603.26553 (SemConFlow). 2503.20202 (SARGes). 2407.02151 (deictic
-labelling). 2301.05339 (gesture generation review). 2506.01077 (TRiMM). 2609.21576 (GestureFAR). 2604.10927
-(LiveGesture). 2610.06153 (Talk, Render, Act). 2603.18771 (educational robot motion). 2509.12507 (pointing
-gestures). 2611.25444 (VisualTalk-Bench). 2609.06591 (interaction prior).
+**Physical actions.** Aristidou and Lasenby (2011) FABRIK, Graphical Models 73(5). Li et al. (2012)
+kinematic redundancy and swivel angle, ICRA (Rosen group). Chen and Li (2022) natural arm postures, Robotica.
+2507.00792 (JAX-IK). 2506.17996 (neural IK). 2508.02106 (physically plausible synthesis). 2303.11886
+(complementary dynamics). 2506.01563 (intention-aware motion). Kopp et al. (2006) Behavior Markup Language,
+IVA. McNeill (1992) *Hand and Mind*. Kendon (2004) *Gesture: visible action as utterance*. Kita, van Gijn,
+van der Hulst (1998) gesture phases. Flash and Hogan (1985) minimum-jerk, J. Neuroscience. Leonard and Cummins
+(2011) temporal alignment of gesture and speech, Lang. Cogn. Processes. Pouw, Paxton, Harrison, Dixon (2020)
+acoustic information about upper limb movement in voicing, PNAS 117(21). Herbort and Kunde (2016) spatial
+(mis-)interpretation of pointing gestures, JEP:HPP 42. Winkworth et al. (1994/1995) speech breathing, JSHR.
+2503.14408 (LLM gesture selection). 2412.16563 (SemTalk). 2603.26553 (SemConFlow). 2503.20202 (SARGes).
+2407.02151 (deictic labelling). 2301.05339 (gesture generation review). 2506.01077 (TRiMM). 2609.21576
+(GestureFAR). 2604.10927 (LiveGesture). 2610.06153 (Talk, Render, Act). 2603.18771 (educational robot
+motion). 2509.12507 (pointing gestures). 2611.25444 (VisualTalk-Bench). 2609.06591 (interaction prior).
 2604.25164 (identity-aware motion).
 
-**Conversation.** 2212.04356 (Whisper). 2604.19151, 2305.15386, 2609.24199 (Indian ASR benchmarks).
-2406.10993 (code-switched speech). 2403.06487, 2401.04868, 2503.06241 (voice activity projection).
-2604.01897 (FastTurn). 2410.00037 (Moshi). 2604.21406, 2509.22243, 2507.23159, 2509.06502 (full duplex).
-2410.15929, 2304.04472, 2607.22729 (backchannels). 2507.23298 (nodding types). 2112.13548, 2409.20188,
-2609.40317 (listening heads). 2510.04637, 2506.22554 (dyadic behaviour). 2206.02436 (confusion detection).
-2603.09536, 2604.12253 (LLM pedagogical agents). 2308.15214 (FurChat). 2603.03282 (MIBURI). 2611.30388
-(BASE). 2608.24909 (streaming digital-human agents). 2503.18429 (Teller).
+**Conversation.** 2212.04356 (Whisper). 2609.04225 (turn-aware streaming ASR). 2604.19151, 2305.15386,
+2609.24199 (Indian ASR benchmarks). 2406.10993 (code-switched speech). 2205.09812, 2403.06487, 2401.04868,
+2503.06241 (voice activity projection). 2604.01897 (FastTurn). 2609.20995 (Voice-Light). 2604.23295 (Human-1,
+IndicFDB). 2410.00037 (Moshi). 2604.21406, 2509.22243, 2507.23159, 2509.06502 (full duplex). 2410.15929,
+2304.04472, 2607.22729 (backchannels). 2507.23298 (nodding types). 2112.13548, 2409.20188, 2609.40317
+(listening heads). 2510.04637, 2506.22554 (dyadic behaviour). 2206.02436 (confusion detection). Rowe (1986)
+wait time, J. Teacher Education 37(1). 2603.09536, 2604.12253 (LLM pedagogical agents). 2308.15214 (FurChat).
+2603.03282 (MIBURI). 2611.30388 (BASE). 2608.24909 (streaming digital-human agents). 2503.18429 (Teller).
 
 **Evaluation.** 2208.10441, 2308.12646, 2608.10839 (GENEA challenges). 2101.03769 (gesture evaluation
 review). 2605.06063 (avatar representation in gesture evaluation).
 
 **Internal documents.** `docs/pratibimb/BRIEF.md`, `LAYERS.md`, `ARCHITECTURE.md`, `ENGINE.md`, `SPEC.md`,
-`TRAINING.md`, `PACK_FORMAT.md`; code in `scripts/pratibimb/engine/` and `scripts/teacher/maker/`.
+`TRAINING.md`, `PACK_FORMAT.md`, `PAPER_CHANGELOG.md`; code in `scripts/pratibimb/engine/` and
+`scripts/teacher/maker/`.
