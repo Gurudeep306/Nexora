@@ -275,6 +275,10 @@ if a.models and os.path.exists(os.path.join(a.models, "face_recognition_sface_20
         res["likeness_in_frame_pct"] = round(100 * c / base) if c is not None and base > 0 else None
         res["likeness_alone_pct"] = round(100 * al_ / base) if al_ is not None and base > 0 else None
 
+# The learned face alone, one file per held-out frame, so other tools (bench.py) can judge it against any photos.
+for k, (_, _, pred) in enumerate(sheets):
+    cv2.imwrite(os.path.join(a.out, f"alone_{k:02d}.png"), np.where(pred.sum(2, keepdims=True) > 0, pred, 128).astype(np.uint8))
+
 # A sheet: real | learned in the frame | learned alone, one row per held-out frame.
 rows = []
 for raw, comp, pred in sheets[:6]:

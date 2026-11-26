@@ -119,6 +119,12 @@ export function judge(shot: Shot, r: Reading | null, base: Baseline): Check[] {
         ? { ok: false, label: 'Distance', fix: shot.frame === 'face' ? 'Move back a little' : 'Step back until your waist is in the picture' }
         : { ok: true, label: 'Distance' },
   )
+  // Detail: a small face (a weak webcam, or too far away) gives the model too few pixels of skin, eyes and
+  // lips to learn from. 220 px across is a first setting, to be confirmed by the test bench (bench.py).
+  const minPx = shot.frame === 'face' ? 220 : 80
+  if (r.size >= lo) {
+    out.push(r.facePx < minPx ? { ok: false, label: 'Detail', fix: 'Not enough detail from this camera: come a little closer, or use your phone (its camera is sharper)' } : { ok: true, label: 'Detail' })
+  }
   const off = shot.frame === 'face' ? 0.18 : 0.2
   out.push(Math.abs(r.cx - 0.5) > off || Math.abs(r.cy - (shot.frame === 'face' ? 0.45 : 0.3)) > 0.22 ? { ok: false, label: 'Centred', fix: 'Move so your face is in the middle of the frame' } : { ok: true, label: 'Centred' })
   out.push(

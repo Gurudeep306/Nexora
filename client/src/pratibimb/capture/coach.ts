@@ -10,6 +10,8 @@ export interface Reading {
   faces: number
   /** face width / frame width */
   size: number
+  /** face width in the camera's own pixels: the detail the model can learn from */
+  facePx: number
   /** face centre, 0..1 of the frame */
   cx: number
   cy: number
@@ -207,6 +209,7 @@ export function read(result: FaceLandmarkerResult, src: CanvasImageSource, w: nu
   return {
     faces,
     size: x1 - x0,
+    facePx: (x1 - x0) * w,
     cx: (x0 + x1) / 2,
     cy: (y0 + y1) / 2,
     yaw,

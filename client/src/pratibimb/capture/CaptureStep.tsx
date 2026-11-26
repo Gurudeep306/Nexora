@@ -212,6 +212,7 @@ function useCamera(facing: 'user' | 'environment', audio = false) {
   const video = useRef<HTMLVideoElement>(null)
   const [error, setError] = useState('')
   const [stream, setStream] = useState<MediaStream | null>(null)
+  const [res, setRes] = useState<{ w: number; h: number } | null>(null)
   useEffect(() => {
     let s: MediaStream | null = null
     let alive = true
@@ -221,6 +222,8 @@ function useCamera(facing: 'user' | 'environment', audio = false) {
         if (!alive) return m.getTracks().forEach((t) => t.stop())
         s = m
         setStream(m)
+        const st = m.getVideoTracks()[0]?.getSettings()
+        if (st?.width && st?.height) setRes({ w: st.width, h: st.height })
         if (video.current) {
           video.current.srcObject = m
           void video.current.play().catch(() => {})
@@ -232,7 +235,7 @@ function useCamera(facing: 'user' | 'environment', audio = false) {
       s?.getTracks().forEach((t) => t.stop())
     }
   }, [facing, audio])
-  return { video, error, stream }
+  return { video, error, stream, res }
 }
 
 
@@ -302,7 +305,7 @@ interface ScanProps {
 
 function ScanSession({ done, only, base, onBase, onPhoto, onVideo, onClose }: ScanProps) {
   const [facing, setFacing] = useState<'user' | 'environment'>('user')
-  const { video, error, stream } = useCamera(facing, !only)
+  const { video, error, stream, res } = useCamera(facing, !only)
   const canvas = useRef<HTMLCanvasElement>(null)
   const poses = useMemo(() => sequence(only, done), [only]) // eslint-disable-line react-hooks/exhaustive-deps
   const [running, setRunning] = useState(false)
@@ -668,6 +671,12 @@ function ScanSession({ done, only, base, onBase, onPhoto, onVideo, onClose }: Sc
           </div>
         )}
       </div>
+      {res && Math.min(res.w, res.h) < 720 && !(error || err) && (
+        <p className="pbx-note" role="status">
+          This camera gives {res.w}×{res.h}, which is low for a lifelike model. A phone camera is sharper: choose Phone above, or sit
+          closer, facing a window.
+        </p>
+      )}
       {(error || err) && (
         <div className="pbx-error" role="alert">
           {error || err}
