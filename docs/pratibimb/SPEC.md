@@ -59,5 +59,12 @@ Against the person's own video: audio never more than 50 ms ahead of the lips; m
   (same picking rules); consent for yourself or someone you know (their own sentence on camera);
   capture.py over photos and videos together; **the identity pack** (`docs/pratibimb/PACK_FORMAT.md`),
   signed, downloadable and importable on any account; the build worker (`worker.py`).
-- Next: stage 2 trainer (learned appearance), sticker check in the browser picker, face match between
+- **Living Portrait** (`portrait.py`, 2026-11-26): the person's own pixels re-animated instead of a repainted
+  3D head. Frames fused onto one face layout (noise and blur from weak cameras average out), the person's own
+  motion model (52 expression values + head turn → their face points), real mouth and eye banks. Builds in
+  seconds on a CPU. Bench, driven only by expression values from a held-out clip and judged by SFace: 97%
+  (woman, trained on cheap 480p webcam video), 100% (man, studio video); controls (wrong person) 22–24%.
+  Held-out clips were from the same session (other moments); a different day is the next, harder test.
+- Next: Living Portrait player in the browser (WebGL, driven by lip sync), person cut out from the background,
+  wardrobe (one short recording per outfit), the rest of the bench; stage 2 trainer (learned appearance), sticker check in the browser picker, face match between
   the consent clip and the photos, look filter, voice cloning, motion profile in the player.
