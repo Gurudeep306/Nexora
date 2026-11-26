@@ -71,7 +71,7 @@ def proportions(shoulder_m=None, sex="neutral", head_iod_m=0.09):
         "shoulder": sw, "upper_arm": 0.83 * sw * f, "forearm": 0.72 * sw * f, "palm": 0.27 * sw, "finger": 0.24 * sw,
         "neck": 0.22 * sw, "torso": 1.45 * sw, "chest_w": 0.92 * sw, "chest_d": 0.62 * sw * (0.95 if sex == "female" else 1.0),
         "waist_w": 0.78 * sw * (0.92 if sex == "female" else 1.0), "waist_d": 0.55 * sw, "neck_r": 0.145 * sw,
-        "arm_r": 0.105 * sw, "forearm_r": 0.085 * sw, "wrist_r": 0.065 * sw, "sex": sex,
+        "arm_r": 0.095 * sw, "forearm_r": 0.078 * sw, "wrist_r": 0.06 * sw, "sex": sex,
     }
 
 
@@ -117,19 +117,26 @@ class Tube:
         self.cap_start, self.cap_end, self.layer, self.colour = cap_start, cap_end, layer, colour
 
 
+def torso_profile(P, ease=1.0, collar=1.12):
+    """Ellipse radii along the torso, every tenth of its height: waist, chest, the rounded shoulder line at
+    nine tenths (as wide as the shoulders plus the upper arm), then in to the neck."""
+    ww, wd = P["waist_w"] / 2, P["waist_d"] / 2
+    cw, cd = P["chest_w"] / 2, P["chest_d"] / 2
+    sw = P["shoulder"] / 2 + P["arm_r"] * 0.9
+    prof = [(ww * 1.04, wd * 1.05), (ww, wd), (ww * 1.02, wd), (ww * 1.08, wd * 1.04), (cw * 0.95, cd * 0.98), (cw, cd),
+            (cw * 1.02, cd * 1.0), (cw * 1.04, cd * 0.97), (sw * 0.96, cd * 0.9), (sw, cd * 0.72), (P["neck_r"] * collar, P["neck_r"] * collar * 0.95)]
+    return [(x * ease, z * ease) for x, z in prof]
+
+
 def tubes_for(P, outfit):
     """The body's tubes, and the outfit's tubes over them."""
     T = []
     sw = P["shoulder"]
     # Torso: pelvis → spine → chest → neck; wide at the chest, narrower at the waist.
-    T.append(Tube("torso", ["pelvis", "spine", "chest", "neck"],
-                  [(P["waist_w"] / 2, P["waist_d"] / 2), (P["waist_w"] / 2 * 1.02, P["waist_d"] / 2), (P["chest_w"] / 2, P["chest_d"] / 2),
-                   (P["neck_r"] * 1.25, P["neck_r"] * 1.15)], rings=14, seg=22, cap_start=True, cap_end=False))
+    T.append(Tube("torso", ["pelvis", "spine", "chest", "neck"], torso_profile(P, 1.0), rings=22, seg=26, cap_start=True, cap_end=False))
     T.append(Tube("neck", ["neck", "head"], [(P["neck_r"], P["neck_r"] * 0.95), (P["neck_r"] * 0.92, P["neck_r"] * 0.9)],
                   rings=5, seg=16, cap_end=False))
     for s in ("L", "R"):
-        T.append(Tube(f"shoulder{s}", [f"clav{s}", f"shoulder{s}"], [(P["arm_r"] * 1.4, P["arm_r"] * 1.15), (P["arm_r"] * 1.15, P["arm_r"])],
-                      rings=5, seg=14, cap_end=False, cap_start=False))
         T.append(Tube(f"arm{s}", [f"shoulder{s}", f"elbow{s}", f"wrist{s}"],
                       [(P["arm_r"], P["arm_r"]), (P["forearm_r"] * 1.05, P["forearm_r"]), (P["wrist_r"], P["wrist_r"] * 0.7)],
                       rings=14, seg=14, cap_start=False, cap_end=False))
@@ -144,15 +151,10 @@ def tubes_for(P, outfit):
     if outfit:
         ease = outfit.get("ease", 1.08)
         col = np.array(outfit.get("colour", [0.18, 0.24, 0.36]))
-        T.append(Tube("top", ["pelvis", "spine", "chest", "neck"],
-                      [(P["waist_w"] / 2 * ease * 1.03, P["waist_d"] / 2 * ease * 1.05), (P["waist_w"] / 2 * ease, P["waist_d"] / 2 * ease),
-                       (P["chest_w"] / 2 * ease, P["chest_d"] / 2 * ease), (P["neck_r"] * 1.45, P["neck_r"] * 1.3)],
-                      rings=14, seg=24, cap_start=True, cap_end=False, layer="cloth", colour=col))
+        T.append(Tube("top", ["pelvis", "spine", "chest", "neck"], torso_profile(P, ease, collar=1.35), rings=22, seg=26,
+                      cap_start=True, cap_end=False, layer="cloth", colour=col))
         sleeve = outfit.get("sleeve", 0.55)  # 0 = sleeveless, 1 = full
         for s in ("L", "R"):
-            T.append(Tube(f"topshoulder{s}", [f"clav{s}", f"shoulder{s}"],
-                          [(P["arm_r"] * 1.55 * ease, P["arm_r"] * 1.3 * ease), (P["arm_r"] * 1.3 * ease, P["arm_r"] * 1.15 * ease)],
-                          rings=5, seg=14, cap_end=False, layer="cloth", colour=col))
             if sleeve > 0:
                 chain = [f"shoulder{s}", f"elbow{s}"] + ([f"wrist{s}"] if sleeve > 0.5 else [])
                 rr = [(P["arm_r"] * 1.12 * ease, P["arm_r"] * 1.12 * ease), (P["forearm_r"] * 1.25 * ease, P["forearm_r"] * 1.2 * ease)]
@@ -211,12 +213,26 @@ def tube_mesh(tube, S, Rw, Pw):
             c2, d2 = rings[r + 1][j], rings[r + 1][(j + 1) % tube.seg]
             tris += [(a, c2, b), (b, c2, d2)]
     V = np.array(verts)
+    # Face outwards: each side triangle's normal must point away from its ring's centre.
+    if tris:
+        T = np.array(tris)
+        cen = np.array([V[r].mean(0) for r in rings])
+        ring_of = np.repeat(np.arange(len(rings)), tube.seg)
+        A, B, C = V[T[:, 0]], V[T[:, 1]], V[T[:, 2]]
+        nrm = np.cross(B - A, C - A)
+        out = (A + B + C) / 3 - cen[ring_of[T[:, 0]]]
+        if (np.einsum("ij,ij->i", nrm, out) < 0).mean() > 0.5:
+            tris = [(a, c, b) for a, b, c in tris]
     for end, ring in ((tube.cap_start, rings[0]), (tube.cap_end, rings[-1])):
         if end:
             ci = len(V)
             V = np.vstack([V, V[ring].mean(0)])
-            for j in range(tube.seg):
-                tris.append((ring[j], ring[(j + 1) % tube.seg], ci))
+            cap = [(ring[j], ring[(j + 1) % tube.seg], ci) for j in range(tube.seg)]
+            a0, b0, c0 = V[cap[0][0]], V[cap[0][1]], V[ci]
+            other = V[rings[1 if ring is rings[0] else -2]].mean(0)
+            if np.cross(b0 - a0, c0 - a0) @ (c0 - other) < 0:
+                cap = [(a, c, b) for a, b, c in cap]
+            tris += cap
     return V, np.array(tris, np.int64)
 
 
@@ -227,7 +243,7 @@ def body_mesh(P, outfit, rots=None, S=None):
     out = []
     covered = set()
     if outfit:
-        covered = {"torso", "shoulderL", "shoulderR"}  # arms stay: the sleeve is wider and covers the part it reaches
+        covered = {"torso"}  # arms stay: the sleeve is wider and covers the part it reaches
     for t in tubes_for(P, outfit):
         if t.layer == "skin" and t.name in covered:
             continue  # hidden under the garment: not drawn

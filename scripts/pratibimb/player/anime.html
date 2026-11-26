@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Pratibimb anime player</title>
+<style>html,body{margin:0;background:transparent}canvas{display:block}</style></head><body>
+<canvas id="c"></canvas>
+<script type="module">
+// anime.html?c=<dir with character.json>&w=600&h=700 ; window.draw(frame) draws one frame; window.ready when loaded.
+import { AnimePlayer } from './anime.js'
+const q = new URLSearchParams(location.search)
+const cv = document.getElementById('c')
+cv.width = +(q.get('w') || 600); cv.height = +(q.get('h') || 700)
+const p = await AnimePlayer.load(cv, (q.get('c') || '.') + '/character.json')
+window.draw = (f) => p.draw(f)
+window.morphNames = p.doc.morphNames
+p.draw({})
+window.ready = true
+</script></body></html>
