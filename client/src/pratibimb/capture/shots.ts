@@ -24,8 +24,27 @@ export interface Shot {
 /** Taken from the front photo: the person's own straight-ahead values. */
 export interface Baseline {
   tilt: number
+  /** the person's usual "covered" reading (a beard, stubble, moles or glasses are there in every frame) */
+  cover?: number
 }
 export const DEFAULT_BASE: Baseline = { tilt: 0.42 }
+
+/** The person's usual covered reading over the frames seen so far (median), so a beard is never taken for a
+    sticker or a hand: only something that is not usually there fails "Clear face". */
+export function coverTracker() {
+  const xs: number[] = []
+  return {
+    add(v: number) {
+      xs.push(v)
+      if (xs.length > 120) xs.shift()
+    },
+    usual() {
+      if (xs.length < 3) return 0
+      const s = [...xs].sort((a, b) => a - b)
+      return s[Math.floor(s.length / 2)]
+    },
+  }
+}
 
 const straight = (r: Reading) => (Math.abs(r.yaw) > 10 ? (r.yaw > 0 ? 'Turn a little to your right, face the camera' : 'Turn a little to your left, face the camera') : null)
 const level = (r: Reading, b: Baseline) => (r.tilt < b.tilt - 0.06 ? 'Lower your chin a little' : r.tilt > b.tilt + 0.06 ? 'Raise your chin a little' : null)
@@ -131,7 +150,7 @@ export function judge(shot: Shot, r: Reading | null, base: Baseline): Check[] {
     r.light < 70 ? { ok: false, label: 'Light', fix: 'Too dark: face a window or a lamp' } : r.light > 215 ? { ok: false, label: 'Light', fix: 'Too bright: move out of direct sun' } : { ok: true, label: 'Light' },
   )
   out.push(r.sideLight > 0.35 ? { ok: false, label: 'Even light', fix: 'Light falls on one side of your face: turn towards the light' } : { ok: true, label: 'Even light' })
-  out.push(r.foreign > 0.05 ? { ok: false, label: 'Clear face', fix: 'Something covers your face (a sticker, filter or hand): use a photo without it' } : { ok: true, label: 'Clear face' })
+  out.push(r.foreign > 0.05 && r.foreign > (base.cover ?? 0) + 0.08 ? { ok: false, label: 'Clear face', fix: 'Something covers your face (a sticker, filter or hand): use a photo without it' } : { ok: true, label: 'Clear face' })
   out.push(Math.abs(r.roll) > 10 ? { ok: false, label: 'Head level', fix: 'Keep your head level, not tilted to one side' } : { ok: true, label: 'Head level' })
   out.push(shot.id !== 'smile' && r.blink > 0.5 ? { ok: false, label: 'Eyes open', fix: 'Keep your eyes open' } : { ok: true, label: 'Eyes open' })
   const pose = shot.pose(r, base)

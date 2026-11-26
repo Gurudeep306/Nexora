@@ -5,7 +5,7 @@
   Nothing is generated or changed; the photos are frames of the video itself.
 */
 import { readImage } from './coach'
-import { judge, SHOTS, type Baseline, type Shot, type ShotId } from './shots'
+import { coverTracker, judge, SHOTS, type Baseline, type Shot, type ShotId } from './shots'
 
 export interface Found {
   shot: Shot
@@ -51,6 +51,7 @@ export async function photosFromVideo(file: Blob, base: Baseline, onProgress: (p
     const n = Math.min(600, Math.max(8, Math.round(dur * 4)))
     const best = new Map<ShotId, { bmp: ImageBitmap; sharp: number; at: number }>()
     let tilt = base.tilt
+    const cover = coverTracker()
     for (let i = 0; i < n; i++) {
       if (signal?.aborted) break
       const t = (dur * (i + 0.5)) / n
@@ -60,8 +61,9 @@ export async function photosFromVideo(file: Blob, base: Baseline, onProgress: (p
       let kept = false
       if (r && r.faces === 1) {
         const rr = { ...r, motion: 0 }
+        cover.add(r.foreign)
         for (const s of SHOTS) {
-          const ok = judge(s, rr, { tilt }).every((c) => c.ok || c.label === 'Centred')
+          const ok = judge(s, rr, { tilt, cover: cover.usual() }).every((c) => c.ok || c.label === 'Centred')
           const cur = best.get(s.id)
           if (ok && (!cur || r.sharp > cur.sharp)) {
             if (cur && ![...best.values()].some((x) => x !== cur && x.bmp === cur.bmp)) cur.bmp.close()

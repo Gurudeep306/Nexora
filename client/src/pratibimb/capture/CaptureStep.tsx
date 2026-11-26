@@ -16,7 +16,7 @@ import { handQrCard, handQrPlaceholder, themeQrColors } from '@/components/hand/
 import { loadCoach, read, readImage, type Reading } from './coach'
 import { photosFromVideo } from './fromVideo'
 import { cssColors, drawHud, targetTick, tickFor } from './hud'
-import { coverage, DEFAULT_BASE, judge, SHOTS, type Baseline, type Check as CheckT, type Shot, type ShotId } from './shots'
+import { coverage, coverTracker, DEFAULT_BASE, judge, SHOTS, type Baseline, type Check as CheckT, type Shot, type ShotId } from './shots'
 
 type Mode = 'scan' | 'phone' | 'upload'
 
@@ -326,6 +326,7 @@ function ScanSession({ done, only, base, onBase, onPhoto, onVideo, onClose }: Sc
   const lit = useRef<Set<number>>(new Set())
   const rec = useRef<MediaRecorder | null>(null)
   const chunks = useRef<Blob[]>([])
+  const cover = useRef(coverTracker())
   const s = useRef({ at: 0, greenSince: 0, best: null as ImageBitmap | null, bestSharp: -1, poseStart: 0, base, running: false, grabbing: false })
 
   useEffect(() => {
@@ -433,7 +434,8 @@ function ScanSession({ done, only, base, onBase, onPhoto, onVideo, onClose }: Sc
             lastT = t
             const r = read(lm.detectForVideo(v, t), v, v.videoWidth, v.videoHeight)
             last.current = r
-            const cs = judge(sh ?? SHOTS[0], r, st.base)
+            if (r) cover.current.add(r.foreign)
+            const cs = judge(sh ?? SHOTS[0], r, { ...st.base, cover: cover.current.usual() })
             setChecks(sh ? cs : cs.filter((x) => ['Only you', 'Distance', 'Light'].includes(x.label)))
             setReading(r)
             if (r && r.faces === 1) {
@@ -747,6 +749,7 @@ function Uploads({ done, base, upload, refresh, onThumb }: { done: Set<ShotId>; 
   const [over, setOver] = useState(false)
   const input = useRef<HTMLInputElement>(null)
   const taken = useRef(new Set(done))
+  const cover = useRef(coverTracker())
   useEffect(() => {
     taken.current = new Set(done)
   }, [done])
@@ -783,6 +786,18 @@ function Uploads({ done, base, upload, refresh, onThumb }: { done: Set<ShotId>; 
 
   async function add(files: FileList | File[] | null) {
     if (!files) return
+    // First learn the person's usual face across these photos, so a beard is not taken for a sticker.
+    for (const f of Array.from(files)) {
+      if (!/^image\/(jpeg|png|webp)$/.test(f.type)) continue
+      try {
+        const b = await createImageBitmap(f, { imageOrientation: 'from-image' })
+        const r = await readImage(b)
+        b.close()
+        if (r) cover.current.add(r.foreign)
+      } catch {
+        /* read again below, where the reason is shown */
+      }
+    }
     for (const f of Array.from(files)) {
       const isVideo = f.type.startsWith('video/')
       const url = isVideo ? '' : URL.createObjectURL(f)
@@ -803,7 +818,7 @@ function Uploads({ done, base, upload, refresh, onThumb }: { done: Set<ShotId>; 
         let pick: Shot | null = null
         let nearest: { fixes: string[] } | null = null
         for (const s of order) {
-          const c = judge(s, r ? { ...r, motion: 0 } : null, base).filter((x) => x.label !== 'Centred')
+          const c = judge(s, r ? { ...r, motion: 0 } : null, { ...base, cover: cover.current.usual() }).filter((x) => x.label !== 'Centred')
           const bad = c.filter((x) => !x.ok).map((x) => x.fix ?? x.label)
           if (!bad.length) {
             pick = s

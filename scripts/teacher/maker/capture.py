@@ -396,7 +396,7 @@ def covered(bgr, lm, face_px):
     _, _, st, _ = cv2.connectedComponentsWithStats(dark.astype(np.uint8))
     blobs = sum(int(x) for x in st[1:, 4] if x > (face_px / 30) ** 2) / inner.sum()
     edges = ((np.abs(cv2.Laplacian(cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY), cv2.CV_64F)) > 40) & inner).sum() / inner.sum()
-    return blobs > 0.05 and edges > 0.005
+    return blobs if edges > 0.005 else 0.0
 # Read the chosen frames again (frames are not kept in memory while scanning).
 want = {records[i][0]["name"]: [] for _, i in views}
 for label, i in views:
@@ -410,8 +410,7 @@ for t, bgr, name in frames():
     if name in want_train:
         r = records[want_train[name]][0]
         lm = np.array(r["landmarks"])
-        if covered(bgr, lm, r["face_px"]):
-            continue  # a covered face would teach the learner the cover
+        cover = covered(bgr, lm, r["face_px"])
         fw = float(np.ptp(lm[:, 0]))
         cx, cy = lm[:, 0].mean(), lm[:, 1].mean()
         half = fw * 1.4
@@ -424,7 +423,20 @@ for t, bgr, name in frames():
             crop = cv2.resize(crop, (int(crop.shape[1] * scale), int(crop.shape[0] * scale)), interpolation=cv2.INTER_AREA)
         fn = f"{len(train_meta):03d}.jpg"
         cv2.imwrite(os.path.join(a.out, "train", fn), crop, [cv2.IMWRITE_JPEG_QUALITY, 93])
-        train_meta.append({"file": fn, "t": r["t"], "offset": [x0, y0], "scale": scale, "yaw": r["yaw"], "pitch": r["pitch"]})
+        train_meta.append({"file": fn, "t": r["t"], "offset": [x0, y0], "scale": scale, "yaw": r["yaw"], "pitch": r["pitch"], "cover": round(cover, 4)})
+# A covered face (sticker, emoji, hand) would teach the learner the cover. Judged against the person's own usual
+# face, so a beard, stubble, moles or glasses that are there in every frame are never taken for a cover.
+if train_meta:
+    usual = float(np.median([m["cover"] for m in train_meta]))
+    kept = []
+    for m in train_meta:
+        if m["cover"] > 0.05 and m["cover"] > usual + 0.08:
+            os.remove(os.path.join(a.out, "train", m["file"]))
+        else:
+            kept.append(m)
+    if len(kept) < len(train_meta):
+        print(f"CAPTURE {len(train_meta) - len(kept)} training frames left out: something covers the face", flush=True)
+    train_meta = kept
 json.dump(train_meta, open(os.path.join(a.out, "train", "train.json"), "w"))
 saved = []
 for label, i in views:
