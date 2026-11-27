@@ -139,10 +139,13 @@ export function speakingFace(t: number, src: { curves?: Curves | null; timing?: 
   if (src.timing) {
     const pbm = visemeOn(src.timing, ['PP'], t + 0.02)
     const fv = visemeOn(src.timing, ['FF'], t + 0.02)
+    // Lips meet on p/b/m with the jaw nearly (not fully) closed: openers fade, the jaw keeps a little.
     for (const k of OPENERS) s[k] = (s[k] || 0) * (1 - pbm)
+    s.jawOpen = Math.max(s.jawOpen || 0, 0.06 * pbm)
     s.mouthPressLeft = Math.max(s.mouthPressLeft || 0, 0.45 * pbm)
     s.mouthPressRight = Math.max(s.mouthPressRight || 0, 0.45 * pbm)
-    s.mouthClose = Math.max(s.mouthClose || 0, 0.25 * pbm)
+    // mouthClose closes the lips against the jaw opening; more than the jaw opening pushes them through each other.
+    s.mouthClose = Math.min(Math.max(s.mouthClose || 0, 0.25 * pbm), s.jawOpen || 0)
     s.mouthRollUpper = Math.max(s.mouthRollUpper || 0, 0.12 * pbm)
     s.mouthRollLower = Math.max(s.mouthRollLower || 0, 0.12 * pbm, 0.55 * fv)
     s.mouthUpperUpLeft = Math.max(s.mouthUpperUpLeft || 0, 0.15 * fv)
