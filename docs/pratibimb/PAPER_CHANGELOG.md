@@ -481,3 +481,164 @@ real foil pool, paired-comparison γ, a bandwidth certificate, a mutation audit,
 renderer lost its id target, line pass and composite, the lips became one lips–jaw–tongue solve with a free
 jaw, and the consent chain around identity packs was redesigned; round 4 should check the new gates and the
 consent route rather than the overall design.
+
+## v5
+Editor of round 4 (reviews: the look and the face R4L, voice and conversation R4V, building it R4B, red team
+R4R). The layer count stays at 92 (L0–L91). §2.5 gains S22 (voice likeness) and a "Rule" column, so every gate
+names one of five decision rules (P point check, Z zero events, B bound with a power-calculated n, E
+equivalence/TOST, NI non-inferiority). §5.12 is regenerated from the layer texts with a "Needed for R1"
+column: 80 layers for release 1 (12 of them as they are), 7 Live only, 5 *later*. Status counts are now 6
+exist, 56 partial and 30 to build, because "exists" is now defined as "everything release 1 needs is in
+code". New owner decision D16 (S2's fallback target); D6 gains a plan B; D10 names voice foils; D14 says
+release 1 ships γ = 0. There are new risks 17 (the live photo bake) and 18 (voice likeness and echo), and §8.6
+and §8.7 are rewritten.
+
+Facts checked by the editor in the repository:
+- **The photo bake is live.** `scripts/teacher/maker/worker.py` runs `pipeline.py`. Its stage 6 runs
+  `bake_skin.py`, whose docstring reads: "Paint a person's face from their photos onto the model's skin
+  texture". It solves a camera per photo by DLT and colours every face texel from the photos. Stage 7
+  (`paint_features.py`) draws the features onto that photo skin. Stage 8 (`paint_look.py`) blends
+  `cv2.stylization` of the photo skin with the photo skin. All three Studio styles use this path.
+- **A check-only model picks the shipped output (new, found by the editor).** `pipeline.py` keeps the best of
+  three variants by an SFace likeness score (`likeness.py`). That breaks D6/L3. The fix is part of step 0.
+- **The lip fix does not reach the Studio.** Commit 5fa24edb touched only `scripts/pratibimb/engine/phonemes.py`
+  and its test (plus the pack route). `phonemes.py` is imported only by `engine/perform.py` and
+  `test_engine.py`. The Studio player (`client/src/pratibimb/engine/player.ts`) imports `lipsync.ts`, which
+  uses Oculus viseme classes from HeadTTS timing.
+- **What the shipping stack already has.** `solve_face.py` solves 222 CC0 targets with `lsq_linear`, with depth
+  counting half. `player.ts` has the states idle, listening, thinking and speaking, the gestures wave,
+  namaste, present, point and nod as fixed key poses, and `renderAt(t, speechT)`. `look.ts` switches between
+  painted, anime and real.
+- **Writer and arXiv ids.** Only a stale `engine/__pycache__/glb.cpython-313.pyc` remains of a glTF writer.
+  The titles of arXiv 2606.18323, 2607.08256, 2509.19852 and 2406.06979 were confirmed through the arXiv API.
+
+Key judgements:
+- **One avatar stack (R4B-3).** The choice is MPFB → `pipeline.py` → VRM → `client/src/pratibimb/engine/`. It
+  runs in production and already has the template, rig, hands, clothes, a fit bounded to human heads and a
+  player. The `scripts/pratibimb/engine/` stack would need all of that rebuilt, and its colour fits pixels.
+  The brief's path name is read as "our own code" (§2.4). Useful parts are salvaged. `splats.py`, `build.py`
+  and `portrait.py` are frozen as bench baselines.
+- **The three release-1 chains that could not go green under default decisions.**
+  - γ is fixed at 0 in release 1, so the pilot, its mutant and the brow arm are *later* (R4R-22 = R4B-11).
+  - Foils are attribute-transplanted, and S16 is only monitored in release 1 (R4R-23, R4R-24).
+  - The audio mark is reported rather than gated. Release 1 keeps a server generation log, and the
+    registry and C2PA move to *later*, with exports (R4R-26 + R4B-13).
+- **Echo guard (R4R-9 vs. R4V-4).** Both say the 120 ms speaker check is impossible. R4V-4's text self-echo
+  test was taken over R4R-9's server speaker check, because it needs no speaker model and does not run into
+  D6. R4R-9's 250 ms decision with a 50 ms fade was kept.
+- **Look additions.** R4L-1 (a per-person shadow bake) and R4L-2 (a far-side edge) are accepted as spike
+  flags, each kept only if it wins an A/B on identical frames, instead of being added unconditionally.
+
+Accepted (id → what changed):
+- R4B-1 → production files in the Status lines (L5, L7–L10, L17, L34, L40, L43, L47, L49, L52, L60, L64,
+  L69, L73, L77, L89–L91) and in §8.7. L34 step (0) is `solve_face.py`; RBF/ICP fit only the residual.
+- R4B-2 → §2.4 and §8.6 step 0: a parametric stand-in for stage 6, features drawn on photo-free skin, older
+  models not publishable. `bake_skin.py` becomes the S15 mutant.
+- R4B-3 → §8.7 one stack, with the reason and the salvage and freeze lists. L64 names its mouth path. One lip
+  table is kept as a data file read by `lipsync.ts` and by the server.
+- R4B-4 → §8.6 step 0 (days 1–10): the owner's own build, `look: 'band'`, `talkrender.cjs`, and a comparison
+  with the current look and the Rocketbox teachers. The headless GPU renderer moves to week 3.
+- R4B-5 → the spike uses `pipeline.py`'s fit on the owner and one staff volunteer. The optional hand-painted
+  chart is dropped.
+- R4B-6 → L51's spike version is one RGBA8 texture per band. Everything else enters only after "go", each
+  piece with an A/B.
+- R4B-7 → S3/S4 run on the morphed mesh in numpy for the milestone. The render id pass is kept for release 1
+  (S3, L65, L91).
+- R4B-8 → each gate's pull request ships its mutant as a test. S21 becomes a CI listing (L91).
+- R4B-9 → §7.1 "what runs today", a week-1 timing and a decision rule (keep Blender if p95 ≤ 240 s, else build
+  the VRM writer, L90).
+- R4B-10 → KTX2 is out of release 1 and paint layers ship as WebP/PNG. The transcoder sizes measured by the
+  reviewer are recorded (§7.2, L51, §6.3).
+- R4B-11 → merged with R4R-22.
+- R4B-12 → the stroke-id layer and stroke-quantised mode are removed (L51, L52, §8.5, §9.3).
+- R4B-13 → registry, C2PA and 7-day licences are *later*, with exports. Consent, import rules and
+  revocation stay in release 1 (L3, L57, L63, S17).
+- R4B-14 → `bake_skin.py`'s texel tracer, fed `paint.py` over template renders, bakes the master set (L51).
+- R4B risk 1 → the §5.12 "Needed for R1" column. Risk 3 → MP4 links plus a 1–5 rating (§8.3, §8.6). The
+  new idea → the same-pipeline control as the rule for every look ablation (§8.5, with changes: a method rule,
+  not a novelty claim).
+- R4R-1 → S1 gates the rank-1 margin and the cosine is a diagnostic. The invariance claim is corrected (L24).
+  S1 gets a mutant.
+- R4R-2 → S7/L82 gate the clamp's activity and the post-clamp residuals. The mutant widens limits by 30°.
+- R4R-3 → S3 counts the union of aligner and hand-labelled closures, so missed ones fail.
+- R4R-4 → S8 is scored with disambiguators off, with their firing capped at 10% (L75).
+- R4R-5 → the five decision rules in §2.5 and §5.0. S12, S18, L63's ABX, S9, L74, L68 and L83 are restated
+  as E or NI tests with margins. L72's quiz clause moves to §8.4.
+- R4R-6 → L50's "X%" clause is dropped.
+- R4R-7 → mutants at about 1.25× the threshold for every machine gate, and catch trials on S9, S22, L68, L73
+  and L77 (L91).
+- R4R-8 → S10 gates the first *content* audio, plus answer turns at ≤ 2.5 s. Bank audio is reported (L88).
+- R4R-9 → decided at 250 ms with a 50 ms fade (L87). The speaker check is replaced (see R4V-4).
+- R4R-10 → a main-thread render-submission row and an OffscreenCanvas fallback. Morph counts and the
+  download size are aligned (≈ 6.2 MB, §7.2).
+- R4R-12 → L6 selects by track continuity and SFace only confirms. YuNet's data is recorded as UNVERIFIED.
+- R4R-13 → L1 states an offline-replay attacker model. Real-time swaps are reported as a residual risk (with
+  changes: no anti-spoof model is named, since none is verified commercial-OK).
+- R4R-14 → the consent challenge is spoken in English or Hindi, and the Qwen3-ASR licence is settled in §6.3.
+- R4R-15 → S6 uses the template's inner-lip loop, with per-person calibration at closed frames.
+- R4R-16 → player and server bundles (§4.3, L2, L90), gated on "no audio, no embedding in the player".
+- R4R-17 → new provenance labels ("Lesson approved by [name] · AI voice", "AI answer, not checked by [name]")
+  and S20 rewritten (L57, §8.4).
+- R4R-18 → "copies we control" (L3). The label is a site guarantee (L57).
+- R4R-19 → L52 adds a symmetric dark-theme edge term and an additive hair rim. S19 gets a cell for black hair
+  on dark themes.
+- R4R-20 → L42 adds lines for the hair fit and the flyaway field and measures bandwidth over the whole
+  evaluated atlas (≈ 714 numbers). R4R-20a → S15's colour-only identification test (E).
+- R4R-21 → merged with R4L-7: L13 is fitted on the pool with colour cards and tested on the bench.
+- R4R-22 → γ is 0 in release 1, and the pilot, its mutant and the brow arm are *later* (L24, D14, §8.5).
+- R4R-23 → attribute-transplanted foils (S2, L0, §8.2).
+- R4R-24 → S16 is monitored in release 1 and gated later on S2(b) with a power-calculated n.
+- R4R-26 → L63's mark is reported, not gated. Publishing depends on the generation log.
+- R4R-27 → "exists" is defined, and L2, L5, L6, L10, L16, L20, L49 and L69 are relabelled partial. "Spectral
+  proxy" is fixed in §8.5. The Libri-Light audio terms are marked UNVERIFIED.
+- R4R risk "S2 may be infeasible" → the week-5 S2 pilot with D16 written first. Risk "D6 load-bearing" → plan
+  B in D6. Risk "moderngl" → gates rendered on the fallback are flagged (L91). The new idea → the
+  operating-characteristic sheet in L91, used to define a valid n.
+- R4L-1 + R4L-11 → L53's per-person key-shadow bake by pose (signed distance, 15 + 2 layers, ≈ 245 KB, kept at
+  every tier). The view-indexed paint is merged into it (L50, L51, L89).
+- R4L-2 → L52's far-side contour edge, as a spike flag.
+- R4L-3 → L41's 30-cell table (Monk × hue tercile), with red-orange shadows at Monk ≥ 6 and a machine
+  chroma/hue gate (with changes: the "ashy?" item goes to the owner's per-Monk check, not to S12, which is
+  Live).
+- R4L-4 → a value floor and ceiling (L41), the iris caustic and an iris–pupil gate (L44), and the additive hair
+  rim (L52).
+- R4L-5 → the under-eye darkening is counted once (L41).
+- R4L-6 → L40's partition of unity with σ ≈ 13 mm (f½ = 0.187/σ ≈ 2 c/fw on a 140 mm face, recomputed by the
+  editor). The lip border is drawn by L43.
+- R4L-7 → L13's 3-parameter sclera model.
+- R4L-8 → L47 adds plait/ponytail and bun, the "tied back?" question and the oiled shine. Release 1 starts
+  from the CC0 MPFB hair already in the pipeline (with changes: "long straight" stays in release 1, since
+  MPFB `long01` already ships).
+- R4L-9 → L52's minimum on-screen sizes and size-based drops, and the phone tier keeps the pose bake (L89).
+- R4L-10 → the spike cells: Monk 3/6/9 × hue recolours, a 20° hold with and without the flags, black hair on
+  a dark theme.
+- R4L risk 5 → line-end taper through the distance texture's second channel, after "go" (L54).
+- R4V-1 + R4V-10 → S22 voice likeness, with MOS in the same session (with changes: Hindi and Hinglish pooled,
+  the cross-lingual arm reported only). D10 names voice foils, and L60's free-floating MOS is removed.
+- R4V-2 → L60 best-of-4 for narration with a cross-family rank, garbage arcs in L61, and N = 1 live.
+- R4V-3 + R4V-11 → conditioning cached per person × language, bounded PSOLA/WSOLA corrections, and a
+  clause-consistency gate with a real-reading sanity arm. "Carry the pitch register" is removed.
+- R4V-4 + R4V-11 → no speaker model in the duck path, a text self-echo test before the stop, loopback
+  peer-connection playback, and S11 on three browsers (L83, L87, S11).
+- R4V-5 → wait time II as a parallel floor with a receipt cue, and answer turns at ≤ 2.5 s (L84, §7.3, S10).
+- R4V-6 → the narration–step timeline in L72, pitch-preserving playback rates (L89), and S3/S5 at 1.5× and
+  2×.
+- R4V-8 → L58's respelling lexicon, with the gate now a phone error rate through the lattice.
+- R4V-9 → L60 pinned to V3. The Hindi pack's licence is UNVERIFIED, and Perth is removed in our copy, so one
+  mark remains (§6.3).
+- R4V risk "no new recording" → narration in an unrecorded language needs the teacher's approval of a sample
+  until S22's cross-lingual arm passes (L15).
+
+Rejected (id → why):
+- R4L-13 (feature weights tuned to display size by Bradley–Terry) → it adds a rater pilot for a gain that
+  R4L-9's fixed minimum sizes mostly deliver. Listed in §9.2.
+- R4V-7 (clear-speech repair mode) → repair happens only in live conversation, which is not release 1. It is
+  untested, and the brief asks us to cut before we add. Listed in §9.2 for the Live release.
+- R4V new idea (contrastive focus from the frame diff) → untested, and it rests on a stress detector and
+  phrase splitting that are not yet validated. Listed in §9.2.
+- R4R-10's alternative "render from the worker through OffscreenCanvas by default" → kept only as a
+  fallback, because Safari support is UNVERIFIED.
+
+CHANGE SIZE: medium — the design's structure holds and no layer was added or removed, but round 4 found that
+production breaks the brief, chose one code stack, rewrote the build order around existing code, and gave
+every gate a decision rule. Each of these is a substantive change, though not a redesign.
